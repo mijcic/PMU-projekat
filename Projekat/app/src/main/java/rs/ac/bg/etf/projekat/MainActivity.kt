@@ -11,6 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import rs.ac.bg.etf.projekat.ui.theme.ProjekatTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +24,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProjekatTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val navController = rememberNavController()
+                NavigationGraph(navController)
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ProjekatTheme {
-        Greeting("Android")
+fun NavigationGraph(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = "destinationMainScreen1"
+    ) {
+        composable("destinationMainScreen1") {
+            MainScreen1(navController)
+        }
+        composable("destinationMainScreen2") {
+            MainScreen2(navController)
+        }
     }
 }
