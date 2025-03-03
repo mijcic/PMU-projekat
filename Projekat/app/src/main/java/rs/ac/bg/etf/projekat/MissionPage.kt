@@ -1,38 +1,60 @@
 package rs.ac.bg.etf.projekat
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun MissionPage(image:Int,title:String){
-    Box(
-        modifier = Modifier.fillMaxSize() // Puni celu veličinu ekrana
+fun MissionPage(image:Int,title:String,navController: NavController){
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
+    Surface(
+        modifier = Modifier.fillMaxSize().background(Color(0xFF233331)).padding(top=22.dp),
     ) {
         Column(
-            modifier = Modifier
-
+            modifier = Modifier.fillMaxSize().background(Color(0xFF233331))
+                .padding(top=(screenWidth/8).dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium
+                style = TextStyle(
+                    fontFamily = FontFamily(
+                        Font(R.font.special_elite)
+                    ),
+                    fontSize = 26.sp,
+                    color = Color.Black
+                ),
             )
+            Spacer(modifier = Modifier.padding((screenWidth/16).dp))
 
             Image(
                 painter = painterResource(id = image),
                 contentDescription = "Image",
-                modifier = Modifier, // Slika pokriva celu površinu
+                modifier = Modifier.clip(RoundedCornerShape(20.dp)),
             )
+            Spacer(modifier = Modifier.padding((screenWidth/15).dp))
 
             Text(
                 text = "“Detective, the murder took place at 2:15 AM. \n" +
@@ -54,8 +76,13 @@ fun MissionPage(image:Int,title:String){
                         "waiting for forensics to confirm details, \n" +
                         "but it’s clear this wasn’t a random attack.”",
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium
+                style = TextStyle(
+                    fontFamily = FontFamily(
+                        Font(R.font.special_elite)
+                    ),
+                )
             )
         }
     }
+
 }
