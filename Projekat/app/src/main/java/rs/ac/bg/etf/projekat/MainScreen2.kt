@@ -77,7 +77,9 @@ fun MainScreen2(
                 modifier = Modifier.fillMaxWidth().padding(12.dp)
             ) {
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("destinationLoginPage")
+                    },
                     modifier = Modifier.align(Alignment.TopStart)
                         .shadow(
                             elevation = 20.dp,

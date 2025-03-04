@@ -19,12 +19,23 @@ object destinationCardsPage: NavigationDestinations{
 object destinationMissionPage: NavigationDestinations{
     override val route = "destinationMissionPage"
 }
+
 object destinationSettingsPage: NavigationDestinations{
     override val route = "destinationSettingsPage"
 }
+
 object destinationScorePage: NavigationDestinations{
     override val route = "destinationScorePage"
 }
 
-val navigationDestinations =
-    listOf(destinationMainScreen1, destinationMainScreen2,destinationCardsPage,destinationMissionPage)
+object destinationLoginPage : NavigationDestinations {
+    override val route = "destinationLoginPage"
+}
+
+object destinationSignUpPage : NavigationDestinations {
+    override val route = "destinationSignUpPage"
+}
+
+val navigationDestinations = listOf(destinationMainScreen1, destinationMainScreen2,
+    destinationCardsPage,destinationMissionPage, destinationSettingsPage,
+    destinationScorePage, destinationLoginPage, destinationSignUpPage)

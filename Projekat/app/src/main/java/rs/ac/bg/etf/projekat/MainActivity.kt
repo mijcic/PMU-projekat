@@ -63,5 +63,11 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationScorePage") {
             ScorePage(navController)
         }
+        composable("destinationLoginPage") {
+            LoginPage(navController)
+        }
+        composable("destinationSignUpPage") {
+            SignUpPage(navController)
+        }
     }
 }
