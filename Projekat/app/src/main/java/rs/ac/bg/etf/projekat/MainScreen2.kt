@@ -1,26 +1,269 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlin.math.exp
 
 @Composable
 fun MainScreen2(
     navController: NavController
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().systemBarsPadding().background(colorResource(id = R.color.gray_1)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize().systemBarsPadding()
     ) {
-        Text(text = "Screen2")
+        val imagePainter = painterResource(id = R.drawable.main_screen_background)
+        var explanationOn by rememberSaveable { mutableStateOf(false) }
+
+        Image(
+            painter = imagePainter,
+            contentDescription = "Background image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f))
+        )
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(12.dp)
+            ) {
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.TopStart)
+                        .shadow(
+                            elevation = 20.dp, // Intenzitet senke
+                            shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
+                            clip = false // Da li da senka bude isečena ili ne
+                        )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "User Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .shadow(
+                            elevation = 20.dp, // Intenzitet senke
+                            shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
+                            clip = false // Da li da senka bude isečena ili ne
+                        )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(0.1f))
+
+            Text(
+                text = "Welcome, detective!",
+                fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+                fontSize = 35.sp,
+                color = colorResource(id = R.color.white),
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    shadow = Shadow(
+                        color = Color.Black, // Boja senke
+                        offset = Offset(10f, 10f), // Pomak senke
+                        blurRadius = 20f // Intenzitet senke (blur)
+                    )
+                )
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = { explanationOn = !explanationOn },
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
+                shape = RoundedCornerShape(15.dp),
+                modifier = Modifier.fillMaxWidth(0.8f).wrapContentWidth()
+                    .shadow(
+                        elevation = 20.dp, // Intenzitet senke
+                        shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
+                        clip = false // Da li da senka bude isečena ili ne
+                    )
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = if (!explanationOn) "View a detailed explanation of the game"
+                        else "Hide a detailed explanation of the game",
+                        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+                        fontSize = 19.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            shadow = Shadow(
+                                color = Color.Black, // Boja senke
+                                offset = Offset(5f, 5f), // Pomak senke
+                                blurRadius = 10f // Intenzitet senke (blur)
+                            )
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Icon(
+                        painter = if (!explanationOn) painterResource(id = R.drawable.arrow_down)
+                        else painterResource(id = R.drawable.arrow_up),
+                        contentDescription = if (!explanationOn) "Arrow Down"
+                        else "Arrow Up",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            AnimatedVisibility(visible = explanationOn) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .border(2.dp, Color.White)
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = "Whodunit is an interactive detective game where you choose your own path to solving mysteries! As a skilled detective, you gather clues and interrogate suspicious characters. Every decision shapes the investigation – will you follow your instincts or rely on the evidence? Each puzzle is a key to the truth, but be careful – one wrong move could lead to a dead end! Will you uncover the truth or remain trapped in a web of lies? The choice is yours!",
+                        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+                        fontSize = 15.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(0.4f))
+
+            Button(
+                onClick = { },
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
+                shape = RoundedCornerShape(15.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .wrapContentWidth()
+                    .shadow(
+                        elevation = 20.dp, // Intenzitet senke
+                        shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
+                        clip = false // Da li da senka bude isečena ili ne
+                    )
+            ) {
+                Text(
+                    text = "PLAY GAME",
+                    fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+                    fontSize = 25.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.Black, // Boja senke
+                            offset = Offset(5f, 5f), // Pomak senke
+                            blurRadius = 10f // Intenzitet senke (blur)
+                        )
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.1f))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                        .shadow(
+                            elevation = 20.dp, // Intenzitet senke
+                            shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
+                            clip = false // Da li da senka bude isečena ili ne
+                        )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.trophy_fill),
+                        contentDescription = "Trophy Fill",
+                        tint = colorResource(id = R.color.golden_yellow),
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(0.05f))
+        }
     }
 }
