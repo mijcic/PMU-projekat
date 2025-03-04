@@ -57,7 +57,7 @@ fun SignUpPage(
     navController: NavController
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().systemBarsPadding()
+        modifier = Modifier.fillMaxSize()
     ) {
         val imagePainter = painterResource(id = R.drawable.background_login_signup)
         var nameAndSurname by remember { mutableStateOf("") }

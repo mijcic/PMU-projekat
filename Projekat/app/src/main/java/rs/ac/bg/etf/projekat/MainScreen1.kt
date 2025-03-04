@@ -45,7 +45,7 @@ fun MainScreen1(
     navController: NavController
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().systemBarsPadding().background(colorResource(id = R.color.gray_1)),
+        modifier = Modifier.fillMaxSize().background(colorResource(id = R.color.gray_1)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

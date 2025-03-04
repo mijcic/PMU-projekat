@@ -7,13 +7,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,7 +51,7 @@ fun MainScreen2(
     navController: NavController
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().systemBarsPadding()
+        modifier = Modifier.fillMaxSize()
     ) {
         val imagePainter = painterResource(id = R.drawable.main_screen_background)
         var explanationOn by rememberSaveable { mutableStateOf(false) }
@@ -70,22 +69,19 @@ fun MainScreen2(
 
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth().padding(12.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = {
-                        navController.navigate("destinationLoginPage")
-                    },
-                    modifier = Modifier.align(Alignment.TopStart)
-                        .shadow(
-                            elevation = 20.dp,
-                            shape = RoundedCornerShape(15.dp),
-                            clip = false
-                        )
+                    onClick = { navController.navigate("destinationLoginPage") },
+                    modifier = Modifier.shadow(
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(15.dp),
+                        clip = false
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -96,15 +92,12 @@ fun MainScreen2(
                 }
 
                 IconButton(
-                    onClick = {
-                        navController.navigate("destinationSettingsPage")
-                    },
-                    modifier = Modifier.align(Alignment.TopEnd)
-                        .shadow(
-                            elevation = 20.dp,
-                            shape = RoundedCornerShape(15.dp),
-                            clip = false
-                        )
+                    onClick = { navController.navigate("destinationSettingsPage") },
+                    modifier = Modifier.shadow(
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(15.dp),
+                        clip = false
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -115,13 +108,13 @@ fun MainScreen2(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(0.1f))
+            Spacer(modifier = Modifier.weight(0.3f))
 
             Text(
                 text = "Welcome, detective!",
                 fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                 fontSize = 35.sp,
-                color = colorResource(id = R.color.white),
+                color = Color.White,
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     shadow = Shadow(
@@ -132,27 +125,21 @@ fun MainScreen2(
                 )
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
-
             Button(
                 onClick = { explanationOn = !explanationOn },
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
                 shape = RoundedCornerShape(15.dp),
-                modifier = Modifier.fillMaxWidth(0.8f).wrapContentWidth()
-                    .shadow(
-                        elevation = 20.dp,
-                        shape = RoundedCornerShape(15.dp),
-                        clip = false
-                    )
+                modifier = Modifier.fillMaxWidth(0.8f).padding(10.dp).shadow(
+                    elevation = 20.dp,
+                    shape = RoundedCornerShape(15.dp),
+                    clip = false
+                )
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier.fillMaxWidth()
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (!explanationOn) "View a detailed explanation of the game"
-                        else "Hide a detailed explanation of the game",
+                        text = if (!explanationOn) "View a detailed explanation of the game" else "Hide a detailed explanation",
                         fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                         fontSize = 19.sp,
                         color = Color.White,
@@ -165,23 +152,17 @@ fun MainScreen2(
                             )
                         )
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
                     Icon(
-                        painter = if (!explanationOn) painterResource(id = R.drawable.arrow_down)
-                        else painterResource(id = R.drawable.arrow_up),
-                        contentDescription = if (!explanationOn) "Arrow Down"
-                        else "Arrow Up",
+                        painter = if (!explanationOn) painterResource(id = R.drawable.arrow_down) else painterResource(id = R.drawable.arrow_up),
+                        contentDescription = "Arrow",
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-
             AnimatedVisibility(visible = explanationOn) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .border(2.dp, Color.White)
@@ -189,75 +170,62 @@ fun MainScreen2(
                         .padding(10.dp)
                 ) {
                     Text(
-                        text = "Whodunit is an interactive detective game where you choose your own path to solving mysteries! As a skilled detective, you gather clues and interrogate suspicious characters. Every decision shapes the investigation – will you follow your instincts or rely on the evidence? Each puzzle is a key to the truth, but be careful – one wrong move could lead to a dead end! Will you uncover the truth or remain trapped in a web of lies? The choice is yours!",
+                        text = "Whodunit is an interactive detective game where you choose your own path to solving mysteries! As a skilled detective, you gather clues and interrogate suspicious characters. Every decision shapes the investigation – will you follow your instincts or rely on the evidence? Each puzzle is key to the truth, but be careful – one wrong move could lead to a dead end! Will you uncover the truth or remain trapped in a web of lies? The choice is yours!",
                         fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                         fontSize = 15.sp,
                         color = Color.White,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.weight(0.4f))
+            Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                onClick = {
-                    navController.navigate("destinationCardsPage")
-                },
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
-                shape = RoundedCornerShape(15.dp),
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .wrapContentWidth()
-                    .shadow(
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(
+                    onClick = { navController.navigate("destinationCardsPage") },
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = Modifier.padding(10.dp).wrapContentWidth().shadow(
                         elevation = 20.dp,
                         shape = RoundedCornerShape(15.dp),
                         clip = false
                     )
-            ) {
-                Text(
-                    text = "PLAY GAME",
-                    fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
-                    fontSize = 25.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        shadow = Shadow(
-                            color = Color.Black,
-                            offset = Offset(5f, 5f),
-                            blurRadius = 10f
+                ) {
+                    Text(
+                        text = "PLAY GAME",
+                        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+                        fontSize = 25.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            shadow = Shadow(
+                                color = Color.Black,
+                                offset = Offset(5f, 5f),
+                                blurRadius = 10f
+                            )
                         )
                     )
-                )
-            }
+                }
 
-            Spacer(modifier = Modifier.weight(0.1f))
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-            ) {
                 IconButton(
-                    onClick = {
-                        navController.navigate("destinationScorePage")
-                    },
-                    modifier = Modifier.align(Alignment.BottomEnd)
-                        .shadow(
-                            elevation = 20.dp,
-                            shape = RoundedCornerShape(15.dp),
-                            clip = false
-                        )
+                    onClick = { navController.navigate("destinationScorePage") },
+                    modifier = Modifier.padding(12.dp).shadow(
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(15.dp),
+                        clip = false
+                    )
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.trophy_fill),
-                        contentDescription = "Trophy Fill",
+                        contentDescription = "Trophy",
                         tint = colorResource(id = R.color.golden_yellow),
                         modifier = Modifier.size(30.dp)
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(0.05f))
         }
     }
 }
