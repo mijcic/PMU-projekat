@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = "destinationScorePage"
+        startDestination = "destinationMainScreen1"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)

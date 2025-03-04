@@ -1,27 +1,22 @@
 package rs.ac.bg.etf.projekat
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -32,21 +27,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -58,7 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import kotlin.math.exp
 
 @Composable
 fun MainScreen2(
@@ -93,9 +80,9 @@ fun MainScreen2(
                     onClick = { },
                     modifier = Modifier.align(Alignment.TopStart)
                         .shadow(
-                            elevation = 20.dp, // Intenzitet senke
-                            shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
-                            clip = false // Da li da senka bude isečena ili ne
+                            elevation = 20.dp,
+                            shape = RoundedCornerShape(15.dp),
+                            clip = false
                         )
                 ) {
                     Icon(
@@ -107,12 +94,14 @@ fun MainScreen2(
                 }
 
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("destinationSettingsPage")
+                    },
                     modifier = Modifier.align(Alignment.TopEnd)
                         .shadow(
-                            elevation = 20.dp, // Intenzitet senke
-                            shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
-                            clip = false // Da li da senka bude isečena ili ne
+                            elevation = 20.dp,
+                            shape = RoundedCornerShape(15.dp),
+                            clip = false
                         )
                 ) {
                     Icon(
@@ -134,9 +123,9 @@ fun MainScreen2(
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     shadow = Shadow(
-                        color = Color.Black, // Boja senke
-                        offset = Offset(10f, 10f), // Pomak senke
-                        blurRadius = 20f // Intenzitet senke (blur)
+                        color = Color.Black,
+                        offset = Offset(10f, 10f),
+                        blurRadius = 20f
                     )
                 )
             )
@@ -149,9 +138,9 @@ fun MainScreen2(
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.fillMaxWidth(0.8f).wrapContentWidth()
                     .shadow(
-                        elevation = 20.dp, // Intenzitet senke
-                        shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
-                        clip = false // Da li da senka bude isečena ili ne
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(15.dp),
+                        clip = false
                     )
             ) {
                 Column(
@@ -168,9 +157,9 @@ fun MainScreen2(
                         textAlign = TextAlign.Center,
                         style = TextStyle(
                             shadow = Shadow(
-                                color = Color.Black, // Boja senke
-                                offset = Offset(5f, 5f), // Pomak senke
-                                blurRadius = 10f // Intenzitet senke (blur)
+                                color = Color.Black,
+                                offset = Offset(5f, 5f),
+                                blurRadius = 10f
                             )
                         )
                     )
@@ -210,16 +199,18 @@ fun MainScreen2(
             Spacer(modifier = Modifier.weight(0.4f))
 
             Button(
-                onClick = { },
+                onClick = {
+                    navController.navigate("destinationCardsPage")
+                },
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .wrapContentWidth()
                     .shadow(
-                        elevation = 20.dp, // Intenzitet senke
-                        shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
-                        clip = false // Da li da senka bude isečena ili ne
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(15.dp),
+                        clip = false
                     )
             ) {
                 Text(
@@ -230,9 +221,9 @@ fun MainScreen2(
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         shadow = Shadow(
-                            color = Color.Black, // Boja senke
-                            offset = Offset(5f, 5f), // Pomak senke
-                            blurRadius = 10f // Intenzitet senke (blur)
+                            color = Color.Black,
+                            offset = Offset(5f, 5f),
+                            blurRadius = 10f
                         )
                     )
                 )
@@ -246,12 +237,14 @@ fun MainScreen2(
                     .padding(12.dp)
             ) {
                 IconButton(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("destinationScorePage")
+                    },
                     modifier = Modifier.align(Alignment.BottomEnd)
                         .shadow(
-                            elevation = 20.dp, // Intenzitet senke
-                            shape = RoundedCornerShape(15.dp), // Oblik senke (možeš koristiti isti oblik kao za dugme)
-                            clip = false // Da li da senka bude isečena ili ne
+                            elevation = 20.dp,
+                            shape = RoundedCornerShape(15.dp),
+                            clip = false
                         )
                 ) {
                     Icon(
@@ -262,7 +255,6 @@ fun MainScreen2(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.weight(0.05f))
         }
     }
