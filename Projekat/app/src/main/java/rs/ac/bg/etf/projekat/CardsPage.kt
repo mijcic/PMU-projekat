@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
@@ -49,44 +49,59 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
         var textWidth by remember { mutableStateOf(0f) }
         var paddingStart by remember { mutableStateOf(0.dp) }
 
-        Image(
-            painter = painterResource(id = R.drawable.cards_image),
-            contentDescription = "Background Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.cards_image),
+                contentDescription = "Background Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+            )
+        }
+
 
         Column(modifier = Modifier
-            .align(Alignment.TopCenter).padding(top = 22.dp)) {
+            .align(Alignment.TopCenter).padding(top = 22.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally)
 
+        {
             Column(
                 modifier = Modifier
             ) {
-
-
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
             Column(
-                modifier = Modifier.padding(start = paddingStart)
+                modifier = Modifier.padding(start = paddingStart),
             ) {
                 Text(text = "Detective,", color = Color.White,
                     style = TextStyle(
                     fontFamily = FontFamily(
                         Font(R.font.special_elite)
                     ),
+                        fontSize = 17.sp,
                     color = Color.Black
                 ))
             }
         Column(
-            modifier = Modifier
+            modifier = Modifier,
+            verticalArrangement = Arrangement.Center
         ) {
             Text("choose one case from the options provided.", color = Color.White,
                 style = TextStyle(
                     fontFamily = FontFamily(
                         Font(R.font.special_elite)
                     ),
-                    color = Color.Black
+                    color = Color.Black,
+                            fontSize = 17.sp
                 ))
         }
 
@@ -143,7 +158,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                     CardWithImage(
                         R.drawable.abuse,
                         "Abuse \uD83D\uDC7A",
-                        "Investigating cases of abuse, be it physical, emotional, or \n" +
+                        "Investigating cases of abuse, be it physical, emotional, or " +
                                 "psychological, to uncover the perpetrators and bring justice.",
                         navController
                     )
@@ -152,8 +167,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                     CardWithImage(
                         R.drawable.gang,
                         "Gang Conflicts \uD83E\uDE78",
-                        "Delve into a dangerous world of \n" +
-                                "gang wars and criminal \n" +
+                        "Delve into a dangerous world of " +
+                                "gang wars and criminal " +
                                 "organizations, solving cases of violence and turf battles.",
                         navController
                     )
@@ -161,9 +176,9 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                     CardWithImage(
                         R.drawable.corruption,
                         "Corruption \uD83C\uDFDB\uFE0F",
-                        "Uncover the hidden faces of \n" +
-                                "corruption in politics or corporations, revealing the \n" +
-                                "extent of fraudulent activities \n" +
+                        "Uncover the hidden faces of " +
+                                "corruption in politics or corporations, revealing the " +
+                                "extent of fraudulent activities " +
                                 "and their consequences.",
                         navController
                     )
@@ -171,17 +186,17 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                     CardWithImage(
                         R.drawable.m_symptoms,
                         "Mysterious Symptoms ⚕\uFE0F ",
-                        "Investigate strange diseases or unusual deaths, connecting the \n" +
-                                "dots between mysterious health \n" +
+                        "Investigate strange diseases or unusual deaths, connecting the " +
+                                "dots between mysterious health " +
                                 "conditions and criminal activity.",
                         navController
                     )
                     CardWithImage(
                         R.drawable.mafia,
                         "Mafia ❌",
-                        "Explore the dangerous world of \n" +
-                                "mafia organizations, \n" +
-                                "investigating murders, extortion, drug trafficking, and other \n" +
+                        "Explore the dangerous world of " +
+                                "mafia organizations, " +
+                                "investigating murders, extortion, drug trafficking, and other " +
                                 "heinous crimes.",
                         navController
                     )
@@ -189,9 +204,9 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                     CardWithImage(
                         R.drawable.crime_passion,
                         "Crimes of Passion \uD83C\uDFAD",
-                        "Investigate intense emotional \n" +
-                                "motives behind crimes of passion, \n" +
-                                "such as murders driven by jealousy \n" +
+                        "Investigate intense emotional " +
+                                "motives behind crimes of passion, " +
+                                "such as murders driven by jealousy " +
                                 "or violent love affairs.",
                         navController
                     )
@@ -206,10 +221,11 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                     CardWithImage(
                         R.drawable.sects,
                         "Cults and Sects \uD83D\uDC80",
-                        "Uncover the sinister operations of dangerous cults or ideological \n" +
+                        "Uncover the sinister operations of dangerous cults or ideological " +
                                 "sects, revealing manipulation, brainwashing, and murder.",
                         navController
                     )
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
 
             }
