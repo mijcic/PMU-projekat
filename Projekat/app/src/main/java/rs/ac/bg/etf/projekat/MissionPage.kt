@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,12 +26,22 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.MyViewModel
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MissionPage(image:Int,title:String,navController: NavController){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
+    val viewModel:MyViewModel= hiltViewModel()
+    val uistate by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(viewModel.uiState.value.zlocin) {
+        viewModel.getAllData()
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize().background(Color(0xFF233331)).padding(top=22.dp),
