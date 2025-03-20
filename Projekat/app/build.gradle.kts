@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.symbol.processing)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.realm.kotlin)
 }
 
 android {
@@ -72,4 +73,7 @@ dependencies {
     // add for hilt di
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler) // add the plugin also!
+
+    implementation(libs.realm.library)
+    //implementation(libs.io.realm.gradle.plugin)
 }

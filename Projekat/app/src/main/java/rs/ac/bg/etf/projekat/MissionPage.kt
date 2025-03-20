@@ -41,6 +41,7 @@ fun MissionPage(image:Int,title:String,navController: NavController){
 
     LaunchedEffect(viewModel.uiState.value.zlocin) {
         viewModel.getAllData()
+        viewModel.saveData()
     }
 
     Surface(
