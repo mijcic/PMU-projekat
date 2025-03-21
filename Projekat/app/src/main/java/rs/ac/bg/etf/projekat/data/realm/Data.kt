@@ -1,15 +1,407 @@
 package rs.ac.bg.etf.projekat.data.realm
 
+import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.Ignore
+
+import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
 
 
-open class Person : RealmObject {
-    var name: String = "Foo"
-    var dog: Dog? = null
+// Enum for stZlocin
+enum class stZlocinR {
+    u_istrazi,
+    resen,
+    nedovoljno_informacija
 }
 
-// Definisanje Dog modela
-open class Dog : RealmObject {
-    var name: String = ""
-    var age: Int = 0
+// Zlocin table
+open class ZlocinR : RealmObject {
+    @PrimaryKey
+    var idZlocin: Int = 0
+    var tipZlocinaId: TipZlocinaR? = null
+    var naziv: String = ""
+
+    var datum: RealmInstant ?=null
+    var mesto: String = ""
+    var opis: String = ""
+
+
+    var status: String = stZlocinR.u_istrazi.name
 }
+
+// TipZlocinaR table
+open class TipZlocinaR : RealmObject {
+    @PrimaryKey
+    var idTipZlocina: Int = 0
+    var nazivTipaZlocina: String = nazivTipaZlocinaR.murder.name
+}
+
+// Enum for TipZlocina
+enum class nazivTipaZlocinaR {
+    murder,
+    disappearance,
+    robbery,
+    kidnappingAndBlackmail,
+    FamilySecrets,
+    Abuse,
+    GangConflicts,
+    Corruption,
+    MysteriousSymptoms,
+    MafiaCrimesOfPassion,
+    FalseIdentities,
+    CultsAndSecrets
+}
+
+
+// NapredakIstrageR table
+open class NapredakIstrageR : RealmObject {
+    @PrimaryKey
+    var idNapredak: Int = 0
+    var korisnikId: Int = 0
+    var zlocinId: ZlocinR? = null
+    var trenutniStatus: String = ""
+    var trenutniTrenutak: String = ""
+    var datumZadnjePromene: RealmInstant? = null
+}
+
+// ZabelezeniIzborR table
+open class ZabelezeniIzborR : RealmObject {
+    @PrimaryKey
+    var idIzbor: Int = 0
+    var korisnikId: Int = 0
+    var akcija: String = ""
+    var opisAkcije: String = ""
+    var datum: RealmInstant? = null
+    var misijaId: MisijaR? = null
+}
+
+// MisijaR table
+open class MisijaR : RealmObject {
+    @PrimaryKey
+    var idMisija: Int = 0
+    var zlocinId: ZlocinR? = null
+    var naziv: String = ""
+    var opis: String = ""
+    var status: Int = 0
+    var ispravanPotez: String = ""
+}
+
+// OsumnjicenR table
+open class OsumnjicenR : RealmObject {
+    @PrimaryKey
+    var idOsumnjicen: Int = 0
+    var ime: String = ""
+    var status: Int = 0
+    var tipOsumnjicen: String = TipOsumnjicenR.pojedinac.name
+    var motiv: MotivR? = null
+    var zlocinId: ZlocinR? = null
+}
+
+// Enum for TipOsumnjicen
+enum class TipOsumnjicenR {
+    pojedinac,
+    organizacija
+}
+
+// MotivR table
+open class MotivR : RealmObject {
+    @PrimaryKey
+    var idMotiv: Int = 0
+    var opis: String = ""
+}
+
+// DokazR table
+open class DokazR : RealmObject {
+    @PrimaryKey
+    var idDokaz: Int = 0
+    var tipDokaza: String = TipDokazaR.svedok.name
+    var opis: String = ""
+    var zlocinId: ZlocinR? = null
+    var zrtvaId: ZrtvaR? = null
+    var status: Int = 0
+}
+
+// Enum for TipDokaza
+enum class TipDokazaR {
+    fizicki,
+    digitalni,
+    svedok
+}
+
+// SvedokR table
+open class SvedokR : RealmObject {
+    @PrimaryKey
+    var idSvedok: Int = 0
+    var ime: String = ""
+    var kontakt: String = ""
+    var izjava: String = ""
+    var zlocinId: ZlocinR? = null
+    var statusSvedok: String = StatusSvedokR.aktivno.name
+}
+
+// Enum for StatusSvedok
+enum class StatusSvedokR {
+    aktivno,
+    zasticen,
+    nesaradnja
+}
+
+// ZrtvaR table
+open class ZrtvaR : RealmObject {
+    @PrimaryKey
+    var idZrtva: Int = 0
+    var tipZrtve: String = ""
+    var ime: String = ""
+    var detalji: String = ""
+    var statusZrtva: String = StatusZrtvaR.ziva.name
+    var zlocinId: ZlocinR? = null
+}
+
+// Enum for StatusZrtva
+enum class StatusZrtvaR {
+    ziva,
+    mrtva,
+    nestala
+}
+
+// ZrtvaZlostavljanjaR table
+open class ZrtvaZlostavljanjaR : RealmObject {
+    @PrimaryKey
+    var idZlostavljanje: Int = 0
+    var tipZlostavljanja: String = TipZlostavljanjaR.fizicko.name
+}
+
+// Enum for TipZlostavljanja
+enum class TipZlostavljanjaR {
+    fizicko,
+    emocionalno,
+    seksualno
+}
+
+// BandaR table
+open class BandaR : RealmObject {
+    @PrimaryKey
+    var idBanda: Int = 0
+    var nazivBande: String = ""
+    var tipBande: String = TipBandeR.iznuda.name
+    var status: Int = 0
+}
+
+// Enum for TipBande
+enum class TipBandeR {
+    narkoTrgovina,
+    iznuda,
+    teritorija
+}
+
+// MafijaR table
+open class MafijaR : RealmObject {
+    @PrimaryKey
+    var idMafije: Int = 0
+    var naziv: String = ""
+    var lider: String = ""
+    var aktivnosti: String = ""
+}
+
+// KultoviR table
+open class KultoviR : RealmObject {
+    @PrimaryKey
+    var idKult: Int = 0
+    var naziv: String = ""
+    var lider: String = ""
+    var ucenja: String = ""
+    var aktivnosti: String = ""
+}
+
+// TelefonR table
+open class TelefonR : RealmObject {
+    @PrimaryKey
+    var idTelefon: Int = 0
+    var model: String = ""
+    var os: String = ""
+    var zrtvaId: ZrtvaR? = null
+    var sifra: String = ""
+}
+
+// KontaktR table
+open class KontaktR : RealmObject {
+    @PrimaryKey
+    var idKontakt: Int = 0
+    var ime: String = ""
+    var broj: String = ""
+    var status: Int = 0
+    var zrtvaId: ZrtvaR? = null
+}
+
+// PorukeR table
+open class PorukeR : RealmObject {
+    @PrimaryKey
+    var idPoruke: Int = 0
+    @Ignore
+    var tipPoruke: TipPorukeR? = null
+    var sadrzaj: String = ""
+    var datumVreme: RealmInstant? = null
+    var zrtvaId: ZrtvaR? = null
+    var posiljalacId: KontaktR? = null
+    var statusPoruke: String =StatusPorukeR.read.name
+    var sifrovana: Boolean = false
+}
+
+// Enum for TipPoruke
+enum class TipPorukeR {
+    SMS,
+    WhatsApp,
+    email
+}
+
+// Enum for StatusPoruke
+enum class StatusPorukeR {
+    sent,
+    read,
+    delete
+}
+
+// PoziviR table
+open class PoziviR : RealmObject {
+    @PrimaryKey
+    var idPoziv: Int = 0
+    var tip: Int = 0
+    var broj: String = ""
+    var datumVreme: RealmInstant? = null
+    var zrtvaId: ZrtvaR? = null
+    var status: Int = 0
+    var kontaktId: KontaktR? = null
+}
+
+// GalerijaR table
+open class GalerijaR : RealmObject {
+    @PrimaryKey
+    var idGalerija: Int = 0
+    var tip: Int = 0
+    var putanja: String = ""
+    var zrtvaId: ZrtvaR? = null
+    var datumVreme: RealmInstant? = null
+    var lokacija: String = ""
+}
+
+// AplikacijaR table
+open class AplikacijaR : RealmObject {
+    @PrimaryKey
+    var idAplikacije: Int = 0
+    var naziv: String = ""
+    var tip: Int = 0
+    var zrtvaId: ZrtvaR? = null
+    var aktivna: Boolean = false
+    var informacije: String = ""
+}
+
+// ObdukcijaR table
+open class ObdukcijaR : RealmObject {
+    @PrimaryKey
+    var idObdukcija: Int = 0
+    var izvestaj: String = ""
+    var datum: RealmInstant? = null
+    var uzrokSmrti: String = ""
+    var zrtvaId: ZrtvaR? = null
+    var informacije: String = ""
+}
+
+// ForenzickiDokazR table
+open class ForenzickiDokazR : RealmObject {
+    @PrimaryKey
+    var idForenzickiDokaz: Int = 0
+    var tipForenzickiDokaz: String = TipForenzickiDokazR.DNK.name
+    var opis: String = ""
+    var status: Int = 0
+    var zrtvaId: ZrtvaR? = null
+    var veza: String = ""
+}
+
+// Enum for TipForenzickiDokaz
+enum class TipForenzickiDokazR {
+    otisak,
+    DNK,
+    dokument
+}
+
+// TragR table
+open class TragR : RealmObject {
+    @PrimaryKey
+    var idTrag: Int = 0
+    var forenzickiDokazId: ForenzickiDokazR? = null
+    var osumnjicenId: OsumnjicenR? = null
+}
+
+// DokazOsumnjicenR table
+open class DokazOsumnjicenR : RealmObject {
+    @PrimaryKey
+    var idDokazOsumnjicen: Int = 0
+    var dokazId: DokazR? = null
+    var osumnjicenId: OsumnjicenR? = null
+}
+
+// AlibiR table
+open class AlibiR : RealmObject {
+    @PrimaryKey
+    var idAlibi: Int = 0
+    var osumnjicenId: OsumnjicenR? = null
+    var svedokId: SvedokR? = null
+    var opis: String = ""
+    var statusAlibija: String = StatusAlibijaR.lažan.name
+}
+
+// Enum for StatusAlibija
+enum class StatusAlibijaR {
+    potvrđen,
+    lažan,
+    nepotvrđen
+}
+
+// OdnosOsumnjicenZrtvaR table
+open class OdnosOsumnjicenZrtvaR : RealmObject {
+    @PrimaryKey
+    var idOdnos: Int = 0
+    var osumnjicenId: OsumnjicenR? = null
+    var zrtvaId: ZrtvaR? = null
+    var tipOdnosa: String = TipOdnosaR.lični.name
+}
+
+// Enum for TipOdnosa
+enum class TipOdnosaR {
+    poslovni,
+    lični,
+    porodični,
+    rivalski,
+    slučajni
+}
+
+val realmClasses = listOf(
+    ZlocinR::class,
+    TipZlocinaR::class,
+    NapredakIstrageR::class,
+    ZabelezeniIzborR::class,
+    MisijaR::class,
+    OsumnjicenR::class,
+    MotivR::class,
+    DokazR::class,
+    SvedokR::class,
+    ZrtvaR::class,
+    ZrtvaZlostavljanjaR::class,
+    BandaR::class,
+    MafijaR::class,
+    KultoviR::class,
+    TelefonR::class,
+    KontaktR::class,
+    PorukeR::class,
+    PoziviR::class,
+    GalerijaR::class,
+    AplikacijaR::class,
+    ObdukcijaR::class,
+    ForenzickiDokazR::class,
+    TragR::class,
+    DokazOsumnjicenR::class,
+    AlibiR::class,
+    OdnosOsumnjicenZrtvaR::class
+)

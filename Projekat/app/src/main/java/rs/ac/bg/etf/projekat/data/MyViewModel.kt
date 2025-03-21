@@ -8,8 +8,6 @@ import io.realm.kotlin.UpdatePolicy
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.MainActivity
-import rs.ac.bg.etf.projekat.data.realm.Dog
-import rs.ac.bg.etf.projekat.data.realm.Person
 
 /*
 @HiltViewModel

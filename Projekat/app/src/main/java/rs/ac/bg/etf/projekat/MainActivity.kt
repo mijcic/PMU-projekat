@@ -25,8 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.realm.Dog
-import rs.ac.bg.etf.projekat.data.realm.Person
+import rs.ac.bg.etf.projekat.data.realm.realmClasses
 import rs.ac.bg.etf.projekat.ui.theme.ProjekatTheme
 
 @AndroidEntryPoint
@@ -38,12 +37,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val realmClassesSet = realmClasses.toSet()
         realm = Realm.open(
             configuration = RealmConfiguration.create(
-                schema = setOf(
-                    Person::class,
-                    Dog::class,
-                )
+                schema = realmClassesSet,
             )
         )
 

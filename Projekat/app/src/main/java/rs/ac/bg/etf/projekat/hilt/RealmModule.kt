@@ -13,8 +13,6 @@ import jakarta.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import rs.ac.bg.etf.projekat.data.realm.Dog
-import rs.ac.bg.etf.projekat.data.realm.Person
 /*
 @Module
 @InstallIn(SingletonComponent::class)

@@ -3,15 +3,20 @@ package rs.ac.bg.etf.projekat.data
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.type.TimeZone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.UpdatePolicy
+import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
-import rs.ac.bg.etf.projekat.data.realm.Dog
-import rs.ac.bg.etf.projekat.data.realm.Person
+import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,11 +45,31 @@ class MyViewModel @Inject constructor(
      fun saveData() {
         viewModelScope.launch {
             realm.write {
-                val person = Person().apply {
-                    name = "Carlo"
-                    dog = Dog().apply { name = "Fido"; age = 16 }
+                val zlocin=ZlocinR().apply {
+                    idZlocin = 1 // Primer ID-a
+                    naziv = "Ubistvo"
+                    mesto = "Beograd"
+                    opis = "Ubistvo u centru grada"
+
+                    // Kreiraj objekat za TipZlocina i dodeli mu vrednosti
+                    //tipZlocinaId = TipZlocina().apply {
+                      //  idTipZlocina = 1
+                        //naziv = "Ubistvo"
+                    //}
+
+                    // Datum je LocalDate, konvertujemo ga u Date
+                    datum = RealmInstant.now()
+
+// Ako želiš da konvertuješ ZonedDateTime u java.util.Date
+                    //  = Date.from(zonedDateTime.toInstant())
+                    //datum = Date.from(datum!!.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant())
+
+                    // Status (pretpostavljamo da je stZlocin enum)
+                    //status = stZlocin.resen
                 }
-                copyToRealm(person, updatePolicy = UpdatePolicy.ALL)
+
+
+                copyToRealm(zlocin, updatePolicy = UpdatePolicy.ALL)
             }
         }
     }
