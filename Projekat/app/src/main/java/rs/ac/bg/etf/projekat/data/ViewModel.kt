@@ -50,24 +50,8 @@ class MyViewModel @Inject constructor(
                     naziv = "Ubistvo"
                     mesto = "Beograd"
                     opis = "Ubistvo u centru grada"
-
-                    // Kreiraj objekat za TipZlocina i dodeli mu vrednosti
-                    //tipZlocinaId = TipZlocina().apply {
-                      //  idTipZlocina = 1
-                        //naziv = "Ubistvo"
-                    //}
-
-                    // Datum je LocalDate, konvertujemo ga u Date
                     datum = RealmInstant.now()
-
-// Ako želiš da konvertuješ ZonedDateTime u java.util.Date
-                    //  = Date.from(zonedDateTime.toInstant())
-                    //datum = Date.from(datum!!.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant())
-
-                    // Status (pretpostavljamo da je stZlocin enum)
-                    //status = stZlocin.resen
                 }
-
 
                 copyToRealm(zlocin, updatePolicy = UpdatePolicy.ALL)
             }

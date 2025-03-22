@@ -25,6 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.realm.MisijaR
+import rs.ac.bg.etf.projekat.data.realm.NapredakIstrageR
+import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
+import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.realmClasses
 import rs.ac.bg.etf.projekat.ui.theme.ProjekatTheme
 
@@ -38,11 +42,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val realmClassesSet = realmClasses.toSet()
-        realm = Realm.open(
-            configuration = RealmConfiguration.create(
-                schema = realmClassesSet,
-            )
+
+        val config = RealmConfiguration.Builder(
+            schema = realmClassesSet
         )
+            .schemaVersion(2)
+            .deleteRealmIfMigrationNeeded()
+            .build()
+
+        realm = Realm.open(config)
 
         enableEdgeToEdge()
         setContent {

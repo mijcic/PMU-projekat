@@ -12,8 +12,7 @@ import kotlin.reflect.KProperty
 // Enum for stZlocin
 enum class stZlocinR {
     u_istrazi,
-    resen,
-    nedovoljno_informacija
+    resen
 }
 
 // Zlocin table
@@ -54,27 +53,12 @@ enum class nazivTipaZlocinaR {
     CultsAndSecrets
 }
 
-
 // NapredakIstrageR table
 open class NapredakIstrageR : RealmObject {
     @PrimaryKey
     var idNapredak: Int = 0
     var korisnikId: Int = 0
     var zlocinId: ZlocinR? = null
-    var trenutniStatus: String = ""
-    var trenutniTrenutak: String = ""
-    var datumZadnjePromene: RealmInstant? = null
-}
-
-// ZabelezeniIzborR table
-open class ZabelezeniIzborR : RealmObject {
-    @PrimaryKey
-    var idIzbor: Int = 0
-    var korisnikId: Int = 0
-    var akcija: String = ""
-    var opisAkcije: String = ""
-    var datum: RealmInstant? = null
-    var misijaId: MisijaR? = null
 }
 
 // MisijaR table
@@ -85,7 +69,17 @@ open class MisijaR : RealmObject {
     var naziv: String = ""
     var opis: String = ""
     var status: Int = 0
-    var ispravanPotez: String = ""
+}
+
+// MisijaPorukaR table
+open class MisijaPorukaR : RealmObject {
+    @PrimaryKey
+    var idMisija: Int = 0
+    var zlocinId: ZlocinR? = null
+    var naziv: String = ""
+    var poruka: PorukeR? = null
+    var status: Int = 0
+    var posiljalac: String = ""
 }
 
 // OsumnjicenR table
@@ -97,6 +91,7 @@ open class OsumnjicenR : RealmObject {
     var tipOsumnjicen: String = TipOsumnjicenR.pojedinac.name
     var motiv: MotivR? = null
     var zlocinId: ZlocinR? = null
+    var kriv: Int = 0
 }
 
 // Enum for TipOsumnjicen
@@ -139,6 +134,7 @@ open class SvedokR : RealmObject {
     var izjava: String = ""
     var zlocinId: ZlocinR? = null
     var statusSvedok: String = StatusSvedokR.aktivno.name
+    var statusIspitan: Int = 0
 }
 
 // Enum for StatusSvedok
@@ -374,14 +370,14 @@ enum class TipOdnosaR {
     lični,
     porodični,
     rivalski,
-    slučajni
+    slučajni,
+    ljubavni
 }
 
 val realmClasses = listOf(
     ZlocinR::class,
     TipZlocinaR::class,
     NapredakIstrageR::class,
-    ZabelezeniIzborR::class,
     MisijaR::class,
     OsumnjicenR::class,
     MotivR::class,
