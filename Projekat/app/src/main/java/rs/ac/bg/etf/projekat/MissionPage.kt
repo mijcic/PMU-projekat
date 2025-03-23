@@ -40,7 +40,7 @@ fun MissionPage(image:Int,title:String,navController: NavController){
     val uistate by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel.uiState.value.zlocin) {
-        viewModel.getAllData()
+        //viewModel.getAllData()
         viewModel.saveData()
     }
 

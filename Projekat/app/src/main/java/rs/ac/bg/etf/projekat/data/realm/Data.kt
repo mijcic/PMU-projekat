@@ -379,6 +379,7 @@ val realmClasses = listOf(
     TipZlocinaR::class,
     NapredakIstrageR::class,
     MisijaR::class,
+    MisijaPorukaR::class,
     OsumnjicenR::class,
     MotivR::class,
     DokazR::class,

@@ -38,9 +38,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewModelScope
+import rs.ac.bg.etf.projekat.data.MyViewModel
 
 @Composable
-fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
+fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myViewModel: MyViewModel){
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -118,7 +120,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "Dive into a chilling investigation " +
                                 "to solve a brutal murder and " +
                                 "uncover the truth behind the crime.",
-                        navController
+                        navController,
+                        { myViewModel.insertDataForMurder() }
                     )
 
                     CardWithImage(
@@ -127,7 +130,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "A thrilling mission where the detective seeks to uncover the " +
                                 "mystery of a missing person, uncovering hidden secrets along " +
                                 "the way.",
-                        navController
+                        navController,
+                        {}
                     )
 
 
@@ -136,7 +140,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         " Robbery \uD83D\uDCB0",
                         "Focuses on solving a robbery case, whether it's a bank heist, " +
                                 "a museum theft, or the stealing of valuable items.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -144,7 +149,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "Kidnapping and Blackmail \uD83E\uDEE5",
                         "Investigate the dark world of kidnappings and blackmail, " +
                                 "where innocent lives are held ransom for secrets or money.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -152,7 +158,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "Family Secrets \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66",
                         "The detective explores crimes rooted in family dynamics, unraveling " +
                                 "secrets that tie blood relatives to criminal activity.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -160,7 +167,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "Abuse \uD83D\uDC7A",
                         "Investigating cases of abuse, be it physical, emotional, or " +
                                 "psychological, to uncover the perpetrators and bring justice.",
-                        navController
+                        navController,
+                        {}
                     )
 
 
@@ -170,7 +178,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "Delve into a dangerous world of " +
                                 "gang wars and criminal " +
                                 "organizations, solving cases of violence and turf battles.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -180,7 +189,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                                 "corruption in politics or corporations, revealing the " +
                                 "extent of fraudulent activities " +
                                 "and their consequences.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -189,7 +199,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         "Investigate strange diseases or unusual deaths, connecting the " +
                                 "dots between mysterious health " +
                                 "conditions and criminal activity.",
-                        navController
+                        navController,
+                        {}
                     )
                     CardWithImage(
                         R.drawable.mafia,
@@ -198,7 +209,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                                 "mafia organizations, " +
                                 "investigating murders, extortion, drug trafficking, and other " +
                                 "heinous crimes.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -208,7 +220,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                                 "motives behind crimes of passion, " +
                                 "such as murders driven by jealousy " +
                                 "or violent love affairs.",
-                        navController
+                        navController,
+                        {}
                     )
 
                     CardWithImage(
@@ -216,14 +229,16 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
                         " False Identities \uD83E\uDEAA",
                         "Solve cases involving the use of fake or stolen identities for illegal activities, " +
                                 "uncovering the culprits behind them.",
-                        navController
+                        navController,
+                        {}
                     )
                     CardWithImage(
                         R.drawable.sects,
                         "Cults and Sects \uD83D\uDC80",
                         "Uncover the sinister operations of dangerous cults or ideological " +
                                 "sects, revealing manipulation, brainwashing, and murder.",
-                        navController
+                        navController,
+                        {}
                     )
                     Spacer(modifier = Modifier.height(32.dp))
                 }
@@ -236,12 +251,13 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController){
 }
 
 @Composable
-fun CardWithImage(image: Int, title:String, text:String,navController: NavController) {
+fun CardWithImage(image: Int, title:String, text:String,navController: NavController, insertIntoDatabase: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(1.dp)
             .clickable{
                 navController.navigate(destinationMissionPage.route+"/"+image+"/"+title)
+                insertIntoDatabase()
             }
             .padding(bottom = 18.dp)
             .fillMaxWidth(),

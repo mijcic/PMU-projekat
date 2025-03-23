@@ -25,11 +25,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.Repository
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.NapredakIstrageR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.realmClasses
+import rs.ac.bg.etf.projekat.data.retrofit.Api
 import rs.ac.bg.etf.projekat.ui.theme.ProjekatTheme
 
 @AndroidEntryPoint
@@ -40,6 +42,8 @@ class MainActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        var myViewModel = MyViewModel()
 
         val realmClassesSet = realmClasses.toSet()
 
@@ -56,14 +60,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjekatTheme {
                 val navController = rememberNavController()
-                NavigationGraph(navController)
+                NavigationGraph(navController, myViewModel)
             }
         }
     }
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(navController: NavHostController, viewModel: MyViewModel) {
 
     NavHost(
         navController = navController,
@@ -76,7 +80,7 @@ fun NavigationGraph(navController: NavHostController) {
             MainScreen2(navController)
         }
         composable("destinationCardsPage") {
-            CardsPage(Modifier,navController)
+            CardsPage(Modifier,navController, viewModel)
         }
         composable(route = "destinationMissionPage/{image}/{title}",
             arguments = listOf(navArgument("image") { type = NavType.IntType },
