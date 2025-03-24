@@ -71,7 +71,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MyViewModel) {
 
     NavHost(
         navController = navController,
-        startDestination = "destinationMainScreen1"
+        startDestination = "destinationCardsPage"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)

@@ -25,8 +25,6 @@ open class ZlocinR : RealmObject {
     var datum: RealmInstant ?=null
     var mesto: String = ""
     var opis: String = ""
-
-
     var status: String = stZlocinR.u_istrazi.name
 }
 
