@@ -52,7 +52,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    //private val MyRepository: Repository
+    private val MyRepository: Repository
 ) : ViewModel() {
 
     private val _uiState= MutableStateFlow(UiStateZlocin())
@@ -73,25 +73,63 @@ class MyViewModel @Inject constructor(
 //        }
 //    }
 
-     fun saveData() {
-        viewModelScope.launch {
-            realm.write {
-                val zlocin=ZlocinR().apply {
-                    idZlocin = 1 // Primer ID-a
-                    naziv = "Ubistvo"
-                    mesto = "Beograd"
-                    opis = "Ubistvo u centru grada"
-                    datum = RealmInstant.now()
+    suspend fun inserTipZlocina(): TipZlocinaR? {
+        var tipZlocina: TipZlocinaR? =null
+        realm.write {
+             tipZlocina =
+                query<TipZlocinaR>("nazivTipaZlocina == $0", "murder").find().firstOrNull()
+
+            if (tipZlocina == null) {
+                val maxId = query<TipZlocinaR>().find().maxOfOrNull { it.idTipZlocina } ?: 0
+                tipZlocina = TipZlocinaR().apply {
+                    idTipZlocina = maxId + 1
+                    nazivTipaZlocina = "murder"
+                }
+                copyToRealm(tipZlocina!!)
+            }
+        }
+        return tipZlocina
+    }
+
+    suspend fun insertZlocin(tipZlocina: TipZlocinaR?) {
+        realm.write {
+            val nazivZlocina = "Murder in a luxury casino"
+            val dateString = "16.11.2023"
+            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            val localDate = LocalDate.parse(dateString, formatter)
+            val instantDate = localDate.atStartOfDay(ZoneOffset.UTC).toInstant()
+
+            val realmInstantDate = RealmInstant.from(instantDate.epochSecond, instantDate.nano)
+
+            // Ako tipZlocina nije unet u bazu, unesite ga
+            val existingTipZlocina = query<TipZlocinaR>("nazivTipaZlocina == $0", tipZlocina?.nazivTipaZlocina).find().firstOrNull()
+                ?: tipZlocina?.let {
+                    copyToRealm(it)
                 }
 
-                copyToRealm(zlocin, updatePolicy = UpdatePolicy.ALL)
-            }
+            val zlocin = query<ZlocinR>("tipZlocinaId == $0 AND naziv == $1 AND datum == $2", existingTipZlocina, nazivZlocina, realmInstantDate).find().firstOrNull()
+                ?: ZlocinR().apply {
+                    idZlocin = (query<ZlocinR>().find().maxOfOrNull { it.idZlocin } ?: 0) + 1
+                    tipZlocinaId = existingTipZlocina // Povezivanje sa tipom zločina
+                    naziv = nazivZlocina
+                    datum = realmInstantDate
+                    mesto = "Luxury casino 'Fortuna' in Monte Carlo"
+                    opis = "The young heiress of a wealthy hotel chain was found dead..."
+                    status = stZlocinR.u_istrazi.name
+                }
+
+            copyToRealm(zlocin)
         }
     }
 
-    fun insertDataForMurder() = runBlocking {
+
+    fun insertDataForMurder()  {
         viewModelScope.launch {
+            val tipZlocinaR:TipZlocinaR? = inserTipZlocina()
+            insertZlocin(tipZlocinaR)
             realm.write {
+
+                /*
                 // tip zlocina
                 var tipZlocina: TipZlocinaR? = null
 
@@ -734,6 +772,8 @@ class MyViewModel @Inject constructor(
                 if (odnosOsumnjicenZrtvaAF != null) copyToRealm(odnosOsumnjicenZrtvaAF, updatePolicy = UpdatePolicy.ALL)
                 if (odnosOsumnjicenZrtvaMB != null) copyToRealm(odnosOsumnjicenZrtvaMB, updatePolicy = UpdatePolicy.ALL)
                 if (odnosOsumnjicenZrtvaVD != null) copyToRealm(odnosOsumnjicenZrtvaVD, updatePolicy = UpdatePolicy.ALL)
+
+                 */
             }
         }
     }
@@ -741,4 +781,8 @@ class MyViewModel @Inject constructor(
 
 data class UiStateZlocin(
     val zlocin: List<Zlocin> = emptyList()
+)
+
+data class UiStatePostZlocin(
+    val message: String?= null
 )

@@ -43,8 +43,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var myViewModel = MyViewModel()
-
         val realmClassesSet = realmClasses.toSet()
 
         val config = RealmConfiguration.Builder(
@@ -60,15 +58,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjekatTheme {
                 val navController = rememberNavController()
-                NavigationGraph(navController, myViewModel)
+                NavigationGraph(navController)
             }
         }
     }
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, viewModel: MyViewModel) {
+fun NavigationGraph(navController: NavHostController) {
 
+    val viewModel: MyViewModel= hiltViewModel()
     NavHost(
         navController = navController,
         startDestination = "destinationCardsPage"
