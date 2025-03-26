@@ -233,8 +233,8 @@ open class KontaktR : RealmObject {
 open class PorukeR : RealmObject {
     @PrimaryKey
     var idPoruke: Int = 0
-    @Ignore
-    var tipPoruke: TipPorukeR? = null
+    //@Ignore
+    var tipPoruke: String = ""
     var sadrzaj: String = ""
     var datumVreme: RealmInstant? = null
     var zrtvaId: ZrtvaR? = null
