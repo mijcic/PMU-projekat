@@ -1,7 +1,13 @@
 package rs.ac.bg.etf.projekat.data.retrofit
 
+import okhttp3.Request
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
+import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 
 
 const val BASE_URL = "http://192.168.0.18:8080/"
@@ -9,4 +15,11 @@ const val BASE_URL = "http://192.168.0.18:8080/"
 interface Api {
     @GET("zlocin")
     suspend fun getZlocin():List<Zlocin>
+
+    @POST("postZlocin")
+    @Headers("Content-Type: application/json")
+    suspend fun postZlocin(@Body request: Zlocin): MessageResponse
+
+    @POST("insertData")
+    suspend fun insertData(@Body request: ZlocinRequest): MessageResponse
 }

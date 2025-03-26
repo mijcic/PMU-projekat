@@ -41,7 +41,9 @@ import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
+import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
+import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -58,6 +60,9 @@ class MyViewModel @Inject constructor(
     private val _uiState= MutableStateFlow(UiStateZlocin())
     val uiState : StateFlow<UiStateZlocin> = _uiState
 
+    private val _uiStatePostZlocin = MutableStateFlow(UiStatePostZlocin())
+    val uiStatePostZlocin : StateFlow<UiStatePostZlocin> = _uiStatePostZlocin
+
 //    fun getAllData() = viewModelScope.launch {
 //        Log.d("GET ZLOCIN","getall")
 //        try {
@@ -72,6 +77,34 @@ class MyViewModel @Inject constructor(
 //            _uiState.value = UiStateZlocin(zlocin = emptyList())
 //        }
 //    }
+
+
+    fun postZlocin(zlocin: Zlocin)=viewModelScope.launch {
+        try {
+            val response = MyRepository.postZlocin(zlocin)
+            Log.d("POST_ZLOCIN",response.toString())
+            _uiStatePostZlocin.value = UiStatePostZlocin(message = response)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStatePostZlocin.value = UiStatePostZlocin(message = null)
+        }
+    }
+
+    fun insertDataZlocin(zlocin: ZlocinRequest)=viewModelScope.launch {
+        try {
+            val response = MyRepository.insertData(zlocin)
+            Log.d("POST_ZLOCIN",response.toString())
+            _uiStatePostZlocin.value = UiStatePostZlocin(message = response)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStatePostZlocin.value = UiStatePostZlocin(message = null)
+        }
+    }
+
+
+    ///////-------------------
 
     suspend fun inserTipZlocina(): TipZlocinaR? {
         var tipZlocina: TipZlocinaR? =null
@@ -784,5 +817,5 @@ data class UiStateZlocin(
 )
 
 data class UiStatePostZlocin(
-    val message: String?= null
+    val message: MessageResponse?= null
 )

@@ -30,6 +30,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.realm.stZlocinR
+import rs.ac.bg.etf.projekat.data.retrofit.models.AlibiData
+import rs.ac.bg.etf.projekat.data.retrofit.models.DokazData
+import rs.ac.bg.etf.projekat.data.retrofit.models.MisijaData
+import rs.ac.bg.etf.projekat.data.retrofit.models.MotivData
+import rs.ac.bg.etf.projekat.data.retrofit.models.OsumnjicenData
+import rs.ac.bg.etf.projekat.data.retrofit.models.SvedokData
+import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
+import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinData
+import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
+import rs.ac.bg.etf.projekat.data.retrofit.models.ZrtvaData
+import java.util.Date
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -40,7 +52,7 @@ fun MissionPage(image:Int,title:String,navController: NavController){
     val uistate by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel.uiState.value.zlocin) {
-        //viewModel.getAllData()
+        InsertData(viewModel)
     }
 
     Surface(
