@@ -14,7 +14,9 @@ data class Zlocin(
     val naziv: String,
     val opis: String,
     val idTipZlocina: Int,
-    val datum: Long
+    val datum: Long,
+    val mesto:String,
+    val status: String
 )
 
 @Serializable
@@ -54,88 +56,131 @@ data class Korisnik(
 )
 
 @Serializable
-data class Misija(
-    val idMisija:Int,
-    val naziv: String,
-    val opis: String,
-    val cilj: String
+data class MessageResponse(
+    val message: String
+)
+
+
+
+@Serializable
+data class ZlocinRequest(
+    val zlocin: ZlocinData,
+    val zrtva: ZrtvaData,
+    val osumnjicen: List<OsumnjicenData>,
+    val dokazi: List<DokazData>,
+    val svedok: List<SvedokData>,
+    val alibi: List<AlibiData>,
+    val misija: MisijaData,
+    val motivi: List<MotivData>,
+    val obdukcija: ObdukcijaData,
+    val forenzickiDokazi: List<ForenzickiDokazData>,
+    val telefon: TelefonData,
+    val misijaPoruka: List<MisijaPorukaData>
 )
 
 @Serializable
-data class Motiv(
-    val idMotiv:Int,
+data class ZlocinData(
+    var id: Int,
+    val idTipZlocina: Int,
+    val naziv: String,
+    val datum: Long,
+    val mesto: String,
+    val opis: String,
+    val status: String
+)
+
+@Serializable
+data class ZrtvaData(
+    var id: Int,
+    val ime: String,
+    val tipZrtve: String,
+    val detalji: String,
+    val statusZrtva: String
+)
+
+@Serializable
+data class MotivData(
+    var idMotiv: Int,
     val opis: String
 )
 
 @Serializable
-data class NapredakIstrage(
-    val idNapredak:Int,
-    val idKorisnik:Int,
-    val idZlocin:Int,
-    val status:String,
-    val datumPromene:Long
+data class OsumnjicenData(
+    var id: Int,
+    val ime: String,
+    val tipOsumnjicen: Int,
+    val motiv: Int,
+    val status: Int,
+    val kriv: Int,
+    val odnosZrtva:String
 )
 
 @Serializable
-data class Obdukcija(
-    val idObdukcija:Int,
+data class DokazData(
+    var id:Int,
+    val tipDokaza: String,
+    val opis: String,
+    val status: Int,
+    var osumnjicen: OsumnjicenData
+)
+
+@Serializable
+data class SvedokData(
+    var id: Int,
+    val ime: String,
+    val izjava: String,
+    val kontakt: String,
+    val statusSvedok: String,
+    val status: Int
+)
+
+@Serializable
+data class AlibiData(
+    var id:Int,
+    var osumnjicen: OsumnjicenData,
+    var svedok: SvedokData?,
+    val opis: String,
+    val statusAlibija: String
+)
+
+@Serializable
+data class ObdukcijaData(
+    var id:Int,
+    val izvestaj:String,
+    val datum: Long,
     val uzrokSmrti:String,
-    val zakljucak:String,
-    val idZlocin: Int
+    val informacije: String,
 )
 
 @Serializable
-data class Organizacije(
-    val idOrganizacija: Int,
+data class ForenzickiDokazData (
+    var id: Int,
+    val tipForenzickiDokaz: String,
+    val opis: String,
+    val statusS:Int,
+    val veza: String,
+)
+
+@Serializable
+data class TelefonData(
+    var id: Int,
+    val model:String,
+    val os: String,
+    val sifra: String,
+    val informacije: String
+)
+
+@Serializable
+data class MisijaData(
     val naziv: String,
-    val tip: String
-)
-
-@Serializable
-data class Osumnjicen(
-    val idOsumnjicen: Int,
-    val ime: String,
-    val prezime: String,
-    val alibi:String,
-    val idZlocin: Int
-)
-
-@Serializable
-data class Svedok(
-    val idSvedok: Int,
-    val ime: String,
-    val prezime: String,
-    val iskaz:String,
-    val idZlocin: Int
-)
-
-@Serializable
-data class TajnaPorodice(
-    val idTajna: Int,
     val opis: String,
-    val idOsumnjicen: Int
+    val status: Int
 )
-
 @Serializable
-data class Trag(
-    val idTrag: Int,
-    val opis: String,
-    val idDokaz: Int,
-    val idOsumnjicen: Int
-)
-
-@Serializable
-data class Ucena(
-    val idUcena: Int,
-    val opis: String,
-    val idOsumnjicen: Int
-)
-
-@Serializable
-data class ZabelezeniIzbor(
-    val idIzbor:Int,
-    val idKorisnik: Int,
-    val idZlocin: Int,
-    val opisIzbora:String,
-    val datumIzbora:Long
+data class MisijaPorukaData(
+    var id: Int,
+    val naziv: String,
+    val statusS: Int,
+    val posiljalac:String,
+    val poruka: String,
 )

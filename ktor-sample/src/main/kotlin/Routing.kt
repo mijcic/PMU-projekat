@@ -1,9 +1,12 @@
 package com.example
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.*
 
 fun Application.configureRouting() {
@@ -21,16 +24,74 @@ fun Application.configureRouting() {
         }
         get("/clanorganizacije") {
             val organizacije = fetchClanOrganizacijeFromDatabase()
-            call.respond(organizacije)  // vraca JSON obj
+            call.respond(organizacije)
         }
         get("/dokaz") {
             val dokazi = fetchDokazFromDatabase()
-            call.respond(dokazi)  // vraca JSON obj
+            call.respond(dokazi)
         }
         get("/forenzickidokaz") {
             val dokazi = fetchForenzickiDokazFromDatabase()
-            call.respond(dokazi)  // vraca JSON obj
+            call.respond(dokazi)
         }
+
+        //post zahtevi
+
+        post("/postZlocin"){
+            try {
+                println("Post zlocin")
+                println("call $call")
+                val zlocin = call.receive<Zlocin>()
+                println("Received Zlocin: $zlocin")
+                insertZlocin(zlocin) // Insert data into the database
+                call.respond("Zlocin inserted successfully")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Zlocin"))
+            }
+        }
+
+        post("/insertData"){
+            try{
+                val zlocin = call.receive<ZlocinRequest>()
+                //println("$zlocin")
+
+                insertZlocinData(zlocin.zlocin)
+                insertZrtva(zlocin.zrtva,zlocin.zlocin)
+                insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
+                insertTelefonData(zlocin.telefon, zlocin.zrtva)
+
+                for (i in zlocin.motivi.indices) {
+                    val motiv = zlocin.motivi[i]
+                    val osumnjicen = zlocin.osumnjicen[i] // pretpostavljamo da su 'motivi' i 'osumnjicen' iste duzine
+
+                    insertMotivData(motiv)
+                    insertOsumnjicenData(osumnjicen, zlocin.zlocin, motiv, zlocin.zrtva)
+                }
+                for(dokaz in zlocin.dokazi){
+                    insertDokazData(dokaz, zlocin.zlocin, zlocin.zrtva, zlocin.osumnjicen)
+                }
+                for(svedok in zlocin.svedok){
+                    insertSvedokData(svedok, zlocin.zlocin)
+                }
+                for(alibi in zlocin.alibi){
+                    insertAlibiData(alibi,zlocin.zlocin,zlocin.osumnjicen,zlocin.svedok)
+                }
+                for(forenzickiDokaz in zlocin.forenzickiDokazi){
+                    insertForenzickiDokaz(forenzickiDokaz, zlocin.zrtva)
+                }
+                for (misijaPoruka in zlocin.misijaPoruka){
+                    insertMisijaPorukaData(misijaPoruka, zlocin.zlocin)
+                }
+
+                call.respond("Zlocin inserted successfully")
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Zlocin"))
+            }
+        }
+
 
         staticResources("/static", "static")
     }
@@ -90,7 +151,9 @@ fun fetchZlocinFromDatabase(): List<Zlocin> {
         val opis = resultSet.getString("opis")
         val idTipZlocina = resultSet.getInt("idTipZlocina")
         val datum = resultSet.getTimestamp("datum").time
-        Zlocin(id, naziv, opis, idTipZlocina, datum)
+        val mesto = resultSet.getString("mesto")
+        val status = resultSet.getString("status")
+        Zlocin(id, naziv, opis, idTipZlocina, datum,mesto, status)
     }
 }
 
