@@ -361,37 +361,37 @@ class MyViewModel @Inject constructor(
         return kontakt
     }
 
-//    suspend fun insertPoruka(tipP: String, sadrzajP: String, datumVremeP: RealmInstant?, zrtvaP: ZrtvaR?, posiljalacP: KontaktR?, statusP: String, sifrovanaP: Boolean): PorukeR? {
-//        var poruka: PorukeR? = null
-//        realm.write {
-//            // Ako zrtva nije uneta u bazu, unesite je
-//            val existingZrtva = query<ZrtvaR>("idZrtva == $0", zrtvaP?.idZrtva).find().firstOrNull()
-//                ?: zrtvaP?.let {
-//                    copyToRealm(it)
-//                }
-//
-//            // Ako posiljalac nije unet u bazu, unesite ga
-//            val existingPosiljalac = query<KontaktR>("idKontakt == $0", posiljalacP?.idKontakt).find().firstOrNull()
-//                ?: posiljalacP?.let {
-//                    copyToRealm(it)
-//                }
-//
-//            poruka = query<PorukeR>("tipPoruke == $0 AND sadrzaj == $1 AND datumVreme == $2 AND zrtvaId == $3 AND posiljalacId == $4 AND statusPoruke == $5 AND sifrovana == $6",
-//                tipP, sadrzajP, datumVremeP, existingZrtva, existingPosiljalac, statusP, sifrovanaP).find().firstOrNull()
-//                ?: PorukeR().apply {
-//                    idPoruke = (query<PorukeR>().find().maxOfOrNull { it.idPoruke } ?: 0) + 1
-//                    tipPoruke = tipP
-//                    sadrzaj = sadrzajP
-//                    datumVreme = datumVremeP
-//                    zrtvaId = existingZrtva
-//                    posiljalacId = existingPosiljalac
-//                    statusPoruke = statusP
-//                    sifrovana = sifrovanaP
-//                }
-//            copyToRealm(poruka!!)
-//        }
-//        return poruka
-//    }
+    suspend fun insertPoruka(tipP: String, sadrzajP: String, datumVremeP: RealmInstant?, zrtvaP: ZrtvaR?, posiljalacP: KontaktR?, statusP: String, sifrovanaP: Boolean): PorukeR? {
+        var poruka: PorukeR? = null
+        realm.write {
+            // Ako zrtva nije uneta u bazu, unesite je
+            val existingZrtva = query<ZrtvaR>("idZrtva == $0", zrtvaP?.idZrtva).find().firstOrNull()
+                ?: zrtvaP?.let {
+                    copyToRealm(it)
+                }
+
+            // Ako posiljalac nije unet u bazu, unesite ga
+            val existingPosiljalac = query<KontaktR>("idKontakt == $0", posiljalacP?.idKontakt).find().firstOrNull()
+                ?: posiljalacP?.let {
+                    copyToRealm(it)
+                }
+
+            poruka = query<PorukeR>("tipPoruke == $0 AND sadrzaj == $1 AND datumVreme == $2 AND zrtvaId == $3 AND posiljalacId == $4 AND statusPoruke == $5 AND sifrovana == $6",
+                tipP, sadrzajP, datumVremeP, existingZrtva, existingPosiljalac, statusP, sifrovanaP).find().firstOrNull()
+                ?: PorukeR().apply {
+                    idPoruke = (query<PorukeR>().find().maxOfOrNull { it.idPoruke } ?: 0) + 1
+                    tipPoruke = tipP
+                    sadrzaj = sadrzajP
+                    datumVreme = datumVremeP
+                    zrtvaId = existingZrtva
+                    posiljalacId = existingPosiljalac
+                    statusPoruke = statusP
+                    sifrovana = sifrovanaP
+                }
+            copyToRealm(poruka!!)
+        }
+        return poruka
+    }
 
     suspend fun insertMisijaPoruka(zlocinMP: ZlocinR?, nazivMP: String, porukaMP: PorukeR?, statusMP: Int, posiljalacMP: String): MisijaPorukaR? {
         var misijaPoruka: MisijaPorukaR? = null
@@ -449,7 +449,7 @@ class MyViewModel @Inject constructor(
                     izvestaj = izvestajO
                     datum = realmInstantDateO
                     uzrokSmrti = uzrokSmrtiO
-                    zrtvaId = zrtvaO
+                    zrtvaId = existingZrtva
                     informacije = informacijeO
                 }
             copyToRealm(obdukcija!!)
@@ -574,10 +574,10 @@ class MyViewModel @Inject constructor(
 
             var kontaktAmeliaFontaine: KontaktR? = insertKontakt("Amelia Fontaine", "+377 556 789", 0, zrtva)
 
-            //var porukaKorisniku: PorukeR? = insertPoruka(TipPorukeR.SMS.name, "You know Marco is just a pawn. The real truth is buried deeper. Look for the Queen of Hearts card.",
-            //    null, zrtva, kontaktAmeliaFontaine, StatusPorukeR.sent.name, false)
+            var porukaKorisniku: PorukeR? = insertPoruka(TipPorukeR.SMS.name, "You know Marco is just a pawn. The real truth is buried deeper. Look for the Queen of Hearts card.",
+                null, zrtva, kontaktAmeliaFontaine, StatusPorukeR.sent.name, false)
 
-            var porukaKorisniku: PorukeR? = null
+            //var porukaKorisniku: PorukeR? = null
 
             var misijaPoruka: MisijaPorukaR? = insertMisijaPoruka(zlocin, "Hidden card", porukaKorisniku, 0, "Amelia Fontaine")
 
