@@ -535,24 +535,23 @@ class MyViewModel @Inject constructor(
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
 
-            val zlocin: ZlocinR? = insertZlocin(tipZlocina, "Murder in a luxury casino", "16.11.2023", "Luxury casino 'Fortuna' in Monte Carlo",
-                "The young heiress of a wealthy hotel chain was found dead...", stZlocinR.u_istrazi.name)
+            val zlocin: ZlocinR? = insertZlocin(tipZlocina, "Ubistvo Isabelle Moreau", "16.11.2023", "Hotel u Monte Karlu",
+                "Ubistvo poznate poslovne žene Isabelle Moreau pod misterioznim okolnostima.", stZlocinR.u_istrazi.name)
 
-            val zrtva: ZrtvaR? = insertZrtva("Person", "Isabelle Moreau", "Isabelle was the heiress of a famous French family involved in the hotel industry. " +
-                    "She was known as an ambitious, yet controversial figure in social circles.", StatusZrtvaR.mrtva.name, zlocin)
+            val zrtva: ZrtvaR? = insertZrtva("Osoba", "Isabelle Moreau", "Poznata poslovna žena sa dugovima zbog kockarske zavisnosti.", StatusZrtvaR.mrtva.name, zlocin)
 
-            val motivMarcoBellini: MotivR? = insertMotiv("The victim owed him money due to a gambling addiction.")
-            val motivVincentDuval: MotivR? = insertMotiv("Jealousy due to Isabelle's relationship with him.")
-            val motivAmeliaFontaine: MotivR? = insertMotiv("Jealousy, envy, and a desire for revenge due to unrequited love for Marco and feelings of inadequacy next to Isabelle.")
+            val motivMarcoBellini: MotivR? = insertMotiv("Zrtva mu je dugovala novac zbog kockarske zavisnosti")
+            val motivVincentDuval: MotivR? = insertMotiv("Ljubomora zbog Isabelleine veze sa njegovom ženom")
+            val motivAmeliaFontaine: MotivR? = insertMotiv("Ljubomora, zavist i želja za osvetom zbog nepriznate ljubavi prema Marcu i osećaja manje vrednosti pored Isabelle")
 
             var osumnjiceniMarcoBellini: OsumnjicenR? = insertOsumnjiceni("Marco Bellini", 0, TipOsumnjicenR.pojedinac.name, motivMarcoBellini, zlocin, 0)
             var osumnjiceniVincentDuval: OsumnjicenR? = insertOsumnjiceni("Vincent Duval", 0, TipOsumnjicenR.pojedinac.name, motivVincentDuval, zlocin, 0)
             var osumnjiceniAmeliaFontaine: OsumnjicenR? = insertOsumnjiceni("Amelia Fontaine", 1, TipOsumnjicenR.pojedinac.name, motivAmeliaFontaine, zlocin, 1)
 
-            var dokaz1: DokazR? = insertDokaz(TipDokazaR.fizicki.name, "A bloody knife with the initials 'M.B.' was found at the crime scene.", zlocin, zrtva, 0)
-            var dokaz2: DokazR? = insertDokaz(TipDokazaR.digitalni.name, "Isabelle was receiving threatening messages on WhatsApp, which were later linked to Marc Bellini's phone number.", zlocin, zrtva, 0)
-            var dokaz3: DokazR? = insertDokaz(TipDokazaR.fizicki.name, "A bloody knife with the initials 'M.B.' was found at the crime scene, but DNA analysis revealed that the skin traces on the knife belonged to Amelie.", zlocin, zrtva, 1)
-            var dokaz4: DokazR? = insertDokaz(TipDokazaR.digitalni.name, "Threatening messages on WhatsApp were linked to Marc Bellini's phone number, but it turned out that they were sent by Amelia using a different device.", zlocin, zrtva, 1)
+            var dokaz1: DokazR? = insertDokaz(TipDokazaR.fizicki.name, "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina", zlocin, zrtva, 0)
+            var dokaz2: DokazR? = insertDokaz(TipDokazaR.digitalni.name, "Izabel je primala preteće poruke na WhatsApp, koje su kasnije povezane sa brojem telefona Marka Belinija", zlocin, zrtva, 0)
+            var dokaz3: DokazR? = insertDokaz(TipDokazaR.fizicki.name, "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina, ali analiza DNK je otkrila da su tragovi kože na nožu pripadali Ameliji", zlocin, zrtva, 1)
+            var dokaz4: DokazR? = insertDokaz(TipDokazaR.digitalni.name, "Preteće poruke na WhatsApp bile su povezane sa brojem telefona Marka Belinija, ali se ispostavilo da ih je poslala Amelija koristeći drugi uređaj", zlocin, zrtva, 1)
 
             var dokazOsumnjiceni1: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz1, osumnjiceniAmeliaFontaine)
             var dokazOsumnjiceni2: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz2, osumnjiceniAmeliaFontaine)
@@ -560,32 +559,28 @@ class MyViewModel @Inject constructor(
             var dokazOsumnjiceni4: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz4, osumnjiceniAmeliaFontaine)
 
             var svedokAmeliaFontaine: SvedokR? = insertSvedok("Amelia Fontaine", "+377 556 789",
-                "Amelia saw Marc leaving Isabelle's room a few hours before the body was found. " +
-                        "She also claimed to have heard an argument coming from the room.",
-                zlocin, StatusSvedokR.aktivno.name, 1)
+                "Tvrdila je da je videla Marca u blizini sobe žrtve.",
+                zlocin, StatusSvedokR.nesaradnja.name, 1)
 
-            var alibiMarcoBellini: AlibiR? = insertAlibi(osumnjiceniMarcoBellini, null, "Marco claims that he was at the casino during the crime, playing poker, " +
-                    "but there is no evidence that he was at the table at that time.", StatusAlibijaR.lažan.name)
-            var alibiAmeliaFontaine: AlibiR? = insertAlibi(osumnjiceniAmeliaFontaine, null, "Amelia claimed that she was at the casino at the time of the murder, " +
-                    "but security footage showed that she left the room just before the crime.", StatusAlibijaR.lažan.name)
+            var alibiMarcoBellini: AlibiR? = insertAlibi(osumnjiceniMarcoBellini, null, "Marko tvrdi da je bio u kazinu tokom zločina, igrajući poker, ali nema dokaza da je bio za stolom u to vreme", StatusAlibijaR.lažan.name)
+            var alibiAmeliaFontaine: AlibiR? = insertAlibi(osumnjiceniAmeliaFontaine, null, "Amelia je tvrdila da je bila u kazinu u vreme ubistva, ali bezbednosni snimci su pokazali da je napustila sobu neposredno pre zločina.", StatusAlibijaR.lažan.name)
 
-            var misija: MisijaR? = insertMisija(zlocin, "Hidden card", "The user received a message from an unknown number with the content: " +
-                    "'You know Marco is just a pawn. The real truth is buried deeper. Look for the Queen of Hearts card.", 0)
+            var misija: MisijaR? = insertMisija(zlocin, "Skrivena karta", "Korisnik je dobio poruku sa nepoznatog broja sa sadržajem: 'Znaš da je Marko samo pion. Prava istina je dublje zakopana. Potraži kartu Kraljice srca.'", 0)
 
             var kontaktAmeliaFontaine: KontaktR? = insertKontakt("Amelia Fontaine", "+377 556 789", 0, zrtva)
 
-            var porukaKorisniku: PorukeR? = insertPoruka(TipPorukeR.SMS.name, "You know Marco is just a pawn. The real truth is buried deeper. Look for the Queen of Hearts card.",
-                null, zrtva, kontaktAmeliaFontaine, StatusPorukeR.sent.name, false)
+//            var porukaKorisniku: PorukeR? = insertPoruka(TipPorukeR.SMS.name, "Znaš da je Marko samo pion. Prava istina je dublje zakopana. Potraži kartu Kraljice srca.",
+//                null, zrtva, kontaktAmeliaFontaine, StatusPorukeR.sent.name, false)
 
-            //var porukaKorisniku: PorukeR? = null
+            var porukaKorisniku: PorukeR? = null
 
-            var misijaPoruka: MisijaPorukaR? = insertMisijaPoruka(zlocin, "Hidden card", porukaKorisniku, 0, "Amelia Fontaine")
+            var misijaPoruka: MisijaPorukaR? = insertMisijaPoruka(zlocin, "Skrivena karta", porukaKorisniku, 0, "Amelia Fontaine")
 
-            var obdukcija: ObdukcijaR? = insertObdukcija("Defensive wounds were found on the body, and death was caused by multiple stab wounds to the chest area.",
-                "16.11.2023", "Multiple stab wounds", zrtva, "Skin remnants were found under the victim's nails, but the DNA analysis is still ongoing.")
+            var obdukcija: ObdukcijaR? = insertObdukcija("Na telu su pronađeni tragovi samoodbrane, a smrt je nastupila usled višestrukih ubodnih rana u predelu grudnog koša.",
+                "16.11.2023", "Višestruke ubodne rane", zrtva, "Na noktima žrtve pronađeni su ostaci kože, ali analiza DNK još uvek traje.")
 
-            var forenzickiDokaz: ForenzickiDokazR? = insertForenzickiDokaz(TipForenzickiDokazR.DNK.name, "Skin remnants were found under the victim's nails. The analysis result is pending.",
-                0, zrtva, "Potential connection to the suspect Marco Bellini.")
+            var forenzickiDokaz: ForenzickiDokazR? = insertForenzickiDokaz(TipForenzickiDokazR.DNK.name, "Na noktima žrtve pronađeni su ostaci kože. Čeka se rezultat analize.",
+                0, zrtva, "Potencijalna povezanost sa osumnjičenim Marcom Bellinijem.")
 
             var telefon: TelefonR? = insertTelefon("iPhone 14 Pro", "iOS", zrtva, "4862")
 
