@@ -40,9 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewModelScope
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
 
 @Composable
-fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myViewModel: MyViewModel){
+fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -121,7 +122,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "to solve a brutal murder and " +
                                 "uncover the truth behind the crime.",
                         navController,
-                        { myViewModel.insertDataForMurder() }
+                        { realmViewModel.insertDataForMurder() }
                     )
 
                     CardWithImage(

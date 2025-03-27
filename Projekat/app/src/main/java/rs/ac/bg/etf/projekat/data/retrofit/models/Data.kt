@@ -14,7 +14,7 @@ data class Zlocin(
 )
 
 data class MessageResponse(
-    val message:String
+    val message: String
 )
 
 
@@ -99,7 +99,7 @@ data class MisijaPoruka(
     val poruka: String,
 )
 
-// Sign up
+// Sign up i log in
 
 data class KorisnikRequest(
     val ime: String,

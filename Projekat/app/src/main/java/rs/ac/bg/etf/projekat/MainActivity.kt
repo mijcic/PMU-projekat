@@ -11,6 +11,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.Repository
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.NapredakIstrageR
@@ -40,6 +43,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         lateinit var realm: Realm
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,6 +57,7 @@ class MainActivity : ComponentActivity() {
             .build()
 
         realm = Realm.open(config)
+
 
         enableEdgeToEdge()
         setContent {
@@ -68,9 +73,11 @@ class MainActivity : ComponentActivity() {
 fun NavigationGraph(navController: NavHostController) {
 
     val viewModel: MyViewModel= hiltViewModel()
+    val realmViewModel: RealmViewModel = hiltViewModel()
+
     NavHost(
         navController = navController,
-        startDestination = "destinationSignUpPage"
+        startDestination = "destinationMainScreen1"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)
@@ -79,7 +86,7 @@ fun NavigationGraph(navController: NavHostController) {
             MainScreen2(navController)
         }
         composable("destinationCardsPage") {
-            CardsPage(Modifier,navController, viewModel)
+            CardsPage(Modifier,navController, viewModel, realmViewModel)
         }
         composable(route = "destinationMissionPage/{image}/{title}",
             arguments = listOf(navArgument("image") { type = NavType.IntType },
