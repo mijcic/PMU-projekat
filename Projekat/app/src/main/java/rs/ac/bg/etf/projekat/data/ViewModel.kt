@@ -41,6 +41,7 @@ import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
+import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
@@ -87,6 +88,22 @@ class MyViewModel @Inject constructor(
         catch (e:Exception){
             e.printStackTrace()
             _uiStatePostZlocin.value = UiStatePostZlocin(message = null)
+        }
+    }
+
+    private val _uiStateSignUp = MutableStateFlow(UiStateSignUp())
+    val uiStateSignUp : StateFlow<UiStateSignUp> = _uiStateSignUp
+
+    fun signUp(korisnik: KorisnikRequest)=viewModelScope.launch {
+        try {
+            Log.d("SIGNUP", korisnik.toString())
+            val response = MyRepository.signUp(korisnik)
+            Log.d("SIGNUP", response.toString())
+            _uiStateSignUp.value = UiStateSignUp(message = response)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateSignUp.value = UiStateSignUp(message = null)
         }
     }
 
@@ -597,4 +614,8 @@ data class UiStateZlocin(
 
 data class UiStatePostZlocin(
     val message: MessageResponse?= null
+)
+
+data class UiStateSignUp(
+    val message: MessageResponse?=null
 )

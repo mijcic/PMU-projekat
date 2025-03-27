@@ -98,3 +98,13 @@ data class MisijaPoruka(
     val posiljalac:String,
     val poruka: String,
 )
+
+// Sign up
+
+data class KorisnikRequest(
+    val ime: String,
+    val prezime: String,
+    val korisnickoIme: String,
+    val sifra: String,
+    val email: String
+)

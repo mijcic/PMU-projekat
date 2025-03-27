@@ -184,3 +184,14 @@ data class MisijaPorukaData(
     val posiljalac:String,
     val poruka: String,
 )
+
+// sign up
+
+@Serializable
+data class KorisnikRequest(
+    val ime: String,
+    val prezime: String,
+    val korisnickoIme: String,
+    val sifra: String,
+    val email: String
+)

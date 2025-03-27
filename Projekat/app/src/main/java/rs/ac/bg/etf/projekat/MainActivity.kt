@@ -70,7 +70,7 @@ fun NavigationGraph(navController: NavHostController) {
     val viewModel: MyViewModel= hiltViewModel()
     NavHost(
         navController = navController,
-        startDestination = "destinationCardsPage"
+        startDestination = "destinationSignUpPage"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)

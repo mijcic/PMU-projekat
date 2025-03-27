@@ -198,7 +198,6 @@ fun insertOdnosOsumnjicenZrtvaData(osumnjicen: OsumnjicenData, zrtva: ZrtvaData)
     }
 }
 
-
 fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData, osumnjiceni: List<OsumnjicenData>){
     val query = """
         INSERT INTO dokaz (tipDokaza, opis, statusS, zlocinId, zrtvaId)
@@ -474,4 +473,73 @@ fun insertMisijaPorukaData(misijaPoruka: MisijaPorukaData, zlocin: ZlocinData){
     } finally {
         closeResources(conn, statement, null)
     }
+}
+
+// sign up
+
+fun signUpKorisnik(korisnik: KorisnikRequest) {
+
+    val query = """
+        INSERT INTO korisnik (korisnickoIme, ime, prezime, sifra, email, nacinPrijave, poeni, poslednjaAktivnost)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, korisnik.korisnickoIme)
+        statement?.setString(2, korisnik.ime)
+        statement?.setString(3, korisnik.prezime)
+        statement?.setString(4, korisnik.sifra)
+        statement?.setString(5, korisnik.email)
+        statement?.setString(6, "rucno")
+        statement?.setInt(7, 0)
+        statement?.setDate(8, Date(System.currentTimeMillis()))
+
+        statement?.executeUpdate()
+
+        //resultSet = statement?.generatedKeys
+        //if (resultSet?.next() == true) {
+            //korisnik.id=resultSet.getInt(1)
+        //}
+
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+fun checkKorisnik(korisnik: KorisnikRequest): Boolean {
+    val query = """
+        SELECT COUNT(*) FROM korisnik WHERE korisnickoIme=?
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query)
+
+        statement?.setString(1, korisnik.korisnickoIme)
+
+        resultSet = statement?.executeQuery()
+
+        // Ako COUNT(*) > 0, znači da korisnik postoji
+        if (resultSet?.next() == true) {
+            val count = resultSet.getInt(1)
+            return count > 0
+        }
+
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, resultSet)
+    }
+
+    return false
 }

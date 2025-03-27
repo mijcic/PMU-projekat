@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -49,7 +52,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +70,12 @@ fun SignUpPage(
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
+        val viewModel: MyViewModel = hiltViewModel()
+        val uistate by viewModel.uiStateSignUp.collectAsState()
+
+        var ime by remember { mutableStateOf("") }
+        var prezime by remember { mutableStateOf("") }
+        var context = LocalContext.current
 
         Image(
             painter = imagePainter,
@@ -209,6 +221,18 @@ fun SignUpPage(
                     Spacer(modifier = Modifier.height(13.dp))
                     Button(
                         onClick = {
+                            if(username=="" || password=="" || email=="" || nameAndSurname==""){
+                                Toast.makeText(context, "The data has not been entered!", Toast.LENGTH_SHORT).show()
+                            }
+                            val parts = nameAndSurname.split(" ")
+                            if (parts.size >= 2) {
+                                ime = parts[0] // Prvo ime
+                                prezime = parts[1] // Prezime
+                            } else {
+                                ime = parts.getOrNull(0) ?: ""
+                                prezime = ""
+                            }
+                            viewModel.signUp(KorisnikRequest(ime,prezime,username,password,email))
                             //navController.navigate("destinationCardsPage")
                         },
                         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),

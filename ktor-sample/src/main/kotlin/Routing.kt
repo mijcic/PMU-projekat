@@ -92,7 +92,24 @@ fun Application.configureRouting() {
             }
         }
 
-
+        post("/signUp"){
+            try{
+                println("signUp")
+                val korisnik = call.receive<KorisnikRequest>()
+                val b= checkKorisnik(korisnik)
+                if(b){
+                    call.respond("Korisnik already exists.")
+                }
+                else{
+                    signUpKorisnik(korisnik)
+                    call.respond("Korisnik inserted successfully")
+                }
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Korisnik"))
+            }
+        }
         staticResources("/static", "static")
     }
 }
@@ -101,7 +118,7 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        "mia123"
+        "1234"
     )
 }
 
