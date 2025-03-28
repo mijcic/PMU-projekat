@@ -8,6 +8,13 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
+// Zlocin table
+open class PrijavljeniKorisnikR : RealmObject {
+    @PrimaryKey
+    var idKorisnik: Int = 0
+    var korisnickoIme: String = ""
+    var sifra: String = ""
+}
 
 // Enum for stZlocin
 enum class stZlocinR {
@@ -398,5 +405,6 @@ val realmClasses = listOf(
     TragR::class,
     DokazOsumnjicenR::class,
     AlibiR::class,
-    OdnosOsumnjicenZrtvaR::class
+    OdnosOsumnjicenZrtvaR::class,
+    PrijavljeniKorisnikR::class
 )

@@ -21,4 +21,6 @@ class Repository @Inject constructor(
     suspend fun insertData(@Body request: ZlocinRequest): MessageResponse = Api.insertData(request)
 
     suspend fun signUp(@Body request: KorisnikRequest): MessageResponse = Api.signUp(request)
+
+    suspend fun logIn(@Body request: KorisnikRequest): MessageResponse = Api.logIn(request)
 }

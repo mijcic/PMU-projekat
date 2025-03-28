@@ -547,3 +547,35 @@ fun checkKorisnik(korisnik: KorisnikRequest): Boolean {
 
     return false  // No matching user found
 }
+
+// log in
+
+fun logIn(korisnik: KorisnikRequest): Boolean {
+    val query = """
+        SELECT * FROM korisnik WHERE korisnickoIme = ? AND sifra = ?
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query)
+
+        statement?.setString(1, korisnik.korisnickoIme)
+        statement?.setString(2, korisnik.sifra)
+
+        resultSet = statement?.executeQuery()
+
+        if (resultSet?.next() == true) {
+            return true
+        }
+
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, resultSet)
+    }
+
+    return false
+}

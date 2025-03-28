@@ -1,5 +1,8 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,9 +29,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -49,8 +56,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(
@@ -62,6 +75,21 @@ fun LoginPage(
         val imagePainter = painterResource(id = R.drawable.background_login_signup)
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+
+        var context = LocalContext.current
+        val viewModel: MyViewModel = hiltViewModel()
+        val realViewModel: RealmViewModel = hiltViewModel()
+        val uiState by viewModel.uiStateLogIn.collectAsState()
+
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(uiState.message) {
+            uiState.message?.let { response ->
+                if (response.message.toString() == "FALSE") {
+                    Toast.makeText(context, "Username and password are incorrect", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         Image(
             painter = imagePainter,
@@ -157,7 +185,16 @@ fun LoginPage(
                     Spacer(modifier = Modifier.height(13.dp))
                     Button(
                         onClick = {
-                            //navController.navigate("destinationCardsPage")
+                            if (username == "" || password == ""){
+                                Toast.makeText(context, "The data has not been entered!", Toast.LENGTH_SHORT).show()
+                            }
+                            else {
+                                viewModel.logIn(KorisnikRequest("", "", username, password, ""))
+                                scope.launch {
+                                    realViewModel.insertPrijavljeniKorisnik(username, password)
+                                }
+                            }
+                            navController.navigate("destinationMainScreen2")
                         },
                         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
                         shape = RoundedCornerShape(8.dp)

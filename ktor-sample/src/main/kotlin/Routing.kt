@@ -111,6 +111,25 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Korisnik"))
             }
         }
+
+        post("/logIn"){
+            try{
+                println("logIn")
+                val korisnik = call.receive<KorisnikRequest>()
+                val result = logIn(korisnik)
+                if (result) {
+                    call.respond(MessageResponse("TRUE"))
+                }
+                else {
+                    call.respond(MessageResponse("FALSE"))
+                }
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to log in Korisnik"))
+            }
+        }
+
         staticResources("/static", "static")
     }
 }
@@ -119,7 +138,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        "1234"
+        //"1234"
+        "mia123"
     )
 }
 
