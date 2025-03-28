@@ -513,23 +513,27 @@ fun signUpKorisnik(korisnik: KorisnikRequest) {
         closeResources(conn, statement, null)
     }
 }
+
+
 fun checkKorisnik(korisnik: KorisnikRequest): Boolean {
     val query = """
-        SELECT COUNT(*) FROM korisnik WHERE korisnickoIme=?
+        SELECT COUNT(*) FROM korisnik WHERE korisnickoIme=? OR email=?
     """
     var conn: Connection? = null
     var statement: PreparedStatement? = null
     var resultSet: ResultSet? = null
 
     try {
-        conn = getDatabaseConnection()
+        conn = getDatabaseConnection()  // Assuming this method returns a valid DB connection
         statement = conn?.prepareStatement(query)
 
+        // Set the parameters for both username and email
         statement?.setString(1, korisnik.korisnickoIme)
+        statement?.setString(2, korisnik.email)
 
         resultSet = statement?.executeQuery()
 
-        // Ako COUNT(*) > 0, znači da korisnik postoji
+        // If COUNT(*) > 0, it means either the username or email already exists
         if (resultSet?.next() == true) {
             val count = resultSet.getInt(1)
             return count > 0
@@ -538,8 +542,8 @@ fun checkKorisnik(korisnik: KorisnikRequest): Boolean {
     } catch (e: SQLException) {
         e.printStackTrace()
     } finally {
-        closeResources(conn, statement, resultSet)
+        closeResources(conn, statement, resultSet)  // Make sure to close DB resources
     }
 
-    return false
+    return false  // No matching user found
 }

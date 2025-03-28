@@ -93,20 +93,21 @@ fun Application.configureRouting() {
         }
 
         post("/signUp"){
-            try{
-                println("signUp")
+            try {
+                println("signUp") // For debugging
                 val korisnik = call.receive<KorisnikRequest>()
-                val b= checkKorisnik(korisnik)
-                if(b){
-                    call.respond("Korisnik already exists.")
-                }
-                else{
+                val exists = checkKorisnik(korisnik)
+
+                if (exists) {
+                    println("User already exists") // Debugging
+                    call.respond(MessageResponse("Korisnik already exists."))
+                } else {
                     signUpKorisnik(korisnik)
-                    call.respond("Korisnik inserted successfully")
+                    println("User inserted successfully") // Debugging
+                    call.respond(MessageResponse("Korisnik inserted successfully"))
                 }
-            }
-            catch (e: Exception){
-                e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace() // Log the exception
                 call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Korisnik"))
             }
         }

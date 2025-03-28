@@ -1,5 +1,8 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
+import android.util.Log
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -27,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +61,7 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpPage(
@@ -71,11 +76,26 @@ fun SignUpPage(
         var password by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
         val viewModel: MyViewModel = hiltViewModel()
-        val uistate by viewModel.uiStateSignUp.collectAsState()
+        val uistateSignUp by viewModel.uiStateSignUp.collectAsState()
 
         var ime by remember { mutableStateOf("") }
         var prezime by remember { mutableStateOf("") }
         var context = LocalContext.current
+
+
+        LaunchedEffect(uistateSignUp.message?.message) {
+            val toastMessage = uistateSignUp.message?.message
+
+            Log.d("SIGNUPx", "tionCardsPage")
+            if (toastMessage != null && toastMessage.isNotEmpty()) {
+                if (toastMessage == "Korisnik inserted successfully") {
+                    Log.d("SIGNUPx", "Navigating to destinationCardsPage")
+                    navController.navigate(destinationMainScreen2.route)
+                } else {
+                    Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         Image(
             painter = imagePainter,
@@ -224,13 +244,21 @@ fun SignUpPage(
                             if(username=="" || password=="" || email=="" || nameAndSurname==""){
                                 Toast.makeText(context, "The data has not been entered!", Toast.LENGTH_SHORT).show()
                             }
+                            else if (password.length < 6) {
+                                Toast.makeText(context, "Password must be at least 6 characters!", Toast.LENGTH_SHORT).show()
+                            }
+                            else if (!(username.length >= 3 && username.matches("^[a-zA-Z0-9_]*$".toRegex()))) {
+                                Toast.makeText(context, "Username must be at least 3 characters and contain only alphanumeric characters or underscores!", Toast.LENGTH_LONG).show()
+                            }
+                            else if (!(Patterns.EMAIL_ADDRESS.matcher(email).matches())) {
+                                Toast.makeText(context, "Invalid email format!", Toast.LENGTH_SHORT).show()
+                            }
                             val parts = nameAndSurname.split(" ")
-                            if (parts.size >= 2) {
-                                ime = parts[0] // Prvo ime
-                                prezime = parts[1] // Prezime
+                            if (parts.size < 2) {
+                                Toast.makeText(context, "Please enter both first name and last name!", Toast.LENGTH_SHORT).show()
                             } else {
-                                ime = parts.getOrNull(0) ?: ""
-                                prezime = ""
+                                ime = parts[0] // First name
+                                prezime = parts[1] // Last name
                             }
                             viewModel.signUp(KorisnikRequest(ime,prezime,username,password,email))
                             //navController.navigate("destinationCardsPage")

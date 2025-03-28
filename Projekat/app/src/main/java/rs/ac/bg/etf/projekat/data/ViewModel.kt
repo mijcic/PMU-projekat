@@ -96,14 +96,17 @@ class MyViewModel @Inject constructor(
 
     fun signUp(korisnik: KorisnikRequest)=viewModelScope.launch {
         try {
-            Log.d("SIGNUP", korisnik.toString())
+            Log.d("SIGNUP", "ovde")
             val response = MyRepository.signUp(korisnik)
             Log.d("SIGNUP", response.toString())
-            _uiStateSignUp.value = UiStateSignUp(message = response)
+            Log.d("SIGNUP", "Response: ${response.message}")
+            _uiStateSignUp.value = UiStateSignUp(message = response, isRefreshing = false)
+            Log.d("SIGNUP", "Response: ${_uiStateSignUp.value}")
         }
         catch (e:Exception){
+            Log.d("SIGNUP", "greska")
             e.printStackTrace()
-            _uiStateSignUp.value = UiStateSignUp(message = null)
+            _uiStateSignUp.value = UiStateSignUp(message = null, isRefreshing = false, error = e.localizedMessage)
         }
     }
 
@@ -617,5 +620,7 @@ data class UiStatePostZlocin(
 )
 
 data class UiStateSignUp(
-    val message: MessageResponse?=null
+    val message: MessageResponse?=null,
+    val isRefreshing: Boolean = false,
+    val error: String? = null
 )
