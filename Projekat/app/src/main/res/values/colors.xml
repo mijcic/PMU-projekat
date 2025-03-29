@@ -11,4 +11,6 @@
     <color name="dark_purple">#3E2F5B</color>
     <color name="golden_yellow">#F7D100</color>
     <color name="light_gray">#D9D9D9</color>
+    <color name="mission_light_gray">#B0B0B0</color>
+    <color name="mission_overlay_color">#802E3B3D</color>
 </resources>

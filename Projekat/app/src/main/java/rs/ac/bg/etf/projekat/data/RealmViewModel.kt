@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.query.RealmResults
 import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,10 @@ import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -48,6 +52,9 @@ class RealmViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(UiStateUserData())
     val uiState : StateFlow<UiStateUserData> = _uiState
+
+    private val _uiStateCrimeData = MutableStateFlow(UiStateCrimeData())
+    val uiStateCrimeData : StateFlow<UiStateCrimeData> = _uiStateCrimeData
 
     suspend fun inserTipZlocina(nazivTZ: String): TipZlocinaR? {
         var tipZlocina: TipZlocinaR? = null
@@ -508,6 +515,30 @@ class RealmViewModel @Inject constructor(
         }
     }
 
+    suspend fun getTitleDatePlaceDescFromCrime() {
+        var title: String? = ""
+        var date: RealmInstant? = null
+        var dateString: String? = ""
+        var place: String? = ""
+        var description: String? = ""
+        realm.write {
+            var currentID: Int? = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+            var currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+            title = currentCrime?.naziv
+
+            date = currentCrime?.datum
+
+            val instant = date?.let { Instant.ofEpochSecond(it.epochSeconds, it.nanosecondsOfSecond.toLong()) }
+            val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            dateString = localDateTime.format(formatter) + "."
+
+            place = currentCrime?.mesto
+            description = currentCrime?.opis
+        }
+        _uiStateCrimeData.value = UiStateCrimeData(title, dateString, place, description)
+    }
+
     fun insertDataForMurder()  {
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
@@ -571,4 +602,11 @@ class RealmViewModel @Inject constructor(
 
 data class UiStateUserData (
     val userExists: Boolean? = null
+)
+
+data class UiStateCrimeData (
+    val title: String? = null,
+    val date: String? = null,
+    val place: String? = null,
+    val description: String? = null
 )
