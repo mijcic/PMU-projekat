@@ -36,6 +36,10 @@ object destinationSignUpPage : NavigationDestinations {
     override val route = "destinationSignUpPage"
 }
 
+object destinationPhonePage : NavigationDestinations {
+    override val route = "destinationPhonePage"
+}
+
 val navigationDestinations = listOf(destinationMainScreen1, destinationMainScreen2,
     destinationCardsPage,destinationMissionPage, destinationSettingsPage,
-    destinationScorePage, destinationLoginPage, destinationSignUpPage)
+    destinationScorePage, destinationLoginPage, destinationSignUpPage, destinationPhonePage)
