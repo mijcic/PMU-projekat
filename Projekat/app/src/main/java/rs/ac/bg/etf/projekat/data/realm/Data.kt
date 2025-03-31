@@ -369,6 +369,23 @@ open class OdnosOsumnjicenZrtvaR : RealmObject {
     var tipOdnosa: String = TipOdnosaR.lični.name
 }
 
+open class PitanjeIspitivanjeOsumnjicenogR : RealmObject {
+    @PrimaryKey
+    var idPitanjeIspitivanjeOsumnjicenog: Int =0
+    var kategorija =KategorijaIspitivanjeOsumnjicenog.opsta.name
+    var tekst: String =""
+    var odgovor: String =""
+    var komentar: String =""
+    var osumnjicenId: OsumnjicenR? = null
+}
+
+enum class KategorijaIspitivanjeOsumnjicenog {
+    opsta,
+    alibi,
+    dokaz,
+    kontradikcija
+}
+
 // Enum for TipOdnosa
 enum class TipOdnosaR {
     poslovni,
@@ -406,5 +423,6 @@ val realmClasses = listOf(
     DokazOsumnjicenR::class,
     AlibiR::class,
     OdnosOsumnjicenZrtvaR::class,
-    PrijavljeniKorisnikR::class
+    PrijavljeniKorisnikR::class,
+    PitanjeIspitivanjeOsumnjicenogR::class
 )

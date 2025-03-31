@@ -77,7 +77,7 @@ fun NavigationGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = "destinationMainScreen1"
+        startDestination = "destinationOfficePage"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)
@@ -107,6 +107,31 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("destinationSignUpPage") {
             SignUpPage(navController)
+        }
+        composable("destinationOfficePage"){
+            OfficePage(navController,viewModel,realmViewModel)
+        }
+        composable("destinationSuspectsPage"){
+            SuspectsPage(navController,viewModel,realmViewModel)
+        }
+        composable(route = "destinationSuspectDetailsPage/{image}/{title}",
+            arguments = listOf(navArgument("image") { type = NavType.IntType },
+                navArgument("title") { type = NavType.StringType }),
+        ) { navBackStackEntry ->
+            val image = navBackStackEntry.arguments?.getInt("image") ?: 0
+            val title =navBackStackEntry.arguments?.getString("title") ?:""
+            SuspectDetailsPage(image=image,title=title,navController)
+        }
+        composable(route = "destinationSuspectsInterviewPage/{title}",
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType }),
+        ) { navBackStackEntry ->
+            val title =navBackStackEntry.arguments?.getString("title") ?:""
+            SuspectInterviewPage(navController, viewModel,title)
+        }
+
+        composable("destinationWitnessesPage"){
+            WitnessesPage(navController, viewModel,realmViewModel)
         }
     }
 }

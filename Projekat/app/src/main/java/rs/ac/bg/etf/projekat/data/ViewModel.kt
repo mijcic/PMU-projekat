@@ -25,6 +25,7 @@ import rs.ac.bg.etf.projekat.data.realm.MotivR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
 import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
 import rs.ac.bg.etf.projekat.data.realm.StatusPorukeR
@@ -123,6 +124,42 @@ class MyViewModel @Inject constructor(
             _uiStateLogIn.value = UiStateLogIn(message = null)
         }
     }
+
+    private val _uiStateZlocinData = MutableStateFlow(UiStateDataZlocin())
+    val uiStateZlocinData : StateFlow<UiStateDataZlocin> = _uiStateZlocinData
+
+    fun getAllDataZlocin() = viewModelScope.launch {
+        try {
+            val response = selectAllOsumnjiceni()
+            val response2 = selectAllSvedoci()
+            _uiStateZlocinData.value = UiStateDataZlocin(suspects = response, witnesses = response2)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateZlocinData.value = UiStateDataZlocin(suspects = emptyList(), witnesses =  emptyList())
+        }
+    }
+
+    private val _uiStatePitanjaZaOsumnjicenog = MutableStateFlow(UiStatePitanjaZaOsumnjicenog())
+    val uiStatePitanjaZaOsumnjicenog : StateFlow<UiStatePitanjaZaOsumnjicenog> = _uiStatePitanjaZaOsumnjicenog
+
+    fun getPitanjaZaOsumnjicenog(osumnjicen:String) = viewModelScope.launch {
+        try {
+            val response1 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"opsta")
+            val response2 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"alibi")
+            val response3 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"dokaz")
+            val response4 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"kontradikcija")
+            _uiStatePitanjaZaOsumnjicenog.value = UiStatePitanjaZaOsumnjicenog(response1,response2,response3,response4)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStatePitanjaZaOsumnjicenog.value = UiStatePitanjaZaOsumnjicenog(emptyList(),emptyList(),emptyList(),emptyList())
+        }
+    }
+
+    fun clearPitanjaZaOsumnjicenog() {
+        _uiStatePitanjaZaOsumnjicenog.value = UiStatePitanjaZaOsumnjicenog(emptyList(),emptyList(),emptyList(),emptyList())  // Resetovanje podataka na početnu vrednost
+    }
 }
 
 data class UiStateZlocin(
@@ -141,4 +178,16 @@ data class UiStateSignUp(
 
 data class UiStateLogIn(
     val message: MessageResponse? =null
+)
+
+data class UiStateDataZlocin(
+    val suspects: List<OsumnjicenR> = emptyList(),
+    val witnesses: List<SvedokR> = emptyList(),
+)
+
+data class UiStatePitanjaZaOsumnjicenog(
+    val generalQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
+    val alibiQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
+    val evidenceQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
+    val passingQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
 )

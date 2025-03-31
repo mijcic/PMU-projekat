@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.data
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import rs.ac.bg.etf.projekat.data.realm.MotivR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
 import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
@@ -508,63 +510,378 @@ class RealmViewModel @Inject constructor(
         }
     }
 
-    fun insertDataForMurder()  {
+    suspend fun insertPitanjeIspitivanjeOsumnjicenog(osumnjicenZ: OsumnjicenR?, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {
+        var pitanje: PitanjeIspitivanjeOsumnjicenogR? = null
+        realm.write {
+            // If the suspect is not in the database, insert it
+            val existingOsumnjicen = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenZ?.idOsumnjicen).find().firstOrNull()
+                ?: osumnjicenZ?.let {
+                    copyToRealm(it)
+                }
+
+            // Check if the question already exists based on the provided data
+            pitanje = query<PitanjeIspitivanjeOsumnjicenogR>("kategorija == $0 AND tekst == $1 AND odgovor == $2 AND komentar == $3 AND osumnjicenId == $4",
+                kategorijaZ, tekstZ, odgovorZ, komentarZ, osumnjicenZ).find().firstOrNull()
+                ?: PitanjeIspitivanjeOsumnjicenogR().apply {
+                    // Ensure the primary key is unique by querying the maximum id in PitanjeIspitivanjeOsumnjicenogR
+                    idPitanjeIspitivanjeOsumnjicenog = (query<PitanjeIspitivanjeOsumnjicenogR>().find().maxOfOrNull { it.idPitanjeIspitivanjeOsumnjicenog } ?: 0) + 1
+                    kategorija = kategorijaZ
+                    tekst = tekstZ
+                    odgovor = odgovorZ
+                    komentar = komentarZ
+                    osumnjicenId = osumnjicenZ
+                }
+
+            copyToRealm(pitanje!!)
+        }
+        return pitanje
+    }
+
+    fun insertDataForMurder() {
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
 
-            val zlocin: ZlocinR? = insertZlocin(tipZlocina, "Ubistvo Isabelle Moreau", "16.11.2023", "Hotel u Monte Karlu",
-                "Ubistvo poznate poslovne žene Isabelle Moreau pod misterioznim okolnostima.", stZlocinR.u_istrazi.name)
+            val zlocin: ZlocinR? = insertZlocin(
+                tipZlocina,
+                "Ubistvo Isabelle Moreau",
+                "16.11.2023",
+                "Hotel u Monte Karlu",
+                "Ubistvo poznate poslovne žene Isabelle Moreau pod misterioznim okolnostima.",
+                stZlocinR.u_istrazi.name
+            )
 
-            val zrtva: ZrtvaR? = insertZrtva("Osoba", "Isabelle Moreau", "Poznata poslovna žena sa dugovima zbog kockarske zavisnosti.", StatusZrtvaR.mrtva.name, zlocin)
+            val zrtva: ZrtvaR? = insertZrtva(
+                "Osoba",
+                "Isabelle Moreau",
+                "Poznata poslovna žena sa dugovima zbog kockarske zavisnosti.",
+                StatusZrtvaR.mrtva.name,
+                zlocin
+            )
 
-            val motivMarcoBellini: MotivR? = insertMotiv("Zrtva mu je dugovala novac zbog kockarske zavisnosti")
-            val motivVincentDuval: MotivR? = insertMotiv("Ljubomora zbog Isabelleine veze sa njegovom ženom")
-            val motivAmeliaFontaine: MotivR? = insertMotiv("Ljubomora, zavist i želja za osvetom zbog nepriznate ljubavi prema Marcu i osećaja manje vrednosti pored Isabelle")
+            val motivMarcoBellini: MotivR? =
+                insertMotiv("Zrtva mu je dugovala novac zbog kockarske zavisnosti")
+            val motivVincentDuval: MotivR? =
+                insertMotiv("Ljubomora zbog Isabelleine veze sa njegovom ženom")
+            val motivAmeliaFontaine: MotivR? =
+                insertMotiv("Ljubomora, zavist i želja za osvetom zbog nepriznate ljubavi prema Marcu i osećaja manje vrednosti pored Isabelle")
 
-            var osumnjiceniMarcoBellini: OsumnjicenR? = insertOsumnjiceni("Marco Bellini", 0, TipOsumnjicenR.pojedinac.name, motivMarcoBellini, zlocin, 0)
-            var osumnjiceniVincentDuval: OsumnjicenR? = insertOsumnjiceni("Vincent Duval", 0, TipOsumnjicenR.pojedinac.name, motivVincentDuval, zlocin, 0)
-            var osumnjiceniAmeliaFontaine: OsumnjicenR? = insertOsumnjiceni("Amelia Fontaine", 1, TipOsumnjicenR.pojedinac.name, motivAmeliaFontaine, zlocin, 1)
+            var osumnjiceniMarcoBellini: OsumnjicenR? = insertOsumnjiceni(
+                "Marco Bellini",
+                0,
+                TipOsumnjicenR.pojedinac.name,
+                motivMarcoBellini,
+                zlocin,
+                0
+            )
+            var osumnjiceniVincentDuval: OsumnjicenR? = insertOsumnjiceni(
+                "Vincent Duval",
+                0,
+                TipOsumnjicenR.pojedinac.name,
+                motivVincentDuval,
+                zlocin,
+                0
+            )
+            var osumnjiceniAmeliaFontaine: OsumnjicenR? = insertOsumnjiceni(
+                "Amelia Fontaine",
+                1,
+                TipOsumnjicenR.pojedinac.name,
+                motivAmeliaFontaine,
+                zlocin,
+                1
+            )
 
-            var dokaz1: DokazR? = insertDokaz(TipDokazaR.fizicki.name, "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina", zlocin, zrtva, 0)
-            var dokaz2: DokazR? = insertDokaz(TipDokazaR.digitalni.name, "Izabel je primala preteće poruke na WhatsApp, koje su kasnije povezane sa brojem telefona Marka Belinija", zlocin, zrtva, 0)
-            var dokaz3: DokazR? = insertDokaz(TipDokazaR.fizicki.name, "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina, ali analiza DNK je otkrila da su tragovi kože na nožu pripadali Ameliji", zlocin, zrtva, 1)
-            var dokaz4: DokazR? = insertDokaz(TipDokazaR.digitalni.name, "Preteće poruke na WhatsApp bile su povezane sa brojem telefona Marka Belinija, ali se ispostavilo da ih je poslala Amelija koristeći drugi uređaj", zlocin, zrtva, 1)
+            var dokaz1: DokazR? = insertDokaz(
+                TipDokazaR.fizicki.name,
+                "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina",
+                zlocin,
+                zrtva,
+                0
+            )
+            var dokaz2: DokazR? = insertDokaz(
+                TipDokazaR.digitalni.name,
+                "Izabel je primala preteće poruke na WhatsApp, koje su kasnije povezane sa brojem telefona Marka Belinija",
+                zlocin,
+                zrtva,
+                0
+            )
+            var dokaz3: DokazR? = insertDokaz(
+                TipDokazaR.fizicki.name,
+                "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina, ali analiza DNK je otkrila da su tragovi kože na nožu pripadali Ameliji",
+                zlocin,
+                zrtva,
+                1
+            )
+            var dokaz4: DokazR? = insertDokaz(
+                TipDokazaR.digitalni.name,
+                "Preteće poruke na WhatsApp bile su povezane sa brojem telefona Marka Belinija, ali se ispostavilo da ih je poslala Amelija koristeći drugi uređaj",
+                zlocin,
+                zrtva,
+                1
+            )
 
-            var dokazOsumnjiceni1: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz1, osumnjiceniAmeliaFontaine)
-            var dokazOsumnjiceni2: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz2, osumnjiceniAmeliaFontaine)
-            var dokazOsumnjiceni3: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz3, osumnjiceniAmeliaFontaine)
-            var dokazOsumnjiceni4: DokazOsumnjicenR? = insertDokazOsumnjicenog(dokaz4, osumnjiceniAmeliaFontaine)
+            var dokazOsumnjiceni1: DokazOsumnjicenR? =
+                insertDokazOsumnjicenog(dokaz1, osumnjiceniAmeliaFontaine)
+            var dokazOsumnjiceni2: DokazOsumnjicenR? =
+                insertDokazOsumnjicenog(dokaz2, osumnjiceniAmeliaFontaine)
+            var dokazOsumnjiceni3: DokazOsumnjicenR? =
+                insertDokazOsumnjicenog(dokaz3, osumnjiceniAmeliaFontaine)
+            var dokazOsumnjiceni4: DokazOsumnjicenR? =
+                insertDokazOsumnjicenog(dokaz4, osumnjiceniAmeliaFontaine)
 
-            var svedokAmeliaFontaine: SvedokR? = insertSvedok("Amelia Fontaine", "+377 556 789",
+            var svedokAmeliaFontaine: SvedokR? = insertSvedok(
+                "Amelia Fontaine", "+377 556 789",
                 "Tvrdila je da je videla Marca u blizini sobe žrtve.",
-                zlocin, StatusSvedokR.nesaradnja.name, 1)
+                zlocin, StatusSvedokR.nesaradnja.name, 1
+            )
 
-            var alibiMarcoBellini: AlibiR? = insertAlibi(osumnjiceniMarcoBellini, null, "Marko tvrdi da je bio u kazinu tokom zločina, igrajući poker, ali nema dokaza da je bio za stolom u to vreme", StatusAlibijaR.lažan.name)
-            var alibiAmeliaFontaine: AlibiR? = insertAlibi(osumnjiceniAmeliaFontaine, null, "Amelia je tvrdila da je bila u kazinu u vreme ubistva, ali bezbednosni snimci su pokazali da je napustila sobu neposredno pre zločina.", StatusAlibijaR.lažan.name)
+            var alibiMarcoBellini: AlibiR? = insertAlibi(
+                osumnjiceniMarcoBellini,
+                null,
+                "Marko tvrdi da je bio u kazinu tokom zločina, igrajući poker, ali nema dokaza da je bio za stolom u to vreme",
+                StatusAlibijaR.lažan.name
+            )
+            var alibiAmeliaFontaine: AlibiR? = insertAlibi(
+                osumnjiceniAmeliaFontaine,
+                null,
+                "Amelia je tvrdila da je bila u kazinu u vreme ubistva, ali bezbednosni snimci su pokazali da je napustila sobu neposredno pre zločina.",
+                StatusAlibijaR.lažan.name
+            )
 
-            var misija: MisijaR? = insertMisija(zlocin, "Skrivena karta", "Korisnik je dobio poruku sa nepoznatog broja sa sadržajem: 'Znaš da je Marko samo pion. Prava istina je dublje zakopana. Potraži kartu Kraljice srca.'", 0)
+            var misija: MisijaR? = insertMisija(
+                zlocin,
+                "Skrivena karta",
+                "Korisnik je dobio poruku sa nepoznatog broja sa sadržajem: 'Znaš da je Marko samo pion. Prava istina je dublje zakopana. Potraži kartu Kraljice srca.'",
+                0
+            )
 
-            var kontaktAmeliaFontaine: KontaktR? = insertKontakt("Amelia Fontaine", "+377 556 789", 0, zrtva)
+            var kontaktAmeliaFontaine: KontaktR? =
+                insertKontakt("Amelia Fontaine", "+377 556 789", 0, zrtva)
 
 //            var porukaKorisniku: PorukeR? = insertPoruka(TipPorukeR.SMS.name, "Znaš da je Marko samo pion. Prava istina je dublje zakopana. Potraži kartu Kraljice srca.",
 //                null, zrtva, kontaktAmeliaFontaine, StatusPorukeR.sent.name, false)
 
             var porukaKorisniku: PorukeR? = null
 
-            var misijaPoruka: MisijaPorukaR? = insertMisijaPoruka(zlocin, "Skrivena karta", porukaKorisniku, 0, "Amelia Fontaine")
+            var misijaPoruka: MisijaPorukaR? =
+                insertMisijaPoruka(zlocin, "Skrivena karta", porukaKorisniku, 0, "Amelia Fontaine")
 
-            var obdukcija: ObdukcijaR? = insertObdukcija("Na telu su pronađeni tragovi samoodbrane, a smrt je nastupila usled višestrukih ubodnih rana u predelu grudnog koša.",
-                "16.11.2023", "Višestruke ubodne rane", zrtva, "Na noktima žrtve pronađeni su ostaci kože, ali analiza DNK još uvek traje.")
+            var obdukcija: ObdukcijaR? = insertObdukcija(
+                "Na telu su pronađeni tragovi samoodbrane, a smrt je nastupila usled višestrukih ubodnih rana u predelu grudnog koša.",
+                "16.11.2023",
+                "Višestruke ubodne rane",
+                zrtva,
+                "Na noktima žrtve pronađeni su ostaci kože, ali analiza DNK još uvek traje."
+            )
 
             var forenzickiDokaz: ForenzickiDokazR? = insertForenzickiDokaz(
-                TipForenzickiDokazR.DNK.name, "Na noktima žrtve pronađeni su ostaci kože. Čeka se rezultat analize.",
-                0, zrtva, "Potencijalna povezanost sa osumnjičenim Marcom Bellinijem.")
+                TipForenzickiDokazR.DNK.name,
+                "Na noktima žrtve pronađeni su ostaci kože. Čeka se rezultat analize.",
+                0,
+                zrtva,
+                "Potencijalna povezanost sa osumnjičenim Marcom Bellinijem."
+            )
 
             var telefon: TelefonR? = insertTelefon("iPhone 14 Pro", "iOS", zrtva, "4862")
 
-            var odnosOsumnjicenZrtvaAF: OdnosOsumnjicenZrtvaR? = insertOdnosOsumnjicenZrtva(osumnjiceniAmeliaFontaine, zrtva, TipOdnosaR.rivalski.name)
-            var odnosOsumnjicenZrtvaMB: OdnosOsumnjicenZrtvaR? = insertOdnosOsumnjicenZrtva(osumnjiceniMarcoBellini, zrtva, TipOdnosaR.poslovni.name)
-            var odnosOsumnjicenZrtvaVD: OdnosOsumnjicenZrtvaR? = insertOdnosOsumnjicenZrtva(osumnjiceniVincentDuval, zrtva, TipOdnosaR.ljubavni.name)
+            var odnosOsumnjicenZrtvaAF: OdnosOsumnjicenZrtvaR? = insertOdnosOsumnjicenZrtva(
+                osumnjiceniAmeliaFontaine,
+                zrtva,
+                TipOdnosaR.rivalski.name
+            )
+            var odnosOsumnjicenZrtvaMB: OdnosOsumnjicenZrtvaR? =
+                insertOdnosOsumnjicenZrtva(osumnjiceniMarcoBellini, zrtva, TipOdnosaR.poslovni.name)
+            var odnosOsumnjicenZrtvaVD: OdnosOsumnjicenZrtvaR? =
+                insertOdnosOsumnjicenZrtva(osumnjiceniVincentDuval, zrtva, TipOdnosaR.ljubavni.name)
+
+            // Marco Bellini - General Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "opsta",
+                "What was your relationship with Isabelle Moreau before her death?",
+                "We had a business relationship. I didn’t know her personally, just met occasionally for work.",
+                "His tone is flat, possibly trying to keep a distance from her. Quick answer, maybe rehearsed."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "opsta",
+                "Why did you feel Isabelle owed you money?",
+                "She had gambling debts. It affected our relationship because she couldn’t pay me back.",
+                "His answer is quick and automatic, seems like something he’s said before, trying to keep things simple."
+            )
+            // Marco Bellini - Alibi Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "alibi",
+                "Where were you at the time of Isabelle’s murder?",
+                "I was at the casino, playing poker. Never left the table at that time.",
+                "No hesitation, but his answer feels too perfect, might be trying to cover up something."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "alibi",
+                "Did you leave the casino during the night Isabelle was killed?",
+                "No, I didn’t leave. I played poker the whole time.",
+                "His response is quick, but there's no room for details, which might suggest a defensive tone."
+            )
+            // Marco Bellini - Evidence Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "dokaz",
+                "Did you know that threatening messages sent to Isabelle were linked to your number?",
+                "That’s a mistake. I don’t know anything about those messages. Someone must have used my number.",
+                "His answer is fast, possibly nervous about the connection to his number, but he tries to explain it away."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "dokaz",
+                "Is there any reason your initials would be linked to the knife found at the crime scene?",
+                "I don’t know why it was there. I’ve never used that knife.",
+                "He answers quickly, but his tone lacks confidence, could be worried about the knife."
+            )
+            // Marco Bellini - Contradiction Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "kontradikcija",
+                "You said you were at the casino when Isabelle was killed, but witnesses didn’t see you. How do you explain that?",
+                "It must have been a mistake. I was at the casino the whole time.",
+                "His response is too quick, maybe trying to brush off the discrepancy. Sounds defensive."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniMarcoBellini,
+                "kontradikcija",
+                "There are claims you were seen leaving Isabelle’s room. Can you deny that?",
+                "That’s an absolute lie. I was never in her room.",
+                "Quick, defensive response. His confidence feels a bit forced."
+            )
+
+            // Vincent Duval - General Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "opsta",
+                "What was your relationship with Isabelle Moreau before her death?",
+                "We were in a romantic relationship, though it wasn’t easy. Isabelle had her own world, and I was jealous.",
+                "He’s emotional in his response, which could be revealing. His jealousy seems genuine but might have been a motive."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "opsta",
+                "Did you ever have a serious conflict with Isabelle before her death?",
+                "Yes, a few times. Her relationship with someone else made me uncontrollably jealous.",
+                "He admits jealousy openly, which shows emotional involvement. It could be important for motive."
+            )
+
+            // Vincent Duval - Alibi Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "alibi",
+                "Where were you at the time of Isabelle’s murder?",
+                "I was in the hotel, in my room. No one saw me.",
+                "His answer is calm but feels a bit unsure. There’s a slight hesitation, as if trying to cover all bases."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "alibi",
+                "Did you have any contact with Isabelle shortly before her murder?",
+                "No. We hadn’t spoken in days.",
+                "He tries to show distance, but the tone suggests there’s more behind their recent interactions."
+            )
+
+            // Vincent Duval - Evidence Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "dokaz",
+                "Were there any threatening messages or evidence connecting your number to Isabelle?",
+                "I never sent threatening messages. This is all a lie.",
+                "His answer is quick, but something about the directness feels like he’s deflecting."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "dokaz",
+                "A knife with your initials was found at the crime scene. Can you explain that?",
+                "I’ve never been near that knife. It must be a set-up.",
+                "His answer comes quickly, but he doesn’t seem fully confident. He might be trying to explain away something troubling."
+            )
+
+            // Vincent Duval - Contradiction Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "kontradikcija",
+                "You said you were in your room when Isabelle was killed, but witnesses saw you near her. How do you explain that?",
+                "It’s a mistake. I never left my room.",
+                "He’s defensive, trying to deny everything. The quickness of his answer might be a sign of stress."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniVincentDuval,
+                "kontradikcija",
+                "There are claims that you were jealous because of Isabelle’s other relationships. Can you deny that?",
+                "Jealousy wasn’t the reason for her death. That’s just gossip.",
+                "He denies it too easily. His response feels a little too rehearsed."
+            )
+
+            // Amelia Fontaine - General Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "opsta",
+                "How would you describe your relationship with Isabelle Moreau?",
+                "Isabelle was a competitor, but also a friend. We were in different industries, so we didn’t have much conflict.",
+                "She tries to keep it neutral. Doesn’t want to reveal too much about her real feelings."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "opsta",
+                "How did you feel about her business success?",
+                "She was successful, no doubt. But honestly, sometimes it was hard to watch.",
+                "There’s a slight edge to her answer, indicating some underlying resentment or jealousy."
+            )
+
+            // Amelia Fontaine - Alibi Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "alibi",
+                "Where were you at the time of Isabelle’s murder?",
+                "I was at home, working.",
+                "Her answer is quick and simple. There’s no real detail to back it up, which seems suspicious."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "alibi",
+                "Did you have any contact with Isabelle right before her death?",
+                "No, we hadn’t spoken for months.",
+                "She makes it sound like they were distant, but the lack of emotion could mean there’s more beneath the surface."
+            )
+
+            // Amelia Fontaine - Evidence Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "dokaz",
+                "Were there any messages or evidence linking you to threatening Isabelle?",
+                "No, I never sent any threatening messages.",
+                "Her response is quick, but there’s something about her tone that feels off. Almost too rehearsed."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "dokaz",
+                "A knife with your initials was found at the crime scene. Can you explain that?",
+                "I don’t know why it was there. I’ve never used that knife.",
+                "Her answer is calm, but the lack of a solid explanation raises suspicion."
+            )
+
+            // Amelia Fontaine - Contradiction Questions
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "kontradikcija",
+                "You said you were at home when Isabelle was killed, but witnesses saw you near the crime scene. How do you explain that?",
+                "That’s not true. I was home, like I said.",
+                "Her answer is too firm. Could be a defensive reaction, or maybe she’s hiding something."
+            )
+            insertPitanjeIspitivanjeOsumnjicenog(
+                osumnjiceniAmeliaFontaine,
+                "kontradikcija",
+                "There were rumors about your jealousy of Isabelle. Can you deny that?",
+                "Jealousy wasn’t the reason for what happened. That’s just talk.",
+                "Her response feels too dismissive. Maybe trying to push away the idea without fully confronting it."
+            )
+
         }
     }
 }
@@ -572,3 +889,40 @@ class RealmViewModel @Inject constructor(
 data class UiStateUserData (
     val userExists: Boolean? = null
 )
+
+// get data
+
+suspend fun selectAllOsumnjiceni(): List<OsumnjicenR> {
+    val osumnjiceni: List<OsumnjicenR>
+
+    osumnjiceni = realm.query<OsumnjicenR>().find()
+
+    return osumnjiceni
+}
+
+suspend fun selectAllSvedoci(): List<SvedokR> {
+    val svedoci: List<SvedokR>
+
+    svedoci = realm.query<SvedokR>().find()
+
+    return svedoci
+}
+
+suspend fun selectAllPitanjaIspitivanjeOsumnjicenog(): List<PitanjeIspitivanjeOsumnjicenogR> {
+    val pitanja: List<PitanjeIspitivanjeOsumnjicenogR>
+
+    pitanja = realm.query<PitanjeIspitivanjeOsumnjicenogR>().find()
+    return pitanja
+}
+
+suspend fun selectPitanjaByOsumnjicenAndCategory(osumnjicenId: String, category: String): List<PitanjeIspitivanjeOsumnjicenogR> {
+    val pitanja: List<PitanjeIspitivanjeOsumnjicenogR>
+
+    pitanja = realm.query<PitanjeIspitivanjeOsumnjicenogR>(
+        "osumnjicenId.ime == $0 AND kategorija == $1",
+        osumnjicenId,
+        category
+    ).find()
+
+    return pitanja
+}
