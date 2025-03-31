@@ -56,7 +56,15 @@ object destinationWitnessesPage: NavigationDestinations {
     override val route = "destinationWitnessesPage"
 }
 
+object destinationPhonePage : NavigationDestinations {
+    override val route = "destinationPhonePage"
+}
+
+object questionsPage : NavigationDestinations {
+    override val route = "questionsPage"
+}
+
 val navigationDestinations = listOf(destinationMainScreen1, destinationMainScreen2,
     destinationCardsPage,destinationMissionPage, destinationSettingsPage,
-    destinationScorePage, destinationLoginPage, destinationSignUpPage,destinationOfficePage,
-    destinationSuspectDetailsPage)
+    destinationScorePage, destinationLoginPage, destinationSignUpPage, destinationPhonePage,
+    questionsPage)

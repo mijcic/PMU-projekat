@@ -3,11 +3,15 @@ package rs.ac.bg.etf.projekat
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,11 +23,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,11 +53,10 @@ import java.util.Date
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun MissionPage(image:Int,title:String,navController: NavController){
+fun MissionPage(image:Int, title:String, date: String, place: String, description: String, navController: NavController){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val viewModel:MyViewModel= hiltViewModel()
-    val uistate by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel.uiState.value.zlocin) {
         InsertData(viewModel)
@@ -59,64 +66,79 @@ fun MissionPage(image:Int,title:String,navController: NavController){
         modifier = Modifier.fillMaxSize().background(Color(0xFF233331)).padding(top=22.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().background(Color(0xFF233331))
-                .padding(top=(screenWidth/8).dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF233331))
+                .padding(top=(screenWidth/8).dp).padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontFamily = FontFamily(
+                        Font(R.font.special_elite)
+                    )
+                )
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = date,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Light,
+                color = colorResource(id = R.color.mission_light_gray),
+                style = TextStyle(
+                    fontFamily = FontFamily(
+                        Font(R.font.special_elite)
+                    )
+                )
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = place,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
                 color = Color.White,
                 style = TextStyle(
                     fontFamily = FontFamily(
                         Font(R.font.special_elite)
-                    ),
-                    fontSize = 26.sp,
-                    color = Color.Black
-                ),
+                    )
+                )
             )
-            Spacer(modifier = Modifier.padding((screenWidth/16).dp))
 
-            Image(
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Image (
                 painter = painterResource(id = image),
                 contentDescription = "Image",
                 modifier = Modifier.clip(RoundedCornerShape(20.dp)),
             )
-            Spacer(modifier = Modifier.padding((screenWidth/15).dp))
+
+            Spacer(modifier = Modifier.height(15.dp))
 
             Box(
-                modifier = Modifier.padding(15.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorResource(id = R.color.mission_overlay_color), shape = RoundedCornerShape(8.dp))
+                    .padding(12.dp)
             ) {
                 Text(
-                    text = "“Detective, the murder took place at 2:15 AM. \n" +
-                            "Neighbors reported hearing a scream \n" +
-                            "followed by a loud thud, \n" +
-                            "then everything went quiet. \n" +
-                            "\n" +
-                            "When we arrived, Richard Hayes was found \n" +
-                            "dead in his living room, stabbed several \n" +
-                            "times in the chest. \n" +
-                            "\n" +
-                            "There were no signs of forced entry, so it’s \n" +
-                            "likely the killer was someone he knew.\n" +
-                            "His wife, Evelyn Hayes, was reportedly out \n" +
-                            "of town on business, but we’re still verifying \n" +
-                            "her alibi. A strange note was found on his \n" +
-                            "desk, reading: ‘It was always you.’ No signs \n" +
-                            "of a robbery, so this could be personal. We’re \n" +
-                            "waiting for forensics to confirm details, \n" +
-                            "but it’s clear this wasn’t a random attack.”",
+                    text = description,
+                    fontSize = 16.sp,
                     color = Color.White,
+                    textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontFamily = FontFamily(
                             Font(R.font.special_elite)
-                        ),
+                        )
                     )
-                )
-
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(Color.White.copy(alpha = 0.1f))
                 )
             }
         }

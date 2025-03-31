@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,9 +22,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +41,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 
+@SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
 fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
     Box(
@@ -51,6 +58,14 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
         val screenWidth = configuration.screenWidthDp
         var textWidth by remember { mutableStateOf(0f) }
         var paddingStart by remember { mutableStateOf(0.dp) }
+
+        val realmViewModel: RealmViewModel = hiltViewModel()
+        val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(Unit) {
+            realmViewModel.getTitleDatePlaceDescFromCrime()
+        }
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -122,7 +137,11 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "to solve a brutal murder and " +
                                 "uncover the truth behind the crime.",
                         navController,
-                        { realmViewModel.insertDataForMurder() }
+                        { realmViewModel.insertDataForMurder() },
+                        crimeData.value.title.toString(),
+                        crimeData.value.date.toString(),
+                        crimeData.value.place.toString(),
+                        crimeData.value.description.toString()
                     )
 
                     CardWithImage(
@@ -132,7 +151,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "mystery of a missing person, uncovering hidden secrets along " +
                                 "the way.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
 
@@ -142,7 +162,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "Focuses on solving a robbery case, whether it's a bank heist, " +
                                 "a museum theft, or the stealing of valuable items.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -151,7 +172,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "Investigate the dark world of kidnappings and blackmail, " +
                                 "where innocent lives are held ransom for secrets or money.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -160,7 +182,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "The detective explores crimes rooted in family dynamics, unraveling " +
                                 "secrets that tie blood relatives to criminal activity.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -169,7 +192,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "Investigating cases of abuse, be it physical, emotional, or " +
                                 "psychological, to uncover the perpetrators and bring justice.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
 
@@ -180,7 +204,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "gang wars and criminal " +
                                 "organizations, solving cases of violence and turf battles.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -191,7 +216,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "extent of fraudulent activities " +
                                 "and their consequences.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -201,7 +227,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "dots between mysterious health " +
                                 "conditions and criminal activity.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
                     CardWithImage(
                         R.drawable.mafia,
@@ -211,7 +238,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "investigating murders, extortion, drug trafficking, and other " +
                                 "heinous crimes.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -222,7 +250,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "such as murders driven by jealousy " +
                                 "or violent love affairs.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
 
                     CardWithImage(
@@ -231,7 +260,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "Solve cases involving the use of fake or stolen identities for illegal activities, " +
                                 "uncovering the culprits behind them.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
                     CardWithImage(
                         R.drawable.sects,
@@ -239,7 +269,8 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "Uncover the sinister operations of dangerous cults or ideological " +
                                 "sects, revealing manipulation, brainwashing, and murder.",
                         navController,
-                        {}
+                        {},
+                        "", "", "", ""
                     )
                     Spacer(modifier = Modifier.height(32.dp))
                 }
@@ -252,12 +283,12 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
 }
 
 @Composable
-fun CardWithImage(image: Int, title:String, text:String,navController: NavController, insertIntoDatabase: () -> Unit) {
+fun CardWithImage(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String) {
     Card(
         modifier = Modifier
             .padding(1.dp)
             .clickable{
-                navController.navigate(destinationMissionPage.route+"/"+image+"/"+title)
+                navController.navigate(destinationMissionPage.route+"/"+image+"/"+titleMP+"/"+dateMP+"/"+placeMP+"/"+descMP)
                 insertIntoDatabase()
             }
             .padding(bottom = 18.dp)
