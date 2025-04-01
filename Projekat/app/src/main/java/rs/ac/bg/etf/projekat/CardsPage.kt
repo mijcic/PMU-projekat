@@ -64,7 +64,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
         val scope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
-            realmViewModel.getTitleDatePlaceDescFromCrime()
+            //realmViewModel.getTitleDatePlaceDescFromCrime()
         }
 
         Box(
@@ -137,7 +137,10 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "to solve a brutal murder and " +
                                 "uncover the truth behind the crime.",
                         navController,
-                        { realmViewModel.insertDataForMurder() },
+                        {
+                            realmViewModel.insertDataForMurder()
+                            realmViewModel.callGetTitleDatePlaceDescFromCrime()
+                        },
                         crimeData.value.title.toString(),
                         crimeData.value.date.toString(),
                         crimeData.value.place.toString(),
@@ -288,8 +291,8 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
         modifier = Modifier
             .padding(1.dp)
             .clickable{
-                navController.navigate(destinationMissionPage.route+"/"+image+"/"+titleMP+"/"+dateMP+"/"+placeMP+"/"+descMP)
                 insertIntoDatabase()
+                navController.navigate(destinationMissionPage.route + "/" + image + "/" + "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION")
             }
             .padding(bottom = 18.dp)
             .fillMaxWidth(),

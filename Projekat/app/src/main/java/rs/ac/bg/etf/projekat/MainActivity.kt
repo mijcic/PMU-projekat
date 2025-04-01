@@ -90,8 +90,12 @@ fun NavigationGraph(navController: NavHostController) {
             CardsPage(Modifier,navController, viewModel, realmViewModel)
         }
         composable(route = "destinationMissionPage/{image}/{title}/{date}/{place}/{description}",
-            arguments = listOf(navArgument("image") { type = NavType.IntType },
-                navArgument("title") { type = NavType.StringType }),
+            arguments = listOf(
+                navArgument("image") { type = NavType.IntType },
+                navArgument("title") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("place") { type = NavType.StringType },
+                navArgument("description") { type = NavType.StringType })
             ) { navBackStackEntry ->
             val image = navBackStackEntry.arguments?.getInt("image") ?: 0
             val title = navBackStackEntry.arguments?.getString("title") ?:""

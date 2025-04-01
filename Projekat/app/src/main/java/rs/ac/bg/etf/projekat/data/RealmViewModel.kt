@@ -569,6 +569,12 @@ class RealmViewModel @Inject constructor(
         _uiStateCrimeData.value = UiStateCrimeData(title, dateString, place, description)
     }
 
+    fun callGetTitleDatePlaceDescFromCrime() {
+        viewModelScope.launch {
+            getTitleDatePlaceDescFromCrime()
+        }
+    }
+
     fun insertDataForMurder()  {
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
