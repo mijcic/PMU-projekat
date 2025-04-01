@@ -558,9 +558,10 @@ class RealmViewModel @Inject constructor(
             date = currentCrime?.datum
 
             val instant = date?.let { Instant.ofEpochSecond(it.epochSeconds, it.nanosecondsOfSecond.toLong()) }
-            val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+            val safeInstant = instant ?: Instant.now()
+            val localDateTime = LocalDateTime.ofInstant(safeInstant, ZoneId.systemDefault())
             val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            dateString = localDateTime.format(formatter) + "."
+            dateString = localDateTime?.format(formatter) + "."
 
             place = currentCrime?.mesto
             description = currentCrime?.opis
