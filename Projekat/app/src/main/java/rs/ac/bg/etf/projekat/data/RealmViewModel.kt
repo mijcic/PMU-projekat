@@ -21,8 +21,10 @@ import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.MotivR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
 import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
+import rs.ac.bg.etf.projekat.data.realm.OsobaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
@@ -105,29 +107,78 @@ class RealmViewModel @Inject constructor(
         return zlocin
     }
 
-    suspend fun insertZrtva(tipZ: String, imeZ: String, detaljiZ: String, statusZ: String, zlocinZ: ZlocinR?): ZrtvaR? {
-        var zrtva: ZrtvaR? = null
+    suspend fun insertOsoba(imeZ: String, kontaktZ:String, datumZ: RealmInstant, zanimanjeZ: String,polZ: String,zlocinZ: ZlocinR?): OsobaR?{
+        var osoba: OsobaR? =null
+
         realm.write {
-            // Ako zlocin nije unet u bazu, unesite ga
             val existingZlocin = query<ZlocinR>("idZlocin == $0", zlocinZ?.idZlocin).find().firstOrNull()
                 ?: zlocinZ?.let {
                     copyToRealm(it)
                 }
 
-            zrtva = query<ZrtvaR>("tipZrtve == $0 AND ime == $1 AND detalji == $2 AND statusZrtva == $3 AND zlocinId == $4",
-                tipZ, imeZ, detaljiZ, statusZ, zlocinZ).find().firstOrNull()
-                ?: ZrtvaR().apply {
+
+            osoba = query<OsobaR>("ime == $0 AND kontakt == $1 AND datum == $2 AND zanimanje == $3 AND pol == $4 AND zlocinId == $5",
+                imeZ, kontaktZ, datumZ, zanimanjeZ,polZ, existingZlocin).find().firstOrNull()
+                ?: OsobaR().apply {
+                    idOsoba= (query<OsobaR>().find().maxOfOrNull { it.idOsoba } ?: 0) + 1
+                    ime = imeZ
+                    kontakt = kontaktZ
+                    datum = datumZ
+                    zanimanje = zanimanjeZ
+                    pol = polZ
+                    zlocinId = existingZlocin
+                }
+            copyToRealm(osoba!!)
+        }
+        return osoba
+    }
+
+    suspend fun insertZrtva(
+        tipZ: String, imeZ: String, detaljiZ: String, statusZ: String,
+        zlocinZ: ZlocinR?, kontaktZ: String, datumZ: RealmInstant,
+        zanimanjeZ: String, polZ: String
+    ): ZrtvaR? {
+        var zrtva: ZrtvaR?=null
+        // Unesi osobu i proveri da li je već u bazi
+        val osoba = insertOsoba(imeZ, kontaktZ, datumZ, zanimanjeZ, polZ, zlocinZ)
+
+        realm.write {
+            // Proveri i unesi zlocinZ ako nije u bazi
+            val existingZlocin = query<ZlocinR>("idZlocin == $0", zlocinZ?.idZlocin).find().firstOrNull()
+                ?: zlocinZ?.let {
+                    copyToRealm(it)  // Ako nije u bazi, dodajte ga
+                }
+
+            // Proveri i unesi osobu ako nije u bazi
+            val existingOsoba = query<OsobaR>("ime == $0 AND kontakt == $1", imeZ, kontaktZ).find().firstOrNull()
+                ?: osoba?.let {
+                    copyToRealm(it)  // Ako osoba nije u bazi, dodajte je
+                }
+
+            // Upit za traženje već postojećeg Zrtva
+            zrtva = query<ZrtvaR>(
+                "tipZrtve == $0 AND detalji == $1 AND statusZrtva == $2 AND zlocinId == $3 AND osobaId == $4",
+                tipZ, detaljiZ, statusZ, existingZlocin, existingOsoba
+            ).find().firstOrNull()
+
+            // Ako Zrtva ne postoji, kreirajte novu
+            if (zrtva == null) {
+                zrtva = ZrtvaR().apply {
                     idZrtva = (query<ZrtvaR>().find().maxOfOrNull { it.idZrtva } ?: 0) + 1
                     tipZrtve = tipZ
-                    ime = imeZ
                     detalji = detaljiZ
                     statusZrtva = statusZ
-                    zlocinId = zlocinZ
+                    zlocinId = existingZlocin
+                    osobaId = existingOsoba
                 }
-            copyToRealm(zrtva!!)
+                copyToRealm(zrtva!!)  // Dodajte Zrtvu u Realm
+            }
+
         }
         return zrtva
+
     }
+
 
     suspend fun insertMotiv(opisM: String): MotivR? {
         var motiv: MotivR? = null
@@ -142,36 +193,63 @@ class RealmViewModel @Inject constructor(
         return motiv
     }
 
-    suspend fun insertOsumnjiceni(imeO: String, statusO: Int, tipOsumnjicenO: String, motivO: MotivR?, zlocinO: ZlocinR?, krivO: Int): OsumnjicenR? {
+
+    suspend fun insertOsumnjiceni(
+        imeO: String, statusO: Int, tipOsumnjicenO: String, motivO: MotivR?, zlocinO: ZlocinR?, krivO: Int,
+        kontaktO: String, datumO: RealmInstant, zanimanjO: String, polO: String
+    ): OsumnjicenR? {
         var osumnjiceni: OsumnjicenR? = null
+
+        // Unos osobe i osiguranje da je povezana sa Realm bazom
+        var osoba: OsobaR? = insertOsoba(imeO, kontaktO, datumO, zanimanjO, polO, zlocinO)
+
+        var osobaZ = 1
+        if (osoba != null) {
+            osobaZ = osoba.idOsoba
+        }
+
         realm.write {
-            // Ako motiv nije unet u bazu, unesite ga
-            val existingMotiv = query<MotivR>("idMotiv == $0", motivO?.idMotiv).find().firstOrNull()
-                ?: motivO?.let {
-                    copyToRealm(it)
+            // Ako motivO nije unet u bazu, unesite ga i povežite sa Realm bazom
+            val existingMotiv = motivO?.let {
+                query<MotivR>("idMotiv == $0", it.idMotiv).find().firstOrNull()
+                    ?: copyToRealm(it)  // Ako motiv nije u bazi, dodaj ga u bazu
+            }
+
+            // Ako zlocinO nije unet u bazu, unesite ga i povežite sa Realm bazom
+            val existingZlocin = zlocinO?.let {
+                query<ZlocinR>("idZlocin == $0", it.idZlocin).find().firstOrNull()
+                    ?: copyToRealm(it)  // Ako zlocin nije u bazi, dodaj ga u bazu
+            }
+
+            val existingOsoba = query<OsobaR>("ime == $0 AND kontakt == $1", imeO, kontaktO).find().firstOrNull()
+                ?: osoba?.let {
+                    copyToRealm(it)  // Ako osoba nije u bazi, dodajte je
                 }
 
-            // Ako zlocin nije unet u bazu, unesite ga
-            val existingZlocin = query<ZlocinR>("idZlocin == $0", zlocinO?.idZlocin).find().firstOrNull()
-                ?: zlocinO?.let {
-                    copyToRealm(it)
-                }
+            // Pronađi ili kreiraj novi OsumnjicenR
+            osumnjiceni = query<OsumnjicenR>(
+                "status == $0 AND tipOsumnjicen == $1 AND motiv == $2 AND zlocinId == $3 AND kriv == $4 AND osobaId == $5",
+                statusO, tipOsumnjicenO, existingMotiv, existingZlocin, krivO, existingOsoba
+            ).find().firstOrNull()
 
-            osumnjiceni = query<OsumnjicenR>("ime == $0 AND status == $1 AND tipOsumnjicen == $2 AND motiv == $3 AND zlocinId == $4 AND kriv == $5",
-                imeO, statusO, tipOsumnjicenO, existingMotiv, existingZlocin, krivO).find().firstOrNull()
-                ?: OsumnjicenR().apply {
+            // Ako osumnjiceni ne postoji, kreiraj ga
+            if (osumnjiceni == null) {
+                osumnjiceni = OsumnjicenR().apply {
                     idOsumnjicen = (query<OsumnjicenR>().find().maxOfOrNull { it.idOsumnjicen } ?: 0) + 1
-                    ime = imeO
                     status = statusO
                     tipOsumnjicen = tipOsumnjicenO
                     motiv = existingMotiv
                     zlocinId = existingZlocin
                     kriv = krivO
+                    osobaId = existingOsoba // Osoba mora biti povezana sa Realm bazom
                 }
-            copyToRealm(osumnjiceni!!)
+                copyToRealm(osumnjiceni!!) // Dodaj osumnjicenog u Realm
+            }
         }
         return osumnjiceni
     }
+
+
 
     suspend fun insertDokaz(tipDokazaD: String, opisD: String, zlocinD: ZlocinR?, zrtvaD: ZrtvaR?, statusD: Int): DokazR? {
         var dokaz: DokazR? = null
@@ -229,8 +307,20 @@ class RealmViewModel @Inject constructor(
         return dokazOsumnjicenog
     }
 
-    suspend fun insertSvedok(imeS: String, kontaktS: String, izjavaS: String, zlocinS: ZlocinR?, statusSvedokS: String, statusIspitanS: Int): SvedokR? {
+    suspend fun insertSvedok(imeS: String, kontaktS: String, izjavaS: String, zlocinS: ZlocinR?, statusSvedokS: String, statusIspitanS: Int,
+        datumS:RealmInstant,zanimanjS:String,polS:String): SvedokR? {
+
         var svedok: SvedokR? = null
+        var osoba: OsobaR? = null
+
+        val result = realm.query<OsobaR>("ime == $0 AND kontakt == $1", imeS, kontaktS).find().firstOrNull()
+        if (result == null) {
+            osoba = insertOsoba(imeS, kontaktS, datumS, zanimanjS, polS, zlocinS)
+        } else {
+            osoba = result
+        }
+
+        var osobaS = osoba?.idOsoba ?: 1
         realm.write {
             // Ako zlocin nije unet u bazu, unesite ga
             val existingZlocin = query<ZlocinR>("idZlocin == $0", zlocinS?.idZlocin).find().firstOrNull()
@@ -238,16 +328,21 @@ class RealmViewModel @Inject constructor(
                     copyToRealm(it)
                 }
 
-            svedok = query<SvedokR>("ime == $0 AND kontakt == $1 AND izjava == $2 AND zlocinId == $3 AND statusSvedok == $4 AND statusIspitan == $5",
-                imeS, kontaktS, izjavaS, existingZlocin, statusSvedokS, statusIspitanS).find().firstOrNull()
+            val existingOsoba = query<OsobaR>("ime == $0 AND kontakt == $1", imeS, kontaktS).find().firstOrNull()
+                ?: osoba?.let {
+                    copyToRealm(it)  // Ako osoba nije u bazi, dodajte je
+                }
+
+
+            svedok = query<SvedokR>("izjava == $0 AND statusSvedok == $1 AND statusIspitan == $2 AND zlocinId == $3 AND osobaId == $4",
+                izjavaS, statusSvedokS, statusIspitanS, zlocinS,existingOsoba).find().firstOrNull()
                 ?: SvedokR().apply {
                     idSvedok = (query<SvedokR>().find().maxOfOrNull { it.idSvedok } ?: 0) + 1
-                    ime = imeS
-                    kontakt = kontaktS
                     izjava = izjavaS
-                    zlocinId = existingZlocin
                     statusSvedok = statusSvedokS
                     statusIspitan = statusIspitanS
+                    zlocinId = existingZlocin
+                    osobaId = existingOsoba
                 }
             copyToRealm(svedok!!)
         }
@@ -452,14 +547,13 @@ class RealmViewModel @Inject constructor(
     suspend fun insertTelefon(modelT: String, osT: String, zrtvaT: ZrtvaR?, sifraT: String): TelefonR? {
         var telefon: TelefonR? = null
         realm.write {
-            // Ako zrtva nije uneta u bazu, unesite je
             val existingZrtva = query<ZrtvaR>("idZrtva == $0", zrtvaT?.idZrtva).find().firstOrNull()
                 ?: zrtvaT?.let {
                     copyToRealm(it)
                 }
 
             telefon = query<TelefonR>("model == $0 AND os == $1 AND zrtvaId == $2 AND sifra == $3",
-                modelT, osT, zrtvaT, sifraT).find().firstOrNull()
+                modelT, osT, existingZrtva, sifraT).find().firstOrNull()
                 ?: TelefonR().apply {
                     idTelefon = (query<TelefonR>().find().maxOfOrNull { it.idTelefon } ?: 0) + 1
                     model = modelT
@@ -475,13 +569,11 @@ class RealmViewModel @Inject constructor(
     suspend fun insertOdnosOsumnjicenZrtva(osumnjicenOOZ: OsumnjicenR?, zrtvaOOZ: ZrtvaR?, tipOdnosaOOZ: String): OdnosOsumnjicenZrtvaR? {
         var odnos: OdnosOsumnjicenZrtvaR? = null
         realm.write {
-            // Ako osumnjiceni nije unet u bazu, unesite ga
             val existingOsumnjiceni = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenOOZ?.idOsumnjicen).find().firstOrNull()
                 ?: osumnjicenOOZ?.let {
                     copyToRealm(it)
                 }
 
-            // Ako zrtva nije uneta u bazu, unesite je
             val existingZrtva = query<ZrtvaR>("idZrtva == $0", zrtvaOOZ?.idZrtva).find().firstOrNull()
                 ?: zrtvaOOZ?.let {
                     copyToRealm(it)
@@ -520,7 +612,6 @@ class RealmViewModel @Inject constructor(
     suspend fun insertPitanjeIspitivanjeOsumnjicenog(osumnjicenZ: OsumnjicenR?, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {
         var pitanje: PitanjeIspitivanjeOsumnjicenogR? = null
         realm.write {
-            // If the suspect is not in the database, insert it
             val existingOsumnjicen = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenZ?.idOsumnjicen).find().firstOrNull()
                 ?: osumnjicenZ?.let {
                     copyToRealm(it)
@@ -537,6 +628,30 @@ class RealmViewModel @Inject constructor(
                     odgovor = odgovorZ
                     komentar = komentarZ
                     osumnjicenId = osumnjicenZ
+                }
+
+            copyToRealm(pitanje!!)
+        }
+        return pitanje
+    }
+
+    suspend fun insertPitanjeIspitivanjeSvedoka(svedokZ: SvedokR?, tekstZ: String, odgovorZ: String): PitanjeIspitivanjeSvedokaR? {
+        var pitanje: PitanjeIspitivanjeSvedokaR? = null
+        realm.write {
+            val existingSvedok = query<SvedokR>("idSvedok == $0", svedokZ?.idSvedok).find().firstOrNull()
+                ?: svedokZ?.let {
+                    copyToRealm(it)
+                }
+
+            pitanje = query<PitanjeIspitivanjeSvedokaR>("tekst == $0 AND odgovor == $1 AND svedokId == $2",
+                tekstZ, odgovorZ, svedokZ).find().firstOrNull()
+                ?: PitanjeIspitivanjeSvedokaR().apply {
+
+                    idPitanjeIspitivanjeSvedoka = (query<PitanjeIspitivanjeSvedokaR>().find().maxOfOrNull { it.idPitanjeIspitivanjeSvedoka } ?: 0) + 1
+                    tekst = tekstZ
+                    odgovor = odgovorZ
+                    next = idPitanjeIspitivanjeSvedoka+1
+                    svedokId = svedokZ
                 }
 
             copyToRealm(pitanje!!)
@@ -593,7 +708,12 @@ class RealmViewModel @Inject constructor(
                 "Isabelle Moreau",
                 "Poznata poslovna žena sa dugovima zbog kockarske zavisnosti.",
                 StatusZrtvaR.mrtva.name,
-                zlocin
+                zlocin,
+                "+377 126 599",
+                RealmInstant.now(),
+                "Isabelle Moreau is the heir to a wealthy hotel chain, recognized for her ambitious approach to business and her presence in social circles. Although she was respected and admired in the world of luxury tourism, Isabelle had a dark side – a battle with a gambling addiction that led to significant financial troubles. Her life was marked by constant attempts to hide her debts and avoid public shame. Despite her business success, her financial problems became increasingly apparent, creating tension in her relationships with colleagues and partners. " +
+                        "The gambling addiction left a deep mark on her career and personal life, making her vulnerable and burdened by daily stress."
+                ,"zenski"
             )
 
             val motivMarcoBellini: MotivR? =
@@ -609,7 +729,12 @@ class RealmViewModel @Inject constructor(
                 TipOsumnjicenR.pojedinac.name,
                 motivMarcoBellini,
                 zlocin,
-                0
+                0,
+                "+377 555 123 456",
+                RealmInstant.now(),
+                "Marco Bellini is a professional gambler known for his participation in high-stakes games. He was involved in several business ventures, often partnering with wealthy individuals. His addiction to gambling has put him in financial distress, leading to a strained relationship with Isabelle, who he owed money to. " +
+                        "Marco's gambling addiction is a key factor that has contributed to his involvement in the investigation.",
+                "muski"
             )
             var osumnjiceniVincentDuval: OsumnjicenR? = insertOsumnjiceni(
                 "Vincent Duval",
@@ -617,7 +742,12 @@ class RealmViewModel @Inject constructor(
                 TipOsumnjicenR.pojedinac.name,
                 motivVincentDuval,
                 zlocin,
-                0
+                0,
+                "+377 555 987 654",
+                RealmInstant.now(),
+                "Vincent Duval is a luxury hotel manager and was once romantically involved with Isabelle. The relationship ended when Isabelle started a relationship with another man, which led to jealousy and frustration. " +
+                        "Vincent’s emotional attachment to Isabelle and the subsequent bitterness over their breakup may have influenced his actions, making him a person of interest in the case.",
+                "muski"
             )
             var osumnjiceniAmeliaFontaine: OsumnjicenR? = insertOsumnjiceni(
                 "Amelia Fontaine",
@@ -625,7 +755,12 @@ class RealmViewModel @Inject constructor(
                 TipOsumnjicenR.pojedinac.name,
                 motivAmeliaFontaine,
                 zlocin,
-                1
+                1,
+                "+377 556 789 123",
+                RealmInstant.now(),
+                "Amelia Fontaine is a successful businesswoman who owns a luxury fashion brand. She had a complicated relationship with Isabelle, marked by envy and unrequited love for Marco Bellini. Amelia’s feelings of jealousy and resentment towards Isabelle’s success and her romantic interest in Marco might have led her to a dangerous path. " +
+                        "Amelia’s motives were fueled by rivalry and deep emotional conflict.",
+                "muski"
             )
 
             var dokaz1: DokazR? = insertDokaz(
@@ -669,7 +804,8 @@ class RealmViewModel @Inject constructor(
             var svedokAmeliaFontaine: SvedokR? = insertSvedok(
                 "Amelia Fontaine", "+377 556 789",
                 "Tvrdila je da je videla Marca u blizini sobe žrtve.",
-                zlocin, StatusSvedokR.nesaradnja.name, 1
+                zlocin, StatusSvedokR.nesaradnja.name, 1,RealmInstant.now(),"Amelia Fontaine is a successful businesswoman who owns a luxury fashion brand. She had a complicated relationship with Isabelle, marked by envy and unrequited love for Marco Bellini. Amelia’s feelings of jealousy and resentment towards Isabelle’s success and her romantic interest in Marco might have led her to a dangerous path. " +
+                        "Amelia’s motives were fueled by rivalry and deep emotional conflict.","zenski"
             )
 
             var alibiMarcoBellini: AlibiR? = insertAlibi(
@@ -919,6 +1055,20 @@ class RealmViewModel @Inject constructor(
                 "Jealousy wasn’t the reason for what happened. That’s just talk.",
                 "Her response feels too dismissive. Maybe trying to push away the idea without fully confronting it."
             )
+
+
+            //pitanja za svedoka
+
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, can you tell us where you were at the time of the crime?", "I was in the casino, but I left the area shortly before Isabelle's body was found. I didn't think anything suspicious was happening at that moment.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "You mentioned seeing Marco leaving Isabelle's room. When exactly did this happen?", "It was a few hours before Isabelle was found dead. I noticed Marco leaving her room, looking a bit nervous, but I didn’t hear anything unusual.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Did you hear any arguments or strange sounds coming from Isabelle's room?", "Yes, I did hear some shouting, but I couldn’t make out the words. It was loud enough to make me curious, but I didn’t want to interfere.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "How did you feel about Isabelle?", "I was very jealous of her, to be honest. She had everything I ever wanted – Marco’s attention, and a life full of luxury. But I never acted on that jealousy, or so I thought.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Did you ever have any conflicts with Isabelle?", "There were times when I felt overlooked or belittled by Isabelle. She often flaunted her success, especially in front of Marco. But I never thought it would escalate to something like this.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "You mentioned seeing Marco earlier in the casino. Can you describe his behavior?", "He was very tense, as if something was bothering him. He wasn’t his usual calm self. I didn’t think much of it at the time, but it now seems significant.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Do you know if Marco and Isabelle had any financial issues?", "From what I knew, Isabelle had some debts, especially from gambling. Marco also had a gambling problem, so I wouldn’t be surprised if there was financial tension between them.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Have you ever been in Isabelle's room?", "No, I’ve never been inside her room. But I’ve seen her come and go a few times, usually after big wins at the casino.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Why do you think Marco might be involved in Isabelle's death?", "Marco had a clear motive – money and gambling debts. But after hearing the details of the investigation, I’m starting to doubt his innocence. I didn’t know who else could have done it until the truth started coming out.")
+            insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
         }
     }
 }
@@ -966,6 +1116,17 @@ suspend fun selectPitanjaByOsumnjicenAndCategory(osumnjicenId: String, category:
         "osumnjicenId.ime == $0 AND kategorija == $1",
         osumnjicenId,
         category
+    ).find()
+
+    return pitanja
+}
+
+suspend fun selectPitanjaBySvedok(svedokId: String): List<PitanjeIspitivanjeSvedokaR> {
+    val pitanja: List<PitanjeIspitivanjeSvedokaR>
+
+    pitanja = realm.query<PitanjeIspitivanjeSvedokaR>(
+        "svedokId.ime == $0",
+        svedokId,
     ).find()
 
     return pitanja
