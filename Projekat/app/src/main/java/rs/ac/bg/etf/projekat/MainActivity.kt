@@ -78,7 +78,7 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         //startDestination = "destinationMainScreen1"
-        startDestination = "destinationOfficePage"
+        startDestination = "destinationMainScreen2"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)
@@ -133,7 +133,21 @@ fun NavigationGraph(navController: NavHostController) {
             val title =navBackStackEntry.arguments?.getString("title") ?:""
             SuspectInterviewPage(navController, viewModel,title)
         }
-
+        composable(route = "destinationWitnessesInterviewPage/{title}",
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType }),
+        ) { navBackStackEntry ->
+            val title =navBackStackEntry.arguments?.getString("title") ?:""
+            WitnessesInterviewPage(navController, viewModel,title)
+        }
+        composable(route = "destinationWitnessDetailsPage/{image}/{title}",
+            arguments = listOf(navArgument("image") { type = NavType.IntType },
+                navArgument("title") { type = NavType.StringType }),
+        ) { navBackStackEntry ->
+            val image = navBackStackEntry.arguments?.getInt("image") ?: 0
+            val title =navBackStackEntry.arguments?.getString("title") ?:""
+            WitnessDetailsPage(image=image,title=title,navController)
+        }
         composable("destinationWitnessesPage"){
             WitnessesPage(navController, viewModel,realmViewModel)
         }

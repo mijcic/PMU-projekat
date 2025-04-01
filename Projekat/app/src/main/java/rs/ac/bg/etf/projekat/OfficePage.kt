@@ -76,19 +76,42 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                 modifier = Modifier
             ) {
                 Button(onClick = {navController.navigate(destinationSuspectsPage.route)}) {
-                    Text("Suspects")
+                    Text(text = "Suspects", color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            ), fontSize = 26.sp, color = Color.Black
+                        )
+                    )
                 }
                 Button(onClick = {navController.navigate(destinationWitnessesPage.route)}) {
-                    Text("Witnesses")
+                    Text(text = "Witnesses", color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            ), fontSize = 26.sp, color = Color.Black
+                        )
+                    )
                 }
                 Button(onClick = {}) {
-                    Text("Evidence")
+                    Text(text = "Evidence", color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            ), fontSize = 26.sp, color = Color.Black
+                        )
+                    )
                 }
-                Button(onClick = {}) {
-                    Text("Phone")
+                Button(onClick = {navController.navigate(destinationPhonePage.route)}) {
+                    Text(text = "Phone", color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            ), fontSize = 26.sp, color = Color.Black
+                        )
+                    )
                 }
             }
         }
-
     }
 }

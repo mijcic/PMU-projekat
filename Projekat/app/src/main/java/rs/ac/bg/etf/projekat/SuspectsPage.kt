@@ -50,8 +50,8 @@ import rs.ac.bg.etf.projekat.data.RealmViewModel
 fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
 
     LaunchedEffect(Unit) {
-        realmViewModel.insertDataForMurder()
-        myViewModel.getAllDataZlocin()
+        //realmViewModel.insertDataForMurder()
+        //myViewModel.getAllDataZlocin()
     }
 
     Box(

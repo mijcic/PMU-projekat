@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -63,7 +64,9 @@ fun MissionPage(image:Int, title:String, date: String, place: String, descriptio
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF233331)).padding(top=22.dp),
+        modifier = Modifier.fillMaxSize().background(Color(0xFF233331)).padding(top=22.dp).clickable {
+            navController.navigate(destinationOfficePage.route)
+        },
     ) {
         Column(
             modifier = Modifier

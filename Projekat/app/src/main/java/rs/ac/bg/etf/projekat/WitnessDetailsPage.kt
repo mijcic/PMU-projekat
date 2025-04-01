@@ -54,20 +54,20 @@ import java.util.Date
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun SuspectDetailsPage(image: Int, title: String, navController: NavController) {
+fun WitnessDetailsPage(image: Int, title: String, navController: NavController) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF233331))
+            .background( Color(0xFF8A6018)) // Tamno žuta boja
             .padding(top = 22.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF233331))
+                .background( Color(0xFF8A6018))
                 .padding(top = (screenWidth / 8).dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -81,22 +81,20 @@ fun SuspectDetailsPage(image: Int, title: String, navController: NavController) 
                 ),
             )
 
-            Spacer(modifier = Modifier.height(16.dp)) // Razmak između naslova i slike
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Slika osumnjičenog sa kružnim oblikom i senkom
             Image(
                 painter = painterResource(id = image),
                 contentDescription = "Suspect Image",
                 modifier = Modifier
-                    .size(220.dp) // Veličina slike
-                    .clip(CircleShape) // Kružni oblik slike
-                    .border(4.dp, Color.White, CircleShape) // Bela granica oko slike
-                    .shadow(8.dp, CircleShape) // Dodajemo senku na sliku
+                    .size(220.dp)
+                    .clip(CircleShape)
+                    .border(4.dp, Color.White, CircleShape)
+                    .shadow(8.dp, CircleShape)
             )
 
-            Spacer(modifier = Modifier.height(24.dp)) // Razmak između slike i teksta
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Informacije o osumnjičenom (motiv, alibi, status)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -135,16 +133,16 @@ fun SuspectDetailsPage(image: Int, title: String, navController: NavController) 
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
-                onClick = { navController.navigate(destinationSuspectsInterviewPage.route+ "/" + title) },
+                onClick = { navController.navigate(destinationWitnessesInterviewPage.route+ "/" + title) },
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors( Color(0xFF1F2D2D)), // Tamna nijansa dugmeta
+                colors = ButtonDefaults.buttonColors( Color(0xFF1F2D2D)),
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .padding(horizontal = 16.dp)
                     .height(50.dp)
             ) {
                 Text(
-                    text = "Interrogate the Suspect",
+                    text = "Interrogate the Witness",
                     color = Color.White,
                     style = TextStyle(
                         fontFamily = FontFamily(Font(R.font.special_elite)),
