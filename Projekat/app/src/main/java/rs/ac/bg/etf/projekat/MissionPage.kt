@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
 import rs.ac.bg.etf.projekat.data.retrofit.models.AlibiData
 import rs.ac.bg.etf.projekat.data.retrofit.models.DokazData
@@ -54,7 +56,7 @@ import java.util.Date
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun MissionPage(image:Int, title:String, date: String, place: String, description: String, navController: NavController){
+fun MissionPage(image:Int, title:String, date: String, place: String, description: String, navController: NavController,realmViewModel: RealmViewModel){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val viewModel:MyViewModel= hiltViewModel()
@@ -62,6 +64,9 @@ fun MissionPage(image:Int, title:String, date: String, place: String, descriptio
     LaunchedEffect(viewModel.uiState.value.zlocin) {
         InsertData(viewModel)
     }
+
+    val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
+    Log.d("CrimeData2", crimeData.value.toString())
 
     Surface(
         modifier = Modifier.fillMaxSize().background(Color(0xFF233331)).padding(top=22.dp).clickable {
@@ -75,46 +80,52 @@ fun MissionPage(image:Int, title:String, date: String, place: String, descriptio
                 .padding(top=(screenWidth/8).dp).padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = title,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(
-                        Font(R.font.special_elite)
+            crimeData.value.title?.let {
+                Text(
+                    text = it,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        )
                     )
                 )
-            )
+            }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = date,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Light,
-                color = colorResource(id = R.color.mission_light_gray),
-                style = TextStyle(
-                    fontFamily = FontFamily(
-                        Font(R.font.special_elite)
+            crimeData.value.date?.let {
+                Text(
+                    text = it,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Light,
+                    color = colorResource(id = R.color.mission_light_gray),
+                    style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        )
                     )
                 )
-            )
+            }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = place,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.White,
-                style = TextStyle(
-                    fontFamily = FontFamily(
-                        Font(R.font.special_elite)
+            crimeData.value.place?.let {
+                Text(
+                    text = it,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        )
                     )
                 )
-            )
+            }
 
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -132,17 +143,19 @@ fun MissionPage(image:Int, title:String, date: String, place: String, descriptio
                     .background(colorResource(id = R.color.mission_overlay_color), shape = RoundedCornerShape(8.dp))
                     .padding(12.dp)
             ) {
-                Text(
-                    text = description,
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.special_elite)
+                crimeData.value.description?.let {
+                    Text(
+                        text = it,
+                        fontSize = 16.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            )
                         )
                     )
-                )
+                }
             }
         }
     }

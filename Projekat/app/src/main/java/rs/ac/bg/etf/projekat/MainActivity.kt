@@ -121,7 +121,7 @@ fun NavigationGraph(navController: NavHostController) {
             val date = navBackStackEntry.arguments?.getString("date") ?:""
             val place = navBackStackEntry.arguments?.getString("place") ?:""
             val description = navBackStackEntry.arguments?.getString("description") ?:""
-            MissionPage(image=image, title=title, date = date, place = place, description = description, navController)
+            MissionPage(image=image, title=title, date = date, place = place, description = description, navController,realmViewModel)
         }
         composable("destinationSettingsPage") {
             SettingsPage(navController)

@@ -59,7 +59,6 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
         var textWidth by remember { mutableStateOf(0f) }
         var paddingStart by remember { mutableStateOf(0.dp) }
 
-        val realmViewModel: RealmViewModel = hiltViewModel()
         val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
         val scope = rememberCoroutineScope()
 

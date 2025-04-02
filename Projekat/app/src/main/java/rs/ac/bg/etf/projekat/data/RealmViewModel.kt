@@ -684,6 +684,7 @@ class RealmViewModel @Inject constructor(
             description = currentCrime?.opis
         }
         _uiStateCrimeData.value = UiStateCrimeData(title, dateString, place, description)
+        Log.d("CrimeData", uiStateCrimeData.value.toString())
     }
 
     fun callGetTitleDatePlaceDescFromCrime() {
