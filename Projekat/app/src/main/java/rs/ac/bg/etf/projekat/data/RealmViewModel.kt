@@ -1118,7 +1118,6 @@ class RealmViewModel @Inject constructor(
                 "Her response feels too dismissive. Maybe trying to push away the idea without fully confronting it."
             )
 
-<<<<<<< HEAD
             var pitanje1 = insertPitanje(zlocin, "Who do you think planted the knife with the initials M.B.?")
             var pitanje2 = insertPitanje(zlocin, "With what object do you think the victim was killed?")
             var pitanje3 = insertPitanje(zlocin, "Who do you think is lying among the witnesses?")
@@ -1138,9 +1137,6 @@ class RealmViewModel @Inject constructor(
             insertOdogovor(pitanje4, "Marco Bellini", false, 50)
             insertOdogovor(pitanje4, "Vincent Duval", false, 50)
             insertOdogovor(pitanje4, "Amelia Fontaine", true, 50)
-=======
-
-            //pitanja za svedoka
 
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, can you tell us where you were at the time of the crime?", "I was in the casino, but I left the area shortly before Isabelle's body was found. I didn't think anything suspicious was happening at that moment.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "You mentioned seeing Marco leaving Isabelle's room. When exactly did this happen?", "It was a few hours before Isabelle was found dead. I noticed Marco leaving her room, looking a bit nervous, but I didn’t hear anything unusual.")
@@ -1152,7 +1148,6 @@ class RealmViewModel @Inject constructor(
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Have you ever been in Isabelle's room?", "No, I’ve never been inside her room. But I’ve seen her come and go a few times, usually after big wins at the casino.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Why do you think Marco might be involved in Isabelle's death?", "Marco had a clear motive – money and gambling debts. But after hearing the details of the investigation, I’m starting to doubt his innocence. I didn’t know who else could have done it until the truth started coming out.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
->>>>>>> c79ea9703a1474cfd01849ec550f1a331b4cefee
         }
     }
 }
