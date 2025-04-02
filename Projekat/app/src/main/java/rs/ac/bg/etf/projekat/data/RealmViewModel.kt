@@ -1193,7 +1193,7 @@ suspend fun selectPitanjaByOsumnjicenAndCategory(osumnjicenId: String, category:
     val pitanja: List<PitanjeIspitivanjeOsumnjicenogR>
 
     pitanja = realm.query<PitanjeIspitivanjeOsumnjicenogR>(
-        "osumnjicenId.ime == $0 AND kategorija == $1",
+        "osumnjicenId.osobaId.ime == $0 AND kategorija == $1",
         osumnjicenId,
         category
     ).find()
@@ -1205,7 +1205,7 @@ suspend fun selectPitanjaBySvedok(svedokId: String): List<PitanjeIspitivanjeSved
     val pitanja: List<PitanjeIspitivanjeSvedokaR>
 
     pitanja = realm.query<PitanjeIspitivanjeSvedokaR>(
-        "svedokId.ime == $0",
+        "svedokId.osobaId.ime == $0",
         svedokId,
     ).find()
 

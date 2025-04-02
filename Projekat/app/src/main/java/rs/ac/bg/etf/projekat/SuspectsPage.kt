@@ -140,8 +140,8 @@ fun SuspectCardWithImage(image: Int, title: String, navController: NavController
         modifier = Modifier
             .padding(8.dp)
             .clickable {
-                navController.navigate(destinationSuspectDetailsPage.route + "/" + image + "/" + title)
                 myViewModel.getPitanjaZaOsumnjicenog(title)
+                navController.navigate(destinationSuspectDetailsPage.route + "/" + image + "/" + title)
             }
             .height(200.dp)
             .fillMaxWidth(0.4f),

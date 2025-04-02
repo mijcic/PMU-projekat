@@ -32,7 +32,7 @@ import rs.ac.bg.etf.projekat.data.MyViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel, title: String) {
-    LaunchedEffect(title) {
+    LaunchedEffect(Unit) {
         myViewModel.getPitanjaZaOsumnjicenog(title)
     }
 

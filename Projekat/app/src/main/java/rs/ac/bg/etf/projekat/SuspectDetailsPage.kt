@@ -135,7 +135,9 @@ fun SuspectDetailsPage(image: Int, title: String, navController: NavController) 
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
-                onClick = { navController.navigate(destinationSuspectsInterviewPage.route+ "/" + title) },
+                onClick = {
+
+                    navController.navigate(destinationSuspectsInterviewPage.route+ "/" + title) },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors( Color(0xFF1F2D2D)), // Tamna nijansa dugmeta
                 modifier = Modifier

@@ -140,8 +140,8 @@ fun WitnessesCardWithImage(image: Int, title: String, navController: NavControll
         modifier = Modifier
             .padding(8.dp)
             .clickable {
-                navController.navigate(destinationWitnessDetailsPage.route + "/" + image + "/" + title)
                 myViewModel.getPitanjaZaSvedoka(title)
+                navController.navigate(destinationWitnessDetailsPage.route + "/" + image + "/" + title)
             }
             .height(200.dp)
             .fillMaxWidth(0.4f),
