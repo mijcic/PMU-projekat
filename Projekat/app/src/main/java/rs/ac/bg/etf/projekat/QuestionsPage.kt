@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,8 +43,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realm.OdgovorR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun QuestionsPage(navController: NavController) {
     Box(
@@ -46,11 +59,21 @@ fun QuestionsPage(navController: NavController) {
         val imagePainter = painterResource(id = R.drawable.questions_background)
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
+        val scope = rememberCoroutineScope()
 
-        var questions = listOf("Who do you think killed Isabelle Moreau?", "Who do you think killed Isabelle Moreau?",
-            "Who do you think killed Isabelle Moreau?", "Who do you think killed Isabelle Moreau?")
+        val realmViewModel: RealmViewModel = hiltViewModel()
 
-        var answers = listOf("Marco Bellini", "Vincent Duval", "Amelia Fontaine")
+//        var questions: List<PitanjeR>? = null
+//        scope.launch {
+//            questions = realmViewModel.getAllPitanje()!!
+//        }
+
+        var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
+        var questionAnswersMap by remember { mutableStateOf<Map<PitanjeR, List<OdgovorR>>>(emptyMap()) }
+
+        LaunchedEffect(Unit) {
+            questions = realmViewModel.getAllPitanje()!!
+        }
 
         Image(
             painter = imagePainter,
@@ -86,6 +109,15 @@ fun QuestionsPage(navController: NavController) {
 
             LazyColumn {
                 items(questions) { question ->
+                    LaunchedEffect(question) {
+                        // Ako još nismo učitali odgovore za ovo pitanje, učitaj ih
+                        if (!questionAnswersMap.containsKey(question)) {
+                            val odgovori = realmViewModel.getAllOdgovorForPitanje(question) ?: emptyList()
+                            // Dodaj odgovore za ovo pitanje u mapu
+                            questionAnswersMap = questionAnswersMap + (question to odgovori)
+                        }
+                    }
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -101,7 +133,7 @@ fun QuestionsPage(navController: NavController) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = question,
+                                text = question.tekst,
                                 modifier = Modifier.padding(16.dp),
                                 fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                                 fontSize = 16.sp,
@@ -109,6 +141,7 @@ fun QuestionsPage(navController: NavController) {
                                 textAlign = TextAlign.Center
                             )
 
+                            val answers = questionAnswersMap[question] ?: emptyList()
                             answers.forEach { answer ->
                                 Button(
                                     onClick = {},
@@ -122,7 +155,7 @@ fun QuestionsPage(navController: NavController) {
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
                                     Text(
-                                        text = answer,
+                                        text = answer.tekstOdgovora,
                                         fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                                         fontSize = 14.sp,
                                         color = Color.White,

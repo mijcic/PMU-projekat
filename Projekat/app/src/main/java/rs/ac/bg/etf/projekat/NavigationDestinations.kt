@@ -61,7 +61,7 @@ object destinationPhonePage : NavigationDestinations {
 }
 
 object questionsPage : NavigationDestinations {
-    override val route = "questionsPage"
+    override val route = "destinationQuestionsPage"
 }
 
 object destinationWitnessDetailsPage : NavigationDestinations {

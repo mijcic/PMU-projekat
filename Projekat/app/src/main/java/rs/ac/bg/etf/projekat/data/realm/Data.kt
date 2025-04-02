@@ -396,6 +396,22 @@ enum class TipOdnosaR {
     ljubavni
 }
 
+open class PitanjeR : RealmObject {
+    @PrimaryKey
+    var idPitanje: Int = 0
+    var zlocinId: ZlocinR? = null
+    var tekst: String = ""
+}
+
+open class OdgovorR : RealmObject {
+    @PrimaryKey
+    var idOdogovor: Int = 0
+    var pitanjeId: PitanjeR? = null
+    var tekstOdgovora: String = ""
+    var tacan: Boolean = false
+    var bodovi: Int = 0
+}
+
 val realmClasses = listOf(
     ZlocinR::class,
     TipZlocinaR::class,
@@ -424,5 +440,7 @@ val realmClasses = listOf(
     AlibiR::class,
     OdnosOsumnjicenZrtvaR::class,
     PrijavljeniKorisnikR::class,
-    PitanjeIspitivanjeOsumnjicenogR::class
+    PitanjeIspitivanjeOsumnjicenogR::class,
+    PitanjeR::class,
+    OdgovorR::class,
 )

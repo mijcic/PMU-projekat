@@ -20,9 +20,11 @@ import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.MotivR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
+import rs.ac.bg.etf.projekat.data.realm.OdgovorR
 import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
@@ -575,6 +577,66 @@ class RealmViewModel @Inject constructor(
         }
     }
 
+    suspend fun insertPitanje(zlocinIdP: ZlocinR?, tekstP: String): PitanjeR? {
+        var pitanje: PitanjeR? = null
+        realm.write {
+            // Ako zlocin nije unet u bazu, unesite ga
+            val existingZlocin = query<ZlocinR>("idZlocin == $0", zlocinIdP?.idZlocin).find().firstOrNull()
+                ?: zlocinIdP?.let {
+                    copyToRealm(it)
+                }
+
+            pitanje = query<PitanjeR>("zlocinId == $0 AND tekst == $1", existingZlocin, tekstP).find().firstOrNull()
+                ?: PitanjeR().apply {
+                    idPitanje = (query<PitanjeR>().find().maxOfOrNull { it.idPitanje } ?: 0) + 1
+                    zlocinId = existingZlocin
+                    tekst = tekstP
+                }
+            copyToRealm(pitanje!!)
+        }
+        return pitanje
+    }
+
+    suspend fun insertOdogovor(pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int) {
+        var odgovor: OdgovorR? = null
+        realm.write {
+            // Ako pitanje nije uneto u bazu, unesite ga
+            val existingPitanje = query<PitanjeR>("idPitanje == $0", pitanjeIdO?.idPitanje).find().firstOrNull()
+                ?: pitanjeIdO?.let {
+                    copyToRealm(it)
+                }
+
+            odgovor = query<OdgovorR>("pitanjeId == $0 AND tekstOdgovora == $1 AND tacan == $2 AND bodovi == $3",
+                existingPitanje, tekstOdgovoraO, tacanO, bodoviO).find().firstOrNull()
+                ?: OdgovorR().apply {
+                    idOdogovor = (query<OdgovorR>().find().maxOfOrNull { it.idOdogovor } ?: 0) + 1
+                    pitanjeId = existingPitanje
+                    tekstOdgovora = tekstOdgovoraO
+                    tacan = tacanO
+                    bodovi = bodoviO
+                }
+            copyToRealm(odgovor!!)
+        }
+    }
+
+    suspend fun getAllPitanje(): List<PitanjeR>? {
+        val currentID: Int = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+        val currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+        return realm.query<PitanjeR>("zlocinId == $0", currentCrime).find()
+    }
+
+    suspend fun getAllOdgovorForPitanje(pitanjeO: PitanjeR?): List<OdgovorR>? {
+        var existingPitanje: PitanjeR? = null
+        realm.write {
+            existingPitanje = query<PitanjeR>("idPitanje == $0", pitanjeO?.idPitanje).find().firstOrNull()
+                ?: pitanjeO?.let {
+                    copyToRealm(it)
+                }
+        }
+
+        return realm.query<OdgovorR>("pitanjeId == $0", existingPitanje).find()
+    }
+
     fun insertDataForMurder()  {
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
@@ -919,6 +981,26 @@ class RealmViewModel @Inject constructor(
                 "Jealousy wasn’t the reason for what happened. That’s just talk.",
                 "Her response feels too dismissive. Maybe trying to push away the idea without fully confronting it."
             )
+
+            var pitanje1 = insertPitanje(zlocin, "Who do you think planted the knife with the initials M.B.?")
+            var pitanje2 = insertPitanje(zlocin, "With what object do you think the victim was killed?")
+            var pitanje3 = insertPitanje(zlocin, "Who do you think is lying among the witnesses?")
+            var pitanje4 = insertPitanje(zlocin, "Who do you think killed Isabelle Moreau?")
+
+            insertOdogovor(pitanje1, "Marco Bellini", false, 25)
+            insertOdogovor(pitanje1, "Vincent Duval", false, 25)
+            insertOdogovor(pitanje1, "Amelia Fontaine", true, 50)
+
+            insertOdogovor(pitanje2, "knife", true, 40)
+            insertOdogovor(pitanje2, "strangled", false, 20)
+
+            insertOdogovor(pitanje3, "Marco Bellini", false, 25)
+            insertOdogovor(pitanje3, "Vincent Duval", false, 25)
+            insertOdogovor(pitanje3, "Amelia Fontaine", true, 40)
+
+            insertOdogovor(pitanje4, "Marco Bellini", false, 50)
+            insertOdogovor(pitanje4, "Vincent Duval", false, 50)
+            insertOdogovor(pitanje4, "Amelia Fontaine", true, 50)
         }
     }
 }

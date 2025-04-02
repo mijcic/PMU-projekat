@@ -78,7 +78,8 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         //startDestination = "destinationMainScreen1"
-        startDestination = "destinationMainScreen2"
+        //startDestination = "destinationMainScreen2"
+        startDestination = "destinationQuestionsPage"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)
@@ -158,7 +159,7 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationPhonePage") {
             PhonePage(navController)
         }
-        composable("questionsPage") {
+        composable("destinationQuestionsPage") {
             QuestionsPage(navController)
         }
     }
