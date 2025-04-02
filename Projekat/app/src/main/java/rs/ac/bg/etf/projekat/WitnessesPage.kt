@@ -118,11 +118,14 @@ fun WitnessesPage(navController: NavController, myViewModel: MyViewModel, realmV
                 ) {
                     item {
                         uiStateDataZlocin.witnesses.forEach { i->
-                            WitnessesCardWithImage(
-                                R.drawable.witness,
-                                i.ime,
-                                navController
-                            )
+                            i.osobaId?.let {
+                                WitnessesCardWithImage(
+                                    R.drawable.witness,
+                                    it.ime,
+                                    navController,
+                                    myViewModel
+                                )
+                            }
                         }
                     }
                 }
@@ -132,12 +135,13 @@ fun WitnessesPage(navController: NavController, myViewModel: MyViewModel, realmV
 }
 
 @Composable
-fun WitnessesCardWithImage(image: Int, title: String, navController: NavController) {
+fun WitnessesCardWithImage(image: Int, title: String, navController: NavController,myViewModel: MyViewModel) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .clickable {
                 navController.navigate(destinationWitnessDetailsPage.route + "/" + image + "/" + title)
+                myViewModel.getPitanjaZaSvedoka(title)
             }
             .height(200.dp)
             .fillMaxWidth(0.4f),

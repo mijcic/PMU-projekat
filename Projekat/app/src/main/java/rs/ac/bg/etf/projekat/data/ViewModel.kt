@@ -26,6 +26,7 @@ import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
 import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
 import rs.ac.bg.etf.projekat.data.realm.StatusPorukeR
@@ -157,9 +158,21 @@ class MyViewModel @Inject constructor(
         }
     }
 
-    fun clearPitanjaZaOsumnjicenog() {
-        _uiStatePitanjaZaOsumnjicenog.value = UiStatePitanjaZaOsumnjicenog(emptyList(),emptyList(),emptyList(),emptyList())  // Resetovanje podataka na početnu vrednost
+    private val _uiStatePitanjaZaSvedoka = MutableStateFlow(UiStatePitanjaZaSvedoka())
+    val uiStatePitanjaZaSvedoka : StateFlow<UiStatePitanjaZaSvedoka> = _uiStatePitanjaZaSvedoka
+
+    fun getPitanjaZaSvedoka(svedok:String) = viewModelScope.launch {
+        try {
+            val response = selectPitanjaBySvedok(svedok)
+            _uiStatePitanjaZaSvedoka.value = UiStatePitanjaZaSvedoka(response)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStatePitanjaZaSvedoka.value = UiStatePitanjaZaSvedoka(emptyList())
+        }
     }
+
+
 }
 
 data class UiStateZlocin(
@@ -190,4 +203,8 @@ data class UiStatePitanjaZaOsumnjicenog(
     val alibiQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
     val evidenceQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
     val passingQuestions: List<PitanjeIspitivanjeOsumnjicenogR> = emptyList(),
+)
+
+data class UiStatePitanjaZaSvedoka(
+    val questions: List<PitanjeIspitivanjeSvedokaR> = emptyList()
 )

@@ -93,7 +93,7 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                         )
                     )
                 }
-                Button(onClick = {}) {
+                Button(onClick = {navController.navigate(destinationEvidencePage.route)}) {
                     Text(text = "Evidence", color = Color.White,
                         style = TextStyle(
                             fontFamily = FontFamily(

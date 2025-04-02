@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.data.realm
 
+import android.hardware.camera2.CameraExtensionSession.StillCaptureLatency
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Ignore
@@ -87,7 +88,25 @@ open class MisijaPorukaR : RealmObject {
     var posiljalac: String = ""
 }
 
+//OsobaR table
+open class OsobaR: RealmObject{
+    @PrimaryKey
+    var idOsoba: Int = 0
+    var ime:String =""
+    var kontakt: String =""
+    var datum:RealmInstant? = null
+    var zanimanje: String=""
+    var pol: String = PolR.muski.name
+    var zlocinId: ZlocinR? = null
+}
+
+enum class PolR{
+    muski,
+    zenski
+}
+
 // OsumnjicenR table
+/*
 open class OsumnjicenR : RealmObject {
     @PrimaryKey
     var idOsumnjicen: Int = 0
@@ -97,6 +116,17 @@ open class OsumnjicenR : RealmObject {
     var motiv: MotivR? = null
     var zlocinId: ZlocinR? = null
     var kriv: Int = 0
+}*/
+
+open class OsumnjicenR : RealmObject {//-ime +osobaId
+    @PrimaryKey
+    var idOsumnjicen: Int = 0
+    var status: Int = 0
+    var tipOsumnjicen: String = TipOsumnjicenR.pojedinac.name
+    var motiv: MotivR? = null
+    var zlocinId: ZlocinR? = null
+    var kriv: Int = 0
+    var osobaId: OsobaR? = null
 }
 
 // Enum for TipOsumnjicen
@@ -131,6 +161,7 @@ enum class TipDokazaR {
 }
 
 // SvedokR table
+/*
 open class SvedokR : RealmObject {
     @PrimaryKey
     var idSvedok: Int = 0
@@ -140,6 +171,15 @@ open class SvedokR : RealmObject {
     var zlocinId: ZlocinR? = null
     var statusSvedok: String = StatusSvedokR.aktivno.name
     var statusIspitan: Int = 0
+}*/
+open class SvedokR : RealmObject {// -ime,kontakt  +osobaId
+    @PrimaryKey
+    var idSvedok: Int = 0
+    var izjava: String = ""
+    var statusSvedok: String = StatusSvedokR.aktivno.name
+    var statusIspitan: Int = 0
+    var zlocinId: ZlocinR? = null
+    var osobaId: OsobaR? = null
 }
 
 // Enum for StatusSvedok
@@ -150,6 +190,7 @@ enum class StatusSvedokR {
 }
 
 // ZrtvaR table
+/*
 open class ZrtvaR : RealmObject {
     @PrimaryKey
     var idZrtva: Int = 0
@@ -158,6 +199,16 @@ open class ZrtvaR : RealmObject {
     var detalji: String = ""
     var statusZrtva: String = StatusZrtvaR.ziva.name
     var zlocinId: ZlocinR? = null
+}*/
+
+open class ZrtvaR : RealmObject {// -ime
+    @PrimaryKey
+    var idZrtva: Int = 0
+    var tipZrtve: String = ""
+    var detalji: String = ""
+    var statusZrtva: String = StatusZrtvaR.ziva.name
+    var zlocinId: ZlocinR? = null
+    var osobaId: OsobaR? = null
 }
 
 // Enum for StatusZrtva
@@ -369,6 +420,16 @@ open class OdnosOsumnjicenZrtvaR : RealmObject {
     var tipOdnosa: String = TipOdnosaR.lični.name
 }
 
+// Enum for TipOdnosa
+enum class TipOdnosaR {
+    poslovni,
+    lični,
+    porodični,
+    rivalski,
+    slučajni,
+    ljubavni
+}
+
 open class PitanjeIspitivanjeOsumnjicenogR : RealmObject {
     @PrimaryKey
     var idPitanjeIspitivanjeOsumnjicenog: Int =0
@@ -386,14 +447,13 @@ enum class KategorijaIspitivanjeOsumnjicenog {
     kontradikcija
 }
 
-// Enum for TipOdnosa
-enum class TipOdnosaR {
-    poslovni,
-    lični,
-    porodični,
-    rivalski,
-    slučajni,
-    ljubavni
+open class PitanjeIspitivanjeSvedokaR : RealmObject {
+    @PrimaryKey
+    var idPitanjeIspitivanjeSvedoka: Int =0
+    var tekst: String =""
+    var odgovor: String =""
+    var svedokId: SvedokR? = null
+    var next: Int =0
 }
 
 open class PitanjeR : RealmObject {
@@ -443,4 +503,6 @@ val realmClasses = listOf(
     PitanjeIspitivanjeOsumnjicenogR::class,
     PitanjeR::class,
     OdgovorR::class,
+    PitanjeIspitivanjeSvedokaR::class,
+    OsobaR::class
 )

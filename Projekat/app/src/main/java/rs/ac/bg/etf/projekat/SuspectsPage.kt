@@ -118,12 +118,14 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
                 ) {
                     item {
                         uiStateDataZlocin.suspects.forEach { i->
-                            SuspectCardWithImage(
-                                R.drawable.suspect,
-                                i.ime,
-                                navController,
-                                myViewModel
-                            )
+                            i.osobaId?.let {
+                                SuspectCardWithImage(
+                                    R.drawable.suspect,
+                                    it.ime,
+                                    navController,
+                                    myViewModel
+                                )
+                            }
                         }
                     }
                 }
