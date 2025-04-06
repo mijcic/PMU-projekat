@@ -1255,19 +1255,11 @@ class RealmViewModel @Inject constructor(
                 zlocin
             )
 
-            val zl1 = insertZadatak(
-                "Amelia pokušava da slaže",
-                "Pronadji dokaz koji dokazuje da laže",
-                false,
-                zl2, // Sledeći zadatak je zl2
-                zlocin
-            )
-
             val zl0 = insertZadatak(
                 "Pronađen nož sa tragovima krvi",
                 "Pošaljite nož na analizu",
                 true,
-                zl1, // Sledeći zadatak je zl1
+                zl2, // Sledeći zadatak je zl1
                 zlocin
             )
 
@@ -1344,4 +1336,12 @@ suspend fun selectTasks(): List<ZadatakR> {
     zadaci = realm.query<ZadatakR>().find()
 
     return zadaci.reversed()
+}
+
+suspend fun selectEvidences(): List<DokazR>{
+    val dokazi: List<DokazR>
+
+    dokazi = realm.query<DokazR>().find()
+
+    return dokazi
 }

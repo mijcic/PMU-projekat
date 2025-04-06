@@ -187,6 +187,19 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    private val _uiStateEvidence = MutableStateFlow(UiStateEvidences())
+    val uiStateEvidence : StateFlow<UiStateEvidences> = _uiStateEvidence
+
+    fun getEvidences() = viewModelScope.launch {
+        try {
+            val response = selectEvidences()
+            _uiStateEvidence.value = UiStateEvidences(response)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateEvidence.value = UiStateEvidences(emptyList())
+        }
+    }
 
 }
 
@@ -226,4 +239,8 @@ data class UiStatePitanjaZaSvedoka(
 
 data class UiStateTasks(
     val tasks: List<ZadatakR> = emptyList()
+)
+
+data class UiStateEvidences(
+    val evidences: List<DokazR> = emptyList()
 )
