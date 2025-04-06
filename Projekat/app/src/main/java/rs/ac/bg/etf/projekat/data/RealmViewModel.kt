@@ -39,6 +39,7 @@ import rs.ac.bg.etf.projekat.data.realm.TipForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
 import rs.ac.bg.etf.projekat.data.realm.TipOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
+import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
@@ -61,6 +62,9 @@ class RealmViewModel @Inject constructor(
 
     private val _uiStateCrimeData = MutableStateFlow(UiStateCrimeData())
     val uiStateCrimeData : StateFlow<UiStateCrimeData> = _uiStateCrimeData
+
+    private var _uiStateZlocinSave = MutableStateFlow(UiStateZlocinSave())
+    val uiStateZlocinSave : StateFlow<UiStateZlocinSave> = _uiStateZlocinSave
 
     suspend fun inserTipZlocina(nazivTZ: String): TipZlocinaR? {
         var tipZlocina: TipZlocinaR? = null
@@ -661,6 +665,44 @@ class RealmViewModel @Inject constructor(
         return pitanje
     }
 
+    suspend fun insertZadatak(
+        tekstZ: String, korakZ: String, uradjenZ: Boolean,
+        nextZ: ZadatakR?,
+        zlocinZ: ZlocinR?
+    ): ZadatakR? {
+        var zadatak: ZadatakR? = null
+
+        realm.write {
+            val existingZlocin = zlocinZ?.let {
+                query<ZlocinR>("idZlocin == $0", it.idZlocin).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+
+            val existingZadatak = nextZ?.let {
+                query<ZadatakR>("idZadatak == $0", it.idZadatak).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            zadatak = query<ZadatakR>(
+                "tekst == $0 AND korak == $1 AND uradjen == $2 AND next == $3 AND zlocinId == $4",
+                tekstZ, korakZ, uradjenZ, existingZadatak, existingZlocin
+            ).find().firstOrNull() ?: ZadatakR().apply {
+                idZadatak = (query<ZadatakR>().find().maxOfOrNull { it.idZadatak } ?: 0) + 1
+                tekst = tekstZ
+                korak = korakZ
+                next = existingZadatak
+                zlocinId = existingZlocin
+                uradjen=uradjenZ
+            }
+
+            copyToRealm(zadatak!!)
+        }
+        return zadatak
+    }
+
+
+
     suspend fun getTitleDatePlaceDescFromCrime() {
         var title: String? = ""
         var date: RealmInstant? = null
@@ -765,6 +807,8 @@ class RealmViewModel @Inject constructor(
                 "Ubistvo poznate poslovne žene Isabelle Moreau pod misterioznim okolnostima.",
                 stZlocinR.u_istrazi.name
             )
+
+            _uiStateZlocinSave.value =UiStateZlocinSave(zlocin)
 
             val zrtva: ZrtvaR? = insertZrtva(
                 "Osoba",
@@ -1149,12 +1193,94 @@ class RealmViewModel @Inject constructor(
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Have you ever been in Isabelle's room?", "No, I’ve never been inside her room. But I’ve seen her come and go a few times, usually after big wins at the casino.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Why do you think Marco might be involved in Isabelle's death?", "Marco had a clear motive – money and gambling debts. But after hearing the details of the investigation, I’m starting to doubt his innocence. I didn’t know who else could have done it until the truth started coming out.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
+
+            var zl11=insertZadatak("Pronađen novi dokaz","Kartica kraljice srca skrivena u hotelskoj sobi Isabelle",false,null,zlocin)
+            var zl10=insertZadatak("Amelia pokušava da slaže","Pronadji dokaz koji dokazuje da laze",false,zl11,zlocin)
+            val zl9 = insertZadatak("Suoči Ameliju sa dokazima",
+                "Suoči Ameliju sa rezultatima analize noža i pretećim porukama",
+                false, zl10, zlocin
+            )
+
+            val zl8 = insertZadatak(
+                "Saznaj ko je slao preteće poruke ",
+                "Prouči izveštaj o pretećim porukama",
+                false, zl9, zlocin
+            )
+
+            val zl7 = insertZadatak(
+                "Uporedi DNK sa ostacima ispod noktiju žrtve",
+                "Uporedi tragove DNK sa uzorcima sa žrtvinog tela",
+                false,
+                zl8, // Sledeći zadatak je zl8
+                zlocin
+            )
+
+            val zl6 = insertZadatak(
+                "Stigao rezultat analize noža",
+                "Prouči izveštaj i otkrij kome pripadaju DNK tragovi",
+                false,
+                zl7, // Sledeći zadatak je zl7
+                zlocin
+            )
+
+            val zl5 = insertZadatak(
+                "Ponovno ispitaj Marca",
+                "Ispitaj Marca",
+                false,
+                zl6,
+                zlocin
+            )
+
+            val zl4 = insertZadatak(
+                "Ispitaj Vincenta",
+                "Ispitaj Vincenta",
+                false,
+                zl5, // Sledeći zadatak je zl5
+                zlocin
+            )
+
+            val zl3 = insertZadatak(
+                "Pregledaj telefon",
+                "Prouči kontakte na telefonu žrtve",
+                false,
+                zl4, // Sledeći zadatak je zl4
+                zlocin
+            )
+
+            val zl2 = insertZadatak(
+                "Ispitaj svedoke",
+                "Ispitaj Ameliju",
+                false,
+                zl3, // Sledeći zadatak je zl3
+                zlocin
+            )
+
+            val zl1 = insertZadatak(
+                "Amelia pokušava da slaže",
+                "Pronadji dokaz koji dokazuje da laže",
+                false,
+                zl2, // Sledeći zadatak je zl2
+                zlocin
+            )
+
+            val zl0 = insertZadatak(
+                "Pronađen nož sa tragovima krvi",
+                "Pošaljite nož na analizu",
+                true,
+                zl1, // Sledeći zadatak je zl1
+                zlocin
+            )
+
         }
     }
 }
 
 data class UiStateUserData (
     val userExists: Boolean? = null
+)
+
+data class UiStateZlocinSave (
+    val zlocin: ZlocinR? =null
 )
 
 data class UiStateCrimeData (
@@ -1210,4 +1336,12 @@ suspend fun selectPitanjaBySvedok(svedokId: String): List<PitanjeIspitivanjeSved
     ).find()
 
     return pitanja
+}
+
+suspend fun selectTasks(): List<ZadatakR> {
+    val zadaci: List<ZadatakR>
+
+    zadaci = realm.query<ZadatakR>().find()
+
+    return zadaci.reversed()
 }

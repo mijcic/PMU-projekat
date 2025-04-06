@@ -40,6 +40,7 @@ import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
 import rs.ac.bg.etf.projekat.data.realm.TipOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.TipPorukeR
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
+import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
@@ -172,6 +173,20 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    private val _uiStateTasks = MutableStateFlow(UiStateTasks())
+    val uiStateTasks : StateFlow<UiStateTasks> = _uiStateTasks
+
+    fun getTasks() = viewModelScope.launch {
+        try {
+            val response = selectTasks()
+            _uiStateTasks.value = UiStateTasks(response)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateTasks.value = UiStateTasks(emptyList())
+        }
+    }
+
 
 }
 
@@ -207,4 +222,8 @@ data class UiStatePitanjaZaOsumnjicenog(
 
 data class UiStatePitanjaZaSvedoka(
     val questions: List<PitanjeIspitivanjeSvedokaR> = emptyList()
+)
+
+data class UiStateTasks(
+    val tasks: List<ZadatakR> = emptyList()
 )

@@ -472,6 +472,16 @@ open class OdgovorR : RealmObject {
     var bodovi: Int = 0
 }
 
+open class ZadatakR : RealmObject {
+    @PrimaryKey
+    var idZadatak: Int =0
+    var tekst: String =""
+    var korak: String =""
+    var uradjen: Boolean = false
+    var next: ZadatakR? = null
+    var zlocinId: ZlocinR? =null
+}
+
 val realmClasses = listOf(
     ZlocinR::class,
     TipZlocinaR::class,
@@ -504,5 +514,6 @@ val realmClasses = listOf(
     PitanjeR::class,
     OdgovorR::class,
     PitanjeIspitivanjeSvedokaR::class,
-    OsobaR::class
+    OsobaR::class,
+    ZadatakR::class
 )

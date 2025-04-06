@@ -184,5 +184,8 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationEvidencePage") {
             EvidencePage(navController, viewModel,realmViewModel)
         }
+        composable("destinationMapPage") {
+            MapPage(navController, viewModel,realmViewModel)
+        }
     }
 }

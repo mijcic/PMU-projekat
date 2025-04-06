@@ -76,7 +76,9 @@ object destinationEvidencePage : NavigationDestinations {
     override val route = "destinationEvidencePage"
 }
 
-
+object destinationMapPage : NavigationDestinations {
+    override val route = "destinationMapPage"
+}
 
 val navigationDestinations = listOf(destinationMainScreen1, destinationMainScreen2,
     destinationCardsPage,destinationMissionPage, destinationSettingsPage,
