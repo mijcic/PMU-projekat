@@ -154,7 +154,7 @@ fun NavigationGraph(navController: NavHostController) {
                 navArgument("title") { type = NavType.StringType }),
         ) { navBackStackEntry ->
             val title =navBackStackEntry.arguments?.getString("title") ?:""
-            SuspectInterviewPage(navController, viewModel,title)
+            SuspectInterviewPage(navController, viewModel,title,realmViewModel)
         }
         composable(route = "destinationWitnessesInterviewPage/{title}",
             arguments = listOf(

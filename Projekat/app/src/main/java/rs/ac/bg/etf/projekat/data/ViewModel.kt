@@ -17,7 +17,10 @@ import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
 import rs.ac.bg.etf.projekat.data.realm.AlibiR
 import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
+import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
+import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
+import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
 import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
@@ -193,11 +196,32 @@ class MyViewModel @Inject constructor(
     fun getEvidences() = viewModelScope.launch {
         try {
             val response = selectEvidences()
-            _uiStateEvidence.value = UiStateEvidences(response)
+            val response2 =selectEvidencesTasks(response)
+            _uiStateEvidence.value = UiStateEvidences(response,response2)
         }
         catch (e:Exception){
             e.printStackTrace()
-            _uiStateEvidence.value = UiStateEvidences(emptyList())
+            _uiStateEvidence.value = UiStateEvidences(emptyList(), emptyList())
+        }
+    }
+
+    fun updateEvidenceAndEvidenceTask(zadatakDokaz: DokazZadatakR) = viewModelScope.launch {
+        zadatakDokaz.zadatakId?.idZadatak?.let { updateDokazZadatakAndZadatak(it,zadatakDokaz.idDokazZadatak) }
+    }
+
+    fun updateSuspectTask(zadatak: IspitivanjeOsumnjicenogZadatakR) = viewModelScope.launch {
+        zadatak.zadatakId?.idZadatak?.let {
+            updateIspitivanjeOsumnjicenogZadatak(zadatak.idIspitivanjeOsumnjicenogZadatak,
+                it
+            )
+        }
+    }
+
+    fun updateWitnessTask(zadatak: IspitivanjeSvedokaZadatakR) = viewModelScope.launch {
+        zadatak.zadatakId?.idZadatak?.let {
+            updateIspitivanjeSvedokaZadatak(zadatak.idIspitivanjeSvedokaZadatak,
+                it
+            )
         }
     }
 
@@ -242,5 +266,6 @@ data class UiStateTasks(
 )
 
 data class UiStateEvidences(
-    val evidences: List<DokazR> = emptyList()
+    val evidences: List<DokazR> = emptyList(),
+    val evidencesTasks: List<DokazZadatakR> = emptyList()
 )

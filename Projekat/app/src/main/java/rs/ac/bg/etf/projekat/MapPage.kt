@@ -210,8 +210,6 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                     }
                 }
             }
-
-
         }
     }
 }

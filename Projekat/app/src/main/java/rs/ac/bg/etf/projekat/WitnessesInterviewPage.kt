@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.selectIspitivanjeSvedokaZadatak
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +41,12 @@ fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewMode
             currentQuestionIndex++
         }
         else{
-            navController.navigate(destinationWitnessesPage.route)
+            selectIspitivanjeSvedokaZadatak(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
+                myViewModel.updateWitnessTask(
+                    it
+                )
+            }
+            navController.popBackStack()
         }
     }
 

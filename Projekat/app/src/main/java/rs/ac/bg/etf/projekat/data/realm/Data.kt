@@ -135,6 +135,24 @@ enum class TipOsumnjicenR {
     organizacija
 }
 
+// Table IspitivanjeOsumnjicenogZadatak
+open class IspitivanjeOsumnjicenogZadatakR : RealmObject {
+    @PrimaryKey
+    var idIspitivanjeOsumnjicenogZadatak: Int = 0
+    var osumnjicenId: OsumnjicenR? =null
+    var zadatakId: ZadatakR? = null
+    var uradjen: Boolean = false
+}
+
+// Table IspitivanjeSvedokaZadatak
+open class IspitivanjeSvedokaZadatakR : RealmObject {
+    @PrimaryKey
+    var idIspitivanjeSvedokaZadatak: Int = 0
+    var svedokId: SvedokR? =null
+    var zadatakId: ZadatakR? = null
+    var uradjen: Boolean = false
+}
+
 // MotivR table
 open class MotivR : RealmObject {
     @PrimaryKey
@@ -151,6 +169,16 @@ open class DokazR : RealmObject {
     var zlocinId: ZlocinR? = null
     var zrtvaId: ZrtvaR? = null
     var status: Int = 0
+}
+
+// DokazZadatakR table
+open class DokazZadatakR: RealmObject {
+    @PrimaryKey
+    var idDokazZadatak: Int =0
+    var tekst: String =""
+    var dokazId: DokazR? =null
+    var uradjen: Boolean =false
+    var zadatakId: ZadatakR? =null
 }
 
 // Enum for TipDokaza
@@ -515,5 +543,8 @@ val realmClasses = listOf(
     OdgovorR::class,
     PitanjeIspitivanjeSvedokaR::class,
     OsobaR::class,
-    ZadatakR::class
+    ZadatakR::class,
+    DokazZadatakR::class,
+    IspitivanjeOsumnjicenogZadatakR::class,
+    IspitivanjeSvedokaZadatakR::class
 )

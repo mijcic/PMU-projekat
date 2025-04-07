@@ -4,17 +4,24 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.RealmResults
+import io.realm.kotlin.query.find
 import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import rs.ac.bg.etf.projekat.MainActivity
 import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
 import rs.ac.bg.etf.projekat.data.realm.AlibiR
 import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
+import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
+import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
+import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
 import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
@@ -701,7 +708,102 @@ class RealmViewModel @Inject constructor(
         return zadatak
     }
 
+    suspend fun insertDokazZadatak(
+        tekstZ: String, dokazIdZ: DokazR?, uradjenZ: Boolean,
+        zadatakIdZ: ZadatakR?
+    ): DokazZadatakR? {
+        var dokazZadatak: DokazZadatakR? = null
 
+        realm.write {
+            val existingZadatak = zadatakIdZ?.let {
+                query<ZadatakR>("idZadatak == $0", it.idZadatak).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            val existingDokaz = dokazIdZ?.let {
+                query<DokazR>("idDokaz == $0", it.idDokaz).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            dokazZadatak = query<DokazZadatakR>(
+                "tekst == $0 AND dokazId == $1 AND uradjen == $2 AND zadatakId == $3",
+                tekstZ, existingDokaz, uradjenZ, existingZadatak
+            ).find().firstOrNull() ?: DokazZadatakR().apply {
+                idDokazZadatak = (query<DokazZadatakR>().find().maxOfOrNull { it.idDokazZadatak } ?: 0) + 1
+                tekst = tekstZ
+                dokazId = existingDokaz
+                zadatakId = existingZadatak
+                uradjen=uradjenZ
+            }
+
+            copyToRealm(dokazZadatak!!)
+        }
+        return dokazZadatak
+    }
+
+    suspend fun insertIspitivanjeOsumnjicenogZadatak(
+        osumnjicenIdZ: OsumnjicenR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
+    ): IspitivanjeOsumnjicenogZadatakR? {
+        var ispitivanjeOsumnjicenogZadatak: IspitivanjeOsumnjicenogZadatakR? = null
+
+        realm.write {
+            val existingZadatak = zadatakIdZ?.let {
+                query<ZadatakR>("idZadatak == $0", it.idZadatak).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            val existingOsumnjicenog = osumnjicenIdZ?.let {
+                query<OsumnjicenR>("idOsumnjicen == $0", it.idOsumnjicen).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            ispitivanjeOsumnjicenogZadatak = query<IspitivanjeOsumnjicenogZadatakR>(
+                "osumnjicenId == $0 AND zadatakId == $1 AND uradjen ==$2",
+                existingOsumnjicenog, existingZadatak, uradjenZ
+            ).find().firstOrNull() ?: IspitivanjeOsumnjicenogZadatakR().apply {
+                idIspitivanjeOsumnjicenogZadatak =
+                    (query<IspitivanjeOsumnjicenogZadatakR>().find().maxOfOrNull { it.idIspitivanjeOsumnjicenogZadatak } ?: 0) + 1
+                osumnjicenId = existingOsumnjicenog
+                zadatakId = existingZadatak
+                uradjen = uradjenZ
+            }
+
+            copyToRealm(ispitivanjeOsumnjicenogZadatak!!)
+        }
+        return ispitivanjeOsumnjicenogZadatak
+    }
+
+    suspend fun insertIspitivanjeSvedokaZadatak(
+        svedokIdZ: SvedokR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
+    ): IspitivanjeSvedokaZadatakR? {
+        var ispitivanjeSvedokaZadatak: IspitivanjeSvedokaZadatakR? = null
+
+        realm.write {
+            val existingZadatak = zadatakIdZ?.let {
+                query<ZadatakR>("idZadatak == $0", it.idZadatak).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            val existingSvedok = svedokIdZ?.let {
+                query<SvedokR>("idSvedok == $0", it.idSvedok).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            ispitivanjeSvedokaZadatak = query<IspitivanjeSvedokaZadatakR>(
+                "svedokId == $0 AND zadatakId == $1 AND uradjen ==$2",
+                existingSvedok, existingZadatak, uradjenZ
+            ).find().firstOrNull() ?: IspitivanjeSvedokaZadatakR().apply {
+                idIspitivanjeSvedokaZadatak =
+                    (query<IspitivanjeSvedokaZadatakR>().find().maxOfOrNull { it.idIspitivanjeSvedokaZadatak } ?: 0) + 1
+                svedokId = existingSvedok
+                zadatakId = existingZadatak
+                uradjen = uradjenZ
+            }
+
+            copyToRealm(ispitivanjeSvedokaZadatak!!)
+        }
+        return ispitivanjeSvedokaZadatak
+    }
 
     suspend fun getTitleDatePlaceDescFromCrime() {
         var title: String? = ""
@@ -1194,74 +1296,66 @@ class RealmViewModel @Inject constructor(
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Why do you think Marco might be involved in Isabelle's death?", "Marco had a clear motive – money and gambling debts. But after hearing the details of the investigation, I’m starting to doubt his innocence. I didn’t know who else could have done it until the truth started coming out.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
 
-            var zl11=insertZadatak("Pronađen novi dokaz","Kartica kraljice srca skrivena u hotelskoj sobi Isabelle",false,null,zlocin)
-            var zl10=insertZadatak("Amelia pokušava da slaže","Pronadji dokaz koji dokazuje da laze",false,zl11,zlocin)
-            val zl9 = insertZadatak("Suoči Ameliju sa dokazima",
-                "Suoči Ameliju sa rezultatima analize noža i pretećim porukama",
+            var zl11 = insertZadatak("New evidence found", "Queen of Hearts card hidden in Isabelle's hotel room", false, null, zlocin)
+            var zl10 = insertZadatak("Amelia is trying to lie", "Find evidence that proves she's lying", false, zl11, zlocin)
+            val zl9 = insertZadatak("Confront Amelia with the evidence",
+                "Confront Amelia with the results of the knife analysis and the threatening messages",
                 false, zl10, zlocin
             )
 
             val zl8 = insertZadatak(
-                "Saznaj ko je slao preteće poruke ",
-                "Prouči izveštaj o pretećim porukama",
+                "Find out who sent the threatening messages",
+                "Study the report on the threatening messages",
                 false, zl9, zlocin
             )
 
             val zl7 = insertZadatak(
-                "Uporedi DNK sa ostacima ispod noktiju žrtve",
-                "Uporedi tragove DNK sa uzorcima sa žrtvinog tela",
-                false,
-                zl8, // Sledeći zadatak je zl8
-                zlocin
+                "Compare DNA with the traces under the victim's nails",
+                "Compare the DNA traces with samples from the victim's body",
+                false, zl8, zlocin
             )
 
             val zl6 = insertZadatak(
-                "Stigao rezultat analize noža",
-                "Prouči izveštaj i otkrij kome pripadaju DNK tragovi",
-                false,
-                zl7, // Sledeći zadatak je zl7
-                zlocin
+                "Knife analysis result received",
+                "Study the report and find out who the DNA traces belong to",
+                false, zl7, zlocin
             )
 
             val zl5 = insertZadatak(
-                "Ponovno ispitaj Marca",
-                "Ispitaj Marca",
-                false,
-                zl6,
-                zlocin
+                "Re-interrogate Marc",
+                "Question Marc again",
+                false, zl6, zlocin
             )
 
             val zl4 = insertZadatak(
-                "Ispitaj Vincenta",
-                "Ispitaj Vincenta",
-                false,
-                zl5, // Sledeći zadatak je zl5
-                zlocin
+                "Interrogate Vincent",
+                "Question Vincent",
+                false, zl5, zlocin
             )
 
             val zl3 = insertZadatak(
-                "Pregledaj telefon",
-                "Prouči kontakte na telefonu žrtve",
-                false,
-                zl4, // Sledeći zadatak je zl4
-                zlocin
+                "Check the phone",
+                "Study the contacts on the victim's phone",
+                false, zl4, zlocin
             )
 
             val zl2 = insertZadatak(
-                "Ispitaj svedoke",
-                "Ispitaj Ameliju",
-                false,
-                zl3, // Sledeći zadatak je zl3
-                zlocin
+                "Interview witnesses",
+                "Question Amelia",
+                false, zl3, zlocin
             )
 
             val zl0 = insertZadatak(
-                "Pronađen nož sa tragovima krvi",
-                "Pošaljite nož na analizu",
-                true,
-                zl2, // Sledeći zadatak je zl1
+                "Knife with blood traces found",
+                "Send the knife for analysis",
+                false,
+                zl2,
                 zlocin
             )
+
+            insertDokazZadatak("Send Evidence for Analysis", dokaz1,false,zl0)
+
+            insertIspitivanjeSvedokaZadatak(svedokAmeliaFontaine,zl2,false)
 
         }
     }
@@ -1345,3 +1439,114 @@ suspend fun selectEvidences(): List<DokazR>{
 
     return dokazi
 }
+
+suspend fun selectEvidencesTasks(evidences: List<DokazR>): List<DokazZadatakR> {
+    val allDokazZadatak: List<DokazZadatakR> = realm.query<DokazZadatakR>().find()
+
+    val evidenceIds: List<Int> = evidences.map { it.idDokaz }
+
+    val filteredDokazZadatak = allDokazZadatak.filter { task ->
+        evidenceIds.contains(task.dokazId?.idDokaz)
+    }
+
+    return filteredDokazZadatak
+}
+
+private fun evidenceIds(evidences: List<DokazR>): List<Int> {
+    return evidences.map { it.idDokaz } // Pretpostavljamo da DokazR ima polje 'idDokaz'
+}
+
+suspend fun updateDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId: Int ) {
+    val realm = MainActivity.realm
+
+    Log.d("UPDATE",dokazZadatakId.toString())
+    Log.d("UPDATE",zadatakId.toString())
+
+    realm.write {
+        val dokazZadaci = query(DokazZadatakR::class).find()
+
+        val dokazZadatak = dokazZadaci.firstOrNull { it.idDokazZadatak == dokazZadatakId }
+
+        if (dokazZadatak != null) {
+            dokazZadatak.uradjen = true
+
+            val zadaci = query(ZadatakR::class).find()
+
+            val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+
+            if (zadatak != null) {
+                zadatak.uradjen = true
+            }
+        }
+    }
+}
+
+
+suspend fun updateIspitivanjeOsumnjicenogZadatak(ispitivanjeOsumnjicenogZadatak: Int,zadatakId:Int ) {
+    val realm = MainActivity.realm
+
+    realm.write {
+        val ispitivanje = query(IspitivanjeOsumnjicenogZadatakR::class).find()
+
+        val ispitivanjeZ =
+            ispitivanje.firstOrNull { it.idIspitivanjeOsumnjicenogZadatak == ispitivanjeOsumnjicenogZadatak }
+
+        if (ispitivanjeZ != null) {
+            ispitivanjeZ.uradjen = true
+
+            val zadaci = query(ZadatakR::class).find()
+
+            val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+
+            if (zadatak != null) {
+                zadatak.uradjen = true
+            }
+        }
+    }
+}
+
+fun selectIspitivanjeOsumnjicenogZadatak(osumnjicenZ: OsumnjicenR?): IspitivanjeOsumnjicenogZadatakR? {
+    // Izvrši upit da preuzmeš sve zadatke koji odgovaraju osumnjičenom i uradjen statusu
+    val zadaci = realm.query<IspitivanjeOsumnjicenogZadatakR>(
+        "osumnjicenId == $0 AND uradjen == $1",
+        osumnjicenZ, false
+    ).find()
+
+    return zadaci.firstOrNull()
+}
+
+
+
+suspend fun updateIspitivanjeSvedokaZadatak(ispitivanjeSvedokaZadatak: Int,zadatakId:Int ) {
+    val realm = MainActivity.realm
+
+    realm.write {
+        val ispitivanje = query(IspitivanjeSvedokaZadatakR::class).find()
+
+        val ispitivanjeZ =
+            ispitivanje.firstOrNull { it.idIspitivanjeSvedokaZadatak == ispitivanjeSvedokaZadatak }
+
+        if (ispitivanjeZ != null) {
+            ispitivanjeZ.uradjen = true
+
+            val zadaci = query(ZadatakR::class).find()
+
+            val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+
+            if (zadatak != null) {
+                zadatak.uradjen = true
+            }
+        }
+    }
+}
+
+fun selectIspitivanjeSvedokaZadatak(svedokZ: SvedokR?): IspitivanjeSvedokaZadatakR? {
+    val zadaci = realm.query<IspitivanjeSvedokaZadatakR>(
+        "svedokId == $0 AND uradjen == $1",
+        svedokZ, false
+    ).find()
+
+    return zadaci.firstOrNull()
+}
+
+

@@ -55,6 +55,7 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.DokazR
+import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 
 @Composable
 fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
@@ -124,9 +125,13 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
                 ) {
                     itemsIndexed(uiStateEvidence.evidences) {
                         index,i->
+
+                            val filteredTasks = uiStateEvidence.evidencesTasks.filter { task ->
+                                task.dokazId?.idDokaz == i.idDokaz
+                            }
                             if(index==0) {
                                 CardEvidenceShow(showDialog,i)
-                                showDialog.value=EvidenceDialog(showDialog,i)
+                                showDialog.value=EvidenceDialog(showDialog,i,filteredTasks,myViewModel)
 
                             }
                             else {
@@ -244,8 +249,8 @@ fun CardEvidenceLock(i: DokazR){
 }
 
 @Composable
-fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR):Boolean {
-    if (showDialog.value) {
+fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR, dokazZadaci: List<DokazZadatakR>,myViewModel: MyViewModel):Boolean {
+    if (showDialog.value && !dokazZadaci.first().uradjen) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -257,10 +262,10 @@ fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR):Boolean {
                 onDismissRequest = {
                     showDialog.value = false
                 },
-                title = { Text(text = "Send Evidence for Analysis") },
+                title = { Text(text = dokazZadaci.first().tekst.toString()) },
                 text = {
                     Column {
-                        Text("Please confirm if you want to send this evidence for analysis.")
+                        Text("Only if you agree, please confirm.")
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("Evidence Type: ${if (i.tipDokaza == "fizicki") "Physical Evidence" else "Digital Evidence"}")
                     }
@@ -273,10 +278,12 @@ fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR):Boolean {
                             disabledContentColor = Color.DarkGray
                         ),
                         onClick = {
+                            myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
                             showDialog.value = false
+
                         }
                     ) {
-                        Text("Send for Analysis",color=Color.White)
+                        Text(dokazZadaci.first().tekst,color=Color.White)
                     }
                 },
                 dismissButton = {
