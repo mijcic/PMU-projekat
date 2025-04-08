@@ -20,6 +20,7 @@ import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
+import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
@@ -742,6 +743,39 @@ class RealmViewModel @Inject constructor(
         return dokazZadatak
     }
 
+    suspend fun insertForenzickiDokazZadatak(
+        tekstZ: String, forenzickiDokazIdZ: ForenzickiDokazR?, uradjenZ: Boolean,
+        zadatakIdZ: ZadatakR?
+    ): ForenzickiDokazZadatakR? {
+        var forenzickiDokazZadatak: ForenzickiDokazZadatakR? = null
+
+        realm.write {
+            val existingZadatak = zadatakIdZ?.let {
+                query<ZadatakR>("idZadatak == $0", it.idZadatak).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            val existingForenzickiDokaz = forenzickiDokazIdZ?.let {
+                query<ForenzickiDokazR>("idForenzickiDokaz == $0", it.idForenzickiDokaz).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            forenzickiDokazZadatak = query<ForenzickiDokazZadatakR>(
+                "tekst == $0 AND forenzickiDokazId == $1 AND uradjen == $2 AND zadatakId == $3",
+                tekstZ, existingForenzickiDokaz, uradjenZ, existingZadatak
+            ).find().firstOrNull() ?: ForenzickiDokazZadatakR().apply {
+                idForenzickiDokazZadatak = (query<ForenzickiDokazZadatakR>().find().maxOfOrNull { it.idForenzickiDokazZadatak } ?: 0) + 1
+                tekst = tekstZ
+                forenzickiDokazId = existingForenzickiDokaz
+                zadatakId = existingZadatak
+                uradjen=uradjenZ
+            }
+            copyToRealm(forenzickiDokazZadatak!!)
+        }
+        return forenzickiDokazZadatak
+    }
+
+
     suspend fun insertIspitivanjeOsumnjicenogZadatak(
         osumnjicenIdZ: OsumnjicenR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
     ): IspitivanjeOsumnjicenogZadatakR? {
@@ -1012,6 +1046,13 @@ class RealmViewModel @Inject constructor(
                 "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina",
                 zlocin,
                 zrtva,
+                1
+            )
+            var dokaz5: DokazR? = insertDokaz(
+                TipDokazaR.fizicki.name,
+                "Na nozu su nadjeni tragovi koze",
+                zlocin,
+                zrtva,
                 0
             )
             var dokaz2: DokazR? = insertDokaz(
@@ -1026,14 +1067,14 @@ class RealmViewModel @Inject constructor(
                 "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina, ali analiza DNK je otkrila da su tragovi kože na nožu pripadali Ameliji",
                 zlocin,
                 zrtva,
-                1
+                0
             )
             var dokaz4: DokazR? = insertDokaz(
                 TipDokazaR.digitalni.name,
                 "Preteće poruke na WhatsApp bile su povezane sa brojem telefona Marka Belinija, ali se ispostavilo da ih je poslala Amelija koristeći drugi uređaj",
                 zlocin,
                 zrtva,
-                1
+                0
             )
 
             var dokazOsumnjiceni1: DokazOsumnjicenR? =
@@ -1332,10 +1373,9 @@ class RealmViewModel @Inject constructor(
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
 
 
-            var zl11 = insertZadatak("New evidence found", "Queen of Hearts card hidden in Isabelle's hotel room", false, null, zlocin)
-            var zl10 = insertZadatak("Amelia is trying to lie", "Find evidence that proves she's lying", false, zl11, zlocin)
-            val zl9 = insertZadatak("Confront Amelia with the evidence",
-                "Confront Amelia with the results of the knife analysis and the threatening messages",
+            var zl10 = insertZadatak("New evidence found", "Queen of Hearts card hidden in Isabelle's hotel room", false, null, zlocin)
+            val zl9 = insertZadatak("Interrogate Amelia",
+                "Question Amelia",
                 false, zl10, zlocin
             )
 
@@ -1392,6 +1432,10 @@ class RealmViewModel @Inject constructor(
             )
 
             var dokazZadatakNoz=insertDokazZadatak("Send Evidence for Analysis", dokaz1,false,zl0)
+
+            var dokazZadatakNoz2=insertDokazZadatak("Send Evidence for Analysis", dokaz5,false,zl6)
+
+            var forenzickiDokazZadatak = insertForenzickiDokazZadatak("Send",forenzickiDokaz,false,zl7)
 
             var ispitivanjeSvedokaZadatakAmelia=insertIspitivanjeSvedokaZadatak(svedokAmeliaFontaine,zl2,false)
 
@@ -1491,6 +1535,26 @@ suspend fun selectEvidencesTasks(evidences: List<DokazR>): List<DokazZadatakR> {
 
     val filteredDokazZadatak = allDokazZadatak.filter { task ->
         evidenceIds.contains(task.dokazId?.idDokaz)
+    }
+
+    return filteredDokazZadatak
+}
+
+suspend fun selectForensicEvidences(): List<ForenzickiDokazR>{
+    val dokazi: List<ForenzickiDokazR>
+
+    dokazi = realm.query<ForenzickiDokazR>().find()
+
+    return dokazi
+}
+
+suspend fun selectForensicEvidencesTasks(evidences: List<ForenzickiDokazR>): List<ForenzickiDokazZadatakR> {
+    val allDokazZadatak: List<ForenzickiDokazZadatakR> = realm.query<ForenzickiDokazZadatakR>().find()
+
+    val evidenceIds: List<Int> = evidences.map { it.idForenzickiDokaz }
+
+    val filteredDokazZadatak = allDokazZadatak.filter { task ->
+        evidenceIds.contains(task.forenzickiDokazId?.idForenzickiDokaz)
     }
 
     return filteredDokazZadatak

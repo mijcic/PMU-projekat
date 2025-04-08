@@ -151,6 +151,7 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                         Button(onClick = {
                             navController.navigate(destinationEvidencePage.route)
                             myViewModel.getEvidences()
+                            myViewModel.getForensicEvidences()
                         }) {
                             Text(
                                 text = "Evidence", color = Color.White,

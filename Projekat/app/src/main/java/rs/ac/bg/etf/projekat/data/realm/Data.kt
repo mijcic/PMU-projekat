@@ -408,6 +408,17 @@ open class ForenzickiDokazR : RealmObject {
     var veza: String = ""
 }
 
+// ForenzickiDokazZadatakR table
+open class ForenzickiDokazZadatakR : RealmObject {
+    @PrimaryKey
+    var idForenzickiDokazZadatak: Int = 0
+    var tekst: String =""
+    var forenzickiDokazId: ForenzickiDokazR? =null
+    var uradjen: Boolean =false
+    var zadatakId: ZadatakR? =null
+}
+
+
 // Enum for TipForenzickiDokaz
 enum class TipForenzickiDokazR {
     otisak,
@@ -556,5 +567,6 @@ val realmClasses = listOf(
     DokazZadatakR::class,
     IspitivanjeOsumnjicenogZadatakR::class,
     IspitivanjeSvedokaZadatakR::class,
-    TelefonZadatakR::class
+    TelefonZadatakR::class,
+    ForenzickiDokazZadatakR::class
 )

@@ -56,13 +56,15 @@ import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
+import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
+import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 
 @Composable
 fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
 
     LaunchedEffect(Unit) {
-        realmViewModel.insertDataForMurder()
-        myViewModel.getAllDataZlocin()
+       // realmViewModel.insertDataForMurder()
+       // myViewModel.getAllDataZlocin()
     }
 
     Box(
@@ -73,6 +75,9 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
         var textWidth by remember { mutableStateOf(0f) }
         var paddingStart by remember { mutableStateOf(0.dp) }
         val uiStateEvidence by myViewModel.uiStateEvidence.collectAsState()
+        val uiStateForensicEvidence by myViewModel.uiStateForensicEvidence.collectAsState()
+
+        val uiStateCntEvidence by myViewModel.uiStateCntEvidence.collectAsState()
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -116,6 +121,7 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
             }
 
             val showDialog = remember { mutableStateOf(false) }
+            val showDialog2 = remember { mutableStateOf(false) }
 
             Column(
                 modifier = Modifier
@@ -126,19 +132,77 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
                     itemsIndexed(uiStateEvidence.evidences) {
                         index,i->
 
+                            if(index==0){
+                                Text(text = "Evidences", color = Color.White,
+                                    style = TextStyle(
+                                        fontFamily = FontFamily(
+                                            Font(R.font.special_elite)
+                                        ),
+                                        fontSize = 26.sp,
+                                        color = Color.Black
+                                    ),
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+
                             val filteredTasks = uiStateEvidence.evidencesTasks.filter { task ->
                                 task.dokazId?.idDokaz == i.idDokaz
                             }
-                            if(index==0) {
+                            if(index<=uiStateCntEvidence.cnt) {
                                 CardEvidenceShow(showDialog,i)
-                                showDialog.value=EvidenceDialog(showDialog,i,filteredTasks,myViewModel)
+                                showDialog.value=EvidenceDialog(showDialog,i,filteredTasks,myViewModel,uiStateCntEvidence.cnt)
 
                             }
                             else {
                                 CardEvidenceLock(i)
                             }
                     }
+
+
+                    itemsIndexed(uiStateForensicEvidence.forensicEvidences) {
+                            index,i->
+
+                        if(index==0){
+
+                            Text(text = "Forensic Evidences", color = Color.White,
+                                style = TextStyle(
+                                    fontFamily = FontFamily(
+                                        Font(R.font.special_elite)
+                                    ),
+                                    fontSize = 26.sp,
+                                    color = Color.Black
+                                ),
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+
+                        val filteredTasks = uiStateForensicEvidence.forensicEvidencesTasks.filter { task ->
+                            task.forenzickiDokazId?.idForenzickiDokaz == i.idForenzickiDokaz
+                        }
+                        if(index==0) {
+                            CardEvidenceShow(showDialog2,i)
+                            showDialog2.value=ForensicEvidenceDialog(showDialog2,i,filteredTasks,myViewModel)
+                        }
+                        else {
+                            CardEvidenceLock(i)
+                        }
+                    }
                 }
+            }
+
+
+            Column(
+                modifier = Modifier.padding(start = paddingStart),
+            ) {
+                Text(text = "Forensic Evidences", color = Color.White,
+                    style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        ),
+                        fontSize = 26.sp,
+                        color = Color.Black
+                    )
+                )
             }
         }
     }
@@ -146,7 +210,7 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
 
 
 @Composable
-fun CardEvidenceShow(showDialog: MutableState<Boolean>, i: DokazR){
+fun <T> CardEvidenceShow(showDialog: MutableState<Boolean>, i: T) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,32 +226,69 @@ fun CardEvidenceShow(showDialog: MutableState<Boolean>, i: DokazR){
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Evidence Type",
-                    tint = Color(0xFF1D72B8), // Plava za fizičke dokaze
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (i.tipDokaza == "fizicki") "Physical Evidence" else "Digital Evidence",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+            // Determining the type of the evidence and handling accordingly
+            when (i) {
+                is DokazR -> { // If the type is DokazR
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Evidence Type",
+                            tint = Color(0xFF1D72B8), // Blue for physical evidence
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (i.tipDokaza == "fizicki") "Physical Evidence" else  "Digital Evidence",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = i.opis, // Using 'opis' for DokazR
+                        style = TextStyle(fontSize = 14.sp, color = Color.Black)
                     )
-                )
+                }
+                is ForenzickiDokazR -> { // If the type is ForenzickiDokazR
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Evidence Type",
+                            tint = Color(0xFF1D72B8), // Blue for physical evidence
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (i.tipForenzickiDokaz == "DNK") "DNK" else if(i.tipForenzickiDokaz =="otisak") "otisak" else "dokument",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
 
+                    Text(
+                        text = i.opis, // Using 'opis' for ForenzickiDokazR
+                        style = TextStyle(fontSize = 14.sp, color = Color.Black)
+                    )
+                }
+                else -> { // Handle any other type or default case
+                    Text(
+                        text = "Unknown Evidence Type",
+                        style = TextStyle(fontSize = 14.sp, color = Color.Gray)
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "${i.opis}",
-                style = TextStyle(fontSize = 14.sp, color = Color.Black)
-            )
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -209,7 +310,7 @@ fun CardEvidenceShow(showDialog: MutableState<Boolean>, i: DokazR){
 }
 
 @Composable
-fun CardEvidenceLock(i: DokazR){
+fun <T> CardEvidenceLock(i: T){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -249,7 +350,10 @@ fun CardEvidenceLock(i: DokazR){
 }
 
 @Composable
-fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR, dokazZadaci: List<DokazZadatakR>,myViewModel: MyViewModel):Boolean {
+fun EvidenceDialog(
+    showDialog: MutableState<Boolean>, i: DokazR, dokazZadaci: List<DokazZadatakR>,
+    myViewModel: MyViewModel, cnt: Int
+):Boolean {
     if (showDialog.value && !dokazZadaci.first().uradjen) {
         Box(
             modifier = Modifier
@@ -280,6 +384,65 @@ fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR, dokazZadaci: Li
                         onClick = {
                             myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
                             showDialog.value = false
+                            myViewModel.cntIncrement(cnt)
+                        }
+                    ) {
+                        Text(dokazZadaci.first().tekst,color=Color.White)
+
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        colors = ButtonColors(
+                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
+                            contentColor = Color.DarkGray,
+                            disabledContentColor = Color.DarkGray
+                        ),
+                        onClick = { showDialog.value = false }
+                    ) {
+                        Text("Cancel",color=Color.White)
+                    }
+                },
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+    return showDialog.value
+}
+
+
+@Composable
+fun ForensicEvidenceDialog(showDialog: MutableState<Boolean>, i: ForenzickiDokazR, dokazZadaci: List<ForenzickiDokazZadatakR>,myViewModel: MyViewModel):Boolean {
+    if (showDialog.value && !dokazZadaci.first().uradjen) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.7f))
+                .clickable(enabled = true) { }
+        ) {
+            AlertDialog(
+                containerColor = Color.White,
+                onDismissRequest = {
+                    showDialog.value = false
+                },
+                title = { Text(text = dokazZadaci.first().tekst.toString()) },
+                text = {
+                    Column {
+                        Text("Only if you agree, please confirm.")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Forensic Evidence Type: ${if (i.tipForenzickiDokaz == "DNK") "DNK" else "otisak"}")
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        colors = ButtonColors(
+                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
+                            contentColor = Color.DarkGray,
+                            disabledContentColor = Color.DarkGray
+                        ),
+                        onClick = {
+                            //myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
+                            showDialog.value = false
 
                         }
                     ) {
@@ -304,4 +467,3 @@ fun EvidenceDialog(showDialog: MutableState<Boolean>, i: DokazR, dokazZadaci: Li
     }
     return showDialog.value
 }
-

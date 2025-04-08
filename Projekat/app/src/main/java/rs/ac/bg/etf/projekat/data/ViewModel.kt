@@ -19,6 +19,7 @@ import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
+import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
@@ -206,8 +207,41 @@ class MyViewModel @Inject constructor(
         }
     }
 
+
+
+    //UiStateCntEvidence
+
+    private val _uiStateCntEvidence = MutableStateFlow(UiStateCntEvidence())
+    val uiStateCntEvidence : StateFlow<UiStateCntEvidence> = _uiStateCntEvidence
+
+    fun cntIncrement(cnt: Int) =viewModelScope.launch {
+        try {
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt+1)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateCntEvidence.value = UiStateCntEvidence(0)
+        }
+    }
+
+    private val _uiStateForensicEvidence = MutableStateFlow(UiStateForensicEvidences())
+    val uiStateForensicEvidence : StateFlow<UiStateForensicEvidences> = _uiStateForensicEvidence
+
+    fun getForensicEvidences() = viewModelScope.launch {
+        try {
+            val response = selectForensicEvidences()
+            val response2 =selectForensicEvidencesTasks(response)
+            _uiStateForensicEvidence.value = UiStateForensicEvidences(response,response2)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateForensicEvidence.value = UiStateForensicEvidences(emptyList(), emptyList())
+        }
+    }
+
     fun updateEvidenceAndEvidenceTask(zadatakDokaz: DokazZadatakR) = viewModelScope.launch {
         zadatakDokaz.zadatakId?.idZadatak?.let { updateDokazZadatakAndZadatak(it,zadatakDokaz.idDokazZadatak) }
+
     }
 
     fun updateSuspectTask(zadatak: IspitivanjeOsumnjicenogZadatakR) = viewModelScope.launch {
@@ -273,4 +307,13 @@ data class UiStateTasks(
 data class UiStateEvidences(
     val evidences: List<DokazR> = emptyList(),
     val evidencesTasks: List<DokazZadatakR> = emptyList()
+)
+
+data class UiStateForensicEvidences(
+    val forensicEvidences: List<ForenzickiDokazR> = emptyList(),
+    val forensicEvidencesTasks: List<ForenzickiDokazZadatakR> = emptyList()
+)
+
+data class UiStateCntEvidence(
+    val cnt: Int =0
 )
