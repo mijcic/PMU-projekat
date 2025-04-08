@@ -41,6 +41,7 @@ import rs.ac.bg.etf.projekat.data.realm.StatusSvedokR
 import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonR
+import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
 import rs.ac.bg.etf.projekat.data.realm.TipDokazaR
 import rs.ac.bg.etf.projekat.data.realm.TipForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
@@ -805,6 +806,40 @@ class RealmViewModel @Inject constructor(
         return ispitivanjeSvedokaZadatak
     }
 
+    suspend fun insertTelefonZadatak(
+        telefonZ: TelefonR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
+    ): TelefonZadatakR? {
+        var telefonZadatak: TelefonZadatakR? = null
+
+        realm.write {
+            val existingZadatak = zadatakIdZ?.let {
+                query<ZadatakR>("idZadatak == $0", it.idZadatak).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            val existingTelefon = telefonZ?.let {
+                query<TelefonR>("idTelefon == $0", it.idTelefon).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            telefonZadatak = query<TelefonZadatakR>(
+                "telefonId == $0 AND zadatakId == $1 AND uradjen ==$2",
+                existingTelefon, existingZadatak, uradjenZ
+            ).find().firstOrNull() ?: TelefonZadatakR().apply {
+                idTelefonZadatak =
+                    (query<TelefonZadatakR>().find().maxOfOrNull { it.idTelefonZadatak } ?: 0) + 1
+                telefonId = existingTelefon
+                zadatakId = existingZadatak
+                uradjen = uradjenZ
+            }
+
+            copyToRealm(telefonZadatak!!)
+        }
+        return telefonZadatak
+    }
+
+
+
     suspend fun getTitleDatePlaceDescFromCrime() {
         var title: String? = ""
         var date: RealmInstant? = null
@@ -1353,9 +1388,11 @@ class RealmViewModel @Inject constructor(
                 zlocin
             )
 
-            insertDokazZadatak("Send Evidence for Analysis", dokaz1,false,zl0)
+            var dokazZadatakNoz=insertDokazZadatak("Send Evidence for Analysis", dokaz1,false,zl0)
 
-            insertIspitivanjeSvedokaZadatak(svedokAmeliaFontaine,zl2,false)
+            var ispitivanjeSvedokaZadatakAmelia=insertIspitivanjeSvedokaZadatak(svedokAmeliaFontaine,zl2,false)
+
+            var telefonZadatak=insertTelefonZadatak(telefon,zl3, false)
 
         }
     }
@@ -1550,3 +1587,35 @@ fun selectIspitivanjeSvedokaZadatak(svedokZ: SvedokR?): IspitivanjeSvedokaZadata
 }
 
 
+suspend fun updateTelefonZadatak(telefonZadatak: Int,zadatakId:Int ) {
+    val realm = MainActivity.realm
+
+    realm.write {
+        val telefon = query(TelefonZadatakR::class).find()
+
+        val telefonZ =
+            telefon.firstOrNull { it.idTelefonZadatak == telefonZadatak }
+
+        if (telefonZ != null) {
+            telefonZ.uradjen = true
+
+            val zadaci = query(ZadatakR::class).find()
+
+            val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+
+            if (zadatak != null) {
+                zadatak.uradjen = true
+            }
+        }
+    }
+}
+
+//izmeniti -> dodati Telefon kao parametar
+fun selectTelefonZadatak(): TelefonZadatakR? {
+    val zadaci = realm.query<TelefonZadatakR>(
+        "uradjen == $0",
+         false
+    ).find()
+
+    return zadaci.firstOrNull()
+}

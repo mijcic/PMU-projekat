@@ -37,6 +37,7 @@ import rs.ac.bg.etf.projekat.data.realm.StatusSvedokR
 import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonR
+import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
 import rs.ac.bg.etf.projekat.data.realm.TipDokazaR
 import rs.ac.bg.etf.projekat.data.realm.TipForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
@@ -223,6 +224,10 @@ class MyViewModel @Inject constructor(
                 it
             )
         }
+    }
+
+    fun updateTelefonTask(telefon: TelefonZadatakR) = viewModelScope.launch {
+        telefon.zadatakId?.idZadatak?.let { updateTelefonZadatak(telefon.idTelefonZadatak, it) }
     }
 
 }

@@ -250,11 +250,11 @@ fun NavigationButtons(onReset: () -> Unit, myViewModel: MyViewModel,realmViewMod
         Spacer(modifier = Modifier.width(16.dp))
         Button(
             onClick = {
-                //selectIspitivanjeOsumnjicenogZadatak(uiPitanjaZaOsumnjicenog.generalQuestions.first().osumnjicenId)?.let {
-                  //  myViewModel.updateSuspectTask(
-                    //    it
-                    //)
-               // }
+                selectIspitivanjeOsumnjicenogZadatak(uiPitanjaZaOsumnjicenog.generalQuestions.first().osumnjicenId)?.let {
+                    myViewModel.updateSuspectTask(
+                        it
+                    )
+                }
                 onReset() },
             modifier = Modifier
                 .weight(1f)

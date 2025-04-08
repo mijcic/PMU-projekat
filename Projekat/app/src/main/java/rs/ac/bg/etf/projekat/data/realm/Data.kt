@@ -305,6 +305,15 @@ open class TelefonR : RealmObject {
     var sifra: String = ""
 }
 
+// TelefonZadatakR table
+open class TelefonZadatakR: RealmObject {
+    @PrimaryKey
+    var idTelefonZadatak: Int=0
+    var telefonId: TelefonR? =null
+    var zadatakId: ZadatakR? =null
+    var uradjen: Boolean =false
+}
+
 // KontaktR table
 open class KontaktR : RealmObject {
     @PrimaryKey
@@ -546,5 +555,6 @@ val realmClasses = listOf(
     ZadatakR::class,
     DokazZadatakR::class,
     IspitivanjeOsumnjicenogZadatakR::class,
-    IspitivanjeSvedokaZadatakR::class
+    IspitivanjeSvedokaZadatakR::class,
+    TelefonZadatakR::class
 )

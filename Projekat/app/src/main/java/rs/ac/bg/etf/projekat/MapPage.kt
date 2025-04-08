@@ -1,6 +1,5 @@
 package rs.ac.bg.etf.projekat
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,8 +18,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -28,6 +29,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -58,9 +59,9 @@ import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 
 @Composable
-fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
+fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
     LaunchedEffect(Unit) {
-
+        // Add any initial setup if needed
     }
 
     Box(
@@ -72,7 +73,7 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
         var paddingStart by remember { mutableStateOf(0.dp) }
         val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
 
-
+        // Background and overlay
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -90,19 +91,17 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
             )
         }
 
+        // Content
         Column(modifier = Modifier
             .align(Alignment.TopCenter).padding(top = 22.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally)
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
-        {
             Column(modifier = Modifier) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Column(
-                modifier = Modifier.padding(start = paddingStart),
-            ) {
+            Column(modifier = Modifier.padding(start = paddingStart)) {
                 Text(text = "Tasks", color = Color.White,
                     style = TextStyle(
                         fontFamily = FontFamily(
@@ -123,23 +122,22 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                     modifier = Modifier.fillMaxSize()
                 ) {
                     var firstFalseFound = false
-                    var firstIndex=-1
+                    var firstIndex = -1
 
                     itemsIndexed(uiStateTasks.tasks) { index, item ->
                         var isLocked = !item.uradjen
                         var isChecked = item.uradjen
 
-                        if (item.uradjen==true){
+                        if (item.uradjen == true) {
                             isLocked = false
                             isChecked = true
-                        }else {
-                            if (firstFalseFound==false || firstIndex==index){
+                        } else {
+                            if (!firstFalseFound || firstIndex == index) {
                                 isLocked = false
                                 isChecked = false
-                                firstFalseFound=true
-                                firstIndex=index
-                            }
-                            else{
+                                firstFalseFound = true
+                                firstIndex = index
+                            } else {
                                 isLocked = true
                                 isChecked = false
                             }
@@ -210,6 +208,22 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                     }
                 }
             }
+        }
+
+        // Back Button (Red X)
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top=40.dp,end=25.dp).size(18.dp)
+                .background(Color(0xFF8B0000), shape = CircleShape)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Back",
+                tint = Color.White,
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
