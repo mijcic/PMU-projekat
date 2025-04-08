@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -250,6 +251,7 @@ fun NavigationButtons(onReset: () -> Unit, myViewModel: MyViewModel,realmViewMod
         Spacer(modifier = Modifier.width(16.dp))
         Button(
             onClick = {
+                Log.d("UPO",uiPitanjaZaOsumnjicenog.generalQuestions.first().osumnjicenId.toString())
                 selectIspitivanjeOsumnjicenogZadatak(uiPitanjaZaOsumnjicenog.generalQuestions.first().osumnjicenId)?.let {
                     myViewModel.updateSuspectTask(
                         it

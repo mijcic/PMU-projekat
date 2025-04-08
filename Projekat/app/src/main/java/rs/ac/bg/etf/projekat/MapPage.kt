@@ -24,14 +24,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -118,6 +121,11 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
+                var showDialog by remember { mutableStateOf(false) }
+
+                // State za provere da li su svi zadaci završeni
+                val allTasksCompleted = uiStateTasks.tasks.all { it.uradjen }
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -206,6 +214,44 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                             }
                         }
                     }
+
+                    if (allTasksCompleted) {
+                        item {
+                            Divider(modifier = Modifier.padding(vertical = 16.dp))
+                        }
+                        item {
+                            Button(
+                                onClick = { showDialog = true },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                shape = MaterialTheme.shapes.medium
+                            ) {
+                                Text(text = "Questions")
+                            }
+                        }
+                    }
+                }
+
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text(text = "Are you sure?") },
+                        text = { Text(text = "Do you want to finish the case and go to the questions page?") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showDialog = false
+                                navController.navigate(questionsPage.route)
+                            }) {
+                                Text("Yes")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDialog = false }) {
+                                Text("No")
+                            }
+                        }
+                    )
                 }
             }
         }

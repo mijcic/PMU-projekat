@@ -1331,6 +1331,7 @@ class RealmViewModel @Inject constructor(
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Why do you think Marco might be involved in Isabelle's death?", "Marco had a clear motive – money and gambling debts. But after hearing the details of the investigation, I’m starting to doubt his innocence. I didn’t know who else could have done it until the truth started coming out.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
 
+
             var zl11 = insertZadatak("New evidence found", "Queen of Hearts card hidden in Isabelle's hotel room", false, null, zlocin)
             var zl10 = insertZadatak("Amelia is trying to lie", "Find evidence that proves she's lying", false, zl11, zlocin)
             val zl9 = insertZadatak("Confront Amelia with the evidence",
@@ -1356,9 +1357,10 @@ class RealmViewModel @Inject constructor(
                 false, zl7, zlocin
             )
 
+
             val zl5 = insertZadatak(
-                "Re-interrogate Marc",
-                "Question Marc again",
+                "Interrogate Marco",
+                "Question Marco",
                 false, zl6, zlocin
             )
 
@@ -1373,6 +1375,7 @@ class RealmViewModel @Inject constructor(
                 "Study the contacts on the victim's phone",
                 false, zl4, zlocin
             )
+
 
             val zl2 = insertZadatak(
                 "Interview witnesses",
@@ -1393,6 +1396,10 @@ class RealmViewModel @Inject constructor(
             var ispitivanjeSvedokaZadatakAmelia=insertIspitivanjeSvedokaZadatak(svedokAmeliaFontaine,zl2,false)
 
             var telefonZadatak=insertTelefonZadatak(telefon,zl3, false)
+
+            var ispitivanjeOsumnjicenogZadatakVincent = insertIspitivanjeOsumnjicenogZadatak(osumnjiceniVincentDuval,zl4,false)
+
+            var ispitivanjeOsumnjicenogZadatakMarco = insertIspitivanjeOsumnjicenogZadatak(osumnjiceniMarcoBellini,zl5,false)
 
         }
     }
@@ -1543,12 +1550,12 @@ suspend fun updateIspitivanjeOsumnjicenogZadatak(ispitivanjeOsumnjicenogZadatak:
 }
 
 fun selectIspitivanjeOsumnjicenogZadatak(osumnjicenZ: OsumnjicenR?): IspitivanjeOsumnjicenogZadatakR? {
-    // Izvrši upit da preuzmeš sve zadatke koji odgovaraju osumnjičenom i uradjen statusu
+    Log.d("UPO",osumnjicenZ.toString())
     val zadaci = realm.query<IspitivanjeOsumnjicenogZadatakR>(
         "osumnjicenId == $0 AND uradjen == $1",
         osumnjicenZ, false
     ).find()
-
+    Log.d("UPO",zadaci.toString())
     return zadaci.firstOrNull()
 }
 
