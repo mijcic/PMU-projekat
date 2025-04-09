@@ -32,6 +32,7 @@ import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
+import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
 import rs.ac.bg.etf.projekat.data.realm.StatusPorukeR
 import rs.ac.bg.etf.projekat.data.realm.StatusSvedokR
@@ -214,13 +215,26 @@ class MyViewModel @Inject constructor(
     private val _uiStateCntEvidence = MutableStateFlow(UiStateCntEvidence())
     val uiStateCntEvidence : StateFlow<UiStateCntEvidence> = _uiStateCntEvidence
 
+    private val _uiStateCntForensicEvidence = MutableStateFlow(UiStateCntForensicEvidence())
+    val uiStateCntForensicEvidence : StateFlow<UiStateCntForensicEvidence> = _uiStateCntForensicEvidence
+
     fun cntIncrement(cnt: Int) =viewModelScope.launch {
         try {
-            _uiStateCntEvidence.value = UiStateCntEvidence(cnt+1)
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt=cnt+1)
         }
         catch (e:Exception){
             e.printStackTrace()
-            _uiStateCntEvidence.value = UiStateCntEvidence(0)
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt=0)
+        }
+    }
+
+    fun cntForensicIncrement(cnt: Int) =viewModelScope.launch {
+        try {
+            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = cnt+1)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = 0)
         }
     }
 
@@ -241,8 +255,12 @@ class MyViewModel @Inject constructor(
 
     fun updateEvidenceAndEvidenceTask(zadatakDokaz: DokazZadatakR) = viewModelScope.launch {
         zadatakDokaz.zadatakId?.idZadatak?.let { updateDokazZadatakAndZadatak(it,zadatakDokaz.idDokazZadatak) }
-
     }
+
+    fun updateForensicEvidenceAndForensicEvidenceTask(zadatakDokaz: ForenzickiDokazZadatakR) = viewModelScope.launch {
+        zadatakDokaz.zadatakId?.idZadatak?.let { updateForenzickiDokazZadatakAndZadatak(it,zadatakDokaz.idForenzickiDokazZadatak) }
+    }
+
 
     fun updateSuspectTask(zadatak: IspitivanjeOsumnjicenogZadatakR) = viewModelScope.launch {
         zadatak.zadatakId?.idZadatak?.let {
@@ -264,6 +282,10 @@ class MyViewModel @Inject constructor(
         telefon.zadatakId?.idZadatak?.let { updateTelefonZadatak(telefon.idTelefonZadatak, it) }
     }
 
+
+    fun updatePorukeTask(poruke: PorukeZadatakR) = viewModelScope.launch {
+        poruke.zadatakId?.idZadatak?.let { updatePorukeZadatak(poruke.idPorukeZadatak, it) }
+    }
 }
 
 data class UiStateZlocin(
@@ -316,4 +338,8 @@ data class UiStateForensicEvidences(
 
 data class UiStateCntEvidence(
     val cnt: Int =0
+)
+
+data class UiStateCntForensicEvidence(
+    val forensicCnt: Int=0
 )

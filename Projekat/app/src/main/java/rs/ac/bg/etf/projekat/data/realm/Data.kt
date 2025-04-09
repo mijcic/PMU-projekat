@@ -328,7 +328,6 @@ open class KontaktR : RealmObject {
 open class PorukeR : RealmObject {
     @PrimaryKey
     var idPoruke: Int = 0
-    //@Ignore
     var tipPoruke: String = ""
     var sadrzaj: String = ""
     var datumVreme: RealmInstant? = null
@@ -337,6 +336,16 @@ open class PorukeR : RealmObject {
     var statusPoruke: String =StatusPorukeR.read.name
     var sifrovana: Boolean = false
 }
+
+//Table PorukeZadatak
+open class PorukeZadatakR: RealmObject {
+    @PrimaryKey
+    var idPorukeZadatak: Int =0
+    var porukeId: PorukeR? =null
+    var zadatakId: ZadatakR? =null
+    var uradjen: Boolean = false
+}
+
 
 // Enum for TipPoruke
 enum class TipPorukeR {
@@ -568,5 +577,6 @@ val realmClasses = listOf(
     IspitivanjeOsumnjicenogZadatakR::class,
     IspitivanjeSvedokaZadatakR::class,
     TelefonZadatakR::class,
-    ForenzickiDokazZadatakR::class
+    ForenzickiDokazZadatakR::class,
+    PorukeZadatakR::class
 )

@@ -78,6 +78,7 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
         val uiStateForensicEvidence by myViewModel.uiStateForensicEvidence.collectAsState()
 
         val uiStateCntEvidence by myViewModel.uiStateCntEvidence.collectAsState()
+        val uiStateCntForensicEvidence by myViewModel.uiStateCntForensicEvidence.collectAsState()
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -179,9 +180,9 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
                         val filteredTasks = uiStateForensicEvidence.forensicEvidencesTasks.filter { task ->
                             task.forenzickiDokazId?.idForenzickiDokaz == i.idForenzickiDokaz
                         }
-                        if(index==0) {
+                        if(index<=uiStateCntForensicEvidence.forensicCnt) {
                             CardEvidenceShow(showDialog2,i)
-                            showDialog2.value=ForensicEvidenceDialog(showDialog2,i,filteredTasks,myViewModel)
+                            showDialog2.value=ForensicEvidenceDialog(showDialog2,i,filteredTasks,myViewModel,uiStateCntForensicEvidence.forensicCnt)
                         }
                         else {
                             CardEvidenceLock(i)
@@ -412,7 +413,7 @@ fun EvidenceDialog(
 
 
 @Composable
-fun ForensicEvidenceDialog(showDialog: MutableState<Boolean>, i: ForenzickiDokazR, dokazZadaci: List<ForenzickiDokazZadatakR>,myViewModel: MyViewModel):Boolean {
+fun ForensicEvidenceDialog(showDialog: MutableState<Boolean>, i: ForenzickiDokazR, dokazZadaci: List<ForenzickiDokazZadatakR>,myViewModel: MyViewModel,cnt: Int):Boolean {
     if (showDialog.value && !dokazZadaci.first().uradjen) {
         Box(
             modifier = Modifier
@@ -441,8 +442,9 @@ fun ForensicEvidenceDialog(showDialog: MutableState<Boolean>, i: ForenzickiDokaz
                             disabledContentColor = Color.DarkGray
                         ),
                         onClick = {
-                            //myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
+                            myViewModel.updateForensicEvidenceAndForensicEvidenceTask(dokazZadaci.first())
                             showDialog.value = false
+                            myViewModel.cntForensicIncrement(cnt)
 
                         }
                     ) {

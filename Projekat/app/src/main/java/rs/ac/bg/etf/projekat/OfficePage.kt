@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.selectPorukeZadatak
 import rs.ac.bg.etf.projekat.data.selectTelefonZadatak
 
 @Composable
@@ -164,6 +165,7 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                         }
                         Button(onClick = {
                             selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
+                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
                             navController.navigate(destinationPhonePage.route) }) {
                             Text(
                                 text = "Phone", color = Color.White,
