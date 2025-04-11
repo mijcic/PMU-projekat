@@ -255,6 +255,7 @@ fun <T> CardEvidenceShow(showDialog: MutableState<Boolean>, i: T) {
                         text = i.opis, // Using 'opis' for DokazR
                         style = TextStyle(fontSize = 14.sp, color = Color.Black)
                     )
+
                 }
                 is ForenzickiDokazR -> { // If the type is ForenzickiDokazR
                     Row(

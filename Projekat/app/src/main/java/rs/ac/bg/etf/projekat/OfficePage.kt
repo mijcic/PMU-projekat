@@ -9,14 +9,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -57,33 +62,17 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                 modifier = Modifier
                     .padding(16.dp)
                     .size(60.dp),
-                shape = MaterialTheme.shapes.small,
-                containerColor = Color.DarkGray
+                shape = MaterialTheme.shapes.medium,
+                containerColor = Color(0xFF424242),
+                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 8.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Tasks",
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Tasks",
-                        color = Color.White,
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
-                        )
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Tasks",
+                    tint = Color.White,
+                    modifier = Modifier.size(32.dp)
+                )
             }
-
         },
         content = { paddingValues ->
             Box(
@@ -93,8 +82,6 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
             ) {
                 val configuration = LocalConfiguration.current
                 val screenWidth = configuration.screenWidthDp
-                var textWidth by remember { mutableStateOf(0f) }
-                var paddingStart by remember { mutableStateOf(0.dp) }
 
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -109,7 +96,7 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .background(Color.Black.copy(alpha = 0.5f))
+                            .background(Color.Black.copy(alpha = 0.6f))
                     )
                 }
 
@@ -120,61 +107,63 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier
-                    ) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
 
-                    Column(
-                        modifier = Modifier
-                    ) {
-                        Button(onClick = { navController.navigate(destinationSuspectsPage.route) }) {
-                            Text(
-                                text = "Suspects", color = Color.White,
-                                style = TextStyle(
-                                    fontFamily = FontFamily(
-                                        Font(R.font.special_elite)
-                                    ), fontSize = 26.sp, color = Color.Black
+                    Text(
+                        text = "Office",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.special_elite)),
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    val buttons = listOf(
+                        "Suspects" to destinationSuspectsPage.route,
+                        "Witnesses" to destinationWitnessesPage.route,
+                        "Evidence" to destinationEvidencePage.route,
+                        "Phone" to destinationPhonePage.route
+                    )
+
+                    buttons.forEach { (label, route) ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .padding(8.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C))
+                        ) {
+                            Button(
+                                onClick = {
+                                    when (label) {
+                                        "Evidence" -> {
+                                            myViewModel.getEvidences()
+                                            myViewModel.getForensicEvidences()
+                                        }
+                                        "Phone" -> {
+                                            selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
+                                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
+                                        }
+                                    }
+                                    navController.navigate(route)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 12.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF424242))
+                            ) {
+                                Text(
+                                    text = label,
+                                    color = Color.White,
+                                    style = TextStyle(
+                                        fontFamily = FontFamily(Font(R.font.special_elite)),
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 )
-                            )
-                        }
-                        Button(onClick = { navController.navigate(destinationWitnessesPage.route) }) {
-                            Text(
-                                text = "Witnesses", color = Color.White,
-                                style = TextStyle(
-                                    fontFamily = FontFamily(
-                                        Font(R.font.special_elite)
-                                    ), fontSize = 26.sp, color = Color.Black
-                                )
-                            )
-                        }
-                        Button(onClick = {
-                            navController.navigate(destinationEvidencePage.route)
-                            myViewModel.getEvidences()
-                            myViewModel.getForensicEvidences()
-                        }) {
-                            Text(
-                                text = "Evidence", color = Color.White,
-                                style = TextStyle(
-                                    fontFamily = FontFamily(
-                                        Font(R.font.special_elite)
-                                    ), fontSize = 26.sp, color = Color.Black
-                                )
-                            )
-                        }
-                        Button(onClick = {
-                            selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
-                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
-                            navController.navigate(destinationPhonePage.route) }) {
-                            Text(
-                                text = "Phone", color = Color.White,
-                                style = TextStyle(
-                                    fontFamily = FontFamily(
-                                        Font(R.font.special_elite)
-                                    ), fontSize = 26.sp, color = Color.Black
-                                )
-                            )
+                            }
                         }
                     }
                 }

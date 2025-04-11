@@ -96,8 +96,8 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         //startDestination = "destinationMainScreen1"
-        startDestination = "destinationMainScreen2"
-        //startDestination = "destinationQuestionsPage"
+        //startDestination = "destinationMainScreen2"
+        startDestination = "destinationQuestionsPage"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)
@@ -179,13 +179,19 @@ fun NavigationGraph(navController: NavHostController) {
             PhonePage(navController)
         }
         composable("destinationQuestionsPage") {
-            QuestionsPage(navController)
+            QuestionsPage(navController, viewModel)
         }
         composable("destinationEvidencePage") {
             EvidencePage(navController, viewModel,realmViewModel)
         }
         composable("destinationMapPage") {
             MapPage(navController, viewModel,realmViewModel)
+        }
+        composable(route = "destinationScoreQuestionsPage/{totalScore}",
+            arguments = listOf(navArgument("totalScore") { type = NavType.StringType }),
+        ) { navBackStackEntry ->
+            val totalScore =navBackStackEntry.arguments?.getString("totalScore") ?:""
+            ScoreQuestionsPage(navController,totalScore,viewModel)
         }
     }
 }

@@ -1004,10 +1004,10 @@ class RealmViewModel @Inject constructor(
 
             val zlocin: ZlocinR? = insertZlocin(
                 tipZlocina,
-                "Ubistvo Isabelle Moreau",
+                "Murder of Isabelle Moreau",
                 "16.11.2023",
-                "Hotel u Monte Karlu",
-                "Ubistvo poznate poslovne žene Isabelle Moreau pod misterioznim okolnostima.",
+                "Hotel in Monte Carlo",
+                "Murder of the famous businesswoman Isabelle Moreau under mysterious circumstances.",
                 stZlocinR.u_istrazi.name
             )
 
@@ -1075,14 +1075,14 @@ class RealmViewModel @Inject constructor(
 
             var dokaz1: DokazR? = insertDokaz(
                 TipDokazaR.fizicki.name,
-                "Krvavi nož sa inicijalima 'M.B.' pronađen je na mestu zločina",
+                "A bloody knife with the initials 'M.B.' was found at the crime scene.",
                 zlocin,
                 zrtva,
                 1
             )
             var dokaz5: DokazR? = insertDokaz(
                 TipDokazaR.fizicki.name,
-                "Na nozu su nadjeni tragovi koze",
+                "Traces of skin were found on the knife.",
                 zlocin,
                 zrtva,
                 0
@@ -1090,7 +1090,7 @@ class RealmViewModel @Inject constructor(
 
             var dokaz6: DokazR? = insertDokaz(
                 TipDokazaR.fizicki.name,
-                "Pronadjena kartica kraljice srca skrivena u hotelskoj sobi Isabelle",
+                "A Queen of Hearts playing card was discovered hidden in Isabelle's hotel room.",
                 zlocin,
                 zrtva,
                 0
@@ -1176,7 +1176,7 @@ class RealmViewModel @Inject constructor(
 
             var forenzickiDokaz: ForenzickiDokazR? = insertForenzickiDokaz(
                 TipForenzickiDokazR.DNK.name,
-                "Na noktima žrtve pronađeni su ostaci kože. Čeka se rezultat analize.",
+                "Traces of skin were found under the victim's fingernails. The analysis results are pending.",
                 0,
                 zrtva,
                 "Potencijalna povezanost sa osumnjičenim Marcom Bellinijem."

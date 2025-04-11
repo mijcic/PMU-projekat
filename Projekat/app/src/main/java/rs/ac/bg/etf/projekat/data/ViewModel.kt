@@ -3,63 +3,27 @@ package rs.ac.bg.etf.projekat.data
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.type.TimeZone
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.realm.kotlin.Realm
-import io.realm.kotlin.UpdatePolicy
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
-import rs.ac.bg.etf.projekat.data.realm.AlibiR
-import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
-import rs.ac.bg.etf.projekat.data.realm.KontaktR
-import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
-import rs.ac.bg.etf.projekat.data.realm.MisijaR
-import rs.ac.bg.etf.projekat.data.realm.MotivR
-import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
-import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
-import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
-import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
-import rs.ac.bg.etf.projekat.data.realm.StatusPorukeR
-import rs.ac.bg.etf.projekat.data.realm.StatusSvedokR
-import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
-import rs.ac.bg.etf.projekat.data.realm.TelefonR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
-import rs.ac.bg.etf.projekat.data.realm.TipDokazaR
-import rs.ac.bg.etf.projekat.data.realm.TipForenzickiDokazR
-import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
-import rs.ac.bg.etf.projekat.data.realm.TipOsumnjicenR
-import rs.ac.bg.etf.projekat.data.realm.TipPorukeR
-import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
-import rs.ac.bg.etf.projekat.data.realm.ZlocinR
-import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
-import rs.ac.bg.etf.projekat.data.realm.stZlocinR
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -241,6 +205,7 @@ class MyViewModel @Inject constructor(
     private val _uiStateForensicEvidence = MutableStateFlow(UiStateForensicEvidences())
     val uiStateForensicEvidence : StateFlow<UiStateForensicEvidences> = _uiStateForensicEvidence
 
+
     fun getForensicEvidences() = viewModelScope.launch {
         try {
             val response = selectForensicEvidences()
@@ -286,6 +251,22 @@ class MyViewModel @Inject constructor(
     fun updatePorukeTask(poruke: PorukeZadatakR) = viewModelScope.launch {
         poruke.zadatakId?.idZadatak?.let { updatePorukeZadatak(poruke.idPorukeZadatak, it) }
     }
+
+
+    private val _uiSteteSelectedAnswers = MutableStateFlow(UiSteteSelectedAnswers())
+    val uiSteteSelectedAnswers : StateFlow<UiSteteSelectedAnswers> = _uiSteteSelectedAnswers
+
+    fun updateSelectedanswes(answers:Map<Int, Int?> ) = viewModelScope.launch {
+        Log.d("ANSWERS",answers.toString())
+        try {
+            _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(answers)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(emptyMap())
+        }
+    }
+
 }
 
 data class UiStateZlocin(
@@ -342,4 +323,8 @@ data class UiStateCntEvidence(
 
 data class UiStateCntForensicEvidence(
     val forensicCnt: Int=0
+)
+
+data class UiSteteSelectedAnswers(
+    var selectedAnswers: Map<Int, Int?>? = emptyMap()
 )

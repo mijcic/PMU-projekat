@@ -1,12 +1,10 @@
 package rs.ac.bg.etf.projekat
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -45,14 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
+import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.OdgovorR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun QuestionsPage(navController: NavController) {
+fun QuestionsPage(navController: NavController,myViewModel: MyViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -63,13 +60,13 @@ fun QuestionsPage(navController: NavController) {
 
         val realmViewModel: RealmViewModel = hiltViewModel()
 
-//        var questions: List<PitanjeR>? = null
-//        scope.launch {
-//            questions = realmViewModel.getAllPitanje()!!
-//        }
-
         var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
         var questionAnswersMap by remember { mutableStateOf<Map<PitanjeR, List<OdgovorR>>>(emptyMap()) }
+
+        // stanje za selektovane odgovore po pitanju
+        var selectedAnswers by remember { mutableStateOf<Map<Int, Int?>>(emptyMap()) }
+        // stanje za ukupne bodove
+        var totalScore by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {
             questions = realmViewModel.getAllPitanje()!!
@@ -143,13 +140,23 @@ fun QuestionsPage(navController: NavController) {
 
                             val answers = questionAnswersMap[question] ?: emptyList()
                             answers.forEach { answer ->
+                                val isSelected = selectedAnswers[question.idPitanje] == answer.idOdogovor
                                 Button(
-                                    onClick = {},
+                                    onClick = {
+                                        selectedAnswers = selectedAnswers + (question.idPitanje to answer.idOdogovor)
+                                        if (answer.tacan) {
+                                            totalScore += answer.bodovi
+                                        }
+                                    },
                                     modifier = Modifier
                                         .fillMaxWidth(0.8f)
-                                        .padding(vertical = 8.dp),
+                                        .padding(vertical = 8.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isSelected) colorResource(id = R.color.dark_purple) else Color(0xFF5E554F)
+                                        ),
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFF5E554F),
+                                        containerColor = if (isSelected) colorResource(id = R.color.dark_purple) else Color(0xFF5E554F),
                                         contentColor = Color.White
                                     ),
                                     shape = RoundedCornerShape(12.dp)
@@ -171,7 +178,8 @@ fun QuestionsPage(navController: NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            navController.navigate("destinationScorePage")
+                            myViewModel.updateSelectedanswes(selectedAnswers)
+                            navController.navigate("destinationScoreQuestionsPage/${totalScore.toString()}")
                         },
                         modifier = Modifier
                             .fillMaxWidth()
