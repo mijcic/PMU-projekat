@@ -35,6 +35,12 @@ fun Application.configureRouting() {
             call.respond(dokazi)
         }
 
+        get("/scoreKorisnika"){
+            print("scoreKorisnika")
+            val korisnici =fetchScoreKorisnici()
+            call.respond(korisnici)
+        }
+
         //post zahtevi
 
         post("/postZlocin"){
@@ -224,5 +230,20 @@ fun fetchForenzickiDokazFromDatabase(): List<ForenzickiDokaz> {
         val tip = resultSet.getString("tip")
         val idZlocin = resultSet.getInt("idZlocin")
         ForenzickiDokaz(idForenzickiDokaz, opis, tip, idZlocin)
+    }
+}
+
+fun fetchScoreKorisnici(): List<ScoreKorisnik> {
+    val query = "SELECT * FROM korisnik ORDER BY poeni DESC LIMIT 5"
+    val rawList = mutableListOf<ScoreKorisnik>()
+
+    executeQuery(query) { resultSet ->
+        val korisnickoIme = resultSet.getString("korisnickoIme")
+        val poeni = resultSet.getInt("poeni")
+        rawList.add(ScoreKorisnik(0,korisnickoIme, poeni))
+    }
+
+    return rawList.mapIndexed { index, korisnik ->
+        korisnik.copy(mesto = index + 1)
     }
 }

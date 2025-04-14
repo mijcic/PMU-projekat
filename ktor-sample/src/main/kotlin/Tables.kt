@@ -56,6 +56,13 @@ data class Korisnik(
 )
 
 @Serializable
+data class ScoreKorisnik(
+    val mesto: Int,
+    val korisnickoIme: String,
+    val poeni:Int,
+)
+
+@Serializable
 data class MessageResponse(
     val message: String
 )

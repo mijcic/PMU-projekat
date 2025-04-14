@@ -108,3 +108,10 @@ data class KorisnikRequest(
     val sifra: String,
     val email: String
 )
+
+// ScorePage korisnici
+data class ScorePageKorisnikResponse(
+    val mesto:Int,
+    val korisnickoIme:String,
+    val poeni:Int
+)

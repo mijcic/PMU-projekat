@@ -1,15 +1,10 @@
 package rs.ac.bg.etf.projekat.data.realm
 
-import android.hardware.camera2.CameraExtensionSession.StillCaptureLatency
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.Ignore
-
 import io.realm.kotlin.types.annotations.PrimaryKey
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
 
-// Zlocin table
+// PrijavljeniKorisnik table
 open class PrijavljeniKorisnikR : RealmObject {
     @PrimaryKey
     var idKorisnik: Int = 0
@@ -59,7 +54,7 @@ enum class nazivTipaZlocinaR {
     CultsAndSecrets
 }
 
-// NapredakIstrageR table
+// NapredakIstrage table
 open class NapredakIstrageR : RealmObject {
     @PrimaryKey
     var idNapredak: Int = 0
@@ -67,7 +62,7 @@ open class NapredakIstrageR : RealmObject {
     var zlocinId: ZlocinR? = null
 }
 
-// MisijaR table
+// Misija table
 open class MisijaR : RealmObject {
     @PrimaryKey
     var idMisija: Int = 0
@@ -77,7 +72,7 @@ open class MisijaR : RealmObject {
     var status: Int = 0
 }
 
-// MisijaPorukaR table
+// MisijaPoruka table
 open class MisijaPorukaR : RealmObject {
     @PrimaryKey
     var idMisija: Int = 0
@@ -105,20 +100,7 @@ enum class PolR{
     zenski
 }
 
-// OsumnjicenR table
-/*
 open class OsumnjicenR : RealmObject {
-    @PrimaryKey
-    var idOsumnjicen: Int = 0
-    var ime: String = ""
-    var status: Int = 0
-    var tipOsumnjicen: String = TipOsumnjicenR.pojedinac.name
-    var motiv: MotivR? = null
-    var zlocinId: ZlocinR? = null
-    var kriv: Int = 0
-}*/
-
-open class OsumnjicenR : RealmObject {//-ime +osobaId
     @PrimaryKey
     var idOsumnjicen: Int = 0
     var status: Int = 0
@@ -188,19 +170,7 @@ enum class TipDokazaR {
     svedok
 }
 
-// SvedokR table
-/*
 open class SvedokR : RealmObject {
-    @PrimaryKey
-    var idSvedok: Int = 0
-    var ime: String = ""
-    var kontakt: String = ""
-    var izjava: String = ""
-    var zlocinId: ZlocinR? = null
-    var statusSvedok: String = StatusSvedokR.aktivno.name
-    var statusIspitan: Int = 0
-}*/
-open class SvedokR : RealmObject {// -ime,kontakt  +osobaId
     @PrimaryKey
     var idSvedok: Int = 0
     var izjava: String = ""
@@ -217,19 +187,7 @@ enum class StatusSvedokR {
     nesaradnja
 }
 
-// ZrtvaR table
-/*
 open class ZrtvaR : RealmObject {
-    @PrimaryKey
-    var idZrtva: Int = 0
-    var tipZrtve: String = ""
-    var ime: String = ""
-    var detalji: String = ""
-    var statusZrtva: String = StatusZrtvaR.ziva.name
-    var zlocinId: ZlocinR? = null
-}*/
-
-open class ZrtvaR : RealmObject {// -ime
     @PrimaryKey
     var idZrtva: Int = 0
     var tipZrtve: String = ""

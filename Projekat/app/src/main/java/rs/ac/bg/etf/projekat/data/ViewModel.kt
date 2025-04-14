@@ -22,6 +22,7 @@ import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 import javax.inject.Inject
@@ -34,28 +35,12 @@ class MyViewModel @Inject constructor(
     private val _uiState= MutableStateFlow(UiStateZlocin())
     val uiState : StateFlow<UiStateZlocin> = _uiState
 
-//    fun getAllData() = viewModelScope.launch {
-//        Log.d("GET ZLOCIN","getall")
-//        try {
-//            Log.d("GET ZLOCIN","pokusaj")
-//            val response = MyRepository.getZlocin()
-//            Log.d("GET ZLOCIN",response.toString())
-//            _uiState.value = UiStateZlocin(zlocin = response)
-//        }
-//        catch (e:Exception){
-//            Log.e("GET ZLOCIN", "Error: ${e.message}")
-//            e.printStackTrace()  // Ovo će ispisati punu stazu greške u logu
-//            _uiState.value = UiStateZlocin(zlocin = emptyList())
-//        }
-//    }
-
     private val _uiStatePostZlocin = MutableStateFlow(UiStatePostZlocin())
     val uiStatePostZlocin : StateFlow<UiStatePostZlocin> = _uiStatePostZlocin
 
     fun insertDataZlocin(zlocin: ZlocinRequest)=viewModelScope.launch {
         try {
             val response = MyRepository.insertData(zlocin)
-            Log.d("POST_ZLOCIN",response.toString())
             _uiStatePostZlocin.value = UiStatePostZlocin(message = response)
         }
         catch (e:Exception){
@@ -69,17 +54,28 @@ class MyViewModel @Inject constructor(
 
     fun signUp(korisnik: KorisnikRequest)=viewModelScope.launch {
         try {
-            Log.d("SIGNUP", "ovde")
             val response = MyRepository.signUp(korisnik)
-            Log.d("SIGNUP", response.toString())
-            Log.d("SIGNUP", "Response: ${response.message}")
             _uiStateSignUp.value = UiStateSignUp(message = response, isRefreshing = false)
-            Log.d("SIGNUP", "Response: ${_uiStateSignUp.value}")
         }
         catch (e:Exception){
-            Log.d("SIGNUP", "greska")
             e.printStackTrace()
             _uiStateSignUp.value = UiStateSignUp(message = null, isRefreshing = false, error = e.localizedMessage)
+        }
+    }
+
+    private val _uiStateScoreKorisnika= MutableStateFlow(UiStateScoreKorisnika())
+    val uiStateScoreKorisnika : StateFlow<UiStateScoreKorisnika> = _uiStateScoreKorisnika
+
+    fun scoreKorisnika() = viewModelScope.launch {
+        Log.d("SCORE","ovde")
+        try {
+            val response = MyRepository.scoreKorisnika()
+            Log.d("SCORE",response.toString())
+            _uiStateScoreKorisnika.value = UiStateScoreKorisnika(scoreList = response, isRefreshing = false)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+            _uiStateScoreKorisnika.value = UiStateScoreKorisnika(scoreList= emptyList(), isRefreshing = false, error = e.localizedMessage)
         }
     }
 
@@ -172,10 +168,6 @@ class MyViewModel @Inject constructor(
         }
     }
 
-
-
-    //UiStateCntEvidence
-
     private val _uiStateCntEvidence = MutableStateFlow(UiStateCntEvidence())
     val uiStateCntEvidence : StateFlow<UiStateCntEvidence> = _uiStateCntEvidence
 
@@ -205,7 +197,6 @@ class MyViewModel @Inject constructor(
     private val _uiStateForensicEvidence = MutableStateFlow(UiStateForensicEvidences())
     val uiStateForensicEvidence : StateFlow<UiStateForensicEvidences> = _uiStateForensicEvidence
 
-
     fun getForensicEvidences() = viewModelScope.launch {
         try {
             val response = selectForensicEvidences()
@@ -225,7 +216,6 @@ class MyViewModel @Inject constructor(
     fun updateForensicEvidenceAndForensicEvidenceTask(zadatakDokaz: ForenzickiDokazZadatakR) = viewModelScope.launch {
         zadatakDokaz.zadatakId?.idZadatak?.let { updateForenzickiDokazZadatakAndZadatak(it,zadatakDokaz.idForenzickiDokazZadatak) }
     }
-
 
     fun updateSuspectTask(zadatak: IspitivanjeOsumnjicenogZadatakR) = viewModelScope.launch {
         zadatak.zadatakId?.idZadatak?.let {
@@ -247,11 +237,9 @@ class MyViewModel @Inject constructor(
         telefon.zadatakId?.idZadatak?.let { updateTelefonZadatak(telefon.idTelefonZadatak, it) }
     }
 
-
     fun updatePorukeTask(poruke: PorukeZadatakR) = viewModelScope.launch {
         poruke.zadatakId?.idZadatak?.let { updatePorukeZadatak(poruke.idPorukeZadatak, it) }
     }
-
 
     private val _uiSteteSelectedAnswers = MutableStateFlow(UiSteteSelectedAnswers())
     val uiSteteSelectedAnswers : StateFlow<UiSteteSelectedAnswers> = _uiSteteSelectedAnswers
@@ -266,7 +254,6 @@ class MyViewModel @Inject constructor(
             _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(emptyMap())
         }
     }
-
 }
 
 data class UiStateZlocin(
@@ -327,4 +314,12 @@ data class UiStateCntForensicEvidence(
 
 data class UiSteteSelectedAnswers(
     var selectedAnswers: Map<Int, Int?>? = emptyMap()
+)
+
+// retrofit
+
+data class UiStateScoreKorisnika(
+    val scoreList: List<ScorePageKorisnikResponse>?= emptyList(),
+    val isRefreshing: Boolean = false,
+    val error: String? = null
 )
