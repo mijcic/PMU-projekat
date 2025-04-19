@@ -127,7 +127,7 @@ fun NavigationGraph(navController: NavHostController) {
             SettingsPage(navController)
         }
         composable("destinationScorePage") {
-            ScorePage(navController)
+            ScorePage(navController,viewModel)
         }
         composable("destinationLoginPage") {
             LoginPage(navController)
@@ -154,7 +154,7 @@ fun NavigationGraph(navController: NavHostController) {
                 navArgument("title") { type = NavType.StringType }),
         ) { navBackStackEntry ->
             val title =navBackStackEntry.arguments?.getString("title") ?:""
-            SuspectInterviewPage(navController, viewModel,title)
+            SuspectInterviewPage(navController, viewModel,title,realmViewModel)
         }
         composable(route = "destinationWitnessesInterviewPage/{title}",
             arguments = listOf(
@@ -179,10 +179,19 @@ fun NavigationGraph(navController: NavHostController) {
             PhonePage(navController)
         }
         composable("destinationQuestionsPage") {
-            QuestionsPage(navController)
+            QuestionsPage(navController, viewModel)
         }
         composable("destinationEvidencePage") {
             EvidencePage(navController, viewModel,realmViewModel)
+        }
+        composable("destinationMapPage") {
+            MapPage(navController, viewModel,realmViewModel)
+        }
+        composable(route = "destinationScoreQuestionsPage/{totalScore}",
+            arguments = listOf(navArgument("totalScore") { type = NavType.StringType }),
+        ) { navBackStackEntry ->
+            val totalScore =navBackStackEntry.arguments?.getString("totalScore") ?:""
+            ScoreQuestionsPage(navController,totalScore,viewModel)
         }
         composable("destinationWhatsAppPage") {
             WhatsAppPage(navController)

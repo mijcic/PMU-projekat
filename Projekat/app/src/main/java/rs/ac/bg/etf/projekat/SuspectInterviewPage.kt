@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,13 +26,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import kotlinx.coroutines.delay
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.UiStatePitanjaZaOsumnjicenog
+import rs.ac.bg.etf.projekat.data.selectIspitivanjeOsumnjicenogZadatak
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel, title: String) {
+fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel, title: String,realmViewModel: RealmViewModel) {
     LaunchedEffect(Unit) {
         myViewModel.getPitanjaZaOsumnjicenog(title)
     }
@@ -108,9 +111,13 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
                     // Add response and detective's comment
                     ResponseSection(response = suspectResponse, selectedQuestionDetail = selectedQuestionDetail)
                     Spacer(modifier = Modifier.height(20.dp))
-                    NavigationButtons {
-                        selectedCategory = null
-                    }
+                    NavigationButtons(
+                        onReset = { selectedCategory = null },
+                        myViewModel = myViewModel,
+                        realmViewModel = realmViewModel,
+                        uiPitanjaZaOsumnjicenog = uiPitanjaZaOsumnjicenog
+                    )
+
                 }
             }
         }
@@ -224,7 +231,7 @@ fun ResponseSection(response: String, selectedQuestionDetail: QuestionDetail?) {
 
 
 @Composable
-fun NavigationButtons(onReset: () -> Unit) {
+fun NavigationButtons(onReset: () -> Unit, myViewModel: MyViewModel,realmViewModel: RealmViewModel,uiPitanjaZaOsumnjicenog:UiStatePitanjaZaOsumnjicenog) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -243,7 +250,14 @@ fun NavigationButtons(onReset: () -> Unit) {
         }
         Spacer(modifier = Modifier.width(16.dp))
         Button(
-            onClick = { onReset() },
+            onClick = {
+                Log.d("UPO",uiPitanjaZaOsumnjicenog.generalQuestions.first().osumnjicenId.toString())
+                selectIspitivanjeOsumnjicenogZadatak(uiPitanjaZaOsumnjicenog.generalQuestions.first().osumnjicenId)?.let {
+                    myViewModel.updateSuspectTask(
+                        it
+                    )
+                }
+                onReset() },
             modifier = Modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(20.dp)) // Rounded corners

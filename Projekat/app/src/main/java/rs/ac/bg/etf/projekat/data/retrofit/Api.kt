@@ -7,12 +7,13 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 
 
-//const val BASE_URL = "http://192.168.0.18:8080/"
-const val BASE_URL = "http://10.0.2.2:8080/"
+const val BASE_URL = "http://192.168.0.13:8080/"
+//const val BASE_URL = "http://10.0.2.2:8080/"
 
 interface Api {
     @GET("zlocin")
@@ -30,4 +31,7 @@ interface Api {
 
     @POST("logIn")
     suspend fun logIn(@Body request: KorisnikRequest): MessageResponse
+
+    @GET("scoreKorisnika")
+    suspend fun scoreKorisnika():List<ScorePageKorisnikResponse>
 }

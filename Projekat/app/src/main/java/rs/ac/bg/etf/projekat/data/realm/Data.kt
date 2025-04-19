@@ -1,15 +1,10 @@
 package rs.ac.bg.etf.projekat.data.realm
 
-import android.hardware.camera2.CameraExtensionSession.StillCaptureLatency
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.Ignore
-
 import io.realm.kotlin.types.annotations.PrimaryKey
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
 
-// Zlocin table
+// PrijavljeniKorisnik table
 open class PrijavljeniKorisnikR : RealmObject {
     @PrimaryKey
     var idKorisnik: Int = 0
@@ -135,6 +130,24 @@ enum class TipOsumnjicenR {
     organizacija
 }
 
+// Table IspitivanjeOsumnjicenogZadatak
+open class IspitivanjeOsumnjicenogZadatakR : RealmObject {
+    @PrimaryKey
+    var idIspitivanjeOsumnjicenogZadatak: Int = 0
+    var osumnjicenId: OsumnjicenR? =null
+    var zadatakId: ZadatakR? = null
+    var uradjen: Boolean = false
+}
+
+// Table IspitivanjeSvedokaZadatak
+open class IspitivanjeSvedokaZadatakR : RealmObject {
+    @PrimaryKey
+    var idIspitivanjeSvedokaZadatak: Int = 0
+    var svedokId: SvedokR? =null
+    var zadatakId: ZadatakR? = null
+    var uradjen: Boolean = false
+}
+
 // MotivR table
 open class MotivR : RealmObject {
     @PrimaryKey
@@ -151,6 +164,16 @@ open class DokazR : RealmObject {
     var zlocinId: ZlocinR? = null
     var zrtvaId: ZrtvaR? = null
     var status: Int = 0
+}
+
+// DokazZadatakR table
+open class DokazZadatakR: RealmObject {
+    @PrimaryKey
+    var idDokazZadatak: Int =0
+    var tekst: String =""
+    var dokazId: DokazR? =null
+    var uradjen: Boolean =false
+    var zadatakId: ZadatakR? =null
 }
 
 // Enum for TipDokaza
@@ -277,6 +300,15 @@ open class TelefonR : RealmObject {
     var sifra: String = ""
 }
 
+// TelefonZadatakR table
+open class TelefonZadatakR: RealmObject {
+    @PrimaryKey
+    var idTelefonZadatak: Int=0
+    var telefonId: TelefonR? =null
+    var zadatakId: ZadatakR? =null
+    var uradjen: Boolean =false
+}
+
 // KontaktR table
 open class KontaktR : RealmObject {
     @PrimaryKey
@@ -291,7 +323,6 @@ open class KontaktR : RealmObject {
 open class PorukeR : RealmObject {
     @PrimaryKey
     var idPoruke: Int = 0
-    //@Ignore
     var tipPoruke: String = ""
     var sadrzaj: String = ""
     var datumVreme: RealmInstant? = null
@@ -300,6 +331,16 @@ open class PorukeR : RealmObject {
     var statusPoruke: String =StatusPorukeR.read.name
     var sifrovana: Boolean = false
 }
+
+//Table PorukeZadatak
+open class PorukeZadatakR: RealmObject {
+    @PrimaryKey
+    var idPorukeZadatak: Int =0
+    var porukeId: PorukeR? =null
+    var zadatakId: ZadatakR? =null
+    var uradjen: Boolean = false
+}
+
 
 // Enum for TipPoruke
 enum class TipPorukeR {
@@ -370,6 +411,17 @@ open class ForenzickiDokazR : RealmObject {
     var zrtvaId: ZrtvaR? = null
     var veza: String = ""
 }
+
+// ForenzickiDokazZadatakR table
+open class ForenzickiDokazZadatakR : RealmObject {
+    @PrimaryKey
+    var idForenzickiDokazZadatak: Int = 0
+    var tekst: String =""
+    var forenzickiDokazId: ForenzickiDokazR? =null
+    var uradjen: Boolean =false
+    var zadatakId: ZadatakR? =null
+}
+
 
 // Enum for TipForenzickiDokaz
 enum class TipForenzickiDokazR {
@@ -470,6 +522,16 @@ open class OdgovorR : RealmObject {
     var tekstOdgovora: String = ""
     var tacan: Boolean = false
     var bodovi: Int = 0
+}
+
+open class ZadatakR : RealmObject {
+    @PrimaryKey
+    var idZadatak: Int =0
+    var tekst: String =""
+    var korak: String =""
+    var uradjen: Boolean = false
+    var next: ZadatakR? = null
+    var zlocinId: ZlocinR? =null
 }
 
 // telefon zrtve
@@ -574,5 +636,13 @@ val realmClasses = listOf(
     OneContactR::class,
     OneCallR::class,
     GalleryR::class,
-    ObicnaPorukaR::class
+    ObicnaPorukaR::class,
+    OsobaR::class,
+    ZadatakR::class,
+    DokazZadatakR::class,
+    IspitivanjeOsumnjicenogZadatakR::class,
+    IspitivanjeSvedokaZadatakR::class,
+    TelefonZadatakR::class,
+    ForenzickiDokazZadatakR::class,
+    PorukeZadatakR::class
 )

@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -22,10 +24,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -33,12 +43,24 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 
 @Composable
-fun ScorePage(navController: NavController){
+fun ScorePage(navController: NavController,myViewModel: MyViewModel){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
+
+    val uiStateScoreKorisnika by myViewModel.uiStateScoreKorisnika.collectAsState()
+
+    LaunchedEffect(uiStateScoreKorisnika.scoreList){
+        myViewModel.scoreKorisnika()
+    }
+
+    LaunchedEffect(Unit){
+        myViewModel.scoreKorisnika()
+    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -47,11 +69,12 @@ fun ScorePage(navController: NavController){
             modifier = Modifier.fillMaxSize().background(Color(0xFF0A1736))
         ) {
             Spacer(modifier = Modifier.padding((screenHeight/30).dp))
+
             Icon(
-                imageVector = Icons.Filled.Star,
+                painter = painterResource(id = R.drawable.trophy_fill),
                 contentDescription = "Trophy",
-                modifier = Modifier.size(100.dp),
-                tint = Color.White
+                tint = colorResource(id = R.color.golden_yellow),
+                modifier = Modifier.size(70.dp)
             )
 
             Spacer(modifier = Modifier.padding((screenHeight/40).dp))
@@ -132,48 +155,52 @@ fun ScorePage(navController: NavController){
                 color = Color.Gray,
                 thickness = 3.dp
             )
+            if (uiStateScoreKorisnika.scoreList!=null){
+                LazyColumn {
+                    items(uiStateScoreKorisnika.scoreList!!){ items->
+                        Row{
+                            Spacer(modifier = Modifier.width(22.dp))
+                            Text(
+                                text = items.mesto.toString()+"  ",
+                                style = TextStyle(color = Color.White),
+                                modifier = Modifier.padding(top=15.dp)
+                            )
+                            Spacer(modifier = Modifier.width(42.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.abuse),
+                                contentDescription = "User Avatar",
+                                modifier = Modifier.size(40.dp)
+                            )
 
-            for (i in 1..5){
-                Row{
-                    Text(
-                        text = "$i. ",
-                        style = TextStyle(color = Color.White),
-                        modifier = Modifier.padding(top=15.dp)
-                    )
-                    Spacer(modifier = Modifier.width(22.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.abuse),
-                        contentDescription = "User Avatar",
-                        modifier = Modifier.size(40.dp)
-                    )
+                            Spacer(modifier = Modifier.width(42.dp))
 
-                    Spacer(modifier = Modifier.width(22.dp))
-
-                    Text(
-                        text = "real_detective_101",
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            color = Color.White,
-                            fontSize = 12.sp,
-                        ),
-                        modifier = Modifier.padding(top=15.dp)
-                    )
-                    Spacer(modifier = Modifier.width(22.dp))
-                    Text(
-                        text = "257 XP",
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            color = Color.White,
-                            fontSize = 18.sp,
-                        ),
-                        modifier = Modifier.padding(top=15.dp)
-                    )
+                            Text(
+                                text = items.korisnickoIme,
+                                style = TextStyle(
+                                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                                    color = Color.White,
+                                    fontSize = 12.sp,
+                                ),
+                                modifier = Modifier.padding(top=15.dp)
+                            )
+                            Spacer(modifier = Modifier.width(42.dp))
+                            Text(
+                                text = items.poeni.toString() + " XP",
+                                style = TextStyle(
+                                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                                    color = Color.White,
+                                    fontSize = 18.sp,
+                                ),
+                                modifier = Modifier.padding(top=15.dp)
+                            )
+                        }
+                        Divider(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = Color.Gray,
+                            thickness = 3.dp
+                        )
+                    }
                 }
-                Divider(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    color = Color.Gray,
-                    thickness = 3.dp
-                )
             }
         }
     }

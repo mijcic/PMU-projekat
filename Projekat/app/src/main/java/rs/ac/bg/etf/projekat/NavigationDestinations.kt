@@ -95,7 +95,13 @@ object destinationOneNotePage : NavigationDestinations {
 object destinationCallsPage : NavigationDestinations {
     override val route = "destinationCallsPage"
 }
+object destinationMapPage : NavigationDestinations {
+    override val route = "destinationMapPage"
+}
 
+object destinationScoreQuestionsPage : NavigationDestinations {
+    override val route = "destinationScoreQuestionsPage"
+}
 object destinationPhonebookPage : NavigationDestinations {
     override val route = "destinationPhonebookPage"
 }
