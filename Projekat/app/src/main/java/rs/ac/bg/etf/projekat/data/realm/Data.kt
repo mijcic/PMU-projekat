@@ -472,6 +472,69 @@ open class OdgovorR : RealmObject {
     var bodovi: Int = 0
 }
 
+// telefon zrtve
+
+open class BeleskaR : RealmObject {
+    @PrimaryKey
+    var idBeleska: Int = 0
+    var zlocinId: ZlocinR? = null
+    var tekst: String = ""
+    var datum: RealmInstant ?= null
+}
+
+open class WhatsAppKontaktR : RealmObject {
+    @PrimaryKey
+    var idWhatsAppKontakt: Int = 0
+    var zlocinId: ZlocinR? = null
+    var ime: String = ""
+    var slika: Int? = 0
+}
+
+open class WhatsAppPorukaR : RealmObject {
+    @PrimaryKey
+    var idWhatsAppPoruka: Int = 0
+    var kontaktKoSalje: WhatsAppKontaktR? = null
+    var kontaktKomeSalje: WhatsAppKontaktR? = null
+    var tekst: String = ""
+    var datum: RealmInstant ?= null
+    var procitana: Boolean = false
+}
+
+open class OneContactR : RealmObject {
+    @PrimaryKey
+    var idOneContact: Int = 0
+    var zlocinId: ZlocinR? = null
+    var ime: String = ""
+    var broj: String = ""
+    var slika: Int? = 0
+}
+
+open class OneCallR : RealmObject {
+    @PrimaryKey
+    var idOneCall: Int = 0
+    var kontakt: OneContactR? = null
+    var datum: RealmInstant ?= null
+    var propusten: Boolean = false
+    var dolazni: Boolean = false
+}
+
+open class GalleryR : RealmObject {
+    @PrimaryKey
+    var idPhoto: Int = 0
+    var slika: Int? = 0
+    var datum: RealmInstant ?= null
+    var mesto: String = ""
+}
+
+open class ObicnaPorukaR : RealmObject {
+    @PrimaryKey
+    var idObicnaPoruka: Int = 0
+    var kontakt: OneContactR? = null
+    var tekst: String = ""
+    var datum: RealmInstant ?= null
+    var procitana: Boolean = false
+}
+
 val realmClasses = listOf(
     ZlocinR::class,
     TipZlocinaR::class,
@@ -504,5 +567,12 @@ val realmClasses = listOf(
     PitanjeR::class,
     OdgovorR::class,
     PitanjeIspitivanjeSvedokaR::class,
-    OsobaR::class
+    OsobaR::class,
+    BeleskaR::class,
+    WhatsAppKontaktR::class,
+    WhatsAppPorukaR::class,
+    OneContactR::class,
+    OneCallR::class,
+    GalleryR::class,
+    ObicnaPorukaR::class
 )

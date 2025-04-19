@@ -67,10 +67,10 @@ fun PhonePage(navController: NavController) {
                     .padding(top = 40.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                AppIconPhotoTextItem("WhatsApp", R.drawable.iphone_whatsapp_icon)
-                AppIconPhotoTextItem("Notes", R.drawable.iphone_notes_icon)
-                AppIconPhotoTextItem("Settings", R.drawable.iphone_settings_icon)
-                AppIconPhotoTextItem("", R.drawable.iphone_empty_icon)
+                AppIconPhotoTextItem("WhatsApp", R.drawable.iphone_whatsapp_icon, { navController.navigate("destinationWhatsAppPage") })
+                AppIconPhotoTextItem("Notes", R.drawable.iphone_notes_icon, { navController.navigate("destinationNotesPage")} )
+                AppIconPhotoTextItem("Settings", R.drawable.iphone_settings_icon, { navController.navigate("destinationPhoneSettingsPage")})
+                AppIconPhotoTextItem("", R.drawable.iphone_empty_icon, {})
             }
 
             Box(
@@ -97,19 +97,18 @@ fun PhonePage(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AppIconPhotoItem(R.drawable.iphone_phone_icon, Modifier.weight(1f))
-                    AppIconPhotoItem(R.drawable.iphone_photos_icon, Modifier.weight(1f))
-                    AppIconPhotoItem(R.drawable.iphone_message_icon, Modifier.weight(1f))
-                    AppIconPhotoItem(R.drawable.iphone_contacts_icon, Modifier.weight(1f))
+                    AppIconPhotoItem(R.drawable.iphone_phone_icon, Modifier.weight(1f), { navController.navigate("destinationCallsPage") })
+                    AppIconPhotoItem(R.drawable.iphone_photos_icon, Modifier.weight(1f), { navController.navigate("destinationGalleryPage") })
+                    AppIconPhotoItem(R.drawable.iphone_message_icon, Modifier.weight(1f), { navController.navigate("destinationMessagesPage") })
+                    AppIconPhotoItem(R.drawable.iphone_contacts_icon, Modifier.weight(1f), { navController.navigate("destinationPhonebookPage") })
                 }
             }
         }
-
     }
 }
 
 @Composable
-fun AppIconPhotoTextItem(iconName: String, iconPicture: Int) {
+fun AppIconPhotoTextItem(iconName: String, iconPicture: Int, onClickFunction: () -> Unit) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 
@@ -123,7 +122,7 @@ fun AppIconPhotoTextItem(iconName: String, iconPicture: Int) {
             modifier = Modifier
                 .size((screenWidth / 7).dp)
                 .clip(RoundedCornerShape(12.dp))
-                .clickable { }
+                .clickable { onClickFunction() }
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -140,7 +139,7 @@ fun AppIconPhotoTextItem(iconName: String, iconPicture: Int) {
 }
 
 @Composable
-fun AppIconPhotoItem(iconPicture: Int, modifier: Modifier = Modifier) {
+fun AppIconPhotoItem(iconPicture: Int, modifier: Modifier = Modifier, onClickFunction: () -> Unit) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 
@@ -154,7 +153,7 @@ fun AppIconPhotoItem(iconPicture: Int, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size((screenWidth / 7).dp)
                 .clip(RoundedCornerShape(12.dp))
-                .clickable { }
+                .clickable { onClickFunction() }
         )
     }
 }

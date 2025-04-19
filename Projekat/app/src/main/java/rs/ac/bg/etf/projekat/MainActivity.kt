@@ -95,9 +95,9 @@ fun NavigationGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        //startDestination = "destinationMainScreen1"
-        startDestination = "destinationMainScreen2"
-        //startDestination = "destinationQuestionsPage"
+        startDestination = "destinationMainScreen1"
+        //startDestination = "destinationMainScreen2"
+        //startDestination = "destinationPhonePage"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)
@@ -183,6 +183,77 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("destinationEvidencePage") {
             EvidencePage(navController, viewModel,realmViewModel)
+        }
+        composable("destinationWhatsAppPage") {
+            WhatsAppPage(navController)
+        }
+        composable("destinationWhatsAppChatPage/{name}/{photo}",
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+                navArgument("photo") { type = NavType.IntType })
+        ) { navBackStackEntry ->
+            val name = navBackStackEntry.arguments?.getString("name") ?: ""
+            val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
+            WhatsAppChatPage(name, photo, navController)
+        }
+        composable("destinationNotesPage") {
+            NotesPage(navController)
+        }
+        composable("destinationOneNotePage/{text}/{date}",
+            arguments = listOf(
+                navArgument("text") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType })
+        ) { navBackStackEntry ->
+            val text = navBackStackEntry.arguments?.getString("text") ?: ""
+            val date = navBackStackEntry.arguments?.getString("date") ?: ""
+
+            OneNotePage(text, date, navController)
+        }
+        composable("destinationCallsPage") {
+            CallsPage(navController)
+        }
+        composable("destinationPhonebookPage") {
+            PhonebookPage(navController)
+        }
+        composable("destinationOneContactPage/{name}/{phoneNumber}/{picture}",
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+                navArgument("phoneNumber") { type = NavType.StringType },
+                navArgument("picture") { type = NavType.IntType })
+        ) { navBackStackEntry ->
+            val name = navBackStackEntry.arguments?.getString("name") ?: ""
+            val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
+            val picture = navBackStackEntry.arguments?.getInt("picture") ?: 0
+
+            OneContactPage(name, phoneNumber, picture, navController)
+        }
+        composable("destinationKeypadPage") {
+            KeypadPage(navController)
+        }
+        composable("destinationMessagesPage") {
+            MessagesPage(navController)
+        }
+        composable("destinationChatPage/{name}/{photo}",
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+                navArgument("photo") { type = NavType.IntType })
+            ) { navBackStackEntry ->
+            val name = navBackStackEntry.arguments?.getString("name") ?: ""
+            val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
+            ChatPage(name, photo, navController)
+        }
+        composable("destinationGalleryPage") {
+            GalleryPage(navController)
+        }
+        composable("destinationOnePhotoPage/{picture}",
+            arguments = listOf(
+                navArgument("picture") { type = NavType.IntType })
+        ) { navBackStackEntry ->
+            val picture = navBackStackEntry.arguments?.getInt("picture") ?: 0
+            OnePhotoPage(picture, navController)
+        }
+        composable("destinationPhoneSettingsPage") {
+            PhoneSettingsPage(navController)
         }
     }
 }

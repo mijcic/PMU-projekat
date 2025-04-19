@@ -79,4 +79,6 @@ dependencies {
     implementation(libs.realm.library)
     //implementation(libs.io.realm.gradle.plugin)
     implementation(kotlin("reflect"))
+
+    implementation("androidx.compose.material:material:1.5.4")
 }
