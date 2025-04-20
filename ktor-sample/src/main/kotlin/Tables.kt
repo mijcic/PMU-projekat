@@ -87,13 +87,24 @@ data class ZlocinRequest(
 
 @Serializable
 data class ZlocinData(
-    var id: Int,
-    val idTipZlocina: Int,
+    var idZlocin: Int,
+    val tipZlocinaId: Int,
     val naziv: String,
     val datum: Long,
     val mesto: String,
     val opis: String,
     val status: String
+)
+
+@Serializable
+data class OsobaData(
+    var idOsoba: Int,
+    var ime:String,
+    var kontakt: String,
+    var datum:Long,
+    var zanimanje: String,
+    var pol: String,
+    var zlocinId:Int
 )
 
 @Serializable

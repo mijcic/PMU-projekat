@@ -6,11 +6,42 @@ import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.*
 
 fun Application.configureRouting() {
     routing {
+
+        //gemini
+        post("/gemini") {
+            try {
+                val requestData = call.receive<GeminiRequest2>()
+                val prompt = requestData.prompt
+                val tables = requestData.tables
+
+                if (prompt.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'prompt' is required and cannot be empty."))
+                    return@post
+                }
+                if (tables == null) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'tables' is required and cannot be empty."))
+                    return@post
+                }
+
+                val geminiResponseText = queryGemini(prompt, tables.toString())
+
+                call.respond(mapOf("response" to geminiResponseText))
+
+            } catch (e: ContentTransformationException) {
+                call.respond(HttpStatusCode.BadRequest,
+                    mapOf("error" to "Invalid request format. A JSON object with the keys 'prompt' and 'tables' is expected."))
+            } catch (e: Exception) {
+                println("Unexpected error at the /gemini endpoint: ${e.message}")
+                e.printStackTrace()
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "An internal server error occurred."))
+            }
+        }
+
+        // get request
         get("/") {
             call.respondText("Hello World!")
         }
@@ -34,22 +65,18 @@ fun Application.configureRouting() {
             val dokazi = fetchForenzickiDokazFromDatabase()
             call.respond(dokazi)
         }
-
         get("/scoreKorisnika"){
             print("scoreKorisnika")
             val korisnici =fetchScoreKorisnici()
             call.respond(korisnici)
         }
 
-        //post zahtevi
+        //post request
 
         post("/postZlocin"){
             try {
-                println("Post zlocin")
-                println("call $call")
                 val zlocin = call.receive<Zlocin>()
-                println("Received Zlocin: $zlocin")
-                insertZlocin(zlocin) // Insert data into the database
+                insertZlocin(zlocin)
                 call.respond("Zlocin inserted successfully")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -60,8 +87,6 @@ fun Application.configureRouting() {
         post("/insertData"){
             try{
                 val zlocin = call.receive<ZlocinRequest>()
-                //println("$zlocin")
-
                 insertZlocinData(zlocin.zlocin)
                 insertZrtva(zlocin.zrtva,zlocin.zlocin)
                 insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
@@ -69,7 +94,7 @@ fun Application.configureRouting() {
 
                 for (i in zlocin.motivi.indices) {
                     val motiv = zlocin.motivi[i]
-                    val osumnjicen = zlocin.osumnjicen[i] // pretpostavljamo da su 'motivi' i 'osumnjicen' iste duzine
+                    val osumnjicen = zlocin.osumnjicen[i]
 
                     insertMotivData(motiv)
                     insertOsumnjicenData(osumnjicen, zlocin.zlocin, motiv, zlocin.zrtva)
@@ -100,20 +125,19 @@ fun Application.configureRouting() {
 
         post("/signUp"){
             try {
-                println("signUp") // For debugging
                 val korisnik = call.receive<KorisnikRequest>()
                 val exists = checkKorisnik(korisnik)
 
                 if (exists) {
-                    println("User already exists") // Debugging
+                    println("User already exists")
                     call.respond(MessageResponse("Korisnik already exists."))
                 } else {
                     signUpKorisnik(korisnik)
-                    println("User inserted successfully") // Debugging
+                    println("User inserted successfully")
                     call.respond(MessageResponse("Korisnik inserted successfully"))
                 }
             } catch (e: Exception) {
-                e.printStackTrace() // Log the exception
+                e.printStackTrace()
                 call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Korisnik"))
             }
         }
@@ -144,8 +168,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        //"1234"
-        "mia123"
+        "1234"
+        //"mia123"
     )
 }
 

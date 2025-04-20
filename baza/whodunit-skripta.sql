@@ -56,6 +56,18 @@ INSERT INTO `TipZlocina` (`naziv`) VALUES
 ('FalseIdentities'),
 ('CultsAndSecrets');
 
+DROP TABLE IF EXISTS `Osoba`;
+CREATE TABLE Osoba (
+    idOsoba INT AUTO_INCREMENT PRIMARY KEY,  -- Primarni ključ
+    ime VARCHAR(50) NOT NULL,          
+    kontakt VARCHAR(255) NOT NULL,               
+    datum DATETIME DEFAULT CURRENT_TIMESTAMP,
+    zanimanje VARCHAR(100) NOT NULL,
+    pol VARCHAR(50) NOT NULL,       
+    zlocinId INT NOT NULL,                   -- Spoljašnji ključ na Zlocin
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)  -- Veza sa Zlocin tabelom
+);
+
 DROP TABLE IF EXISTS `Zrtva`;
 CREATE TABLE Zrtva (
     idZrtva INT AUTO_INCREMENT PRIMARY KEY,  -- Primarni ključ
