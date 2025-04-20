@@ -5,17 +5,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.MainActivity
 import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realm.AlibiR
+import rs.ac.bg.etf.projekat.data.realm.BeleskaR
 import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
+import rs.ac.bg.etf.projekat.data.realm.GalleryR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
@@ -24,8 +28,11 @@ import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.MotivR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
+import rs.ac.bg.etf.projekat.data.realm.ObicnaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.OdgovorR
 import rs.ac.bg.etf.projekat.data.realm.OdnosOsumnjicenZrtvaR
+import rs.ac.bg.etf.projekat.data.realm.OneCallR
+import rs.ac.bg.etf.projekat.data.realm.OneContactR
 import rs.ac.bg.etf.projekat.data.realm.OsobaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
@@ -45,6 +52,8 @@ import rs.ac.bg.etf.projekat.data.realm.TipForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
 import rs.ac.bg.etf.projekat.data.realm.TipOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
+import rs.ac.bg.etf.projekat.data.realm.WhatsAppKontaktR
+import rs.ac.bg.etf.projekat.data.realm.WhatsAppPorukaR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
@@ -70,6 +79,8 @@ class RealmViewModel @Inject constructor(
 
     private var _uiStateZlocinSave = MutableStateFlow(UiStateZlocinSave())
     val uiStateZlocinSave : StateFlow<UiStateZlocinSave> = _uiStateZlocinSave
+
+    var selectedWhatsappContact: WhatsAppKontaktR? = null
 
     suspend fun inserTipZlocina(nazivTZ: String): TipZlocinaR? {
         var tipZlocina: TipZlocinaR? = null
@@ -993,6 +1004,286 @@ class RealmViewModel @Inject constructor(
         return realm.query<OdgovorR>("pitanjeId == $0", existingPitanje).find()
     }
 
+    suspend fun insertBeleska(zlocinIdB: ZlocinR?, tekstB: String, datumB: RealmInstant?): BeleskaR? {
+        var beleska: BeleskaR? = null
+        realm.write {
+            // Ako zlocin nije u bazi, dodaj ga u bazu
+            val existingZlocin = zlocinIdB?.let {
+                query<ZlocinR>("idZlocin == $0", it.idZlocin).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            beleska = query<BeleskaR>("zlocinId == $0 AND tekst == $1 AND datum == $2", existingZlocin, tekstB, datumB).find().firstOrNull()
+                ?: BeleskaR().apply {
+                idBeleska = (query<BeleskaR>().find().maxOfOrNull { it.idBeleska } ?: 0) + 1
+                this.zlocinId = existingZlocin
+                this.tekst = tekstB
+                this.datum = datumB
+            }
+            copyToRealm(beleska!!)
+        }
+        return beleska
+    }
+
+    suspend fun insertWhatsAppKontakt(zlocinIdW: ZlocinR?, imeW: String, brojW: String, slikaW: Int): WhatsAppKontaktR? {
+        var kontakt: WhatsAppKontaktR? = null
+        realm.write {
+            // Ako zlocin nije u bazi, dodaj ga u bazu
+            val existingZlocin = zlocinIdW?.let {
+                query<ZlocinR>("idZlocin == $0", it.idZlocin).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            kontakt = query<WhatsAppKontaktR>("zlocinId == $0 AND ime == $1 AND broj == $2 AND slika == $3", existingZlocin, imeW, brojW, slikaW).find().firstOrNull()
+                ?: WhatsAppKontaktR().apply {
+                idWhatsAppKontakt = (query<WhatsAppKontaktR>().find().maxOfOrNull { it.idWhatsAppKontakt } ?: 0) + 1
+                this.zlocinId = existingZlocin
+                this.ime = imeW
+                this.broj = brojW
+                this.slika = slikaW
+            }
+            copyToRealm(kontakt!!)
+        }
+        return kontakt
+    }
+
+    suspend fun insertWhatsAppPoruka(kontaktKoSalje: WhatsAppKontaktR, kontaktKomeSalje: WhatsAppKontaktR, tekstW: String, datumW: RealmInstant?, procitanaW: Boolean): WhatsAppPorukaR? {
+        var poruka: WhatsAppPorukaR? = null
+        realm.write {
+            // Ako kontakt nije unet u bazu, unesite ga
+            val existingWhatsAppKontakt1 = query<WhatsAppKontaktR>("idWhatsAppKontakt == $0", kontaktKoSalje?.idWhatsAppKontakt).find().firstOrNull()
+                ?: kontaktKoSalje?.let {
+                    copyToRealm(it)
+                }
+
+            val existingWhatsAppKontakt2 = query<WhatsAppKontaktR>("idWhatsAppKontakt == $0", kontaktKomeSalje?.idWhatsAppKontakt).find().firstOrNull()
+                ?: kontaktKomeSalje?.let {
+                    copyToRealm(it)
+                }
+
+            poruka = query<WhatsAppPorukaR>("kontaktKoSalje == $0 AND kontaktKomeSalje == $1 AND tekst == $2 AND datum == $3 AND procitana == $4", existingWhatsAppKontakt1, existingWhatsAppKontakt2, tekstW, datumW, procitanaW).find().firstOrNull()
+                ?: WhatsAppPorukaR().apply {
+                idWhatsAppPoruka = (query<WhatsAppPorukaR>().find().maxOfOrNull { it.idWhatsAppPoruka } ?: 0) + 1
+                this.kontaktKoSalje = existingWhatsAppKontakt1
+                this.kontaktKomeSalje = existingWhatsAppKontakt2
+                this.tekst = tekstW
+                this.datum = datumW
+                this.procitana = procitanaW
+            }
+            copyToRealm(poruka!!)
+        }
+        return poruka
+    }
+
+    suspend fun insertOneContact(zlocinIdC: ZlocinR?, imeC: String, brojC: String, slikaC: Int?): OneContactR? {
+        var kontakt: OneContactR? = null
+        realm.write {
+            // Ako zlocin nije u bazi, dodaj ga u bazu
+            val existingZlocin = zlocinIdC?.let {
+                query<ZlocinR>("idZlocin == $0", it.idZlocin).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            kontakt = query<OneContactR>("zlocinId == $0 AND ime == $1 AND broj == $2 AND slika == $3", existingZlocin, imeC, brojC, slikaC).find().firstOrNull()
+                ?: OneContactR().apply {
+                idOneContact = (query<OneContactR>().find().maxOfOrNull { it.idOneContact } ?: 0) + 1
+                this.zlocinId = existingZlocin
+                this.ime = imeC
+                this.broj = brojC
+                this.slika = slikaC
+            }
+            copyToRealm(kontakt!!)
+        }
+        return kontakt
+    }
+
+    suspend fun insertOneCall(kontaktC: OneContactR?, datumC: RealmInstant?, propustenC: Boolean, dolazniC: Boolean): OneCallR? {
+        var call: OneCallR? = null
+        realm.write {
+            // Ako kontakt nije unet u bazu, unesite ga
+            val existingKontakt = query<OneContactR>("idOneContact == $0", kontaktC?.idOneContact).find().firstOrNull()
+                ?: kontaktC?.let {
+                    copyToRealm(it)
+                }
+
+            call = query<OneCallR>("kontakt == $0 AND datum == $1 AND propusten == $2 AND dolazni == $3", existingKontakt, datumC, propustenC, dolazniC).find().firstOrNull()
+                ?: OneCallR().apply {
+                idOneCall = (query<OneCallR>().find().maxOfOrNull { it.idOneCall } ?: 0) + 1
+                this.kontakt = existingKontakt
+                this.datum = datumC
+                this.propusten = propustenC
+                this.dolazni = dolazniC
+            }
+            copyToRealm(call!!)
+        }
+        return call
+    }
+
+    suspend fun insertGalleryPhoto(zlocinIdG: ZlocinR?, slikaG: Int, datumG: RealmInstant?, mestoG: String): GalleryR? {
+        var photo: GalleryR? = null
+        realm.write {
+            // Ako zlocin nije u bazi, dodaj ga u bazu
+            val existingZlocin = zlocinIdG?.let {
+                query<ZlocinR>("idZlocin == $0", it.idZlocin).find().firstOrNull()
+                    ?: copyToRealm(it)
+            }
+
+            photo = query<GalleryR>("zlocinId == $0 AND slika == $1 AND datum == $2 AND mesto == $3", existingZlocin, slikaG, datumG, mestoG).find().firstOrNull()
+                ?: GalleryR().apply {
+                idPhoto = (query<GalleryR>().find().maxOfOrNull { it.idPhoto } ?: 0) + 1
+                this.zlocinId = existingZlocin
+                this.slika = slikaG
+                this.datum = datumG
+                this.mesto = mestoG
+            }
+            copyToRealm(photo!!)
+        }
+        return photo
+    }
+
+    suspend fun insertObicnaPoruka(kontaktKoSaljeO: OneContactR?, kontaktKomeSaljeO: OneContactR?, tekstO: String, datumO: RealmInstant?, procitanaO: Boolean): ObicnaPorukaR? {
+        var poruka: ObicnaPorukaR? = null
+        realm.write {
+            // Ako kontakt nije unet u bazu, unesite ga
+            val existingKontakt1 = query<OneContactR>("idOneContact == $0", kontaktKoSaljeO?.idOneContact).find().firstOrNull()
+                ?: kontaktKoSaljeO?.let {
+                    copyToRealm(it)
+                }
+
+            val existingKontakt2 = query<OneContactR>("idOneContact == $0", kontaktKomeSaljeO?.idOneContact).find().firstOrNull()
+                ?: kontaktKomeSaljeO?.let {
+                    copyToRealm(it)
+                }
+
+            poruka = query<ObicnaPorukaR>("kontaktKoSalje == $0 AND kontaktKomeSalje == $1 AND tekst == $2 AND datum == $3 AND procitana == $4", existingKontakt1, existingKontakt2, tekstO, datumO, procitanaO).find().firstOrNull()
+                ?: ObicnaPorukaR().apply {
+                idObicnaPoruka = (query<ObicnaPorukaR>().find().maxOfOrNull { it.idObicnaPoruka } ?: 0) + 1
+                this.kontaktKoSalje = existingKontakt1
+                this.kontaktKomeSalje = existingKontakt2
+                this.tekst = tekstO
+                this.datum = datumO
+                this.procitana = procitanaO
+            }
+            copyToRealm(poruka!!)
+        }
+        return poruka
+    }
+
+    suspend fun getAllBeleska(): List<BeleskaR>? {
+        val currentID: Int = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+        val currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+        return realm.query<BeleskaR>("zlocinId == $0", currentCrime).find()
+    }
+
+    suspend fun getAllCalls(): List<OneCallR>? {
+        val currentID: Int = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+        val currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+        return realm.query<OneCallR>("kontakt.zlocinId.idZlocin == $0", currentCrime?.idZlocin).find()
+    }
+
+    suspend fun getAllContacts(): List<OneContactR> {
+        val currentID: Int = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+        val currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+        return realm.query<OneContactR>("zlocinId == $0", currentCrime).find()
+    }
+
+    suspend fun getContactsLastMessages(): List<OneContactPreviewItem> {
+        val kontaktMe = realm.query<OneContactR>("ime == $0", "Me").first().find()
+            ?: return emptyList()
+
+        val contacts = getAllContacts().filter { it.idOneContact != kontaktMe.idOneContact }
+
+        return contacts.map { kontakt ->
+            val lastMessage = realm.query<ObicnaPorukaR>(
+                """
+                (kontaktKoSalje == $0 AND kontaktKomeSalje == $1) OR
+                (kontaktKoSalje == $2 AND kontaktKomeSalje == $3)
+                """.trimIndent(),
+                kontaktMe, kontakt,
+                kontakt, kontaktMe
+            )
+                .sort("datum", Sort.DESCENDING)
+                .first()
+                .find()
+
+            OneContactPreviewItem(kontakt, lastMessage)
+        }
+    }
+
+    suspend fun getMessagesWithContact(contactId: Int): List<ObicnaPorukaR> {
+        val kontaktMe = realm.query<OneContactR>("ime == $0", "Me").first().find()
+            ?: return emptyList()
+
+        val kontakt = realm.query<OneContactR>("idOneContact == $0", contactId).first().find()
+            ?: return emptyList()
+
+        return realm.query<ObicnaPorukaR>(
+            """
+        (kontaktKoSalje == $0 AND kontaktKomeSalje == $1) OR 
+        (kontaktKoSalje == $1 AND kontaktKomeSalje == $0)
+        """.trimIndent(),
+            kontaktMe, kontakt
+        )
+            .sort("datum", Sort.DESCENDING)
+            .find()
+    }
+
+    suspend fun getAllWhatsAppContacts(): List<WhatsAppKontaktR> {
+        val currentID: Int = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+        val currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+        return realm.query<WhatsAppKontaktR>("zlocinId == $0", currentCrime).find()
+    }
+
+    suspend fun getContactsLastWhatsappMessages(): List<WhatsAppPreviewItem> {
+        val kontaktMe = realm.query<WhatsAppKontaktR>("ime == $0", "Me").first().find()
+            ?: return emptyList()
+
+        val contacts = getAllWhatsAppContacts().filter { it.idWhatsAppKontakt != kontaktMe.idWhatsAppKontakt }
+
+        return contacts.map { kontakt ->
+            val lastMessage = realm.query<WhatsAppPorukaR>(
+                """
+                (kontaktKoSalje == $0 AND kontaktKomeSalje == $1) OR
+                (kontaktKoSalje == $2 AND kontaktKomeSalje == $3)
+                """.trimIndent(),
+                kontaktMe, kontakt,
+                kontakt, kontaktMe
+            )
+                .sort("datum", Sort.DESCENDING)
+                .first()
+                .find()
+
+            WhatsAppPreviewItem(kontakt, lastMessage)
+        }
+    }
+
+    suspend fun getWhatsappMessagesWithContact(contactId: Int): List<WhatsAppPorukaR> {
+        val kontaktMe = realm.query<WhatsAppKontaktR>("ime == $0", "Me").first().find()
+            ?: return emptyList()
+
+        val kontakt = realm.query<WhatsAppKontaktR>("idWhatsAppKontakt == $0", contactId).first().find()
+            ?: return emptyList()
+
+        return realm.query<WhatsAppPorukaR>(
+            """
+        (kontaktKoSalje == $0 AND kontaktKomeSalje == $1) OR 
+        (kontaktKoSalje == $1 AND kontaktKomeSalje == $0)
+        """.trimIndent(),
+            kontaktMe, kontakt
+        )
+            .sort("datum", Sort.DESCENDING)
+            .find()
+    }
+
+    suspend fun getAllGalleryPhotos(): List<GalleryR> {
+        val currentID: Int = realm.query<ZlocinR>().max("idZlocin", Int::class).find() ?: 0
+        val currentCrime = realm.query<ZlocinR>("idZlocin == $0", currentID).first().find()
+
+        return realm.query<GalleryR>("zlocinId == $0", currentCrime)
+            .sort("datum", Sort.DESCENDING)
+            .find()
+    }
+
     fun insertDataForMurder()  {
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
@@ -1111,8 +1402,6 @@ class RealmViewModel @Inject constructor(
                 zrtva,
                 0
             )
-
-
 
             var dokazOsumnjiceni1: DokazOsumnjicenR? =
                 insertDokazOsumnjicenog(dokaz1, osumnjiceniAmeliaFontaine)
@@ -1486,6 +1775,60 @@ class RealmViewModel @Inject constructor(
 
             var ispitivanjeOsumnjicenogZadatakAmelia = insertIspitivanjeOsumnjicenogZadatak(osumnjiceniAmeliaFontaine,zl9,false)
             var porukaZadatak = insertPorukeZadatak(null, zl8,false)
+
+            // telefon zrtve
+
+            insertBeleska(zlocin, "Found a lipstick stain on a glass in the victim's room.", RealmInstant.now())
+            insertBeleska(zlocin, "A torn photograph was discovered behind a painting.", RealmInstant.from(Instant.parse("2025-04-17T11:18:41Z").epochSecond, Instant.parse("2025-04-17T11:18:41Z").nano))
+            insertBeleska(zlocin, "The victim received a threatening letter two days before the murder.", RealmInstant.now())
+            insertBeleska(zlocin, "Casino security footage shows a shadowy figure entering Isabelle’s room.", RealmInstant.now())
+            insertBeleska(zlocin, "Blood drops found near the garden entrance.", RealmInstant.from(Instant.parse("2025-04-10T11:18:41Z").epochSecond, Instant.parse("2025-04-10T11:18:41Z").nano))
+
+            val kontaktMarco = insertWhatsAppKontakt(zlocin, "Marco Bellini", "+33612345678", R.drawable.whatsapp_profile_picture)
+            val kontaktVincent = insertWhatsAppKontakt(zlocin, "Vincent Duval", "+33612345678", R.drawable.whatsapp_profile_picture)
+            val kontaktAmelia = insertWhatsAppKontakt(zlocin, "Amelia Fontaine", "+33612345678", R.drawable.whatsapp_profile_picture)
+            val kontaktIsabelle = insertWhatsAppKontakt(zlocin, "Isabelle Moreau", "+33612345678", R.drawable.whatsapp_profile_picture)
+            val kontaktLuc = insertWhatsAppKontakt(zlocin, "Luc Moreau", "+33612345678", R.drawable.whatsapp_profile_picture)
+            val kontaktMe = insertWhatsAppKontakt(zlocin, "Me", "+33612345678", R.drawable.whatsapp_profile_picture)
+
+            if (kontaktAmelia != null && kontaktMe != null) insertWhatsAppPoruka(kontaktAmelia, kontaktMe, "I can't believe what happened to Isabelle.", RealmInstant.from(Instant.parse("2025-04-10T11:18:41Z").epochSecond, Instant.parse("2025-04-10T11:18:41Z").nano), true)
+            if (kontaktAmelia != null && kontaktMe != null) insertWhatsAppPoruka(kontaktMe, kontaktAmelia, "Me neither", RealmInstant.from(Instant.parse("2025-04-11T11:18:41Z").epochSecond, Instant.parse("2025-04-11T11:18:41Z").nano), true)
+            if (kontaktVincent != null && kontaktMe != null) insertWhatsAppPoruka(kontaktVincent, kontaktMe, "We need to talk. Urgently.", RealmInstant.now(), false)
+            if (kontaktVincent != null && kontaktMe != null) insertWhatsAppPoruka(kontaktMe, kontaktVincent, "Okay I agree. Let's met at the coffee place tomorrow at 5pm.", RealmInstant.now(), false)
+            if (kontaktMarco != null && kontaktMe != null) insertWhatsAppPoruka(kontaktMarco, kontaktMe, "Meet me at the fountain tonight. Come alone.", RealmInstant.now(), true)
+            if (kontaktLuc != null && kontaktMe != null) insertWhatsAppPoruka(kontaktLuc, kontaktMe, "I saw something... but I'm not sure what it means.", RealmInstant.now(), false)
+            if (kontaktIsabelle != null && kontaktMe != null) insertWhatsAppPoruka(kontaktIsabelle, kontaktMe, "They’re watching me. I don’t feel safe anymore.", RealmInstant.now(), true)
+
+            val kontaktJean = insertOneContact(zlocin, "Jean Rousseau", "+33612345678", null)
+            val kontaktClaire = insertOneContact(zlocin, "Claire Dubois", "+33687654321", R.drawable.whatsapp_profile_picture)
+            val kontaktHenri = insertOneContact(zlocin, "Henri Leclerc", "+33655556666", R.drawable.whatsapp_profile_picture)
+            val kontaktNatalie = insertOneContact(zlocin, "Natalie Girard", "+33677778888", R.drawable.whatsapp_profile_picture)
+            val kontaktJulien = insertOneContact(zlocin, "Julien Martin", "+33699990000", R.drawable.whatsapp_profile_picture)
+            val obicanKontaktMe = insertOneContact(zlocin, "Me", "+33699990000", R.drawable.whatsapp_profile_picture)
+
+            insertOneCall(kontaktJean, RealmInstant.now(), propustenC = false, dolazniC = true)
+            insertOneCall(kontaktClaire, RealmInstant.now(), propustenC = true, dolazniC = false)
+            insertOneCall(kontaktHenri, RealmInstant.now(), propustenC = false, dolazniC = false)
+            insertOneCall(kontaktNatalie, RealmInstant.now(), propustenC = true, dolazniC = true)
+            insertOneCall(kontaktJulien, RealmInstant.now(), propustenC = false, dolazniC = true)
+            insertOneCall(kontaktJean, RealmInstant.from(Instant.parse("2025-04-17T11:18:41Z").epochSecond, Instant.parse("2025-04-17T11:18:41Z").nano), propustenC = false, dolazniC = true)
+            insertOneCall(kontaktClaire, RealmInstant.from(Instant.parse("2025-04-17T11:18:41Z").epochSecond, Instant.parse("2025-04-17T11:18:41Z").nano), propustenC = true, dolazniC = false)
+            insertOneCall(kontaktHenri, RealmInstant.from(Instant.parse("2025-04-10T11:18:41Z").epochSecond, Instant.parse("2025-04-10T11:18:41Z").nano), propustenC = false, dolazniC = false)
+            insertOneCall(kontaktNatalie, RealmInstant.from(Instant.parse("2025-04-17T11:18:41Z").epochSecond, Instant.parse("2025-04-17T11:18:41Z").nano), propustenC = true, dolazniC = true)
+            insertOneCall(kontaktJulien, RealmInstant.from(Instant.parse("2025-04-10T11:18:41Z").epochSecond, Instant.parse("2025-04-10T11:18:41Z").nano), propustenC = false, dolazniC = true)
+
+            insertGalleryPhoto(zlocin, R.drawable.whatsapp_profile_picture, RealmInstant.now(), "Casino Lobby")
+            insertGalleryPhoto(zlocin, R.drawable.whatsapp_profile_picture, RealmInstant.now(), "Victim's Room")
+            insertGalleryPhoto(zlocin, R.drawable.whatsapp_profile_picture, RealmInstant.now(), "Garden Entrance")
+            insertGalleryPhoto(zlocin, R.drawable.whatsapp_profile_picture, RealmInstant.now(), "Security Office")
+            insertGalleryPhoto(zlocin, R.drawable.whatsapp_profile_picture, RealmInstant.now(), "Underground Parking")
+
+            if (kontaktJean != null && obicanKontaktMe != null) insertObicnaPoruka(kontaktJean, obicanKontaktMe, "Do you really think it was Marco?", RealmInstant.now(), false)
+            if (kontaktJean != null && obicanKontaktMe != null) insertObicnaPoruka(obicanKontaktMe, kontaktJean, "Yes, call me tomorrow at 8pm.", RealmInstant.now(), false)
+            if (kontaktClaire != null && obicanKontaktMe != null) insertObicnaPoruka(kontaktClaire, obicanKontaktMe,"Someone is lying. I can feel it.", RealmInstant.now(), true)
+            if (kontaktHenri != null && obicanKontaktMe != null) insertObicnaPoruka(kontaktHenri, obicanKontaktMe,"Isabelle mentioned something strange last night.", RealmInstant.now(), false)
+            if (kontaktNatalie != null && obicanKontaktMe != null) insertObicnaPoruka(kontaktNatalie, obicanKontaktMe,"Don't tell anyone we met.", RealmInstant.now(), true)
+            if (kontaktJulien != null && obicanKontaktMe != null) insertObicnaPoruka(kontaktJulien, obicanKontaktMe,"She was scared. That I’m sure of.", RealmInstant.now(), false)
         }
     }
 }
@@ -1503,6 +1846,16 @@ data class UiStateCrimeData (
     val date: String? = null,
     val place: String? = null,
     val description: String? = null
+)
+
+data class WhatsAppPreviewItem(
+    val kontakt: WhatsAppKontaktR,
+    val lastMessage: WhatsAppPorukaR?
+)
+
+data class OneContactPreviewItem(
+    val kontakt: OneContactR,
+    val lastMessage: ObicnaPorukaR?
 )
 
 // get data

@@ -193,5 +193,84 @@ fun NavigationGraph(navController: NavHostController) {
             val totalScore =navBackStackEntry.arguments?.getString("totalScore") ?:""
             ScoreQuestionsPage(navController,totalScore,viewModel)
         }
+        composable("destinationWhatsAppPage") {
+            WhatsAppPage(navController)
+        }
+        composable("destinationWhatsAppChatPage/{id}/{name}/{photo}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
+                navArgument("name") { type = NavType.StringType },
+                navArgument("photo") { type = NavType.IntType })
+        ) { navBackStackEntry ->
+            val id = navBackStackEntry.arguments?.getInt("id") ?: 0
+            val name = navBackStackEntry.arguments?.getString("name") ?: ""
+            val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
+            WhatsAppChatPage(id, name, photo, navController)
+        }
+        composable("destinationNotesPage") {
+            NotesPage(navController)
+        }
+        composable("destinationOneNotePage/{text}/{date}",
+            arguments = listOf(
+                navArgument("text") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType })
+        ) { navBackStackEntry ->
+            val text = navBackStackEntry.arguments?.getString("text") ?: ""
+            val date = navBackStackEntry.arguments?.getString("date") ?: ""
+
+            OneNotePage(text, date, navController)
+        }
+        composable("destinationCallsPage") {
+            CallsPage(navController)
+        }
+        composable("destinationPhonebookPage") {
+            PhonebookPage(navController)
+        }
+        composable("destinationOneContactPage/{name}/{phoneNumber}/{picture}",
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+                navArgument("phoneNumber") { type = NavType.StringType },
+                navArgument("picture") { type = NavType.IntType })
+        ) { navBackStackEntry ->
+            val name = navBackStackEntry.arguments?.getString("name") ?: ""
+            val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
+            val picture = navBackStackEntry.arguments?.getInt("picture") ?: 0
+
+            OneContactPage(name, phoneNumber, picture, navController)
+        }
+        composable("destinationKeypadPage") {
+            KeypadPage(navController)
+        }
+        composable("destinationMessagesPage") {
+            MessagesPage(navController)
+        }
+        composable("destinationChatPage/{id}/{name}/{photo}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
+                navArgument("name") { type = NavType.StringType },
+                navArgument("photo") { type = NavType.IntType })
+            ) { navBackStackEntry ->
+            val id = navBackStackEntry.arguments?.getInt("id") ?: 0
+            val name = navBackStackEntry.arguments?.getString("name") ?: ""
+            val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
+            ChatPage(id, name, photo, navController)
+        }
+        composable("destinationGalleryPage") {
+            GalleryPage(navController)
+        }
+        composable("destinationOnePhotoPage/{picture}/{datum}/{mesto}",
+            arguments = listOf(
+                navArgument("picture") { type = NavType.IntType },
+                navArgument("datum") { type = NavType.StringType },
+                navArgument("mesto") { type = NavType.StringType })
+        ) { navBackStackEntry ->
+            val picture = navBackStackEntry.arguments?.getInt("picture") ?: 0
+            val datum = navBackStackEntry.arguments?.getString("datum") ?: ""
+            val mesto = navBackStackEntry.arguments?.getString("mesto") ?: ""
+            OnePhotoPage(picture, datum, mesto, navController)
+        }
+        composable("destinationPhoneSettingsPage") {
+            PhoneSettingsPage(navController)
+        }
     }
 }

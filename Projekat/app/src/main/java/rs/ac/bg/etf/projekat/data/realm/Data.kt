@@ -54,7 +54,7 @@ enum class nazivTipaZlocinaR {
     CultsAndSecrets
 }
 
-// NapredakIstrage table
+// NapredakIstrageR table
 open class NapredakIstrageR : RealmObject {
     @PrimaryKey
     var idNapredak: Int = 0
@@ -62,7 +62,7 @@ open class NapredakIstrageR : RealmObject {
     var zlocinId: ZlocinR? = null
 }
 
-// Misija table
+// MisijaR table
 open class MisijaR : RealmObject {
     @PrimaryKey
     var idMisija: Int = 0
@@ -72,7 +72,7 @@ open class MisijaR : RealmObject {
     var status: Int = 0
 }
 
-// MisijaPoruka table
+// MisijaPorukaR table
 open class MisijaPorukaR : RealmObject {
     @PrimaryKey
     var idMisija: Int = 0
@@ -100,7 +100,20 @@ enum class PolR{
     zenski
 }
 
+// OsumnjicenR table
+/*
 open class OsumnjicenR : RealmObject {
+    @PrimaryKey
+    var idOsumnjicen: Int = 0
+    var ime: String = ""
+    var status: Int = 0
+    var tipOsumnjicen: String = TipOsumnjicenR.pojedinac.name
+    var motiv: MotivR? = null
+    var zlocinId: ZlocinR? = null
+    var kriv: Int = 0
+}*/
+
+open class OsumnjicenR : RealmObject {//-ime +osobaId
     @PrimaryKey
     var idOsumnjicen: Int = 0
     var status: Int = 0
@@ -170,7 +183,19 @@ enum class TipDokazaR {
     svedok
 }
 
+// SvedokR table
+/*
 open class SvedokR : RealmObject {
+    @PrimaryKey
+    var idSvedok: Int = 0
+    var ime: String = ""
+    var kontakt: String = ""
+    var izjava: String = ""
+    var zlocinId: ZlocinR? = null
+    var statusSvedok: String = StatusSvedokR.aktivno.name
+    var statusIspitan: Int = 0
+}*/
+open class SvedokR : RealmObject {// -ime,kontakt  +osobaId
     @PrimaryKey
     var idSvedok: Int = 0
     var izjava: String = ""
@@ -187,7 +212,19 @@ enum class StatusSvedokR {
     nesaradnja
 }
 
+// ZrtvaR table
+/*
 open class ZrtvaR : RealmObject {
+    @PrimaryKey
+    var idZrtva: Int = 0
+    var tipZrtve: String = ""
+    var ime: String = ""
+    var detalji: String = ""
+    var statusZrtva: String = StatusZrtvaR.ziva.name
+    var zlocinId: ZlocinR? = null
+}*/
+
+open class ZrtvaR : RealmObject {// -ime
     @PrimaryKey
     var idZrtva: Int = 0
     var tipZrtve: String = ""
@@ -497,6 +534,72 @@ open class ZadatakR : RealmObject {
     var zlocinId: ZlocinR? =null
 }
 
+// telefon zrtve
+
+open class BeleskaR : RealmObject {
+    @PrimaryKey
+    var idBeleska: Int = 0
+    var zlocinId: ZlocinR? = null
+    var tekst: String = ""
+    var datum: RealmInstant ?= null
+}
+
+open class WhatsAppKontaktR : RealmObject {
+    @PrimaryKey
+    var idWhatsAppKontakt: Int = 0
+    var zlocinId: ZlocinR? = null
+    var ime: String = ""
+    var broj: String = ""
+    var slika: Int? = 0
+}
+
+open class WhatsAppPorukaR : RealmObject {
+    @PrimaryKey
+    var idWhatsAppPoruka: Int = 0
+    var kontaktKoSalje: WhatsAppKontaktR? = null
+    var kontaktKomeSalje: WhatsAppKontaktR? = null
+    var tekst: String = ""
+    var datum: RealmInstant ?= null
+    var procitana: Boolean = false
+}
+
+open class OneContactR : RealmObject {
+    @PrimaryKey
+    var idOneContact: Int = 0
+    var zlocinId: ZlocinR? = null
+    var ime: String = ""
+    var broj: String = ""
+    var slika: Int? = 0
+}
+
+open class OneCallR : RealmObject {
+    @PrimaryKey
+    var idOneCall: Int = 0
+    var kontakt: OneContactR? = null
+    var datum: RealmInstant ?= null
+    var propusten: Boolean = false
+    var dolazni: Boolean = false
+}
+
+open class GalleryR : RealmObject {
+    @PrimaryKey
+    var idPhoto: Int = 0
+    var zlocinId: ZlocinR? = null
+    var slika: Int? = 0
+    var datum: RealmInstant ?= null
+    var mesto: String = ""
+}
+
+open class ObicnaPorukaR : RealmObject {
+    @PrimaryKey
+    var idObicnaPoruka: Int = 0
+    var kontaktKoSalje: OneContactR? = null
+    var kontaktKomeSalje: OneContactR? = null
+    var tekst: String = ""
+    var datum: RealmInstant ?= null
+    var procitana: Boolean = false
+}
+
 val realmClasses = listOf(
     ZlocinR::class,
     TipZlocinaR::class,
@@ -529,6 +632,14 @@ val realmClasses = listOf(
     PitanjeR::class,
     OdgovorR::class,
     PitanjeIspitivanjeSvedokaR::class,
+    OsobaR::class,
+    BeleskaR::class,
+    WhatsAppKontaktR::class,
+    WhatsAppPorukaR::class,
+    OneContactR::class,
+    OneCallR::class,
+    GalleryR::class,
+    ObicnaPorukaR::class,
     OsobaR::class,
     ZadatakR::class,
     DokazZadatakR::class,
