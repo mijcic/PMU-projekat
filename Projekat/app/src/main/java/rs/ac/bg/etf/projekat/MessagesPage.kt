@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,36 +42,26 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.OneContactPreviewItem
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.WhatsAppPreviewItem
 
 @Composable
 fun MessagesPage(navController: NavController) {
     val font = FontFamily.SansSerif
 
-    val messages = listOf(
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-        Message("Ana", 1, "10:45 AM", R.drawable.whatsapp_profile_picture, "\uD83D\uDE0A ❤\uFE0F \uD83D\uDE0A ❤\uFE0F"),
-        Message("Marko", 0, "9:15 AM", R.drawable.whatsapp_profile_picture, "Eej kako si"),
-    )
+    val realmViewModel: RealmViewModel = hiltViewModel()
+    var messages by remember { mutableStateOf<List<OneContactPreviewItem>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        val result = realmViewModel.getContactsLastMessages()
+        messages = result?.sortedByDescending { it.lastMessage?.datum } ?: emptyList()
+    }
 
     Column(
         modifier = Modifier
@@ -133,10 +124,14 @@ fun MessagesPage(navController: NavController) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { navController.navigate("destinationChatPage/" + message.name + "/" + message.picture) },
+                            .clickable {
+                                var id = message.kontakt?.idOneContact
+                                var ime = message.kontakt?.ime ?: message.kontakt?.broj ?: "No Caller ID"
+                                var slika = message.kontakt?.slika ?: R.drawable.no_account
+                                navController.navigate("destinationChatPage/$id/$ime/$slika") },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (message.readOrNot == 0) {
+                        if (message.lastMessage?.procitana == false) {
                             Box(
                                 modifier = Modifier
                                     .padding(start = 6.dp, end = 6.dp)
@@ -159,7 +154,7 @@ fun MessagesPage(navController: NavController) {
                                     .clip(CircleShape)
                             ) {
                                 Image(
-                                    painter = painterResource(id = message.picture),
+                                    painter = painterResource(id = message.kontakt?.slika ?: R.drawable.no_account),
                                     contentDescription = "Profile picture",
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -170,33 +165,39 @@ fun MessagesPage(navController: NavController) {
                             Spacer(modifier = Modifier.width(12.dp))
 
                             Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 8.dp),
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
-                                    message.name,
+                                    text = message.kontakt.ime,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
-                                    fontFamily = font
+                                    fontFamily = font,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
-                                    message.lastMessage,
-                                    fontSize = 16.sp,
-                                    fontFamily = font
+                                    text = message.lastMessage?.tekst ?: "",
+                                    color = Color.Gray,
+                                    fontSize = 14.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
 
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
+                            Column(
+                                horizontalAlignment = Alignment.End,
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    message.time,
+                                    text = realmInstantForWA(message.lastMessage?.datum),
                                     color = Color.Gray,
                                     fontSize = 14.sp,
                                     fontFamily = font
                                 )
-                                Spacer(modifier = Modifier.width(3.dp))
+                                Spacer(modifier = Modifier.height(2.dp))
                                 Icon(
                                     painter = painterResource(R.drawable.right_arow),
                                     contentDescription = null,

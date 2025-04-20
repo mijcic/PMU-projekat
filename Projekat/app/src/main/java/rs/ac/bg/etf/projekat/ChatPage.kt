@@ -27,55 +27,36 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realm.ObicnaPorukaR
+import rs.ac.bg.etf.projekat.data.realm.WhatsAppPorukaR
 
 @Composable
-fun ChatPage(name: String, photo: Int, navController: NavController) {
-    var messages by remember { mutableStateOf(
-        listOf(
-            MessageInChat("Cao", "Me"),
-            MessageInChat("Ej", "Other"),
-            MessageInChat("Kako si?", "Me"),
-            MessageInChat("Dobro", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-            MessageInChat("Ti?", "Other"),
-        )
-    )}
+fun ChatPage(id: Int, name: String, photo: Int, navController: NavController) {
+    val realmViewModel: RealmViewModel = hiltViewModel()
+    var messages by remember { mutableStateOf<List<ObicnaPorukaR>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        messages = realmViewModel.getMessagesWithContact(id)!!
+    }
 
     Column(
         modifier = Modifier
@@ -172,14 +153,24 @@ fun ChatPage(name: String, photo: Int, navController: NavController) {
 }
 
 @Composable
-fun ChatScreen(messages: List<MessageInChat>, modifier: Modifier) {
+fun ChatScreen(messages: List<ObicnaPorukaR>, modifier: Modifier) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(messages) {
+        if (messages.isNotEmpty()) {
+            listState.scrollToItem(0)
+        }
+    }
+
     LazyColumn(
-        modifier = modifier.padding(16.dp)
+        modifier = modifier.padding(16.dp),
+        state = listState,
+        reverseLayout = true
     ) {
         var lastSender = ""
         itemsIndexed(messages) { index, message ->
-            val spacing = if (message.sender == lastSender) 4.dp else 8.dp
-            lastSender = message.sender
+            val spacing = if (message.kontaktKoSalje?.ime == lastSender) 4.dp else 8.dp
+            lastSender = message.kontaktKoSalje?.ime ?: ""
 
             MessageBubble(message, spacing)
         }
@@ -187,25 +178,30 @@ fun ChatScreen(messages: List<MessageInChat>, modifier: Modifier) {
 }
 
 @Composable
-fun MessageBubble(message: MessageInChat, spacing: Dp) {
-    val backgroundColor = if (message.sender == "Me") colorResource(R.color.iphone_green) else colorResource(R.color.light_gray)
-    val alignment = if (message.sender == "Me") Alignment.CenterEnd else Alignment.CenterStart
-    val textColor = if (message.sender == "Me") Color.White else Color.Black
+fun MessageBubble(message: ObicnaPorukaR, spacing: Dp) {
+    val backgroundColor = if (message.kontaktKoSalje?.ime == "Me") colorResource(R.color.iphone_green) else colorResource(R.color.light_gray)
+    val textColor = if (message.kontaktKoSalje?.ime == "Me") Color.White else Color.Black
+    val horizontalAlignment = if (message.kontaktKoSalje?.ime == "Me") Arrangement.End else Arrangement.Start
 
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = spacing),
-        contentAlignment = alignment
+        horizontalArrangement = horizontalAlignment
     ) {
-        Text(
-            text = message.content,
+        Box(
             modifier = Modifier
+                .widthIn(max = (LocalConfiguration.current.screenWidthDp.dp * 0.75f))
                 .background(backgroundColor, RoundedCornerShape(20.dp))
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            color = textColor,
-            fontSize = 16.sp
-        )
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+        ) {
+            Text(
+                text = message.tekst,
+                color = textColor,
+                fontSize = 16.sp,
+                softWrap = true
+            )
+        }
     }
 }
 

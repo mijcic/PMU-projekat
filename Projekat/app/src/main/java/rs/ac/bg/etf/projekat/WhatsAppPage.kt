@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -49,6 +51,8 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +61,8 @@ fun WhatsAppPage(navController: NavController) {
     var chats by remember { mutableStateOf<List<WhatsAppPreviewItem>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        chats = realmViewModel.getContactsLastMessages()!!
+        val result = realmViewModel.getContactsLastWhatsappMessages()
+        chats = result?.sortedByDescending { it.lastMessage?.datum } ?: emptyList()
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -74,57 +79,73 @@ fun WhatsAppPage(navController: NavController) {
             )
         )
 
-        Column {
-            chats.forEach { chat ->
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(chats) { chat ->
                 val kontakt = chat.kontakt
                 val poruka = chat.lastMessage
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navController.navigate("destinationWhatsAppChatPage/${kontakt.ime}/${kontakt.slika}") }
-                        .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
                         modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
+                            .fillMaxWidth()
+                            .clickable {
+                                var ime = kontakt?.ime ?: kontakt?.broj ?: "No Caller ID"
+                                var slika = kontakt?.slika ?: R.drawable.no_account
+                                navController.navigate("destinationWhatsAppChatPage/${kontakt.idWhatsAppKontakt}/$ime/$slika")
+                            }
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            painter = painterResource(id = kontakt.slika ?: R.drawable.no_account),
-                            contentDescription = "Profile picture",
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .size(50.dp)
                                 .clip(CircleShape)
-                        )
-                    }
+                        ) {
+                            Image(
+                                painter = painterResource(id = kontakt.slika ?: R.drawable.no_account),
+                                contentDescription = "Profile picture",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
+                        }
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
 
-                    Column {
-                        Text(kontakt.ime, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Column(
+                            modifier = Modifier.weight(1f) // Ograničava širinu teksta
+                        ) {
+                            Text(
+                                text = kontakt.ime,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = poruka?.tekst ?: "",
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
                         Text(
-                            poruka?.tekst ?: "",
+                            text = realmInstantForWA(poruka?.datum),
                             color = Color.Gray,
-                            fontSize = 14.sp,
-                            maxLines = 1
+                            fontSize = 12.sp,
+                            modifier = Modifier.align(Alignment.Top)
                         )
                     }
 
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = realmInstantForWA(poruka?.datum),
-                        color = Color.Gray,
-                        fontSize = 12.sp
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.Gray.copy(alpha = 0.3f)
                     )
                 }
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Gray.copy(alpha = 0.3f)
-                )
             }
         }
     }

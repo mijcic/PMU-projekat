@@ -549,6 +549,7 @@ open class WhatsAppKontaktR : RealmObject {
     var idWhatsAppKontakt: Int = 0
     var zlocinId: ZlocinR? = null
     var ime: String = ""
+    var broj: String = ""
     var slika: Int? = 0
 }
 
@@ -583,6 +584,7 @@ open class OneCallR : RealmObject {
 open class GalleryR : RealmObject {
     @PrimaryKey
     var idPhoto: Int = 0
+    var zlocinId: ZlocinR? = null
     var slika: Int? = 0
     var datum: RealmInstant ?= null
     var mesto: String = ""
@@ -591,7 +593,8 @@ open class GalleryR : RealmObject {
 open class ObicnaPorukaR : RealmObject {
     @PrimaryKey
     var idObicnaPoruka: Int = 0
-    var kontakt: OneContactR? = null
+    var kontaktKoSalje: OneContactR? = null
+    var kontaktKomeSalje: OneContactR? = null
     var tekst: String = ""
     var datum: RealmInstant ?= null
     var procitana: Boolean = false

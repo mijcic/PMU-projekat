@@ -196,14 +196,16 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationWhatsAppPage") {
             WhatsAppPage(navController)
         }
-        composable("destinationWhatsAppChatPage/{name}/{photo}",
+        composable("destinationWhatsAppChatPage/{id}/{name}/{photo}",
             arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
                 navArgument("name") { type = NavType.StringType },
                 navArgument("photo") { type = NavType.IntType })
         ) { navBackStackEntry ->
+            val id = navBackStackEntry.arguments?.getInt("id") ?: 0
             val name = navBackStackEntry.arguments?.getString("name") ?: ""
             val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
-            WhatsAppChatPage(name, photo, navController)
+            WhatsAppChatPage(id, name, photo, navController)
         }
         composable("destinationNotesPage") {
             NotesPage(navController)
@@ -242,24 +244,30 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationMessagesPage") {
             MessagesPage(navController)
         }
-        composable("destinationChatPage/{name}/{photo}",
+        composable("destinationChatPage/{id}/{name}/{photo}",
             arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
                 navArgument("name") { type = NavType.StringType },
                 navArgument("photo") { type = NavType.IntType })
             ) { navBackStackEntry ->
+            val id = navBackStackEntry.arguments?.getInt("id") ?: 0
             val name = navBackStackEntry.arguments?.getString("name") ?: ""
             val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
-            ChatPage(name, photo, navController)
+            ChatPage(id, name, photo, navController)
         }
         composable("destinationGalleryPage") {
             GalleryPage(navController)
         }
-        composable("destinationOnePhotoPage/{picture}",
+        composable("destinationOnePhotoPage/{picture}/{datum}/{mesto}",
             arguments = listOf(
-                navArgument("picture") { type = NavType.IntType })
+                navArgument("picture") { type = NavType.IntType },
+                navArgument("datum") { type = NavType.StringType },
+                navArgument("mesto") { type = NavType.StringType })
         ) { navBackStackEntry ->
             val picture = navBackStackEntry.arguments?.getInt("picture") ?: 0
-            OnePhotoPage(picture, navController)
+            val datum = navBackStackEntry.arguments?.getString("datum") ?: ""
+            val mesto = navBackStackEntry.arguments?.getString("mesto") ?: ""
+            OnePhotoPage(picture, datum, mesto, navController)
         }
         composable("destinationPhoneSettingsPage") {
             PhoneSettingsPage(navController)
