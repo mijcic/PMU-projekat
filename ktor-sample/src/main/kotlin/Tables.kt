@@ -109,11 +109,12 @@ data class OsobaData(
 
 @Serializable
 data class ZrtvaData(
-    var id: Int,
-    val ime: String,
+    var idZrtva: Int,
     val tipZrtve: String,
     val detalji: String,
-    val statusZrtva: String
+    val statusZrtva: String,
+    val zlocinId:Int,
+    val osobaId:Int
 )
 
 @Serializable
@@ -124,32 +125,33 @@ data class MotivData(
 
 @Serializable
 data class OsumnjicenData(
-    var id: Int,
-    val ime: String,
-    val tipOsumnjicen: Int,
-    val motiv: Int,
+    var idOsumnjicen: Int,
     val status: Int,
+    val tipOsumnjicen: String,
+    val motiv: Int,
+    val zlocinId: Int,
     val kriv: Int,
-    val odnosZrtva:String
+    val osobaId:Int
 )
 
 @Serializable
 data class DokazData(
-    var id:Int,
+    var idDokaz:Int,
     val tipDokaza: String,
     val opis: String,
+    val zlocinId: Int,
+    val zrtvaId:Int,
     val status: Int,
-    var osumnjicen: OsumnjicenData
 )
 
 @Serializable
 data class SvedokData(
-    var id: Int,
-    val ime: String,
+    var idSvedok: Int,
     val izjava: String,
-    val kontakt: String,
     val statusSvedok: String,
-    val status: Int
+    val statusIspitan: Int,
+    val zlocinId: Int,
+    val osobaId: Int
 )
 
 @Serializable

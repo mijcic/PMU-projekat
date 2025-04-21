@@ -26,12 +26,13 @@ data class GeminiRequest2(
 @Serializable
 data class Tables(
     val zlocinR: ZlocinR,
-    val osobaR: List<OsobaR>,
-    //val osumnjicenR: OsumnjicenR,
-    //val dokazR: DokazR,
+   // val osobaR: List<OsobaR>,
+    //val motivR: List<MotivR>,
+    val osumnjicenR: List<OsumnjicenR>,
+    val dokazR: List<DokazR>,
     //val dokazZadatakR: DokazZadatakR,
-    //val svedokR: SvedokR,
-    //val zrtvaR: ZrtvaR
+    val svedokR: List<SvedokR>,
+    val zrtvaR: ZrtvaR
 )
 
 
@@ -47,22 +48,25 @@ data class ZlocinR(
 )
 
 @Serializable
-data class OsobaR(val idOsoba: Int, val ime: String, val kontakt: String, val datum: String?, val zanimanje: String,val pol:String,val zlocinId: Int)
+data class OsobaR(val idOsoba: Int, val ime: String, val kontakt: String?, val datum: String?, val zanimanje: String,val pol:String,val zlocinId: Int)
 
 @Serializable
-data class OsumnjicenR(val idOsumnjicen: Int, val status: Int, val motiv: String?,val tipOsumnjicen:String, val zlocinId:ZlocinR?,val kriv:Int, val osobaId:OsobaR?)
+data class OsumnjicenR(val idOsumnjicen: Int, val status: Int, val motiv: MotivR?,val tipOsumnjicen:String, val zlocinId:Int,val kriv:Int, val osobaId:OsobaR?)
 
 @Serializable
-data class DokazR(val idDokaz: Int, val tipDokaza: String,val opis: String, val zlocinId: ZlocinR?, val zrtvaId: ZrtvaR?, val status: Int)
+data class MotivR(val idMotiv:Int, val opis: String)
+
+@Serializable
+data class DokazR(val idDokaz: Int, val tipDokaza: String,val opis: String, val zlocinId: Int, val zrtvaId: Int, val status: Int)
 
 @Serializable
 data class DokazZadatakR(val idDokazZadatak: Int, val tekst: String,val dokazId:DokazR?, val uradjen:Boolean)
 
 @Serializable
-data class SvedokR(val idSvedok: Int, val izjava: String, val statusSvedok: String,val statusIspitan:Int,val zlocinId: ZlocinR?, val osobaId: OsobaR?)
+data class SvedokR(val idSvedok: Int, val izjava: String, val statusSvedok: String,val statusIspitan:Int,val zlocinId: Int, val osobaId: OsobaR?)
 
 @Serializable
-data class ZrtvaR(val idZrtva: Int, val tipZrtve: String, val detalji:String, val statusZrtva:String,val zlocinId: ZlocinR?, val osobaId: OsobaR?)
+data class ZrtvaR(val idZrtva: Int, val tipZrtve: String, val detalji:String, val statusZrtva:String,val zlocinId: Int, val osobaId: OsobaR?)
 
 
 // --- Konstante ---
@@ -102,15 +106,16 @@ data class Candidate(
 @Serializable
 data class GeminiResponse2(
     val zlocinR: ZlocinR,
-    val osobaR:  List<OsobaR>,
-    //val osumnjicenR:  List<OsumnjicenR>,
-    //val dokazR:  List<DokazR>,
+    //val osobaR:  List<OsobaR>,
+    //val motivR: List<MotivR>,
+    val osumnjicenR:  List<OsumnjicenR>,
+    val dokazR:  List<DokazR>,
     //val dokazZadatakR:  List<DokazZadatakR>,
-    //val svedokR:  List<SvedokR>,
-    //val zrtvaR:  List<ZrtvaR>
+    val svedokR:  List<SvedokR>,
+    val zrtvaR:  ZrtvaR
 )
 
-// --- HTTP Klijent za komunikaciju sa Gemini API-jem ---
+// http klijent za komunikaciju sa gemini api-jem
 val geminiClient = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(Json {
@@ -194,10 +199,10 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse){
                 )
                 insertZlocinData(zl)
 
+
+
+                /*
                 val osobe = geminiResponse2.osobaR
-                println("osoba\n")
-                println(osobe)
-                println("o\n")
 
                 for(o in osobe){
                     println(o)
@@ -224,7 +229,181 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse){
                         insertOsobaData(os,zl)
                     }
                 }
+                */
+
+                //zrtva i osoba
+                insertGeminiZrtva(geminiResponse2,timestamp,zl)
+
+                //osumnjiceni i osobe (izmeniti)
+                insertGeminiOsumnjicen(geminiResponse2,timestamp,zl)
+
+                //svedoci
+                insertGeminiSvedok(geminiResponse2,timestamp,zl)
+
             }
         }
     }
+}
+
+fun insertGeminiZrtva(geminiResponse2: GeminiResponse2,timestamp:Long,zl:ZlocinData){
+    val zrtva = geminiResponse2.zrtvaR
+    val datumStr = zrtva.osobaId?.datum
+    val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+    var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+    if(timestamp2==null){
+        timestamp2=timestamp
+    }
+    val os= timestamp2?.let {
+        zrtva.osobaId?.let { it1 ->
+            OsobaData(
+                idOsoba = it1.idOsoba,
+                ime = zrtva.osobaId.ime,
+                kontakt = if(zrtva.osobaId.kontakt==null)"" else zrtva.osobaId.kontakt,
+                datum = it,
+                zanimanje = zrtva.osobaId.zanimanje,
+                pol = zrtva.osobaId.pol,
+                zlocinId = zrtva.osobaId.zlocinId
+            )
+        }
+    }
+    if (os != null) {
+        insertOsobaData(os,zl)
+    }
+    if (os != null) {
+        val zr=ZrtvaData(
+            idZrtva = zrtva.idZrtva,
+            tipZrtve = zrtva.tipZrtve,
+            detalji = zrtva.detalji,
+            statusZrtva = zrtva.statusZrtva,
+            zlocinId = zl.idZlocin,
+            osobaId = 1
+        )
+
+        insertZrtva(zr, zl,os)
+
+        // dokazi
+        insertGeminiDokaz(geminiResponse2,zl,zr)
+    }
+}
+
+fun insertGeminiDokaz(geminiResponse2: GeminiResponse2,zl:ZlocinData,zrtva:ZrtvaData){
+    val dokazi = geminiResponse2.dokazR
+    for(d in dokazi){
+        val dokaz = DokazData(
+            idDokaz = d.idDokaz,
+            tipDokaza = d.tipDokaza,
+            opis = d.opis,
+            zlocinId = d.zlocinId,
+            zrtvaId = d.zrtvaId,
+            status = d.status
+        )
+        insertDokazData(dokaz,zl,zrtva)
+    }
+}
+
+fun insertGeminiOsumnjicen(geminiResponse2: GeminiResponse2,timestamp:Long,zl:ZlocinData){
+    val osumnjiceni=geminiResponse2.osumnjicenR
+
+    for(o in osumnjiceni){
+        val datumStr = o.osobaId?.datum
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+        var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+        if(timestamp2==null){
+            timestamp2=timestamp
+        }
+        val os= timestamp2?.let {
+            o.osobaId?.let { it1 ->
+                OsobaData(
+                    idOsoba = it1.idOsoba,
+                    ime = o.osobaId.ime,
+                    kontakt = if(o.osobaId.kontakt==null)"" else o.osobaId.kontakt,
+                    datum = it,
+                    zanimanje = o.osobaId.zanimanje,
+                    pol = o.osobaId.pol,
+                    zlocinId = o.osobaId.zlocinId
+                )
+            }
+        }
+        if (os != null) {
+            insertOsobaData(os,zl)
+        }
+        if (os != null) {
+            val m= o.motiv?.let { it1 -> MotivData(it1.idMotiv,o.motiv.opis) }
+            if (m != null) {
+                insertMotivData(m)
+            }
+
+            o.motiv?.let { it1 ->
+                o.osobaId?.let { it2 ->
+                    OsumnjicenData(
+                        idOsumnjicen = o.idOsumnjicen,
+                        status = o.status,
+                        tipOsumnjicen = o.tipOsumnjicen,
+                        motiv = it1.idMotiv,
+                        zlocinId = o.zlocinId,
+                        kriv = o.kriv,
+                        osobaId = os.idOsoba
+                    )
+                }
+            }?.let { it2 ->
+                if (m != null) {
+                    insertOsumnjicenData(
+                        it2,
+                        zlocin = zl,
+                        motiv = m,
+                        zrtva = ZrtvaData(0,"","","",1,1)
+                    )
+                }
+            }
+        }
+    }
+}
+
+fun insertGeminiSvedok(geminiResponse2: GeminiResponse2,timestamp:Long,zl:ZlocinData){
+    val svedoci=geminiResponse2.svedokR
+
+    for(s in svedoci){
+        val datumStr = s.osobaId?.datum
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+        var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+        if(timestamp2==null){
+            timestamp2=timestamp
+        }
+        val os= timestamp2?.let {
+            s.osobaId?.let { it1 ->
+                OsobaData(
+                    idOsoba = it1.idOsoba,
+                    ime = s.osobaId.ime,
+                    kontakt = if(s.osobaId.kontakt==null)"" else s.osobaId.kontakt,
+                    datum = it,
+                    zanimanje = s.osobaId.zanimanje,
+                    pol = s.osobaId.pol,
+                    zlocinId = s.osobaId.zlocinId
+                )
+            }
+        }
+        if (os != null) {
+            insertOsobaData(os,zl)
+        }
+        if (os != null) {
+            insertSvedokData(
+                SvedokData(
+                    idSvedok = s.idSvedok,
+                    izjava = s.izjava,
+                    statusSvedok = s.statusSvedok,
+                    statusIspitan = s.statusIspitan,
+                    zlocinId = s.zlocinId,
+                    osobaId = os.idOsoba
+                ),
+                zlocin = zl
+            )
+        }
+    }
+
 }

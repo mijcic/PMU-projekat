@@ -72,11 +72,12 @@ DROP TABLE IF EXISTS `Zrtva`;
 CREATE TABLE Zrtva (
     idZrtva INT AUTO_INCREMENT PRIMARY KEY,  -- Primarni ključ
     tipZrtve VARCHAR(50) NOT NULL,           -- Tip žrtve (osoba, objekat, fenomen...)
-    ime VARCHAR(255) NOT NULL,               -- Ime žrtve
-    detalji TEXT NOT NULL,                   -- Detalji o žrtvi
+    detalji VARCHAR(150) NOT NULL,            -- Detalji o žrtvi
     statusZrtva VARCHAR(50) NOT NULL,        -- Status žrtve
     zlocinId INT NOT NULL,                   -- Spoljašnji ključ na Zlocin
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)  -- Veza sa Zlocin tabelom
+    osobaId INT NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),  -- Veza sa Zlocin tabelom
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) 
 );
 
 DROP TABLE IF EXISTS `Dokaz`;
@@ -96,13 +97,13 @@ DROP TABLE IF EXISTS `Svedok`;
 -- Tabela za svedoke (globalni podaci)
 CREATE TABLE Svedok (
     idSvedok INT AUTO_INCREMENT PRIMARY KEY,
-    ime VARCHAR(255) NOT NULL,
-    kontakt VARCHAR(255) NOT NULL,
-    zlocinId INT NOT NULL,
     izjava VARCHAR(255) NOT NULL,
     statusSvedok ENUM('aktivno', 'zasticen', 'nesaradnja') NOT NULL,
-    statusS INT NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    statusIspitan INT NOT NULL,
+    zlocinId INT NOT NULL,
+    osobaId INT NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
 );
 
 DROP TABLE IF EXISTS `Motiv`;
@@ -116,13 +117,14 @@ DROP TABLE IF EXISTS `Osumnjicen`;
 -- Tabela za osumnjičene (globalni podaci)
 CREATE TABLE Osumnjicen (
     idOsumnjicen INT AUTO_INCREMENT PRIMARY KEY,
-    ime VARCHAR(255) NOT NULL,
     statusS INT NOT NULL,
     tipOsumnjicen ENUM('pojedinac', 'organizacija') NOT NULL, 
 	motiv INT NOT NULL,
+    zlocinId INT NOT NULL,
     kriv INT NOT NULL,
-    idZlocin INT NOT NULL,
-    FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin),
+    osobaId INT NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba),
     FOREIGN KEY (motiv) REFERENCES Motiv(idMotiv)
 );
 

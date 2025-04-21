@@ -7,33 +7,6 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
 
-fun insertZlocin(zlocin: Zlocin) {
-    val query = """
-        INSERT INTO zlocin (tipZlocinaId, naziv, datum, mesto, opis, statusS)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-    var conn: Connection? = null
-    var statement: PreparedStatement? = null
-
-    try {
-        conn = getDatabaseConnection()
-        statement = conn?.prepareStatement(query)
-
-        statement?.setInt(1,zlocin.idTipZlocina)
-        statement?.setString(2, zlocin.naziv)
-        statement?.setTimestamp(3, java.sql.Timestamp(zlocin.datum))
-        statement?.setString(4, zlocin.mesto)
-        statement?.setString(5, zlocin.opis)
-        statement?.setString(6, zlocin.status)
-
-        statement?.executeUpdate()
-    } catch (e: SQLException) {
-        e.printStackTrace()
-    } finally {
-        closeResources(conn, statement, null)
-    }
-}
-
 // insert into Zlocin Table in mySql
 fun insertZlocinData(zlocin: ZlocinData) {
     val query = """
@@ -108,9 +81,9 @@ fun insertOsobaData(osobaData: OsobaData,zlocin: ZlocinData){
 }
 
 
-fun insertZrtva(zrtvaData: ZrtvaData,zlocin: ZlocinData){
+fun insertZrtva(zrtvaData: ZrtvaData,zlocin: ZlocinData,osoba:OsobaData){
     val query = """
-        INSERT INTO Zrtva (tipZrtve, ime, detalji, statusZrtva, zlocinId)
+        INSERT INTO Zrtva (tipZrtve, detalji, statusZrtva, zlocinId, osobaId)
         VALUES (?, ?, ?, ?, ?)
     """
     var conn: Connection? = null
@@ -121,18 +94,18 @@ fun insertZrtva(zrtvaData: ZrtvaData,zlocin: ZlocinData){
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setString(1, zrtvaData.tipZrtve)       // tipZrtve
-        statement?.setString(2, zrtvaData.ime)            // ime
-        statement?.setString(3, zrtvaData.detalji)        // detalji
-        statement?.setString(4, zrtvaData.statusZrtva)    // statusZrtva
-        statement?.setInt(5, zlocin.idZlocin)          // zlocinId
+        statement?.setString(1, zrtvaData.tipZrtve)
+        statement?.setString(2, zrtvaData.detalji)
+        statement?.setString(3, zrtvaData.statusZrtva)
+        statement?.setInt(4, zrtvaData.zlocinId)
+        statement?.setInt(5, zlocin.idZlocin)
 
         statement?.executeUpdate()
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
             // Vraca generisani ID
-            zrtvaData.id=resultSet.getInt(1)
+            zrtvaData.idZrtva=resultSet.getInt(1)
         }
     } catch (e: SQLException) {
         e.printStackTrace()
@@ -173,7 +146,7 @@ fun insertMotivData(motiv: MotivData){
 
 fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: MotivData, zrtva: ZrtvaData) {
     val query = """
-        INSERT INTO osumnjicen (ime, statusS, tipOsumnjicen, motiv, idZlocin, kriv)
+        INSERT INTO osumnjicen (statusS, tipOsumnjicen, motiv, zlocinId, kriv, osobaId)
         VALUES (?, ?, ?, ?, ?, ?)
     """
     var conn: Connection? = null
@@ -184,19 +157,19 @@ fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: M
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setString(1, osumnjicen.ime)
-        statement?.setInt(2, osumnjicen.status)
-        statement?.setInt(3, osumnjicen.tipOsumnjicen)
-        statement?.setInt(4, motiv.idMotiv)
-        statement?.setInt(5, zlocin.idZlocin)
-        statement?.setInt(6, osumnjicen.kriv)
+        statement?.setInt(1, osumnjicen.status)
+        statement?.setString(2, osumnjicen.tipOsumnjicen)
+        statement?.setInt(3, motiv.idMotiv)
+        statement?.setInt(4, zlocin.idZlocin)
+        statement?.setInt(5, osumnjicen.kriv)
+        statement?.setInt(6, osumnjicen.osobaId)
 
         statement?.executeUpdate()
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
             // Vraca generisani ID
-            osumnjicen.id=resultSet.getInt(1)
+            osumnjicen.idOsumnjicen=resultSet.getInt(1)
         }
 
     } catch (e: SQLException) {
@@ -204,7 +177,7 @@ fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: M
     } finally {
         closeResources(conn, statement, null)
     }
-    insertOdnosOsumnjicenZrtvaData(osumnjicen,zrtva)
+    //insertOdnosOsumnjicenZrtvaData(osumnjicen,zrtva)
 }
 
 fun insertOdnosOsumnjicenZrtvaData(osumnjicen: OsumnjicenData, zrtva: ZrtvaData) {
@@ -220,15 +193,15 @@ fun insertOdnosOsumnjicenZrtvaData(osumnjicen: OsumnjicenData, zrtva: ZrtvaData)
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setInt(1, osumnjicen.id)
-        statement?.setInt(2, zrtva.id)
-        statement?.setString(3, osumnjicen.odnosZrtva)
+        statement?.setInt(1, osumnjicen.idOsumnjicen)
+        statement?.setInt(2, zrtva.idZrtva)
+        //statement?.setString(3, osumnjicen.odnosZrtva)
 
         statement?.executeUpdate()
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
-            osumnjicen.id=resultSet.getInt(1)
+            osumnjicen.idOsumnjicen=resultSet.getInt(1)
         }
 
     } catch (e: SQLException) {
@@ -238,7 +211,8 @@ fun insertOdnosOsumnjicenZrtvaData(osumnjicen: OsumnjicenData, zrtva: ZrtvaData)
     }
 }
 
-fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData, osumnjiceni: List<OsumnjicenData>){
+fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData){
+                    //, osumnjiceni: List<OsumnjicenData>){
     val query = """
         INSERT INTO dokaz (tipDokaza, opis, statusS, zlocinId, zrtvaId)
         VALUES (?, ?, ?, ?, ?)
@@ -255,27 +229,27 @@ fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData, osum
         statement?.setString(2, dokaz.opis)
         statement?.setInt(3, dokaz.status)  // status osumnjičenog
         statement?.setInt(4, zlocin.idZlocin)  // tip osumnjičenog (pojedinac, organizacija itd.)
-        statement?.setInt(5, zrtva.id)  // motiv osumnjičenog (ID motiva)
+        statement?.setInt(5, zrtva.idZrtva)  // motiv osumnjičenog (ID motiva)
 
         statement?.executeUpdate()
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
-            dokaz.id=resultSet.getInt(1)
+            dokaz.idDokaz=resultSet.getInt(1)
         }
 
-        val osumnjicen = osumnjiceni.find { it.ime == dokaz.osumnjicen.ime }
+       // val osumnjicen = osumnjiceni.find { it.ime == dokaz.osumnjicen.ime }
 
-        if (osumnjicen != null) {
-            dokaz.osumnjicen = osumnjicen
-        }
+        //if (osumnjicen != null) {
+          //  dokaz.osumnjicen = osumnjicen
+        //}
 
     } catch (e: SQLException) {
         e.printStackTrace()
     } finally {
         closeResources(conn, statement, null)
     }
-    insertDokazOsumnjicenData(dokaz)
+    //insertDokazOsumnjicenData(dokaz)
 }
 
 fun insertDokazOsumnjicenData(dokaz: DokazData){
@@ -290,8 +264,8 @@ fun insertDokazOsumnjicenData(dokaz: DokazData){
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setInt(1, dokaz.id)
-        statement?.setInt(2, dokaz.osumnjicen.id)
+        statement?.setInt(1, dokaz.idDokaz)
+        //statement?.setInt(2, dokaz.osumnjicen.idOsumnjicen)
 
         statement?.executeUpdate()
 
@@ -304,8 +278,8 @@ fun insertDokazOsumnjicenData(dokaz: DokazData){
 
 fun insertSvedokData(svedok: SvedokData, zlocin: ZlocinData){
     val query = """
-        INSERT INTO svedok (ime, kontakt, zlocinId, izjava, statusSvedok, statusS)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO svedok (izjava, statusSvedok, statusIspitan, zlocinId, osobaId)
+        VALUES (?, ?, ?, ?, ?)
     """
     var conn: Connection? = null
     var statement: PreparedStatement? = null
@@ -315,18 +289,17 @@ fun insertSvedokData(svedok: SvedokData, zlocin: ZlocinData){
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setString(1, svedok.ime)
-        statement?.setString(2, svedok.kontakt)
-        statement?.setInt(3, zlocin.idZlocin)
-        statement?.setString(4, svedok.izjava)
-        statement?.setString(5, svedok.statusSvedok)
-        statement?.setInt(6, svedok.status)
+        statement?.setString(1, svedok.izjava)
+        statement?.setString(2, svedok.statusSvedok)
+        statement?.setInt(3, svedok.statusIspitan)
+        statement?.setInt(4, zlocin.idZlocin)
+        statement?.setInt(5, svedok.osobaId)
 
         statement?.executeUpdate()
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
-            svedok.id=resultSet.getInt(1)
+            svedok.idSvedok=resultSet.getInt(1)
         }
     } catch (e: SQLException) {
         e.printStackTrace()
@@ -343,30 +316,30 @@ fun insertAlibiData(alibi: AlibiData, zlocin: ZlocinData, osumnjiceni: List<Osum
     var statement: PreparedStatement? = null
     var resultSet: ResultSet? = null
 
-    val osumnjicen = osumnjiceni.find { it.ime == alibi.osumnjicen.ime }
-    if (osumnjicen != null) {
-        alibi.osumnjicen = osumnjicen
-    }
+    //val osumnjicen = osumnjiceni.find { it.ime == alibi.osumnjicen.ime }
+    //if (osumnjicen != null) {
+      //  alibi.osumnjicen = osumnjicen
+    //}
 
-    if (alibi.svedok?.ime == "") {
-        alibi.svedok = null
-    }
+    //if (alibi.svedok?.osobaId == "") {
+      //  alibi.svedok = null
+    //}
 
     if (alibi.svedok != null) {
-        val svedok = svedoci.find { it.ime == alibi.svedok?.ime }
-        if (svedok != null) {
-            alibi.svedok = svedok
-        }
+    //    val svedok = svedoci.find { it.ime == alibi.svedok?.ime }
+      //  if (svedok != null) {
+        //    alibi.svedok = svedok
+        //}
     }
 
     try {
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setInt(1, alibi.osumnjicen.id)
+        statement?.setInt(1, alibi.osumnjicen.idOsumnjicen)
 
         if (alibi.svedok != null) {
-            alibi.svedok?.id?.let { statement?.setInt(2, it) }
+            alibi.svedok?.idSvedok?.let { statement?.setInt(2, it) }
         } else {
             statement?.setNull(2, java.sql.Types.INTEGER)  // Correctly set null for svedokId
         }
@@ -402,7 +375,7 @@ fun insertObdukcijaData(obdukcija: ObdukcijaData, zrtva: ZrtvaData){
         statement?.setString(1, obdukcija.izvestaj)
         statement?.setDate(2, Date(obdukcija.datum))
         statement?.setString(3,  obdukcija.uzrokSmrti)
-        statement?.setInt(4,  zrtva.id)
+        statement?.setInt(4,  zrtva.idZrtva)
         statement?.setString(5, obdukcija.informacije)
 
         statement?.executeUpdate()
@@ -434,7 +407,7 @@ fun insertForenzickiDokaz(forenzickiDokaz: ForenzickiDokazData, zrtva: ZrtvaData
         statement?.setString(1, forenzickiDokaz.tipForenzickiDokaz)
         statement?.setString(2, forenzickiDokaz.opis)
         statement?.setInt(3,  forenzickiDokaz.statusS)
-        statement?.setInt(4,  zrtva.id)
+        statement?.setInt(4,  zrtva.idZrtva)
         statement?.setString(5, forenzickiDokaz.veza)
 
         statement?.executeUpdate()
@@ -465,7 +438,7 @@ fun insertTelefonData(telefon: TelefonData, zrtva: ZrtvaData){
 
         statement?.setString(1, telefon.model)
         statement?.setString(2, telefon.os)
-        statement?.setInt(3,  zrtva.id)
+        statement?.setInt(3,  zrtva.idZrtva)
         statement?.setString(4,  telefon.sifra)
         statement?.setString(5, telefon.informacije)
 

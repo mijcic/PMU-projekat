@@ -73,22 +73,11 @@ fun Application.configureRouting() {
 
         //post request
 
-        post("/postZlocin"){
-            try {
-                val zlocin = call.receive<Zlocin>()
-                insertZlocin(zlocin)
-                call.respond("Zlocin inserted successfully")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Zlocin"))
-            }
-        }
-
         post("/insertData"){
             try{
                 val zlocin = call.receive<ZlocinRequest>()
                 insertZlocinData(zlocin.zlocin)
-                insertZrtva(zlocin.zrtva,zlocin.zlocin)
+                //insertZrtva(zlocin.zrtva,zlocin.zlocin)
                 insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
                 insertTelefonData(zlocin.telefon, zlocin.zrtva)
 
@@ -97,10 +86,10 @@ fun Application.configureRouting() {
                     val osumnjicen = zlocin.osumnjicen[i]
 
                     insertMotivData(motiv)
-                    insertOsumnjicenData(osumnjicen, zlocin.zlocin, motiv, zlocin.zrtva)
+                    //insertOsumnjicenData(osumnjicen, zlocin.zlocin, motiv, zlocin.zrtva)
                 }
                 for(dokaz in zlocin.dokazi){
-                    insertDokazData(dokaz, zlocin.zlocin, zlocin.zrtva, zlocin.osumnjicen)
+                    //insertDokazData(dokaz, zlocin.zlocin, zlocin.zrtva, zlocin.osumnjicen)
                 }
                 for(svedok in zlocin.svedok){
                     insertSvedokData(svedok, zlocin.zlocin)
