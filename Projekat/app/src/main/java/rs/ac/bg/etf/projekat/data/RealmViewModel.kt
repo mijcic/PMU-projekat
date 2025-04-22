@@ -1742,7 +1742,6 @@ class RealmViewModel @Inject constructor(
                 false, zl4, zlocin
             )
 
-
             val zl2 = insertZadatak(
                 "Interview witnesses",
                 "Question Amelia",

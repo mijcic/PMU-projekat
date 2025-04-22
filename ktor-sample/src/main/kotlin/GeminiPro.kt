@@ -32,7 +32,10 @@ data class Tables(
     val dokazR: List<DokazR>,
     //val dokazZadatakR: DokazZadatakR,
     val svedokR: List<SvedokR>,
-    val zrtvaR: ZrtvaR
+    val zrtvaR: ZrtvaR,
+    val obdukcijaR: ObdukcijaR,
+    val forenzickiDokazR: List<ForenzickiDokazR>,
+    val telefonR: List<TelefonR>
 )
 
 
@@ -68,6 +71,14 @@ data class SvedokR(val idSvedok: Int, val izjava: String, val statusSvedok: Stri
 @Serializable
 data class ZrtvaR(val idZrtva: Int, val tipZrtve: String, val detalji:String, val statusZrtva:String,val zlocinId: Int, val osobaId: OsobaR?)
 
+@Serializable
+data class ObdukcijaR(val idObdukcija:Int, val izvestaj:String, val datum: String, val uzrokSmrti:String, var zrtvaId: Int, val informacije: String )
+
+@Serializable
+data class ForenzickiDokazR(val idForenzickiDokaz: Int, val tipForenzickiDokaz: String, val opis: String, val statusS:Int, val veza: String)
+
+@Serializable
+data class TelefonR(val idTelefon: Int, val model:String, val os: String, val sifra: String, val informacije: String)
 
 // --- Konstante ---
 // UPOZORENJE: NIKADA NE STAVLJAJ API KLJUČ DIREKTNO U KOD U PRODUKCIJI!
@@ -112,7 +123,10 @@ data class GeminiResponse2(
     val dokazR:  List<DokazR>,
     //val dokazZadatakR:  List<DokazZadatakR>,
     val svedokR:  List<SvedokR>,
-    val zrtvaR:  ZrtvaR
+    val zrtvaR:  ZrtvaR,
+    val obdukcijaR: ObdukcijaR,
+    val forenzickiDokazR: List<ForenzickiDokazR>,
+    val telefonR: List<TelefonR>
 )
 
 // http klijent za komunikaciju sa gemini api-jem
@@ -285,6 +299,15 @@ fun insertGeminiZrtva(geminiResponse2: GeminiResponse2,timestamp:Long,zl:ZlocinD
 
         // dokazi
         insertGeminiDokaz(geminiResponse2,zl,zr)
+
+        //obdukcija
+        insertGeminiObdukcija(geminiResponse2,zl,zr,timestamp)
+
+        //forenzicki dokazi
+        insertGeminiForenzickiDokaz(geminiResponse2,zr)
+
+        //telefon
+        insertGeminiTelefon(geminiResponse2,zr)
     }
 }
 
@@ -301,6 +324,66 @@ fun insertGeminiDokaz(geminiResponse2: GeminiResponse2,zl:ZlocinData,zrtva:Zrtva
         )
         insertDokazData(dokaz,zl,zrtva)
     }
+}
+
+fun insertGeminiTelefon(geminiResponse2: GeminiResponse2,zrtva:ZrtvaData){
+    val telefoni = geminiResponse2.telefonR
+
+    for(telefonR in telefoni){
+        val telefon = TelefonData(
+            idTelefon = telefonR.idTelefon,
+            model = telefonR.model,
+            os = telefonR.os,
+            sifra = telefonR.sifra,
+            informacije = telefonR.informacije
+        )
+
+        insertTelefonData(
+            telefon = telefon,
+            zrtva = zrtva
+        )
+    }
+}
+
+fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponse2,zrtva:ZrtvaData){
+    val dokazi = geminiResponse2.forenzickiDokazR
+    for(d in dokazi){
+        val forenzickiDokaz = ForenzickiDokazData(
+            idForenzickiDokaz = d.idForenzickiDokaz,
+            tipForenzickiDokaz = d.tipForenzickiDokaz,
+            opis = d.opis,
+            statusS = d.statusS,
+            veza = d.veza
+        )
+        insertForenzickiDokaz(
+            forenzickiDokaz = forenzickiDokaz,
+            zrtva = zrtva
+        )
+    }
+}
+
+fun insertGeminiObdukcija(geminiResponse2: GeminiResponse2,zl: ZlocinData,zrtva: ZrtvaData,timestamp: Long){
+    val obdukcija =geminiResponse2.obdukcijaR
+    val datumStr = obdukcija.datum
+    val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+    var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+    if(timestamp2==null){
+        timestamp2=timestamp
+    }
+
+    insertObdukcijaData(
+        ObdukcijaData(
+            idObdukcija = obdukcija.idObdukcija,
+            izvestaj = obdukcija.izvestaj,
+            datum = timestamp2,
+            uzrokSmrti = obdukcija.uzrokSmrti,
+            zrtvaId = obdukcija.zrtvaId,
+            informacije = obdukcija.informacije
+        ),
+        zrtva = zrtva
+    )
 }
 
 fun insertGeminiOsumnjicen(geminiResponse2: GeminiResponse2,timestamp:Long,zl:ZlocinData){

@@ -165,16 +165,18 @@ data class AlibiData(
 
 @Serializable
 data class ObdukcijaData(
-    var id:Int,
+    var idObdukcija:Int,
     val izvestaj:String,
     val datum: Long,
     val uzrokSmrti:String,
+    var zrtvaId: Int,
     val informacije: String,
 )
 
+
 @Serializable
 data class ForenzickiDokazData (
-    var id: Int,
+    var idForenzickiDokaz: Int,
     val tipForenzickiDokaz: String,
     val opis: String,
     val statusS:Int,
@@ -183,7 +185,7 @@ data class ForenzickiDokazData (
 
 @Serializable
 data class TelefonData(
-    var id: Int,
+    var idTelefon: Int,
     val model:String,
     val os: String,
     val sifra: String,
@@ -203,6 +205,16 @@ data class MisijaPorukaData(
     val statusS: Int,
     val posiljalac:String,
     val poruka: String,
+)
+
+@Serializable
+open class ZadatakR (
+    var idZadatak: Int,
+    val tekst: String,
+    val korak: String,
+    val uradjen: Boolean,
+    val next: ZadatakR?,
+    val zlocinId: Int
 )
 
 // sign up

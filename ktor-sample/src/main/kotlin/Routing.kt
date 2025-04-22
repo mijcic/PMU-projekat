@@ -78,7 +78,7 @@ fun Application.configureRouting() {
                 val zlocin = call.receive<ZlocinRequest>()
                 insertZlocinData(zlocin.zlocin)
                 //insertZrtva(zlocin.zrtva,zlocin.zlocin)
-                insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
+                //insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
                 insertTelefonData(zlocin.telefon, zlocin.zrtva)
 
                 for (i in zlocin.motivi.indices) {

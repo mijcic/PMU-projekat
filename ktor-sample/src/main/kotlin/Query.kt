@@ -364,6 +364,7 @@ fun insertObdukcijaData(obdukcija: ObdukcijaData, zrtva: ZrtvaData){
         INSERT INTO obdukcija (izvestaj, datum, uzrokSmrti, zrtvaId,informacije)
         VALUES (?, ?, ?, ?, ?)
     """
+
     var conn: Connection? = null
     var statement: PreparedStatement? = null
     var resultSet: ResultSet? = null
@@ -382,7 +383,7 @@ fun insertObdukcijaData(obdukcija: ObdukcijaData, zrtva: ZrtvaData){
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
-            obdukcija.id = resultSet.getInt(1)
+            obdukcija.idObdukcija = resultSet.getInt(1)
         }
     } catch (e: SQLException) {
         e.printStackTrace()
@@ -414,7 +415,7 @@ fun insertForenzickiDokaz(forenzickiDokaz: ForenzickiDokazData, zrtva: ZrtvaData
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
-            forenzickiDokaz.id = resultSet.getInt(1)
+            forenzickiDokaz.idForenzickiDokaz = resultSet.getInt(1)
         }
     } catch (e: SQLException) {
         e.printStackTrace()
@@ -446,7 +447,7 @@ fun insertTelefonData(telefon: TelefonData, zrtva: ZrtvaData){
 
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
-            telefon.id = resultSet.getInt(1)
+            telefon.idTelefon = resultSet.getInt(1)
         }
     } catch (e: SQLException) {
         e.printStackTrace()
