@@ -35,7 +35,9 @@ data class Tables(
     val zrtvaR: ZrtvaR,
     val obdukcijaR: ObdukcijaR,
     val forenzickiDokazR: List<ForenzickiDokazR>,
-    val telefonR: List<TelefonR>
+    val telefonR: List<TelefonR>,
+    val oneContactR: List<OneContactR>,
+    val beleskaR: List<BeleskaR>
 )
 
 
@@ -80,10 +82,16 @@ data class ForenzickiDokazR(val idForenzickiDokaz: Int, val tipForenzickiDokaz: 
 @Serializable
 data class TelefonR(val idTelefon: Int, val model:String, val os: String, val sifra: String, val informacije: String)
 
+@Serializable
+data class OneContactR(val idOneContact: Int, val zlocinId: Int, val ime: String, val broj: String, val slika: Int)
+
+@Serializable
+data class BeleskaR (val idBeleska: Int, val zlocinId: Int, val tekst: String, val datum: String)
+
 // --- Konstante ---
 // UPOZORENJE: NIKADA NE STAVLJAJ API KLJUČ DIREKTNO U KOD U PRODUKCIJI!
 // Koristi environment variable ili configuration fajl.
-const val GEMINI_API_KEY = ""
+const val GEMINI_API_KEY = "AIzaSyD0Fssx_oFXYrO4dSoRuSfxhGpn4ziWPQk"
 
 // --- Data Klase za Gemini Zahtev ---
 @Serializable
@@ -126,7 +134,9 @@ data class GeminiResponse2(
     val zrtvaR:  ZrtvaR,
     val obdukcijaR: ObdukcijaR,
     val forenzickiDokazR: List<ForenzickiDokazR>,
-    val telefonR: List<TelefonR>
+    val telefonR: List<TelefonR>,
+    val oneContactR: List<OneContactR>,
+    val beleskaR: List<BeleskaR>
 )
 
 // http klijent za komunikaciju sa gemini api-jem
@@ -254,6 +264,11 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse){
                 //svedoci
                 insertGeminiSvedok(geminiResponse2,timestamp,zl)
 
+                // kontakti
+                insertGeminiOneContact(geminiResponse2, zl)
+
+                // beleske
+                insertGeminiBeleska(geminiResponse2, zl, timestamp)
             }
         }
     }
@@ -488,5 +503,43 @@ fun insertGeminiSvedok(geminiResponse2: GeminiResponse2,timestamp:Long,zl:Zlocin
             )
         }
     }
+}
 
+fun insertGeminiOneContact(geminiResponse2: GeminiResponse2, zl:ZlocinData) {
+    val kontakti = geminiResponse2.oneContactR
+    for(k in kontakti){
+        val kontakt = OneContactData(
+            idOneContact = k.idOneContact,
+            zlocinId = k.zlocinId,
+            ime = k.ime,
+            broj = k.broj,
+            slika = k.slika,
+        )
+        insertOneContactData(kontakt, zl)
+    }
+}
+
+fun insertGeminiBeleska(geminiResponse2: GeminiResponse2, zl: ZlocinData, timestamp: Long){
+    val beleske = geminiResponse2.beleskaR
+
+    for(b in beleske){
+        val datumStr = b.datum
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr?.let { LocalDate.parse(it.toString(), formatter2) }
+        var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+        if(timestamp2==null){
+            timestamp2=timestamp
+        }
+
+        val beleska = BeleskaData(
+            idBeleska = b.idBeleska,
+            zlocinId = b.zlocinId,
+            tekst = b.tekst,
+            datum = timestamp2,
+
+        )
+
+        insertBeleskaData(beleska, zl)
+    }
 }

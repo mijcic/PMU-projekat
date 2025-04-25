@@ -291,3 +291,24 @@ CREATE TABLE ZabelezeniIzbor (
     FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik),
     FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin)
 );
+
+DROP TABLE IF EXISTS `OneContact`;
+
+CREATE TABLE OneContact (
+    idOneContact INT AUTO_INCREMENT PRIMARY KEY,
+    zlocinId INT NOT NULL,
+    ime VARCHAR(100) NOT NULL,
+    broj VARCHAR(100) NOT NULL,
+    slika INT,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+);
+
+DROP TABLE IF EXISTS `Beleska`;
+
+CREATE TABLE Beleska (
+    idBeleska INT AUTO_INCREMENT PRIMARY KEY,
+    zlocinId INT NOT NULL,
+    tekst VARCHAR(1000) NOT NULL,
+	datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+);

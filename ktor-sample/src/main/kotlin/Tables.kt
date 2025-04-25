@@ -227,3 +227,22 @@ data class KorisnikRequest(
     val sifra: String,
     val email: String
 )
+
+// telefon zrtve
+
+@Serializable
+data class OneContactData(
+    var idOneContact: Int,
+    val zlocinId: Int,
+    val ime: String,
+    val broj: String,
+    val slika: Int
+)
+
+@Serializable
+data class BeleskaData (
+    var idBeleska: Int,
+    val zlocinId: Int,
+    val tekst: String,
+    val datum: Long
+)

@@ -593,3 +593,68 @@ fun logIn(korisnik: KorisnikRequest): Boolean {
 
     return false
 }
+
+// one contact
+
+fun insertOneContactData(oneContactData: OneContactData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO oneContact (zlocinId, ime, broj, slika)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        statement?.setString(2, oneContactData.ime)
+        statement?.setString(3, oneContactData.broj)
+        statement?.setInt(4,  oneContactData.slika)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            oneContactData.idOneContact = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// beleska
+
+fun insertBeleskaData(beleskaData: BeleskaData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO beleska (zlocinId, tekst, datum)
+        VALUES (?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        statement?.setString(2, beleskaData.tekst)
+        statement?.setTimestamp(3, java.sql.Timestamp(beleskaData.datum))
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            beleskaData.idBeleska = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
