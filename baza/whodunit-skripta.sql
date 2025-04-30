@@ -1,9 +1,52 @@
 CREATE DATABASE IF NOT EXISTS whodunit;
-
--- Korišćenje baze
 USE whodunit;
 
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS `NapredakIstrage`;
+DROP TABLE IF EXISTS `ZabelezeniIzbor`;
+DROP TABLE IF EXISTS `Osoba`;
+DROP TABLE IF EXISTS `Zrtva`;
+DROP TABLE IF EXISTS `Dokaz`;
+DROP TABLE IF EXISTS `Svedok`;
+DROP TABLE IF EXISTS `Osumnjicen`;
+DROP TABLE IF EXISTS `OdnosOsumnjicenZrtva`;
+DROP TABLE IF EXISTS `DokazOsumnjicen`;
+DROP TABLE IF EXISTS `Alibi`;
+DROP TABLE IF EXISTS `Trag`;
+DROP TABLE IF EXISTS `Obdukcija`;
+DROP TABLE IF EXISTS `ForenzickiDokaz`;
+DROP TABLE IF EXISTS `Telefon`;
+DROP TABLE IF EXISTS `Ucena`;
+DROP TABLE IF EXISTS `TajnaPorodice`;
+DROP TABLE IF EXISTS `Organizacija`;
+DROP TABLE IF EXISTS `ClanOrganizacije`;
+DROP TABLE IF EXISTS `Misija`;
+DROP TABLE IF EXISTS `MisijaPoruka`;
+DROP TABLE IF EXISTS `OneContact`;
+DROP TABLE IF EXISTS `Beleska`;
+DROP TABLE IF EXISTS `WhatsAppKontakt`;
+DROP TABLE IF EXISTS `WhatsAppPoruka`;
+DROP TABLE IF EXISTS `OneCall`;
+DROP TABLE IF EXISTS `Gallery`;
+DROP TABLE IF EXISTS `ObicnaPoruka`;
+DROP TABLE IF EXISTS `Pitanje`;
+DROP TABLE IF EXISTS `Odgovor`;
+DROP TABLE IF EXISTS `PitanjeIspitivanjeOsumnjicenog`;
 DROP TABLE IF EXISTS `Korisnik`;
+DROP TABLE IF EXISTS `Zlocin`;
+DROP TABLE IF EXISTS `TipZlocina`;
+DROP TABLE IF EXISTS `PrijavljeniKorisnik`;
+DROP TABLE IF EXISTS `PitanjeIspitivanjeSvedoka`;
+DROP TABLE IF EXISTS `Zadatak`;
+DROP TABLE IF EXISTS `DokazZadatak`;
+DROP TABLE IF EXISTS `IspitivanjeOsumnjicenogZadatak`;
+DROP TABLE IF EXISTS `IspitivanjeSvedokaZadatak`;
+DROP TABLE IF EXISTS `TelefonZadatak`;
+DROP TABLE IF EXISTS `ForenzickiDokazZadatak`;
+-- DROP TABLE IF EXISTS `PorukeZadatak`;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `Korisnik` (
     idKorisnik INT AUTO_INCREMENT PRIMARY KEY,
@@ -16,16 +59,12 @@ CREATE TABLE `Korisnik` (
     poeni INT DEFAULT 0,
     poslednjaAktivnost DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-DROP TABLE IF EXISTS `Zlocin`;
-DROP TABLE IF EXISTS `TipZlocina`;
 
--- Tabela za tipove zločina (statični podaci)
 CREATE TABLE `TipZlocina` (
     `idTipZlocina` INT AUTO_INCREMENT PRIMARY KEY,
     `naziv` VARCHAR(255) NOT NULL
 );
 
--- Tabela za zločine (globalni podaci)
 CREATE TABLE Zlocin (
     idZlocin INT AUTO_INCREMENT PRIMARY KEY,
     tipZlocinaId INT NOT NULL,
@@ -37,11 +76,6 @@ CREATE TABLE Zlocin (
     FOREIGN KEY (tipZlocinaId) REFERENCES TipZlocina(idTipZlocina)
 );
 
-
-
-
-
--- Insertovanje osnovnih vrednosti u tabelu TipZlocina
 INSERT INTO `TipZlocina` (`naziv`) VALUES
 ('murder'),
 ('disappearance'),
@@ -56,7 +90,6 @@ INSERT INTO `TipZlocina` (`naziv`) VALUES
 ('FalseIdentities'),
 ('CultsAndSecrets');
 
-DROP TABLE IF EXISTS `Osoba`;
 CREATE TABLE Osoba (
     idOsoba INT AUTO_INCREMENT PRIMARY KEY,  -- Primarni ključ
     ime VARCHAR(50) NOT NULL,          
@@ -68,7 +101,6 @@ CREATE TABLE Osoba (
     FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)  -- Veza sa Zlocin tabelom
 );
 
-DROP TABLE IF EXISTS `Zrtva`;
 CREATE TABLE Zrtva (
     idZrtva INT AUTO_INCREMENT PRIMARY KEY,  -- Primarni ključ
     tipZrtve VARCHAR(50) NOT NULL,           -- Tip žrtve (osoba, objekat, fenomen...)
@@ -80,8 +112,6 @@ CREATE TABLE Zrtva (
     FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) 
 );
 
-DROP TABLE IF EXISTS `Dokaz`;
--- Tabela za dokaze (globalni podaci)
 CREATE TABLE Dokaz (
     idDokaz INT AUTO_INCREMENT PRIMARY KEY,
     tipDokaza ENUM('fizicki', 'digitalni', 'svedok') NOT NULL,
@@ -93,8 +123,7 @@ CREATE TABLE Dokaz (
     FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
 );
 
-DROP TABLE IF EXISTS `Svedok`;
--- Tabela za svedoke (globalni podaci)
+
 CREATE TABLE Svedok (
     idSvedok INT AUTO_INCREMENT PRIMARY KEY,
     izjava VARCHAR(255) NOT NULL,
@@ -106,15 +135,11 @@ CREATE TABLE Svedok (
     FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
 );
 
-DROP TABLE IF EXISTS `Motiv`;
--- Tabela za motive (statični podaci)
 CREATE TABLE Motiv (
     idMotiv INT AUTO_INCREMENT PRIMARY KEY,
     opis TEXT NOT NULL 
 );
 
-DROP TABLE IF EXISTS `Osumnjicen`;
--- Tabela za osumnjičene (globalni podaci)
 CREATE TABLE Osumnjicen (
     idOsumnjicen INT AUTO_INCREMENT PRIMARY KEY,
     statusS INT NOT NULL,
@@ -128,8 +153,6 @@ CREATE TABLE Osumnjicen (
     FOREIGN KEY (motiv) REFERENCES Motiv(idMotiv)
 );
 
-DROP TABLE IF EXISTS `OdnosOsumnjicenZrtva`;
--- Tabela za odnos osumnjicen zrtva (globalni podaci)
 CREATE TABLE OdnosOsumnjicenZrtva (
     idOdnos INT AUTO_INCREMENT PRIMARY KEY,
     osumnjicenId INT NOT NULL,
@@ -140,8 +163,6 @@ CREATE TABLE OdnosOsumnjicenZrtva (
 );
 
 
-DROP TABLE IF EXISTS `DokazOsumnjicen`;
--- Tabela za dokaze (globalni podaci)
 CREATE TABLE DokazOsumnjicen (
     idDokazOsumnjicen INT AUTO_INCREMENT PRIMARY KEY,
     dokazId INT NOT NULL,
@@ -150,8 +171,6 @@ CREATE TABLE DokazOsumnjicen (
     FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
 );
 
-DROP TABLE IF EXISTS `Alibi`;
--- Tabela za osumnjičene (globalni podaci)
 CREATE TABLE Alibi (
     idAlibi INT AUTO_INCREMENT PRIMARY KEY,
     osumnjicenId INT NOT NULL,
@@ -162,8 +181,6 @@ CREATE TABLE Alibi (
     FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok)
 );
 
-DROP TABLE IF EXISTS `Trag`;
--- Tabela za tragove (globalni podaci)
 CREATE TABLE Trag (
     idTrag INT AUTO_INCREMENT PRIMARY KEY,
     opis TEXT NOT NULL,
@@ -173,8 +190,6 @@ CREATE TABLE Trag (
     FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen)
 );
 
-DROP TABLE IF EXISTS `Obdukcija`;
--- Tabela za obdukcije (globalni podaci)
 CREATE TABLE Obdukcija (
     idObdukcija INT AUTO_INCREMENT PRIMARY KEY,
     izvestaj TEXT NOT NULL,
@@ -185,8 +200,6 @@ CREATE TABLE Obdukcija (
     FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
 );
 
-DROP TABLE IF EXISTS `ForenzickiDokaz`;
--- Tabela za forenzičke dokaze (globalni podaci)
 CREATE TABLE ForenzickiDokaz (
     idForenzickiDokaz INT AUTO_INCREMENT PRIMARY KEY,
     tipForenzickiDokaz ENUM('otisak', 'DNK', 'dokument') NOT NULL,
@@ -197,8 +210,6 @@ CREATE TABLE ForenzickiDokaz (
     FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
 );
 
-DROP TABLE IF EXISTS `Telefon`;
--- Tabela za telefon (globalni podaci)
 CREATE TABLE Telefon (
     idTelefon INT AUTO_INCREMENT PRIMARY KEY,
     model VARCHAR(50) NOT NULL,
@@ -209,9 +220,6 @@ CREATE TABLE Telefon (
     FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
 );
 
-
-DROP TABLE IF EXISTS `Ucena`;
--- Tabela za ucene (globalni podaci)
 CREATE TABLE Ucena (
     idUcena INT AUTO_INCREMENT PRIMARY KEY,
     opis TEXT NOT NULL,
@@ -219,8 +227,6 @@ CREATE TABLE Ucena (
     FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen)
 );
 
-DROP TABLE IF EXISTS `TajnaPorodice`;
--- Tabela za tajne porodice (globalni podaci)
 CREATE TABLE TajnaPorodice (
     idTajna INT AUTO_INCREMENT PRIMARY KEY,
     opis TEXT NOT NULL,
@@ -228,17 +234,12 @@ CREATE TABLE TajnaPorodice (
     FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen)
 );
 
-DROP TABLE IF EXISTS `Organizacija`;
--- Tabela za bande, mafije i kultove (globalni podaci)
 CREATE TABLE Organizacija (
     idOrganizacija INT AUTO_INCREMENT PRIMARY KEY,
     naziv VARCHAR(255) NOT NULL UNIQUE,
     tip VARCHAR(100) NOT NULL CHECK (tip IN ('Banda', 'Mafija', 'Kult'))
 );
 
-
-DROP TABLE IF EXISTS `ClanOrganizacije`;
--- Tabela za povezivanje osumnjičenih sa organizacijama
 CREATE TABLE ClanOrganizacije (
     idClan INT AUTO_INCREMENT PRIMARY KEY,
     idOsumnjicen INT NOT NULL,
@@ -247,8 +248,6 @@ CREATE TABLE ClanOrganizacije (
     FOREIGN KEY (idOrganizacija) REFERENCES Organizacija(idOrganizacija)
 );
 
-DROP TABLE IF EXISTS `Misija`;
--- Tabela za misije (globalni podaci)
 CREATE TABLE Misija (
     idMisija INT AUTO_INCREMENT PRIMARY KEY,
     naziv VARCHAR(255) NOT NULL,
@@ -256,8 +255,6 @@ CREATE TABLE Misija (
     cilj TEXT NOT NULL
 );
 
-DROP TABLE IF EXISTS `MisijaPoruka`;
--- Tabela za misije poruka (globalni podaci)
 CREATE TABLE MisijaPoruka (
     idMisija INT AUTO_INCREMENT PRIMARY KEY,
     zlocinId INT NOT NULL,
@@ -268,8 +265,6 @@ CREATE TABLE MisijaPoruka (
     FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
 );
 
-DROP TABLE IF EXISTS `NapredakIstrage`;
--- Tabela za napredak istrage po igračima (sinhronizacija globalna)
 CREATE TABLE NapredakIstrage (
     idNapredak INT AUTO_INCREMENT PRIMARY KEY,
     idKorisnik INT NOT NULL,
@@ -280,8 +275,6 @@ CREATE TABLE NapredakIstrage (
     FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin)
 );
 
-DROP TABLE IF EXISTS `ZabelezeniIzbor`;
--- Tabela za beleženje izbora igrača (sinhronizacija globalna)
 CREATE TABLE ZabelezeniIzbor (
     idIzbor INT AUTO_INCREMENT PRIMARY KEY,
     idKorisnik INT NOT NULL,
@@ -292,8 +285,6 @@ CREATE TABLE ZabelezeniIzbor (
     FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin)
 );
 
-DROP TABLE IF EXISTS `OneContact`;
-
 CREATE TABLE OneContact (
     idOneContact INT AUTO_INCREMENT PRIMARY KEY,
     zlocinId INT NOT NULL,
@@ -303,8 +294,6 @@ CREATE TABLE OneContact (
     FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
 );
 
-DROP TABLE IF EXISTS `Beleska`;
-
 CREATE TABLE Beleska (
     idBeleska INT AUTO_INCREMENT PRIMARY KEY,
     zlocinId INT NOT NULL,
@@ -312,3 +301,167 @@ CREATE TABLE Beleska (
 	datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
 );
+
+CREATE TABLE WhatsAppKontakt (
+	idWhatsAppKontakt INT AUTO_INCREMENT PRIMARY KEY,
+    zlocinId INT NOT NULL,
+    ime VARCHAR(100) NOT NULL,
+    broj VARCHAR(100) NOT NULL,
+    slika INT,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+);
+
+CREATE TABLE WhatsAppPoruka (
+	idWhatsAppPoruka INT AUTO_INCREMENT PRIMARY KEY,
+    kontaktKoSalje INT NOT NULL,
+    kontaktKomeSalje INT NOT NULL,
+    tekst VARCHAR(1000) NOT NULL,
+    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    procitana TINYINT(0),
+    FOREIGN KEY (kontaktKoSalje) REFERENCES WhatsAppKontakt(idWhatsAppKontakt),
+    FOREIGN KEY (kontaktKomeSalje) REFERENCES WhatsAppKontakt(idWhatsAppKontakt)
+);
+
+CREATE TABLE OneCall (
+	idOneCall INT AUTO_INCREMENT PRIMARY KEY,
+    kontakt INT NOT NULL,
+    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    propusten TINYINT(0),
+    dolazni TINYINT(0),
+    FOREIGN KEY (kontakt) REFERENCES OneContact(idOneContact)
+);
+
+CREATE TABLE Gallery (
+	idPhoto INT AUTO_INCREMENT PRIMARY KEY,
+    zlocinId INT NOT NULL,
+    slika INT,
+    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    mesto VARCHAR(100) NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+);
+
+CREATE TABLE ObicnaPoruka (
+	idObicnaPoruka INT AUTO_INCREMENT PRIMARY KEY,
+    kontaktKoSalje INT NOT NULL,
+    kontaktKomeSalje INT NOT NULL,
+    tekst VARCHAR(1000) NOT NULL,
+    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    procitana TINYINT(0),
+    FOREIGN KEY (kontaktKoSalje) REFERENCES OneContact(idOneContact),
+    FOREIGN KEY (kontaktKomeSalje) REFERENCES OneContact(idOneContact)
+);
+
+-- CREATE TABLE OdnosOsumnjicenZrtva (
+--     idOdnos INT AUTO_INCREMENT PRIMARY KEY,
+--     osumnjicenId INT,
+--     zrtvaId INT,
+--     tipOdnosa VARCHAR(1000) NOT NULL,
+--     FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen),
+--     FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+-- );
+
+CREATE TABLE PrijavljeniKorisnik (
+	idKorisnik INT AUTO_INCREMENT PRIMARY KEY,
+    korisnickoIme VARCHAR(100) NOT NULL,
+    sifra VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Pitanje (
+	idPitanje INT AUTO_INCREMENT PRIMARY KEY,
+    zlocinId INT,
+    tekst VARCHAR(1000) NOT NULL
+);
+
+CREATE TABLE Odgovor (
+	idOdogovor INT AUTO_INCREMENT PRIMARY KEY,
+    pitanjeId INT,
+    tekstOdgovora VARCHAR(1000) NOT NULL,
+    tacan TINYINT(0),
+    bodovi INT NOT NULL,
+    FOREIGN KEY (pitanjeId) REFERENCES Pitanje(idPitanje)
+);
+
+CREATE TABLE PitanjeIspitivanjeOsumnjicenog (
+	idPitanjeIspitivanjeOsumnjicenog INT AUTO_INCREMENT PRIMARY KEY,
+    kategorija ENUM('opsta', 'alibi', 'dokaz', 'kontradikcija') NOT NULL,
+    tekst VARCHAR(1000) NOT NULL,
+    odgovor VARCHAR(1000) NOT NULL,
+    komentar VARCHAR(1000) NOT NULL,
+    osumnjicenId INT NOT NULL,
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+);
+
+CREATE TABLE PitanjeIspitivanjeSvedoka (
+	idPitanjeIspitivanjeSvedoka INT AUTO_INCREMENT PRIMARY KEY,
+    tekst VARCHAR(1000) NOT NULL,
+    odgovor VARCHAR(1000) NOT NULL,
+    svedokId INT NOT NULL,
+    nextPitanje INT NOT NULL,
+	FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok)
+);
+
+CREATE TABLE Zadatak (
+	idZadatak INT AUTO_INCREMENT PRIMARY KEY,
+    tekst VARCHAR(1000) NOT NULL,
+    korak VARCHAR(1000) NOT NULL,
+    uradjen TINYINT(0),
+    nextZadatak INT,
+    zlocinId INT NOT NULL,
+	FOREIGN KEY (nextZadatak) REFERENCES Zadatak(idZadatak)
+);
+
+CREATE TABLE DokazZadatak (
+	idDokazZadatak INT AUTO_INCREMENT PRIMARY KEY,
+    tekst VARCHAR(1000) NOT NULL,
+    dokazId INT NOT NULL,
+    uradjen TINYINT(0),
+    zadatakId INT NOT NULL,
+	FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz),
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+);
+
+CREATE TABLE IspitivanjeOsumnjicenogZadatak (
+	idIspitivanjeOsumnjicenogZadatak INT AUTO_INCREMENT PRIMARY KEY,
+    osumnjicenId INT NOT NULL,
+    zadatakId INT NOT NULL,
+    uradjen TINYINT(0),
+	FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen),
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+);
+
+CREATE TABLE IspitivanjeSvedokaZadatak (
+	idIspitivanjeSvedokaZadatak INT AUTO_INCREMENT PRIMARY KEY,
+    svedokId INT NOT NULL,
+    zadatakId INT NOT NULL,
+    uradjen TINYINT(0),
+    FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok),
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+);
+
+CREATE TABLE TelefonZadatak (
+	idTelefonZadatak INT AUTO_INCREMENT PRIMARY KEY,
+    telefonId INT NOT NULL,
+    zadatakId INT NOT NULL,
+    uradjen TINYINT(0),
+    FOREIGN KEY (telefonId) REFERENCES Telefon(idTelefon),
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+);
+
+CREATE TABLE ForenzickiDokazZadatak (
+	idForenzickiDokazZadatak INT AUTO_INCREMENT PRIMARY KEY,
+    tekst VARCHAR(1000) NOT NULL,
+    forenzickiDokazId INT NOT NULL,
+    uradjen TINYINT(0),
+    zadatakId INT NOT NULL,
+    FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz),
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+);
+
+-- CREATE TABLE PorukeZadatak (
+-- 	idPorukeZadatak INT AUTO_INCREMENT PRIMARY KEY,
+--     porukeId INT NOT NULL,
+--     zadatakId INT NOT NULL,
+--     uradjen TINYINT(0),
+--     FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz),
+--     FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+-- );

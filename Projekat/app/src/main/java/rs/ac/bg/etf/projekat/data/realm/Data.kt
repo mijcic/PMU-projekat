@@ -640,7 +640,6 @@ val realmClasses = listOf(
     OneCallR::class,
     GalleryR::class,
     ObicnaPorukaR::class,
-    OsobaR::class,
     ZadatakR::class,
     DokazZadatakR::class,
     IspitivanjeOsumnjicenogZadatakR::class,
