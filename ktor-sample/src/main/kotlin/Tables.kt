@@ -128,8 +128,8 @@ data class OsumnjicenData(
     var idOsumnjicen: Int,
     val status: Int,
     val tipOsumnjicen: String,
-    var motiv: Int,
-    var zlocinId: Int,
+    val motiv: Int,
+    val zlocinId: Int,
     val kriv: Int,
     val osobaId:Int
 )
@@ -206,16 +206,16 @@ data class MisijaPorukaData(
     val posiljalac:String,
     val poruka: String,
 )
-/*
+
 @Serializable
-open class ZadatakR (
+open class ZadatakData (
     var idZadatak: Int,
     val tekst: String,
     val korak: String,
     val uradjen: Boolean,
-    val next: ZadatakR?,
+    val nextZadatak: Int?,
     val zlocinId: Int
-)*/
+)
 
 // sign up
 
@@ -228,6 +228,171 @@ data class KorisnikRequest(
     val email: String
 )
 
+// telefon zrtve
+
+@Serializable
+data class OneContactData(
+    var idOneContact: Int,
+    val zlocinId: Int,
+    val ime: String,
+    val broj: String,
+    val slika: Int
+)
+
+@Serializable
+data class BeleskaData (
+    var idBeleska: Int,
+    val zlocinId: Int,
+    val tekst: String,
+    val datum: Long
+)
+
+@Serializable
+data class WhatsAppKontaktData (
+    var idWhatsAppKontakt: Int,
+    val zlocinId: Int,
+    val ime: String,
+    val broj: String,
+    val slika: Int?
+)
+
+@Serializable
+data class WhatsAppPorukaData ( // SA MASOM
+    var idWhatsAppPoruka: Int,
+    val kontaktKoSalje: Int,
+    val kontaktKomeSalje: Int,
+    val tekst: String,
+    val datum: Long,
+    val procitana: Boolean
+)
+
+@Serializable
+data class OneCallData (
+    var idOneCall: Int,
+    val kontakt: Int,
+    val datum: Long,
+    val propusten: Boolean,
+    val dolazni: Boolean
+)
+
+@Serializable
+data class GalleryData (
+    var idPhoto: Int,
+    val zlocinId: Int,
+    val slika: Int?,
+    val datum: Long,
+    val mesto: String
+)
+
+@Serializable
+data class ObicnaPorukaData ( // SA MASOM
+    var idObicnaPoruka: Int,
+    val kontaktKoSalje: Int,
+    val kontaktKomeSalje: Int,
+    val tekst: String,
+    val datum: Long,
+    val procitana: Boolean
+)
+
+@Serializable
+data class OdnosOsumnjicenZrtvaData ( // SA MASOM
+    var idOdnos: Int,
+    val osumnjicenId:  Int,
+    val zrtvaId:  Int,
+    val tipOdnosa: String
+)
+
+@Serializable
+data class PrijavljeniKorisnikData (
+    var idKorisnik: Int,
+    val korisnickoIme: String,
+    val sifra: String,
+)
+
+@Serializable
+data class PitanjeData (
+    var idPitanje: Int,
+    val zlocinId: Int,
+    val tekst: String
+)
+
+@Serializable
+data class OdgovorData (
+    var idOdogovor: Int,
+    val pitanjeId: Int,
+    val tekstOdgovora: String,
+    val tacan: Boolean,
+    val bodovi: Int
+)
+
+@Serializable
+data class PitanjeIspitivanjeOsumnjicenogData (   // SA MASOM
+    var idPitanjeIspitivanjeOsumnjicenog: Int,
+    var kategorija: String,
+    val tekst: String,
+    val odgovor: String,
+    val komentar: String,
+    val osumnjicenId: Int
+)
+
+@Serializable
+data class PitanjeIspitivanjeSvedokaData (
+    var idPitanjeIspitivanjeSvedoka: Int,
+    val tekst: String,
+    val odgovor: String,
+    val svedokId: Int,
+    val nextPitanje: Int
+)
+
+@Serializable
+data class DokazZadatakData (
+    var idDokazZadatak: Int,
+    val tekst: String,
+    val dokazId: Int,
+    val uradjen: Boolean,
+    val zadatakId: Int
+)
+
+@Serializable
+data class IspitivanjeOsumnjicenogZadatakData (
+    var idIspitivanjeOsumnjicenogZadatak: Int,
+    val osumnjicenId: Int,
+    val zadatakId: Int,
+    val uradjen: Boolean
+)
+
+@Serializable
+data class IspitivanjeSvedokaZadatakData (
+    var idIspitivanjeSvedokaZadatak: Int,
+    val svedokId: Int,
+    val zadatakId: Int,
+    val uradjen: Boolean
+)
+
+@Serializable
+data class TelefonZadatakData (
+    var idTelefonZadatak: Int,
+    val telefonId: Int,
+    val zadatakId: Int,
+    val uradjen: Boolean
+)
+
+@Serializable
+data class ForenzickiDokazZadatakData (
+    var idForenzickiDokazZadatak: Int,
+    val tekst: String,
+    val forenzickiDokazId: Int,
+    val uradjen: Boolean,
+    val zadatakId: Int
+)
+
+@Serializable
+data class PorukeZadatakData (
+    var idPorukeZadatak: Int,
+    val porukeId: Int,
+    val zadatakId: Int,
+    val uradjen: Boolean
+)
 @Serializable
 data class KontaktData (
     var idKontakt: Int,

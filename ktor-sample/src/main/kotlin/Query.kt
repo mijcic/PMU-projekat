@@ -182,36 +182,36 @@ fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: M
     //insertOdnosOsumnjicenZrtvaData(osumnjicen,zrtva)
 }
 
-fun insertOdnosOsumnjicenZrtvaData(osumnjicen: OsumnjicenData, zrtva: ZrtvaData) {
-    val query = """
-        INSERT INTO odnosOsumnjicenZrtva (osumnjicenId, zrtvaId, tipOdnosa)
-        VALUES (?, ?, ?)
-    """
-    var conn: Connection? = null
-    var statement: PreparedStatement? = null
-    var resultSet: ResultSet? = null
-
-    try {
-        conn = getDatabaseConnection()
-        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-
-        statement?.setInt(1, osumnjicen.idOsumnjicen)
-        statement?.setInt(2, zrtva.idZrtva)
-        //statement?.setString(3, osumnjicen.odnosZrtva)
-
-        statement?.executeUpdate()
-
-        resultSet = statement?.generatedKeys
-        if (resultSet?.next() == true) {
-            osumnjicen.idOsumnjicen=resultSet.getInt(1)
-        }
-
-    } catch (e: SQLException) {
-        e.printStackTrace()
-    } finally {
-        closeResources(conn, statement, null)
-    }
-}
+//fun insertOdnosOsumnjicenZrtvaData(osumnjicen: OsumnjicenData, zrtva: ZrtvaData) {
+//    val query = """
+//        INSERT INTO odnosOsumnjicenZrtva (osumnjicenId, zrtvaId, tipOdnosa)
+//        VALUES (?, ?, ?)
+//    """
+//    var conn: Connection? = null
+//    var statement: PreparedStatement? = null
+//    var resultSet: ResultSet? = null
+//
+//    try {
+//        conn = getDatabaseConnection()
+//        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+//
+//        statement?.setInt(1, osumnjicen.idOsumnjicen)
+//        statement?.setInt(2, zrtva.idZrtva)
+//        //statement?.setString(3, osumnjicen.odnosZrtva)
+//
+//        statement?.executeUpdate()
+//
+//        resultSet = statement?.generatedKeys
+//        if (resultSet?.next() == true) {
+//            osumnjicen.idOsumnjicen=resultSet.getInt(1)
+//        }
+//
+//    } catch (e: SQLException) {
+//        e.printStackTrace()
+//    } finally {
+//        closeResources(conn, statement, null)
+//    }
+//}
 
 fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData){
                     //, osumnjiceni: List<OsumnjicenData>){
@@ -811,3 +811,745 @@ fun logIn(korisnik: KorisnikRequest): Boolean {
 
     return false
 }
+
+// one contact
+
+fun insertOneContactData(oneContactData: OneContactData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO oneContact (zlocinId, ime, broj, slika)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        statement?.setString(2, oneContactData.ime)
+        statement?.setString(3, oneContactData.broj)
+        statement?.setInt(4,  oneContactData.slika)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            oneContactData.idOneContact = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// beleska
+
+fun insertBeleskaData(beleskaData: BeleskaData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO beleska (zlocinId, tekst, datum)
+        VALUES (?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        statement?.setString(2, beleskaData.tekst)
+        statement?.setTimestamp(3, java.sql.Timestamp(beleskaData.datum))
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            beleskaData.idBeleska = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// WhatsAppKontakt
+
+fun insertWhatsAppKontaktData(whatsAppKontaktDataData: WhatsAppKontaktData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO whatsappkontakt (zlocinId, ime, broj, slika)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        statement?.setString(2, whatsAppKontaktDataData.ime)
+        statement?.setString(3, whatsAppKontaktDataData.broj)
+        if (whatsAppKontaktDataData.slika != null) {
+            statement?.setInt(4, whatsAppKontaktDataData.slika)
+        }
+        else {
+            statement?.setNull(4, java.sql.Types.INTEGER)  // Correctly set null for slika
+        }
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            whatsAppKontaktDataData.idWhatsAppKontakt = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// WhatsAppPoruka
+
+fun insertWhatsAppPorukaData(whatsAppPorukaData: WhatsAppPorukaData, kontaktKoSalje: WhatsAppKontaktData, kontaktKomeSalje: WhatsAppKontaktData) {
+    val query = """
+        INSERT INTO whatsappporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
+        VALUES (?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, kontaktKoSalje.idWhatsAppKontakt)
+        statement?.setInt(2, kontaktKomeSalje.idWhatsAppKontakt)
+        statement?.setString(3, whatsAppPorukaData.tekst)
+        statement?.setTimestamp(4, java.sql.Timestamp(whatsAppPorukaData.datum))
+        statement?.setBoolean(5, whatsAppPorukaData.procitana)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            whatsAppPorukaData.idWhatsAppPoruka = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// OneCall
+
+fun insertOneCallData(oneCallData: OneCallData, kontakt: OneContactData) {
+    val query = """
+        INSERT INTO onecall (kontakt, datum, propusten, dolazni)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, oneCallData.kontakt)
+        statement?.setTimestamp(2, java.sql.Timestamp(oneCallData.datum))
+        statement?.setBoolean(3, oneCallData.propusten)
+        statement?.setBoolean(4, oneCallData.dolazni)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            oneCallData.idOneCall = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// Gallery
+
+fun insertGalleryData(galleryData: GalleryData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO gallery (zlocinId, slika, datum, mesto)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        if (galleryData.slika != null) {
+            statement?.setInt(2, galleryData.slika)
+        }
+        else {
+            statement?.setNull(2, java.sql.Types.INTEGER)  // Correctly set null for slika
+        }
+        statement?.setTimestamp(3, java.sql.Timestamp(galleryData.datum))
+        statement?.setString(4, galleryData.mesto)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            galleryData.idPhoto = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// ObicnaPoruka
+
+fun insertObicnaPorukaData(obicnaPorukaData: ObicnaPorukaData, kontaktKoSalje: OneContactData, kontaktKomeSalje: OneContactData) {
+    val query = """
+        INSERT INTO obicnaporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
+        VALUES (?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, kontaktKoSalje.idOneContact)
+        statement?.setInt(2, kontaktKomeSalje.idOneContact)
+        statement?.setString(3, obicnaPorukaData.tekst)
+        statement?.setTimestamp(4, java.sql.Timestamp(obicnaPorukaData.datum))
+
+        if (obicnaPorukaData.procitana != null) {
+            statement?.setBoolean(5, obicnaPorukaData.procitana)
+        } else {
+            statement?.setNull(5, java.sql.Types.BOOLEAN)
+        }
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            obicnaPorukaData.idObicnaPoruka = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// OdnosOsumnjicenZrtva
+
+fun insertOdnosOsumnjicenZrtvaData(odnosOsumnjicenZrtvaData: OdnosOsumnjicenZrtvaData, osumnjicenData: OsumnjicenData, zrtvaData: ZrtvaData) {
+    val query = """
+        INSERT INTO odnososumnjicenzrtva (osumnjicenId, zrtvaId, tipOdnosa)
+        VALUES (?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, osumnjicenData.idOsumnjicen)
+        statement?.setInt(2, zrtvaData.idZrtva)
+        statement?.setString(3, odnosOsumnjicenZrtvaData.tipOdnosa)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            odnosOsumnjicenZrtvaData.idOdnos = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// PrijavljeniKorisnik
+
+fun insertPrijavljeniKorisnikData(prijavljeniKorisnikData: PrijavljeniKorisnikData) {
+    val query = """
+        INSERT INTO prijavljenikorisnik (korisnickoIme, sifra)
+        VALUES (?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, prijavljeniKorisnikData.korisnickoIme)
+        statement?.setString(2, prijavljeniKorisnikData.sifra)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            prijavljeniKorisnikData.idKorisnik = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// Pitanje
+
+fun insertPitanjeData(pitanjeData: PitanjeData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO pitanje (zlocinId, tekst)
+        VALUES (?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, zlocin.idZlocin)
+        statement?.setString(2, pitanjeData.tekst)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            pitanjeData.idPitanje = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// Odgovor
+
+fun insertOdgovorData(odgovorData: OdgovorData, pitanje: PitanjeData) {
+    val query = """
+        INSERT INTO odgovor (pitanjeId, tekstOdgovora, tacan, bodovi)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, pitanje.idPitanje)
+        statement?.setString(2, odgovorData.tekstOdgovora)
+        statement?.setBoolean(3, odgovorData.tacan)
+        statement?.setInt(4, odgovorData.bodovi)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            odgovorData.idOdogovor = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// PitanjeIspitivanjeOsumnjicenog
+
+fun insertPitanjeIspitivanjeOsumnjicenogData(pitanjeIspitivanjeOsumnjicenogData: PitanjeIspitivanjeOsumnjicenogData, osumnjicen: OsumnjicenData) {
+    val query = """
+        INSERT INTO pitanjeispitivanjeosumnjicenog (kategorija, tekst, odgovor, komentar, osumnjicenId)
+        VALUES (?, ?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, pitanjeIspitivanjeOsumnjicenogData.kategorija)
+        statement?.setString(2, pitanjeIspitivanjeOsumnjicenogData.tekst)
+        statement?.setString(3, pitanjeIspitivanjeOsumnjicenogData.odgovor)
+        statement?.setString(4, pitanjeIspitivanjeOsumnjicenogData.komentar)
+        statement?.setInt(5, osumnjicen.idOsumnjicen)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            pitanjeIspitivanjeOsumnjicenogData.idPitanjeIspitivanjeOsumnjicenog = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// PitanjeIspitivanjeSvedoka
+
+fun insertPitanjeIspitivanjeSvedokaData(pitanjeIspitivanjeSvedokaData: PitanjeIspitivanjeSvedokaData, svedok: SvedokData) {
+    val query = """
+        INSERT INTO pitanjeispitivanjesvedoka (tekst, odgovor, svedokId, nextPitanje)
+        VALUES (?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, pitanjeIspitivanjeSvedokaData.tekst)
+        statement?.setString(2, pitanjeIspitivanjeSvedokaData.odgovor)
+        statement?.setInt(3, svedok.idSvedok)
+        statement?.setInt(4, pitanjeIspitivanjeSvedokaData.nextPitanje)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            pitanjeIspitivanjeSvedokaData.idPitanjeIspitivanjeSvedoka = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// Zadatak
+
+fun insertZadatakData(zadatakData: ZadatakData, zlocin: ZlocinData) {
+    val query = """
+        INSERT INTO zadatak (tekst, korak, uradjen, nextZadatak, zlocinId)
+        VALUES (?, ?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, zadatakData.tekst)
+        statement?.setString(2, zadatakData.korak)
+        statement?.setBoolean(3, zadatakData.uradjen)
+        statement?.setNull(4,  java.sql.Types.INTEGER)
+        statement?.setInt(5, zlocin.idZlocin)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            zadatakData.idZadatak = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun getZadatakListaData(): List<ZadatakData> {
+    val query = "SELECT idZadatak, tekst, korak, uradjen, nextZadatak, zlocinId FROM zadatak"
+    val zadatakList = mutableListOf<ZadatakData>()
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query)
+        resultSet = statement?.executeQuery()
+
+        while (resultSet?.next() == true) {
+            val zadatak = ZadatakData(
+                idZadatak = resultSet.getInt("idZadatak"),
+                tekst = resultSet.getString("tekst"),
+                korak = resultSet.getString("korak"),
+                uradjen = resultSet.getBoolean("uradjen"),
+                nextZadatak = resultSet.getInt("nextZadatak"),
+                zlocinId = resultSet.getInt("zlocinId")
+            )
+            zadatakList.add(zadatak)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, resultSet)
+    }
+
+    return zadatakList
+}
+
+fun updateZadatakListData(zadatakList: List<ZadatakData>) {
+    val query = """
+        UPDATE zadatak
+        SET nextZadatak = ?
+        WHERE idZadatak = ?
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query)
+
+        for (i in 0 until zadatakList.size - 1) {
+            val currentZadatak = zadatakList[i]
+            val nextZadatak = zadatakList[i + 1]
+
+            statement?.setInt(1, nextZadatak.idZadatak)
+            statement?.setInt(2, currentZadatak.idZadatak)
+            statement?.addBatch()
+        }
+
+        statement?.executeBatch()
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// DokazZadatak
+
+fun insertDokazZadatakData(dokazZadatakData: DokazZadatakData, dokazData: DokazData, zadatakData: ZadatakData) {
+    val query = """
+        INSERT INTO dokazzadatak (tekst, dokazId, uradjen, zadatakId)
+        VALUES (?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, dokazZadatakData.tekst)
+        statement?.setInt(2, dokazData.idDokaz)
+        statement?.setBoolean(3, dokazZadatakData.uradjen)
+        statement?.setInt(4, zadatakData.idZadatak)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            dokazZadatakData.idDokazZadatak = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// IspitivanjeOsumnjicenogZadatak
+
+fun insertIspitivanjeOsumnjicenogZadatakData(ispitivanjeOsumnjicenogZadatakData: IspitivanjeOsumnjicenogZadatakData, osumnjicenData: OsumnjicenData, zadatakData: ZadatakData) {
+    val query = """
+        INSERT INTO ispitivanjeosumnjicenogzadatak (osumnjicenId, zadatakId, uradjen)
+        VALUES (?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, osumnjicenData.idOsumnjicen)
+        statement?.setInt(2, zadatakData.idZadatak)
+        statement?.setBoolean(3, ispitivanjeOsumnjicenogZadatakData.uradjen)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            ispitivanjeOsumnjicenogZadatakData.idIspitivanjeOsumnjicenogZadatak = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// IspitivanjeSvedokaZadatak
+
+fun insertIspitivanjeSvedokaZadatakData(ispitivanjeSvedokaZadatakData: IspitivanjeSvedokaZadatakData, svedokData: SvedokData, zadatakData: ZadatakData) {
+    val query = """
+        INSERT INTO ispitivanjesvedokazadatak (svedokId, zadatakId, uradjen)
+        VALUES (?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, svedokData.idSvedok)
+        statement?.setInt(2, zadatakData.idZadatak)
+        statement?.setBoolean(3, ispitivanjeSvedokaZadatakData.uradjen)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            ispitivanjeSvedokaZadatakData.idIspitivanjeSvedokaZadatak = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// TelefonZadatak
+
+fun insertTelefonZadatakData(telefonZadatakData: TelefonZadatakData, telefonData: TelefonData, zadatakData: ZadatakData) {
+    val query = """
+        INSERT INTO telefonzadatak (telefonId, zadatakId, uradjen)
+        VALUES (?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, telefonData.idTelefon)
+        statement?.setInt(2, zadatakData.idZadatak)
+        statement?.setBoolean(3, telefonZadatakData.uradjen)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            telefonZadatakData.idTelefonZadatak = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// ForenzickiDokazZadatak
+
+fun insertForenzickiDokazZadatakData(forenzickiDokazZadatakData: ForenzickiDokazZadatakData, forenzickiDokazData: ForenzickiDokazData, zadatakData: ZadatakData) {
+    val query = """
+        INSERT INTO forenzickidokazzadatak (tekst, forenzickiDokazId, uradjen, zadatakId)
+        VALUES (?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, forenzickiDokazZadatakData.tekst)
+        statement?.setInt(2, forenzickiDokazData.idForenzickiDokaz)
+        statement?.setBoolean(3, forenzickiDokazZadatakData.uradjen)
+        statement?.setInt(4, zadatakData.idZadatak)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            forenzickiDokazZadatakData.idForenzickiDokazZadatak = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+// PorukeZadatak
+
+//fun insertPorukeZadatakData(porukeZadatakData: PorukeZadatakData, porukeData: PorukeData, zadatakData: ZadatakData) {
+//    val query = """
+//        INSERT INTO porukezadatak (porukeId, zadatakId, uradjen)
+//        VALUES (?, ?, ?)
+//    """
+//
+//    var conn: Connection? = null
+//    var statement: PreparedStatement? = null
+//    var resultSet: ResultSet? = null
+//
+//    try {
+//        conn = getDatabaseConnection()
+//        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+//
+//        statement?.setInt(1, porukeData.idPoruke)
+//        statement?.setInt(2, zadatakData.idZadatak)
+//        statement?.setBoolean(3, porukeZadatakData.uradjen)
+//
+//        statement?.executeUpdate()
+//
+//        resultSet = statement?.generatedKeys
+//        if (resultSet?.next() == true) {
+//            porukeZadatakData.idPorukeZadatak = resultSet.getInt(1)
+//        }
+//    } catch (e: SQLException) {
+//        e.printStackTrace()
+//    } finally {
+//        closeResources(conn, statement, null)
+//    }
+//}
