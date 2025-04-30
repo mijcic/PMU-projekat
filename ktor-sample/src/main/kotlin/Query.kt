@@ -170,6 +170,8 @@ fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: M
         if (resultSet?.next() == true) {
             // Vraca generisani ID
             osumnjicen.idOsumnjicen=resultSet.getInt(1)
+            osumnjicen.motiv=motiv.idMotiv
+            osumnjicen.zlocinId=zlocin.idZlocin
         }
 
     } catch (e: SQLException) {
@@ -250,30 +252,6 @@ fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData){
         closeResources(conn, statement, null)
     }
     //insertDokazOsumnjicenData(dokaz)
-}
-
-fun insertDokazOsumnjicenData(dokaz: DokazData){
-    val query = """
-        INSERT INTO dokazOsumnjicen (dokazId, osumnjicenId)
-        VALUES (?, ?)
-    """
-    var conn: Connection? = null
-    var statement: PreparedStatement? = null
-
-    try {
-        conn = getDatabaseConnection()
-        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-
-        statement?.setInt(1, dokaz.idDokaz)
-        //statement?.setInt(2, dokaz.osumnjicen.idOsumnjicen)
-
-        statement?.executeUpdate()
-
-    } catch (e: SQLException) {
-        e.printStackTrace()
-    } finally {
-        closeResources(conn, statement, null)
-    }
 }
 
 fun insertSvedokData(svedok: SvedokData, zlocin: ZlocinData){
@@ -481,6 +459,246 @@ fun insertMisijaPorukaData(misijaPoruka: MisijaPorukaData, zlocin: ZlocinData){
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
             misijaPoruka.id = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun insertKontaktData(kontakt: KontaktData, zrtva: ZrtvaData){
+
+    val query = """
+        INSERT INTO kontakt (ime, broj, statusS, zrtvaId)
+        VALUES (?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, kontakt.ime)
+        statement?.setString(2, kontakt.broj)
+        statement?.setInt(3,  kontakt.status)
+        statement?.setInt(4,  zrtva.idZrtva)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            kontakt.idKontakt = resultSet.getInt(1)
+            kontakt.zrtvaId=zrtva
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+
+}
+
+fun insertPorukeData(poruke: PorukeData, zrtva: ZrtvaData, kontakt: KontaktData){
+
+    val query = """
+        INSERT INTO poruke (tipPoruke, sadrzaj, datumVreme, zrtvaId,posiljalacId,statusPoruke,sifrovana)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, poruke.tipPoruke)
+        statement?.setString(2, poruke.sadrzaj)
+        statement?.setTimestamp(3, java.sql.Timestamp(poruke.datumVreme))
+        statement?.setInt(4,  zrtva.idZrtva)
+        statement?.setInt(5,  kontakt.idKontakt)
+        statement?.setString(6,  poruke.statusPoruke)
+        statement?.setBoolean(7,  poruke.sifrovana)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            poruke.idPoruke = resultSet.getInt(1)
+            poruke.zrtvaId=zrtva
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun insertPoziviData(pozivi: PoziviData, zrtva: ZrtvaData, kontakt: KontaktData){
+
+    val query = """
+        INSERT INTO pozivi (tip, broj, datumVreme, zrtvaId,statusS,kontaktId)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, pozivi.tip)
+        statement?.setString(2, pozivi.broj)
+        statement?.setTimestamp(3, java.sql.Timestamp(pozivi.datumVreme))
+        statement?.setInt(4,  zrtva.idZrtva)
+        statement?.setInt(5,  pozivi.status)
+        statement?.setInt(6,  kontakt.idKontakt)
+
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            pozivi.idPoziv = resultSet.getInt(1)
+            pozivi.zrtvaId=zrtva
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun insertGalerijaData(galerija: GalerijaData, zrtva: ZrtvaData){
+
+    val query = """
+        INSERT INTO galerija (tip, putanja, zrtvaId,datumVreme,lokacija)
+        VALUES (?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, galerija.tip)
+        statement?.setString(2, galerija.putanja)
+        statement?.setInt(3,  zrtva.idZrtva)
+        statement?.setTimestamp(4, java.sql.Timestamp(galerija.datumVreme))
+        statement?.setString(5,  galerija.lokacija)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            galerija.idGalerija = resultSet.getInt(1)
+            galerija.zrtvaId=zrtva
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun insertAplikacijaData(aplikacija: AplikacijaData, zrtva: ZrtvaData){
+
+    val query = """
+        INSERT INTO aplikacija (naziv, tip, zrtvaId,aktivna,informacije)
+        VALUES (?, ?, ?, ?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, aplikacija.naziv)
+        statement?.setInt(2, aplikacija.tip)
+        statement?.setInt(3,  zrtva.idZrtva)
+        statement?.setBoolean(4, aplikacija.aktivna)
+        statement?.setString(5,  aplikacija.informacije)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            aplikacija.idAplikacije = resultSet.getInt(1)
+            aplikacija.zrtvaId=zrtva
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+
+fun insertTragData(trag: TragData,forenzickiDokaz: ForenzickiDokazData,osumnjicen: OsumnjicenData){
+
+    val query = """
+        INSERT INTO trag (forenzickiDokazId, osumnjicenId)
+        VALUES (?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, forenzickiDokaz.idForenzickiDokaz)
+        statement?.setInt(2, osumnjicen.idOsumnjicen)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            trag.idTrag = resultSet.getInt(1)
+            trag.osumnjicenId=osumnjicen
+            trag.forenzickiDokazId=forenzickiDokaz
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun insertDokazOsumnjicenData(dokazOsumnjicen: DokazOsumnjicenData,dokaz: DokazData,osumnjicen: OsumnjicenData){
+
+    val query = """
+        INSERT INTO dokazOsumnjicen (dokazId, osumnjicenId)
+        VALUES (?, ?)
+    """
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setInt(1, dokaz.idDokaz)
+        statement?.setInt(2, osumnjicen.idOsumnjicen)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            dokazOsumnjicen.idDokazOsumnjicen = resultSet.getInt(1)
+            dokazOsumnjicen.osumnjicenId=osumnjicen
+            dokazOsumnjicen.dokazId=dokaz
         }
     } catch (e: SQLException) {
         e.printStackTrace()

@@ -291,3 +291,88 @@ CREATE TABLE ZabelezeniIzbor (
     FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik),
     FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin)
 );
+
+DROP TABLE IF EXISTS `Kontakt`;
+-- Tabela za kontakte
+CREATE TABLE Kontakt (
+    idKontakt INT AUTO_INCREMENT PRIMARY KEY,
+    ime varchar(255) NOT NULL,
+    broj varchar(50) NOT NULL,
+    statusS INT NOT NULL,
+    zrtvaId INT NOT NULL,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+);
+
+DROP TABLE IF EXISTS `Poruke`;
+-- Tabela za poruke
+CREATE TABLE Poruke (
+    idPoruke INT AUTO_INCREMENT PRIMARY KEY,
+    tipPoruke ENUM('SMS', 'WhatsApp', 'email') NOT NULL,
+    sadrzaj varchar(255) NOT NULL,
+    datumVreme DATETIME DEFAULT CURRENT_TIMESTAMP,
+    zrtvaId INT NOT NULL,
+    posiljalacId INT NOT NULL,
+    statusPoruke ENUM('sent', 'read', 'delete') NOT NULL,
+    sifrovana boolean NOT NULL,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva),
+    FOREIGN KEY (posiljalacId) REFERENCES Kontakt(idKontakt)
+);
+
+DROP TABLE IF EXISTS `Pozivi`;
+-- Tabela za pozive
+CREATE TABLE Pozivi (
+    idPoziv INT AUTO_INCREMENT PRIMARY KEY,
+    tip INT NOT NULL,
+    broj varchar(100) NOT NULL,
+    datumVreme DATETIME DEFAULT CURRENT_TIMESTAMP,
+    zrtvaId INT NOT NULL,
+    statusS INT NOT NULL,
+    kontaktId INT NOT NULL,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva),
+    FOREIGN KEY (kontaktId) REFERENCES Kontakt(idKontakt)
+);
+
+DROP TABLE IF EXISTS `Galerija`;
+-- Tabela za galeriju
+CREATE TABLE Galerija (
+    idGalerija INT AUTO_INCREMENT PRIMARY KEY,
+    tip INT NOT NULL,
+    putanja varchar(100) NOT NULL,
+    zrtvaId INT NOT NULL,
+	datumVreme DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lokacija varchar(100) NOT NULL,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+);
+
+DROP TABLE IF EXISTS `Aplikacija`;
+-- Tabela za aplikaciju
+CREATE TABLE Aplikacija (
+    idAplikacije INT AUTO_INCREMENT PRIMARY KEY,
+    naziv varchar(100) NOT NULL,
+    tip INT NOT NULL,
+    zrtvaId INT NOT NULL,
+    aktivna boolean NOT NULL,
+    informacije varchar(100) NOT NULL,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+);
+
+DROP TABLE IF EXISTS `Trag`;
+-- Tabela za trag
+CREATE TABLE Trag (
+    idTrag INT AUTO_INCREMENT PRIMARY KEY,
+    forenzickiDokazId INT NOT NULL,
+    osumnjicenId INT NOT NULL,
+    FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz),
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+);
+
+DROP TABLE IF EXISTS `DokazOsumnjicen`;
+-- Tabela za dokazOsumnjicen
+CREATE TABLE DokazOsumnjicen (
+    idDokazOsumnjicen INT AUTO_INCREMENT PRIMARY KEY,
+    dokazId INT NOT NULL,
+    osumnjicenId INT NOT NULL,
+    FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz),
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+);
+

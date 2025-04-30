@@ -128,8 +128,8 @@ data class OsumnjicenData(
     var idOsumnjicen: Int,
     val status: Int,
     val tipOsumnjicen: String,
-    val motiv: Int,
-    val zlocinId: Int,
+    var motiv: Int,
+    var zlocinId: Int,
     val kriv: Int,
     val osobaId:Int
 )
@@ -206,7 +206,7 @@ data class MisijaPorukaData(
     val posiljalac:String,
     val poruka: String,
 )
-
+/*
 @Serializable
 open class ZadatakR (
     var idZadatak: Int,
@@ -215,7 +215,7 @@ open class ZadatakR (
     val uradjen: Boolean,
     val next: ZadatakR?,
     val zlocinId: Int
-)
+)*/
 
 // sign up
 
@@ -226,4 +226,70 @@ data class KorisnikRequest(
     val korisnickoIme: String,
     val sifra: String,
     val email: String
+)
+
+@Serializable
+data class KontaktData (
+    var idKontakt: Int,
+    var ime: String,
+    var broj: String,
+    var status: Int,
+    var zrtvaId: ZrtvaData
+)
+
+@Serializable
+data class PorukeData(
+    var idPoruke: Int,
+    var tipPoruke: String,
+    var sadrzaj: String,
+    var datumVreme: Long,
+    var zrtvaId: ZrtvaData,
+    var posiljalacId: KontaktData,
+    var statusPoruke: String,
+    var sifrovana: Boolean
+)
+
+@Serializable
+data class PoziviData (
+    var idPoziv: Int,
+    var tip: Int,
+    var broj: String,
+    var datumVreme: Long,
+    var zrtvaId: ZrtvaData,
+    var status: Int,
+    var kontaktId: KontaktData
+)
+
+@Serializable
+data class GalerijaData (
+    var idGalerija: Int,
+    var tip: Int,
+    var putanja: String,
+    var zrtvaId: ZrtvaData,
+    var datumVreme: Long,
+    var lokacija: String
+)
+
+@Serializable
+data class AplikacijaData (
+    var idAplikacije: Int,
+    var naziv: String,
+    var tip: Int,
+    var zrtvaId: ZrtvaData,
+    var aktivna: Boolean,
+    var informacije: String
+)
+
+@Serializable
+data class TragData(
+    var idTrag: Int,
+    var forenzickiDokazId: ForenzickiDokazData,
+    var osumnjicenId: OsumnjicenData
+)
+
+@Serializable
+open class DokazOsumnjicenData (
+    var idDokazOsumnjicen: Int,
+    var dokazId: DokazData,
+    var osumnjicenId: OsumnjicenData
 )

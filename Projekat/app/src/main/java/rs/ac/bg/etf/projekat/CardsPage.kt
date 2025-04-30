@@ -137,8 +137,9 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "uncover the truth behind the crime.",
                         navController,
                         {
-                            realmViewModel.insertDataForMurder()
-                            realmViewModel.callGetTitleDatePlaceDescFromCrime()
+                            //realmViewModel.insertDataForMurder()
+                            //realmViewModel.callGetTitleDatePlaceDescFromCrime()
+                            myViewModel.getGeminiData(realmViewModel)
                         },
                         crimeData.value.title.toString(),
                         crimeData.value.date.toString(),
@@ -153,7 +154,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "mystery of a missing person, uncovering hidden secrets along " +
                                 "the way.",
                         navController,
-                        {},
+                        {myViewModel.getGeminiData(realmViewModel)},
                         "", "", "", ""
                     )
 

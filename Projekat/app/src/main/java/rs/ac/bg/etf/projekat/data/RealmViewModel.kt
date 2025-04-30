@@ -102,7 +102,8 @@ class RealmViewModel @Inject constructor(
     suspend fun insertZlocin(tipZlocina: TipZlocinaR?, nazivZ: String, datumZ: String, mestoZ: String, opisZ: String, statusZ: String): ZlocinR? {
         var zlocin: ZlocinR? = null
         realm.write {
-            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            //val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
             val localDate = LocalDate.parse(datumZ, formatter)
             val instantDate = localDate.atStartOfDay(ZoneOffset.UTC).toInstant()
             val realmInstantDate = RealmInstant.from(instantDate.epochSecond, instantDate.nano)
@@ -329,47 +330,61 @@ class RealmViewModel @Inject constructor(
         return dokazOsumnjicenog
     }
 
-    suspend fun insertSvedok(imeS: String, kontaktS: String, izjavaS: String, zlocinS: ZlocinR?, statusSvedokS: String, statusIspitanS: Int,
-        datumS:RealmInstant,zanimanjS:String,polS:String): SvedokR? {
+    suspend fun insertSvedok(
+        imeS: String,
+        kontaktS: String,
+        izjavaS: String,
+        zlocinS: ZlocinR?,
+        statusSvedokS: String,
+        statusIspitanS: Int,
+        datumS: RealmInstant,
+        zanimanjS: String,
+        polS: String
+    ): SvedokR? {
 
         var svedok: SvedokR? = null
-        var osoba: OsobaR? = null
 
-        val result = realm.query<OsobaR>("ime == $0 AND kontakt == $1", imeS, kontaktS).find().firstOrNull()
-        if (result == null) {
-            osoba = insertOsoba(imeS, kontaktS, datumS, zanimanjS, polS, zlocinS)
-        } else {
-            osoba = result
-        }
+        // Pronađi ili kreiraj osobu (van write bloka, da izbegnemo nested write)
+        val osoba = realm.query<OsobaR>("ime == $0 AND kontakt == $1", imeS, kontaktS)
+            .find()
+            .firstOrNull() ?: insertOsoba(imeS, kontaktS, datumS, zanimanjS, polS, zlocinS)
 
-        var osobaS = osoba?.idOsoba ?: 1
         realm.write {
-            // Ako zlocin nije unet u bazu, unesite ga
-            val existingZlocin = query<ZlocinR>("idZlocin == $0", zlocinS?.idZlocin).find().firstOrNull()
-                ?: zlocinS?.let {
-                    copyToRealm(it)
-                }
+            // Menadžisani Zlocin
+            val managedZlocin = zlocinS?.idZlocin?.let { id ->
+                query<ZlocinR>("idZlocin == $0", id).find().firstOrNull()
+                    ?: copyToRealm(zlocinS)
+            }
 
-            val existingOsoba = query<OsobaR>("ime == $0 AND kontakt == $1", imeS, kontaktS).find().firstOrNull()
-                ?: osoba?.let {
-                    copyToRealm(it)  // Ako osoba nije u bazi, dodajte je
-                }
+            // Menadžisana Osoba
+            val managedOsoba = query<OsobaR>("ime == $0 AND kontakt == $1", imeS, kontaktS)
+                .find()
+                .firstOrNull()
+                ?: copyToRealm(osoba!!)
 
+            // Pronađi postojećeg svedoka ako postoji
+            svedok = query<SvedokR>(
+                "izjava == $0 AND statusSvedok == $1 AND statusIspitan == $2 AND zlocinId == $3 AND osobaId == $4",
+                izjavaS, statusSvedokS, statusIspitanS, managedZlocin, managedOsoba
+            ).find().firstOrNull()
 
-            svedok = query<SvedokR>("izjava == $0 AND statusSvedok == $1 AND statusIspitan == $2 AND zlocinId == $3 AND osobaId == $4",
-                izjavaS, statusSvedokS, statusIspitanS, zlocinS,existingOsoba).find().firstOrNull()
-                ?: SvedokR().apply {
+            // Ako ne postoji, kreiraj novog
+            if (svedok == null) {
+                svedok = SvedokR().apply {
                     idSvedok = (query<SvedokR>().find().maxOfOrNull { it.idSvedok } ?: 0) + 1
                     izjava = izjavaS
                     statusSvedok = statusSvedokS
                     statusIspitan = statusIspitanS
-                    zlocinId = existingZlocin
-                    osobaId = existingOsoba
+                    zlocinId = managedZlocin
+                    osobaId = managedOsoba
                 }
-            copyToRealm(svedok!!)
+                copyToRealm(svedok!!)
+            }
         }
+
         return svedok
     }
+
 
     suspend fun insertAlibi(osumnjicenA: OsumnjicenR?, svedokA: SvedokR?, opisA: String, statusAlibijaA: String): AlibiR? {
         var alibi: AlibiR? = null
@@ -517,7 +532,7 @@ class RealmViewModel @Inject constructor(
                     copyToRealm(it)
                 }
 
-            val formatterO = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            val formatterO = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val localDateO = LocalDate.parse(datumO, formatterO)
 
             val instantDateO = localDateO.atStartOfDay(ZoneOffset.UTC).toInstant()

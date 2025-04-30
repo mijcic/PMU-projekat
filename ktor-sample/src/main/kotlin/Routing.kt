@@ -28,8 +28,43 @@ fun Application.configureRouting() {
                 }
 
                 val geminiResponseText = queryGemini(prompt, tables.toString())
+                println(geminiResponseText)
 
                 call.respond(mapOf("response" to geminiResponseText))
+
+            } catch (e: ContentTransformationException) {
+                call.respond(HttpStatusCode.BadRequest,
+                    mapOf("error" to "Invalid request format. A JSON object with the keys 'prompt' and 'tables' is expected."))
+            } catch (e: Exception) {
+                println("Unexpected error at the /gemini endpoint: ${e.message}")
+                e.printStackTrace()
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "An internal server error occurred."))
+            }
+        }
+
+
+        post("/geminiData") {
+            try {
+                val requestData = call.receive<GeminiRequest2>()
+                println("REQUEST DATA")
+                println(requestData)
+                val prompt = requestData.prompt
+                val tables = requestData.tables
+
+                if (prompt.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'prompt' is required and cannot be empty."))
+                    return@post
+                }
+                if (tables == null) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'tables' is required and cannot be empty."))
+                    return@post
+                }
+
+                val geminiResponseText = queryGeminiRetrofit(prompt, tables.toString())
+                println("REQUEST DATA geminiResponseText\n")
+                println(geminiResponseText)
+
+                call.respond(geminiResponseText as Any)
 
             } catch (e: ContentTransformationException) {
                 call.respond(HttpStatusCode.BadRequest,

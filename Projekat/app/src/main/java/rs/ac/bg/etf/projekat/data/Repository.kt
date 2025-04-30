@@ -1,10 +1,9 @@
 package rs.ac.bg.etf.projekat.data
 
-import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import rs.ac.bg.etf.projekat.data.retrofit.Api
+import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponse2
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
@@ -26,4 +25,8 @@ class Repository @Inject constructor(
     suspend fun logIn(@Body request: KorisnikRequest): MessageResponse = Api.logIn(request)
 
     suspend fun scoreKorisnika():List<ScorePageKorisnikResponse> = Api.scoreKorisnika()
+
+
+
+    suspend fun geminiData(@Body request: RequestBody): GeminiResponse2= Api.geminiData(request)
 }

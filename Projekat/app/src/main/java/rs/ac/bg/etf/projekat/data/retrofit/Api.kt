@@ -1,10 +1,12 @@
 package rs.ac.bg.etf.projekat.data.retrofit
 
 import okhttp3.Request
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponse2
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
@@ -12,7 +14,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 
 
-//const val BASE_URL = "http://192.168.0.13:8080/"
+//const val BASE_URL = "http://192.168.0.14:8080/"
 const val BASE_URL = "http://10.0.2.2:8080/"
 
 interface Api {
@@ -34,4 +36,8 @@ interface Api {
 
     @GET("scoreKorisnika")
     suspend fun scoreKorisnika():List<ScorePageKorisnikResponse>
+
+
+    @POST("geminiData")
+    suspend fun geminiData(@Body request: RequestBody):GeminiResponse2
 }
