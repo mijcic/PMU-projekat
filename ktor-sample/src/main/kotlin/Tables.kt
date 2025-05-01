@@ -128,8 +128,8 @@ data class OsumnjicenData(
     var idOsumnjicen: Int,
     val status: Int,
     val tipOsumnjicen: String,
-    val motiv: Int,
-    val zlocinId: Int,
+    var motiv: Int,
+    var zlocinId: Int,
     val kriv: Int,
     val osobaId:Int
 )
