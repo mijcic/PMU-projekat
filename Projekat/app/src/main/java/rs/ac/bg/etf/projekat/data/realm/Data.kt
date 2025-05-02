@@ -20,7 +20,7 @@ enum class stZlocinR {
 
 // Zlocin table
 open class ZlocinR : RealmObject {
-    @PrimaryKey
+    //@PrimaryKey
     var idZlocin: Int = 0
     var tipZlocinaId: TipZlocinaR? = null
     var naziv: String = ""
@@ -157,7 +157,7 @@ open class MotivR : RealmObject {
 
 // DokazR table
 open class DokazR : RealmObject {
-    @PrimaryKey
+    //@PrimaryKey
     var idDokaz: Int = 0
     var tipDokaza: String = TipDokazaR.svedok.name
     var opis: String = ""
@@ -184,18 +184,7 @@ enum class TipDokazaR {
 }
 
 // SvedokR table
-/*
 open class SvedokR : RealmObject {
-    @PrimaryKey
-    var idSvedok: Int = 0
-    var ime: String = ""
-    var kontakt: String = ""
-    var izjava: String = ""
-    var zlocinId: ZlocinR? = null
-    var statusSvedok: String = StatusSvedokR.aktivno.name
-    var statusIspitan: Int = 0
-}*/
-open class SvedokR : RealmObject {// -ime,kontakt  +osobaId
     @PrimaryKey
     var idSvedok: Int = 0
     var izjava: String = ""
@@ -212,20 +201,8 @@ enum class StatusSvedokR {
     nesaradnja
 }
 
-// ZrtvaR table
-/*
 open class ZrtvaR : RealmObject {
-    @PrimaryKey
-    var idZrtva: Int = 0
-    var tipZrtve: String = ""
-    var ime: String = ""
-    var detalji: String = ""
-    var statusZrtva: String = StatusZrtvaR.ziva.name
-    var zlocinId: ZlocinR? = null
-}*/
-
-open class ZrtvaR : RealmObject {// -ime
-    @PrimaryKey
+   // @PrimaryKey
     var idZrtva: Int = 0
     var tipZrtve: String = ""
     var detalji: String = ""
@@ -292,7 +269,7 @@ open class KultoviR : RealmObject {
 
 // TelefonR table
 open class TelefonR : RealmObject {
-    @PrimaryKey
+    //@PrimaryKey
     var idTelefon: Int = 0
     var model: String = ""
     var os: String = ""
@@ -392,7 +369,7 @@ open class AplikacijaR : RealmObject {
 
 // ObdukcijaR table
 open class ObdukcijaR : RealmObject {
-    @PrimaryKey
+    //@PrimaryKey
     var idObdukcija: Int = 0
     var izvestaj: String = ""
     var datum: RealmInstant? = null
@@ -403,7 +380,7 @@ open class ObdukcijaR : RealmObject {
 
 // ForenzickiDokazR table
 open class ForenzickiDokazR : RealmObject {
-    @PrimaryKey
+
     var idForenzickiDokaz: Int = 0
     var tipForenzickiDokaz: String = TipForenzickiDokazR.DNK.name
     var opis: String = ""

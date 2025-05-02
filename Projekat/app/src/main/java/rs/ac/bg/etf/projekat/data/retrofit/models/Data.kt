@@ -36,13 +36,13 @@ data class ZlocinRequest(
 )
 
 data class ZlocinData(
-    val id: Int,
-    val idTipZlocina: Int,
+    var idZlocin: Int,
+    val tipZlocinaId: Int,
     val naziv: String,
     val datum: Long,
     val mesto: String,
     val opis: String,
-    val status:String
+    val status: String
 )
 
 

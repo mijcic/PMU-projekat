@@ -872,6 +872,7 @@ class MyViewModel @Inject constructor(
 
             if (response.zlocinRetrofit!=null) {
                 zlocin= realmViewModel.insertZlocin(
+                    response.zlocinRetrofit!!.idZlocin,
                     tipZlocina,
                     response.zlocinRetrofit!!.naziv,
                     response.zlocinRetrofit!!.datum.toString(),
@@ -882,7 +883,6 @@ class MyViewModel @Inject constructor(
             }
 
             if(response.zrtvaRetrofit!=null){
-
                 val millis = response.zrtvaRetrofit!!.osobaId?.datum
                 val instant = millis?.let { Instant.ofEpochMilli(it) }
                 val realmInstantZrtva = instant?.let { RealmInstant.from(instant.epochSecond, it.nano) }
@@ -891,6 +891,7 @@ class MyViewModel @Inject constructor(
                 val zrtva: ZrtvaR? = response.zrtvaRetrofit!!.osobaId?.let {
                     response.zrtvaRetrofit!!.osobaId.kontakt?.let { it1 ->
                         realmViewModel.insertZrtva(
+                            response.zrtvaRetrofit!!.idZrtva,
                             response.zrtvaRetrofit!!.tipZrtve,
                             it.ime,
                             response.zrtvaRetrofit!!.detalji,
@@ -904,10 +905,10 @@ class MyViewModel @Inject constructor(
                     }
                 }
 
-
                 val dokazi:MutableList<DokazR> =mutableListOf()
                 for(d in response.dokaziRetrofit!!){
-                    val dk=realmViewModel.insertDokaz(
+                    val dk = realmViewModel.insertDokaz(
+                        d.idDokaz,
                         d.tipDokaza,
                         d.opis,
                         zlocin,
@@ -921,6 +922,7 @@ class MyViewModel @Inject constructor(
 
                 for(t in response.telefoniRetrofit!!){
                     realmViewModel.insertTelefon(
+                        idTelefonT = t.idTelefon,
                         modelT = t.model,
                         osT = t.os,
                         zrtvaT = zrtva,
@@ -928,8 +930,10 @@ class MyViewModel @Inject constructor(
                     )
                 }
 
+
                 for(f in response.forenzickiDokazRetrofit!!){
                     realmViewModel.insertForenzickiDokaz(
+                        idForenzickiDokazFD = f.idForenzickiDokaz,
                         tipFD = f.tipForenzickiDokaz,
                         opisFD = f.opis,
                         statusFD = f.statusS,
@@ -939,6 +943,7 @@ class MyViewModel @Inject constructor(
                 }
                 if(response.obdukcijaRetrofit!=null){
                     var obdukcija: ObdukcijaR? = realmViewModel.insertObdukcija(
+                        response.obdukcijaRetrofit!!.idObdukcija,
                         response.obdukcijaRetrofit!!.izvestaj,
                         response.obdukcijaRetrofit!!.datum.toString(),
                         response.obdukcijaRetrofit!!.uzrokSmrti,
@@ -949,6 +954,7 @@ class MyViewModel @Inject constructor(
 
                 for(k in response.kontaktiRetrofit!!){
                     realmViewModel.insertKontakt(
+                        idKontaktK = k.idKontakt,
                         imeK = k.ime,
                         brojK = k.broj,
                         statusK = k.status,
@@ -989,9 +995,6 @@ class MyViewModel @Inject constructor(
                 }
             }
             */
-            Log.d("GEMINI",response.oneContactRetrofit.toString() )
-
-            Log.d("GEMINI",response.galleryRetrofit.toString())
 
             for(s in response.svedociRetrofit!!){
                 val millisSvedok = s.osobaId?.datum
@@ -1018,7 +1021,7 @@ class MyViewModel @Inject constructor(
 
             for(k in response.oneContactRetrofit!!){
                 realmViewModel.insertOneContact(
-                    zlocin, k.ime,k.broj, k.slika
+                    k.idOneContact,zlocin, k.ime,k.broj, k.slika
                 )
             }
 
@@ -1029,6 +1032,7 @@ class MyViewModel @Inject constructor(
                     ?: RealmInstant.now()
                 g.slika?.let {
                     realmViewModel.insertGalleryPhoto(
+                        idPhotoG = g.idPhoto,
                         zlocinIdG = zlocin,
                         slikaG = it,
                         datumG = realmInstantGallery,
@@ -1039,6 +1043,63 @@ class MyViewModel @Inject constructor(
 
             //APLIKACIJE
             //TRAG
+            //DOKAZ OSUMNJICEN
+
+            for(b in response.beleskeRetrofit!!){
+                val millisBeleska = b.datum
+                val instantBeleska = millisBeleska?.let { Instant.ofEpochMilli(it) }
+                val realmInstantBeleska = instantBeleska?.let { RealmInstant.from(instantBeleska.epochSecond, it.nano) }
+                    ?: RealmInstant.now()
+                realmViewModel.insertBeleska(
+                    idBeleskaB = b.idBeleska,
+                    zlocinIdB = zlocin,
+                    tekstB = b.tekst,
+                    datumB = realmInstantBeleska
+                )
+            }
+
+            for(wa in response.whatsappKontaktRetrofit!!){
+                wa.slika?.let {
+                    realmViewModel.insertWhatsAppKontakt(
+                        idWhatsAppKontaktW = wa.idWhatsAppKontakt,
+                        zlocinIdW = zlocin,
+                        imeW = wa.ime,
+                        brojW = wa.broj,
+                        slikaW = it
+                    )
+                }
+            }
+
+            //WHATSAPP PORUKA
+            //ONE CALL
+            //ObicnaPorukaData
+            //OdnosOsumnjicenZrtvaData
+
+
+            for(p in response.pitanjaRetrofit!!){
+                realmViewModel.insertPitanje(
+                    idPitanjeP = p.idPitanje,
+                    zlocinIdP = zlocin,
+                    tekstP = p.tekst
+                )
+            }
+
+            //ODGOVOR
+            //pitanjeIspitivanjeOsumnjicenog
+            //PitanjeIspitivanjeSvedokaData
+
+
+
+            //ISPRAVITI
+            for(z in response.zadaciRetrofit!!){
+                realmViewModel.insertZadatak(
+                    tekstZ = z.tekst,
+                    korakZ = z.korak,
+                    uradjenZ = z.uradjen,
+                    nextZ = null,
+                    zlocinZ = zlocin
+                )
+            }
 
 
             realmViewModel.callGetTitleDatePlaceDescFromCrime()
