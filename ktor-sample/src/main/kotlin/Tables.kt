@@ -114,7 +114,7 @@ data class ZrtvaData(
     val detalji: String,
     val statusZrtva: String,
     val zlocinId:Int,
-    val osobaId:Int
+    var osobaId:OsobaData
 )
 
 @Serializable
@@ -128,10 +128,10 @@ data class OsumnjicenData(
     var idOsumnjicen: Int,
     val status: Int,
     val tipOsumnjicen: String,
-    var motiv: Int,
+    var motiv: MotivData,
     var zlocinId: Int,
     val kriv: Int,
-    val osobaId:Int
+    val osobaId:OsobaData
 )
 
 @Serializable
@@ -151,7 +151,7 @@ data class SvedokData(
     val statusSvedok: String,
     val statusIspitan: Int,
     val zlocinId: Int,
-    val osobaId: Int
+    val osobaId: OsobaData
 )
 
 @Serializable

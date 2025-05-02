@@ -3,7 +3,7 @@ package rs.ac.bg.etf.projekat.data
 import okhttp3.RequestBody
 import retrofit2.http.Body
 import rs.ac.bg.etf.projekat.data.retrofit.Api
-import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponse2
+import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
@@ -28,5 +28,5 @@ class Repository @Inject constructor(
 
 
 
-    suspend fun geminiData(@Body request: RequestBody): GeminiResponse2= Api.geminiData(request)
+    suspend fun geminiData(@Body request: RequestBody):GeminiResponseRetrofit= Api.geminiData(request)
 }

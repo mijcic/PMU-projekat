@@ -52,4 +52,6 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:3.1.1")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.1")
     implementation("io.ktor:ktor-client-content-negotiation:3.1.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }

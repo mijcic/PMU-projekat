@@ -30,7 +30,8 @@ fun Application.configureRouting() {
                 val geminiResponseText = queryGemini(prompt, tables.toString())
                 println(geminiResponseText)
 
-                call.respond(mapOf("response" to geminiResponseText))
+                //call.respond(mapOf("response" to geminiResponseText))
+                call.respond(geminiResponseText as Any)
 
             } catch (e: ContentTransformationException) {
                 call.respond(HttpStatusCode.BadRequest,
@@ -61,8 +62,6 @@ fun Application.configureRouting() {
                 }
 
                 val geminiResponseText = queryGeminiRetrofit(prompt, tables.toString())
-                println("REQUEST DATA geminiResponseText\n")
-                println(geminiResponseText)
 
                 call.respond(geminiResponseText as Any)
 
@@ -192,8 +191,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        //"1234"
-        "mia123"
+        "1234"
+        //"mia123"
     )
 }
 

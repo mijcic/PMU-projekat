@@ -98,7 +98,7 @@ fun insertZrtva(zrtvaData: ZrtvaData,zlocin: ZlocinData,osoba:OsobaData){
         statement?.setString(2, zrtvaData.detalji)
         statement?.setString(3, zrtvaData.statusZrtva)
         statement?.setInt(4, zrtvaData.zlocinId)
-        statement?.setInt(5, zlocin.idZlocin)
+        statement?.setInt(5, osoba.idOsoba)
 
         statement?.executeUpdate()
 
@@ -106,6 +106,7 @@ fun insertZrtva(zrtvaData: ZrtvaData,zlocin: ZlocinData,osoba:OsobaData){
         if (resultSet?.next() == true) {
             // Vraca generisani ID
             zrtvaData.idZrtva=resultSet.getInt(1)
+            zrtvaData.osobaId=osoba
         }
     } catch (e: SQLException) {
         e.printStackTrace()
@@ -162,7 +163,7 @@ fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: M
         statement?.setInt(3, motiv.idMotiv)
         statement?.setInt(4, zlocin.idZlocin)
         statement?.setInt(5, osumnjicen.kriv)
-        statement?.setInt(6, osumnjicen.osobaId)
+        statement?.setInt(6, osumnjicen.osobaId.idOsoba)
 
         statement?.executeUpdate()
 
@@ -170,7 +171,7 @@ fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: M
         if (resultSet?.next() == true) {
             // Vraca generisani ID
             osumnjicen.idOsumnjicen=resultSet.getInt(1)
-            osumnjicen.motiv=motiv.idMotiv
+            osumnjicen.motiv=motiv
             osumnjicen.zlocinId=zlocin.idZlocin
         }
 
@@ -271,7 +272,7 @@ fun insertSvedokData(svedok: SvedokData, zlocin: ZlocinData){
         statement?.setString(2, svedok.statusSvedok)
         statement?.setInt(3, svedok.statusIspitan)
         statement?.setInt(4, zlocin.idZlocin)
-        statement?.setInt(5, svedok.osobaId)
+        statement?.setInt(5, svedok.osobaId.idOsoba)
 
         statement?.executeUpdate()
 

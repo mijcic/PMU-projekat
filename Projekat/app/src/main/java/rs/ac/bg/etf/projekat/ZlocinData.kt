@@ -15,8 +15,11 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZrtvaData
 
 fun InsertData(viewModel: MyViewModel){
-    val osumnjicenDokaz = OsumnjicenData(
-        id=0,
+    /*
+    val osumnjicenDokaz =
+
+        OsumnjicenData(
+        idOsumnjicen =0,
         ime = "Amelia Fontaine",
         status = 0,
         tipOsumnjicen = 1,
@@ -161,4 +164,5 @@ fun InsertData(viewModel: MyViewModel){
         )
     )
     viewModel.insertDataZlocin(zlocinRequest)
+    */
 }

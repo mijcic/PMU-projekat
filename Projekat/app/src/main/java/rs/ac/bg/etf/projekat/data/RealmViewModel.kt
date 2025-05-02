@@ -102,11 +102,16 @@ class RealmViewModel @Inject constructor(
     suspend fun insertZlocin(tipZlocina: TipZlocinaR?, nazivZ: String, datumZ: String, mestoZ: String, opisZ: String, statusZ: String): ZlocinR? {
         var zlocin: ZlocinR? = null
         realm.write {
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            //val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             //val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            val localDate = LocalDate.parse(datumZ, formatter)
-            val instantDate = localDate.atStartOfDay(ZoneOffset.UTC).toInstant()
-            val realmInstantDate = RealmInstant.from(instantDate.epochSecond, instantDate.nano)
+            //val localDate = LocalDate.parse(datumZ, formatter)
+            //val instantDate = localDate.atStartOfDay(ZoneOffset.UTC).toInstant()
+
+            val millis = datumZ.toLong()
+            val instant = Instant.ofEpochMilli(millis)
+            val realmInstantDate = RealmInstant.from(instant.epochSecond, instant.nano)
+
+            //val realmInstantDate = RealmInstant.from(instantDate.epochSecond, instantDate.nano)
 
             // Ako tipZlocina nije unet u bazu, unesite ga
             val existingTipZlocina = query<TipZlocinaR>("nazivTipaZlocina == $0", tipZlocina?.nazivTipaZlocina).find().firstOrNull()
@@ -532,15 +537,10 @@ class RealmViewModel @Inject constructor(
                     copyToRealm(it)
                 }
 
-            val formatterO = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val localDateO = LocalDate.parse(datumO, formatterO)
+            val millis = datumO.toLong()
+            val instant = Instant.ofEpochMilli(millis)
+            val realmInstantDateO = RealmInstant.from(instant.epochSecond, instant.nano)
 
-            val instantDateO = localDateO.atStartOfDay(ZoneOffset.UTC).toInstant()
-
-            val realmInstantDateO = RealmInstant.from(
-                instantDateO.epochSecond,
-                instantDateO.nano
-            )
 
             obdukcija = query<ObdukcijaR>("izvestaj == $0 AND datum == $1 AND uzrokSmrti == $2 AND zrtvaId == $3 AND informacije == $4",
                 izvestajO, realmInstantDateO, uzrokSmrtiO, existingZrtva, informacijeO).find().firstOrNull()

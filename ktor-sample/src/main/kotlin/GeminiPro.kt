@@ -8,6 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.LocalDate
@@ -316,7 +317,7 @@ val geminiClient = HttpClient(CIO) {
     }
 }
 
-suspend fun queryGemini(prompt: String,tables:String): String {
+suspend fun queryGemini(prompt: String,tables:String): Any {
     val request = GeminiRequest(
         contents = listOf(Content(parts = listOf(Part(text = prompt+tables)))),
     )
@@ -336,10 +337,12 @@ suspend fun queryGemini(prompt: String,tables:String): String {
             //println("${geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text}")
 
             //to insert data into mysql database
-            getDataGeminiResponse(geminiResponse)
+            val geminiResponseRetrofit =getDataGeminiResponse(geminiResponse)
+            //println("GEMINI RESPONSE RETROF\n "+geminiResponseRetrofit)
 
-            geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-                ?: "No textual response received from Gemini."
+            geminiResponseRetrofit
+            //geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+              //  ?: "No textual response received from Gemini."
         } else {
             val errorBody = response.bodyAsText()
             println("Error from Gemini: ${response.status} - $errorBody")
@@ -353,7 +356,7 @@ suspend fun queryGemini(prompt: String,tables:String): String {
     }
 }
 
-fun getDataGeminiResponse(geminiResponse:GeminiResponse){
+fun getDataGeminiResponse(geminiResponse:GeminiResponse): GeminiResponseRetrofit {
     val json2 =Json {
         ignoreUnknownKeys = true
     }
@@ -518,11 +521,12 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse){
 
                 // porukeZadatak
 
-                println("GEMINI RESPONSE RETROFIT \n" + geminiResponseRetrofit)
+                //println("GEMINI RESPONSE RETROFIT \n" + geminiResponseRetrofit)
 
             }
         }
     }
+    return geminiResponseRetrofit
 }
 
 data class SviDokaziOdZrtve(
@@ -572,7 +576,7 @@ fun insertGeminiZrtva(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: 
             detalji = zrtva.detalji,
             statusZrtva = zrtva.statusZrtva,
             zlocinId = zl.idZlocin,
-            osobaId = 1
+            osobaId = os
         )
 
         insertZrtva(zr, zl,os)
@@ -760,44 +764,40 @@ fun insertGeminiOsumnjicen(geminiResponse2: GeminiResponse2,geminiResponseRetrof
                 insertMotivData(m)
             }
 
-            o.motiv?.let { it1 ->
-                o.osobaId?.let { it2 ->
-                    OsumnjicenData(
-                        idOsumnjicen = o.idOsumnjicen,
-                        status = o.status,
-                        tipOsumnjicen = o.tipOsumnjicen,
-                        motiv = it1.idMotiv,
-                        zlocinId = o.zlocinId,
-                        kriv = o.kriv,
-                        osobaId = os.idOsoba
-                    )
-                }
-            }?.let { it2 ->
-                if (m != null) {
-                    insertOsumnjicenData(
-                        it2,
-                        zlocin = zl,
-                        motiv = m,
-                        zrtva = ZrtvaData(0,"","","",1,1)
-                    )
+            if (m != null) {
+                val osum=OsumnjicenData(
+                    idOsumnjicen = o.idOsumnjicen,
+                    status = o.status,
+                    tipOsumnjicen = o.tipOsumnjicen,
+                    motiv = m,
+                    zlocinId = o.zlocinId,
+                    kriv = o.kriv,
+                    osobaId = os
+                )
+                insertOsumnjicenData(
+                    osum,
+                    zlocin = zl,
+                    motiv = m,
+                    zrtva = ZrtvaData(0,"","","",1,os)
+                )
 
-                    val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.osumnjicenId == prev }
-                    ispitivanjeOsumnjicenogZadatak?.osumnjicenId = it2.idOsumnjicen
+                val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.osumnjicenId == prev }
+                ispitivanjeOsumnjicenogZadatak?.osumnjicenId = osum.idOsumnjicen
 
-                    val odnosOsumnjicenZrtva = geminiResponse2.odnosOsumnjicenZrtvaR.find { it.osumnjicenId == prev }
-                    odnosOsumnjicenZrtva?.osumnjicenId = it2.idOsumnjicen
+                val odnosOsumnjicenZrtva = geminiResponse2.odnosOsumnjicenZrtvaR.find { it.osumnjicenId == prev }
+                odnosOsumnjicenZrtva?.osumnjicenId = osum.idOsumnjicen
 
-                    val pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
-                    pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = it2.idOsumnjicen
+                val pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
+                pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
 
-                    osumnjiceniLista.add(it2)
-                }
+                osumnjiceniLista.add(osum)
+
                 val pronadjenOsumnjicen = geminiResponse2.tragKtor.find { it.osumnjicenId==prev }
-                pronadjenOsumnjicen?.osumnjicenId=it2.idOsumnjicen
+                pronadjenOsumnjicen?.osumnjicenId=osum.idOsumnjicen
 
                 val pronadjen = geminiResponse2.dokazOsumnjicenKtor.find { it.osumnjicenId==prev }
-                pronadjen?.osumnjicenId=it2.idOsumnjicen
-                osumnjiceniLista.add(it2)
+                pronadjen?.osumnjicenId=osum.idOsumnjicen
+                osumnjiceniLista.add(osum)
             }
         }
     }
@@ -842,7 +842,7 @@ fun insertGeminiSvedok(geminiResponse2: GeminiResponse2,geminiResponseRetrofit: 
                 statusSvedok = s.statusSvedok,
                 statusIspitan = s.statusIspitan,
                 zlocinId = s.zlocinId,
-                osobaId = os.idOsoba
+                osobaId = os
             )
             insertSvedokData(
                 svedok = svedok,
