@@ -18,9 +18,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -122,6 +130,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                 ))
         }
 
+
         Column(
             modifier = Modifier
         ) {
@@ -139,12 +148,12 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         {
                             //realmViewModel.insertDataForMurder()
                             //realmViewModel.callGetTitleDatePlaceDescFromCrime()
-                            myViewModel.getGeminiData(realmViewModel)
+
                         },
                         crimeData.value.title.toString(),
                         crimeData.value.date.toString(),
                         crimeData.value.place.toString(),
-                        crimeData.value.description.toString()
+                        crimeData.value.description.toString(),myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -155,7 +164,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "the way.",
                         navController,
                         {myViewModel.getGeminiData(realmViewModel)},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
 
@@ -166,7 +175,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "a museum theft, or the stealing of valuable items.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -176,7 +185,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "where innocent lives are held ransom for secrets or money.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -186,7 +195,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "secrets that tie blood relatives to criminal activity.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -196,7 +205,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "psychological, to uncover the perpetrators and bring justice.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
 
@@ -208,7 +217,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "organizations, solving cases of violence and turf battles.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -220,7 +229,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "and their consequences.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -231,7 +240,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "conditions and criminal activity.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
                     CardWithImage(
                         R.drawable.mafia,
@@ -242,7 +251,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "heinous crimes.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -254,7 +263,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "or violent love affairs.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
 
                     CardWithImage(
@@ -264,7 +273,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "uncovering the culprits behind them.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
                     CardWithImage(
                         R.drawable.sects,
@@ -273,7 +282,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "sects, revealing manipulation, brainwashing, and murder.",
                         navController,
                         {},
-                        "", "", "", ""
+                        "", "", "", "",myViewModel,realmViewModel
                     )
                     Spacer(modifier = Modifier.height(32.dp))
                 }
@@ -286,14 +295,80 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
 }
 
 @Composable
-fun CardWithImage(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String) {
+fun CardWithImage(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.detective_loupe_magnifying_glass_svgrepo_com),
+                    contentDescription = "Detective Icon",
+                    tint = Color(0xFF4CAF50), // zelena nijansa, možeš promeniti
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Start New Game?",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Do you want to start a new investigation\nor continue the previous one?",
+                        style = MaterialTheme.typography.bodyLarge,
+                        lineHeight = 20.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        MainActivity.clearDatabase()
+                        myViewModel.getGeminiData(realmViewModel)
+
+                        insertIntoDatabase()
+                        navController.navigate(
+                            destinationMissionPage.route + "/" + image + "/" +
+                                    "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF5350)) // crvena nijansa
+                ) {
+                    Text("Start New", color = Color.White)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        showDialog = false
+                        navController.navigate(
+                            destinationMissionPage.route + "/" + image + "/" +
+                                    "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
+                        )
+                    }
+                ) {
+                    Text("Continue")
+                }
+            },
+            containerColor = Color(0xFF1A2B2D),
+            titleContentColor = Color.White,
+            textContentColor = Color.White
+        )
+    }
+
     Card(
         modifier = Modifier
             .padding(1.dp)
             .clickable{
-                insertIntoDatabase()
-                navController.navigate(destinationMissionPage.route + "/" + image + "/" + "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION")
-            }
+                showDialog=true
+                }
             .padding(bottom = 18.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(11.dp),

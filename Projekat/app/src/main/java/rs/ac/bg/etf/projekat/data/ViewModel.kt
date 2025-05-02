@@ -865,8 +865,6 @@ class MyViewModel @Inject constructor(
             Log.d("GEMINI",response.toString())
             _uiStateGeminiData.value = UiStateGeminiData(response)
 
-
-
             val tipZlocina: TipZlocinaR? = realmViewModel.inserTipZlocina("Murder")
             Log.d("GEMINI ZLOCIN",response.zlocinRetrofit.toString())
 
@@ -1042,7 +1040,7 @@ class MyViewModel @Inject constructor(
             //APLIKACIJE
             //TRAG
 
-            
+
             realmViewModel.callGetTitleDatePlaceDescFromCrime()
         }
         catch (e:Exception){

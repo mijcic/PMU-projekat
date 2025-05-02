@@ -60,7 +60,15 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         lateinit var realm: Realm
+
+        fun clearDatabase() {
+            realm.writeBlocking {
+                deleteAll()
+            }
+        }
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
