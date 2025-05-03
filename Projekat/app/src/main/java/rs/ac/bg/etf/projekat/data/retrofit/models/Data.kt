@@ -91,36 +91,6 @@ data class ScorePageKorisnikResponse(
 
 // gemini
 
-data class ZlocinR(val idZlocin: Int, val tipZlocinaId: Int, val naziv: String, val datum: String?, val mesto: String, val opis: String, val status:String)
-
-data class OsobaR(val idOsoba: Int, val ime: String, val kontakt: String?, val datum: String?, val zanimanje: String,val pol:String,val zlocinId: Int)
-
-data class OsumnjicenR(val idOsumnjicen: Int, val status: Int, val motiv: MotivR?,val tipOsumnjicen:String, val zlocinId:Int,val kriv:Int, val osobaId:OsobaR?)
-
-data class MotivR(val idMotiv:Int, val opis: String)
-
-data class DokazR(val idDokaz: Int, val tipDokaza: String,val opis: String, val zlocinId: Int, val zrtvaId: Int, val status: Int)
-
-data class DokazZadatakR(val idDokazZadatak: Int, val tekst: String,val dokazId:DokazR?, val uradjen:Boolean)
-
-data class SvedokR(val idSvedok: Int, val izjava: String, val statusSvedok: String,val statusIspitan:Int,val zlocinId: Int, val osobaId: OsobaR?)
-
-data class ZrtvaR(val idZrtva: Int, val tipZrtve: String, val detalji:String, val statusZrtva:String,val zlocinId: Int, val osobaId: OsobaR?)
-
-data class ObdukcijaR(val idObdukcija:Int, val izvestaj:String, val datum: String, val uzrokSmrti:String, var zrtvaId: Int, val informacije: String )
-
-data class ForenzickiDokazR(val idForenzickiDokaz: Int, val tipForenzickiDokaz: String, val opis: String, val statusS:Int, val veza: String)
-
-data class TelefonR(val idTelefon: Int, val model:String, val os: String, val sifra: String, val informacije: String)
-
-data class DokazOsumnjicenR(var idDokazOsumnjicen: Int, var dokazId: Int, var osumnjicenId: Int)
-
-data class ZadatakR(var idZadatak: Int, var tekst: String, var korak: String,
-    var uradjen: Boolean, var next: ZadatakR?, var zlocinId: Int)
-
-data class AlibiR (var idAlibi: Int, var osumnjicenId: Int, var svedokId: Int?, var opis: String, var statusAlibija: String)
-
-data class KontaktKtor(var idKontakt:Int, val ime: String, val broj: String, val status: Int, var zrtvaId: Int)
 
 
 data class OsobaData(
@@ -460,16 +430,16 @@ data class GeminiResponseRetrofit(
     var whatsappPorukaRetrofit: List<WhatsAppPorukaData>?,
     var oneCallRetrofit: List<OneCallData>?,
     var galleryRetrofit: List<GalleryData>?,
-    var obicnePorukeRetrofit: List<ObicnaPorukaData>?,
+    var obicnePorukeRetrofit: List<ObicnaPorukaData>?, //ne
     var odnosiOsumnjiceniZrtvaRetrofit: List<OdnosOsumnjicenZrtvaData>?,
     var pitanjaRetrofit: List<PitanjeData>?,
     var odgovoriRetrofit: List<OdgovorData>?,
     var pitanjeIspitivanjeOsumnjicenogRetrofit: List<PitanjeIspitivanjeOsumnjicenogData>?,
     var pitanjeIspitivanjeSvedokaRetrofit: List<PitanjeIspitivanjeSvedokaData>?,
-    var osobeRetrofit: List<OsobaData>?,
+    var osobeRetrofit: List<OsobaData>?,//nisam
     var zadaciRetrofit: List<ZadatakData>?,
     var dokaziZadaciRetrofit: List<DokazZadatakData>?,
-    var ispitivanjeOsumnjicenogZadaciRetrofit: List<IspitivanjeOsumnjicenogZadatakData>?,
+    var ispitivanjeOsumnjicenogZadaciRetrofit: List<IspitivanjeOsumnjicenogZadatakData>?,//nisam
     var ispitivanjeSvedokaZadaciRetrofit: List<IspitivanjeSvedokaZadatakData>?,
     var telefonZadaciRetrofit: List<TelefonZadatakData>?,
     var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?

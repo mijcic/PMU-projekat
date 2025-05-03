@@ -685,7 +685,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun insertZadatak(
-        tekstZ: String, korakZ: String, uradjenZ: Boolean,
+        idZadatakZ:Int,tekstZ: String, korakZ: String, uradjenZ: Boolean,
         nextZ: ZadatakR?,
         zlocinZ: ZlocinR?
     ): ZadatakR? {
@@ -704,10 +704,10 @@ class RealmViewModel @Inject constructor(
             }
 
             zadatak = query<ZadatakR>(
-                "tekst == $0 AND korak == $1 AND uradjen == $2 AND next == $3 AND zlocinId == $4",
-                tekstZ, korakZ, uradjenZ, existingZadatak, existingZlocin
+                "idZadatak == $0 AND tekst == $1 AND korak == $2 AND uradjen == $3 AND next == $4 AND zlocinId == $5",
+                idZadatakZ,tekstZ, korakZ, uradjenZ, existingZadatak, existingZlocin
             ).find().firstOrNull() ?: ZadatakR().apply {
-                idZadatak = (query<ZadatakR>().find().maxOfOrNull { it.idZadatak } ?: 0) + 1
+                idZadatak = idZadatakZ
                 tekst = tekstZ
                 korak = korakZ
                 next = existingZadatak
@@ -721,7 +721,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun insertDokazZadatak(
-        tekstZ: String, dokazIdZ: DokazR?, uradjenZ: Boolean,
+        idDokazZadatakZ:Int,tekstZ: String, dokazIdZ: DokazR?, uradjenZ: Boolean,
         zadatakIdZ: ZadatakR?
     ): DokazZadatakR? {
         var dokazZadatak: DokazZadatakR? = null
@@ -738,10 +738,10 @@ class RealmViewModel @Inject constructor(
             }
 
             dokazZadatak = query<DokazZadatakR>(
-                "tekst == $0 AND dokazId == $1 AND uradjen == $2 AND zadatakId == $3",
-                tekstZ, existingDokaz, uradjenZ, existingZadatak
+                "idDokazZadatak ==$0 AND tekst == $1 AND dokazId == $2 AND uradjen == $3 AND zadatakId == $4",
+                idDokazZadatakZ,tekstZ, existingDokaz, uradjenZ, existingZadatak
             ).find().firstOrNull() ?: DokazZadatakR().apply {
-                idDokazZadatak = (query<DokazZadatakR>().find().maxOfOrNull { it.idDokazZadatak } ?: 0) + 1
+                idDokazZadatak = idDokazZadatakZ
                 tekst = tekstZ
                 dokazId = existingDokaz
                 zadatakId = existingZadatak
@@ -754,7 +754,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun insertForenzickiDokazZadatak(
-        tekstZ: String, forenzickiDokazIdZ: ForenzickiDokazR?, uradjenZ: Boolean,
+        idForenzickiDokazZadatakZ:Int,tekstZ: String, forenzickiDokazIdZ: ForenzickiDokazR?, uradjenZ: Boolean,
         zadatakIdZ: ZadatakR?
     ): ForenzickiDokazZadatakR? {
         var forenzickiDokazZadatak: ForenzickiDokazZadatakR? = null
@@ -771,10 +771,10 @@ class RealmViewModel @Inject constructor(
             }
 
             forenzickiDokazZadatak = query<ForenzickiDokazZadatakR>(
-                "tekst == $0 AND forenzickiDokazId == $1 AND uradjen == $2 AND zadatakId == $3",
-                tekstZ, existingForenzickiDokaz, uradjenZ, existingZadatak
+                "idForenzickiDokazZadatak ==$0 AND tekst == $1 AND forenzickiDokazId == $2 AND uradjen == $3 AND zadatakId == $4",
+                idForenzickiDokazZadatakZ,tekstZ, existingForenzickiDokaz, uradjenZ, existingZadatak
             ).find().firstOrNull() ?: ForenzickiDokazZadatakR().apply {
-                idForenzickiDokazZadatak = (query<ForenzickiDokazZadatakR>().find().maxOfOrNull { it.idForenzickiDokazZadatak } ?: 0) + 1
+                idForenzickiDokazZadatak = idForenzickiDokazZadatakZ
                 tekst = tekstZ
                 forenzickiDokazId = existingForenzickiDokaz
                 zadatakId = existingZadatak
@@ -819,7 +819,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun insertIspitivanjeSvedokaZadatak(
-        svedokIdZ: SvedokR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
+        idIspitivanjeSvedokaZadatakZ:Int,svedokIdZ: SvedokR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
     ): IspitivanjeSvedokaZadatakR? {
         var ispitivanjeSvedokaZadatak: IspitivanjeSvedokaZadatakR? = null
 
@@ -835,11 +835,10 @@ class RealmViewModel @Inject constructor(
             }
 
             ispitivanjeSvedokaZadatak = query<IspitivanjeSvedokaZadatakR>(
-                "svedokId == $0 AND zadatakId == $1 AND uradjen ==$2",
-                existingSvedok, existingZadatak, uradjenZ
+                "idIspitivanjeSvedokaZadatak ==$0 AND svedokId == $1 AND zadatakId == $2 AND uradjen ==$3",
+                idIspitivanjeSvedokaZadatakZ,existingSvedok, existingZadatak, uradjenZ
             ).find().firstOrNull() ?: IspitivanjeSvedokaZadatakR().apply {
-                idIspitivanjeSvedokaZadatak =
-                    (query<IspitivanjeSvedokaZadatakR>().find().maxOfOrNull { it.idIspitivanjeSvedokaZadatak } ?: 0) + 1
+                idIspitivanjeSvedokaZadatak =idIspitivanjeSvedokaZadatakZ
                 svedokId = existingSvedok
                 zadatakId = existingZadatak
                 uradjen = uradjenZ
@@ -851,7 +850,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun insertTelefonZadatak(
-        telefonZ: TelefonR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
+        idTelefonZadatakZ:Int,telefonZ: TelefonR?, zadatakIdZ: ZadatakR?, uradjenZ: Boolean
     ): TelefonZadatakR? {
         var telefonZadatak: TelefonZadatakR? = null
 
@@ -867,11 +866,10 @@ class RealmViewModel @Inject constructor(
             }
 
             telefonZadatak = query<TelefonZadatakR>(
-                "telefonId == $0 AND zadatakId == $1 AND uradjen ==$2",
-                existingTelefon, existingZadatak, uradjenZ
+                "idTelefonZadatak ==$0 AND telefonId == $1 AND zadatakId == $2 AND uradjen ==$3",
+                idTelefonZadatakZ,existingTelefon, existingZadatak, uradjenZ
             ).find().firstOrNull() ?: TelefonZadatakR().apply {
-                idTelefonZadatak =
-                    (query<TelefonZadatakR>().find().maxOfOrNull { it.idTelefonZadatak } ?: 0) + 1
+                idTelefonZadatak =idTelefonZadatakZ
                 telefonId = existingTelefon
                 zadatakId = existingZadatak
                 uradjen = uradjenZ
@@ -967,7 +965,7 @@ class RealmViewModel @Inject constructor(
         return pitanje
     }
 
-    suspend fun insertOdogovor(pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int) {
+    suspend fun insertOdogovor(idOdogovorO:Int,pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int) {
         var odgovor: OdgovorR? = null
         realm.write {
             // Ako pitanje nije uneto u bazu, unesite ga
@@ -976,10 +974,10 @@ class RealmViewModel @Inject constructor(
                     copyToRealm(it)
                 }
 
-            odgovor = query<OdgovorR>("pitanjeId == $0 AND tekstOdgovora == $1 AND tacan == $2 AND bodovi == $3",
-                existingPitanje, tekstOdgovoraO, tacanO, bodoviO).find().firstOrNull()
+            odgovor = query<OdgovorR>("idOdogovor ==$0 AND pitanjeId == $1 AND tekstOdgovora == $2 AND tacan == $3 AND bodovi == $4",
+                idOdogovorO,existingPitanje, tekstOdgovoraO, tacanO, bodoviO).find().firstOrNull()
                 ?: OdgovorR().apply {
-                    idOdogovor = (query<OdgovorR>().find().maxOfOrNull { it.idOdogovor } ?: 0) + 1
+                    idOdogovor = idOdogovorO
                     pitanjeId = existingPitanje
                     tekstOdgovora = tekstOdgovoraO
                     tacan = tacanO
@@ -1048,10 +1046,9 @@ class RealmViewModel @Inject constructor(
         return kontakt
     }
 
-    suspend fun insertWhatsAppPoruka(kontaktKoSalje: WhatsAppKontaktR, kontaktKomeSalje: WhatsAppKontaktR, tekstW: String, datumW: RealmInstant?, procitanaW: Boolean): WhatsAppPorukaR? {
+    suspend fun insertWhatsAppPoruka(idWhatsAppPorukaW:Int,kontaktKoSalje: WhatsAppKontaktR, kontaktKomeSalje: WhatsAppKontaktR, tekstW: String, datumW: RealmInstant?, procitanaW: Boolean): WhatsAppPorukaR? {
         var poruka: WhatsAppPorukaR? = null
         realm.write {
-            // Ako kontakt nije unet u bazu, unesite ga
             val existingWhatsAppKontakt1 = query<WhatsAppKontaktR>("idWhatsAppKontakt == $0", kontaktKoSalje?.idWhatsAppKontakt).find().firstOrNull()
                 ?: kontaktKoSalje?.let {
                     copyToRealm(it)
@@ -1062,9 +1059,9 @@ class RealmViewModel @Inject constructor(
                     copyToRealm(it)
                 }
 
-            poruka = query<WhatsAppPorukaR>("kontaktKoSalje == $0 AND kontaktKomeSalje == $1 AND tekst == $2 AND datum == $3 AND procitana == $4", existingWhatsAppKontakt1, existingWhatsAppKontakt2, tekstW, datumW, procitanaW).find().firstOrNull()
+            poruka = query<WhatsAppPorukaR>("idWhatsAppPoruka ==$0 AND kontaktKoSalje == $1 AND kontaktKomeSalje == $2 AND tekst == $3 AND datum == $4 AND procitana == $5", idWhatsAppPorukaW,existingWhatsAppKontakt1, existingWhatsAppKontakt2, tekstW, datumW, procitanaW).find().firstOrNull()
                 ?: WhatsAppPorukaR().apply {
-                idWhatsAppPoruka = (query<WhatsAppPorukaR>().find().maxOfOrNull { it.idWhatsAppPoruka } ?: 0) + 1
+                idWhatsAppPoruka = idWhatsAppPorukaW
                 this.kontaktKoSalje = existingWhatsAppKontakt1
                 this.kontaktKomeSalje = existingWhatsAppKontakt2
                 this.tekst = tekstW
@@ -1682,20 +1679,20 @@ class RealmViewModel @Inject constructor(
             var pitanje3 = insertPitanje(3,zlocin, "Who do you think is lying among the witnesses?")
             var pitanje4 = insertPitanje(4,zlocin, "Who do you think killed Isabelle Moreau?")
 
-            insertOdogovor(pitanje1, "Marco Bellini", false, 25)
-            insertOdogovor(pitanje1, "Vincent Duval", false, 25)
-            insertOdogovor(pitanje1, "Amelia Fontaine", true, 50)
+            insertOdogovor(1,pitanje1, "Marco Bellini", false, 25)
+            insertOdogovor(2,pitanje1, "Vincent Duval", false, 25)
+            insertOdogovor(3,pitanje1, "Amelia Fontaine", true, 50)
 
-            insertOdogovor(pitanje2, "knife", true, 40)
-            insertOdogovor(pitanje2, "strangled", false, 20)
+            insertOdogovor(4,pitanje2, "knife", true, 40)
+            insertOdogovor(5,pitanje2, "strangled", false, 20)
 
-            insertOdogovor(pitanje3, "Marco Bellini", false, 25)
-            insertOdogovor(pitanje3, "Vincent Duval", false, 25)
-            insertOdogovor(pitanje3, "Amelia Fontaine", true, 40)
+            insertOdogovor(6,pitanje3, "Marco Bellini", false, 25)
+            insertOdogovor(7,pitanje3, "Vincent Duval", false, 25)
+            insertOdogovor(8,pitanje3, "Amelia Fontaine", true, 40)
 
-            insertOdogovor(pitanje4, "Marco Bellini", false, 50)
-            insertOdogovor(pitanje4, "Vincent Duval", false, 50)
-            insertOdogovor(pitanje4, "Amelia Fontaine", true, 50)
+            insertOdogovor(9,pitanje4, "Marco Bellini", false, 50)
+            insertOdogovor(10,pitanje4, "Vincent Duval", false, 50)
+            insertOdogovor(11,pitanje4, "Amelia Fontaine", true, 50)
 
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, can you tell us where you were at the time of the crime?", "I was in the casino, but I left the area shortly before Isabelle's body was found. I didn't think anything suspicious was happening at that moment.")
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "You mentioned seeing Marco leaving Isabelle's room. When exactly did this happen?", "It was a few hours before Isabelle was found dead. I noticed Marco leaving her room, looking a bit nervous, but I didn’t hear anything unusual.")
@@ -1709,74 +1706,74 @@ class RealmViewModel @Inject constructor(
             insertPitanjeIspitivanjeSvedoka(svedokAmeliaFontaine, "Amelia, do you know why you were specifically called to testify today?", "I believe it’s because I was one of the last people to see Isabelle and Marco before her death. My testimony about the argument and my observations could help clarify what happened.")
 
 
-            var zl10 = insertZadatak("New evidence found", "Queen of Hearts card hidden in Isabelle's hotel room", false, null, zlocin)
-            val zl9 = insertZadatak("Interrogate Amelia",
+            var zl10 = insertZadatak(1,"New evidence found", "Queen of Hearts card hidden in Isabelle's hotel room", false, null, zlocin)
+            val zl9 = insertZadatak(2,"Interrogate Amelia",
                 "Question Amelia",
                 false, zl10, zlocin
             )
 
             val zl8 = insertZadatak(
-                "Find out who sent the threatening messages",
+                3,"Find out who sent the threatening messages",
                 "Study the report on the threatening messages",
                 false, zl9, zlocin
             )
 
             val zl7 = insertZadatak(
-                "Compare DNA with the traces under the victim's nails",
+                4,"Compare DNA with the traces under the victim's nails",
                 "Compare the DNA traces with samples from the victim's body",
                 false, zl8, zlocin
             )
 
             val zl6 = insertZadatak(
-                "Knife analysis result received",
+                5,"Knife analysis result received",
                 "Study the report and find out who the DNA traces belong to",
                 false, zl7, zlocin
             )
 
 
             val zl5 = insertZadatak(
-                "Interrogate Marco",
+                6,"Interrogate Marco",
                 "Question Marco",
                 false, zl6, zlocin
             )
 
             val zl4 = insertZadatak(
-                "Interrogate Vincent",
+                7,"Interrogate Vincent",
                 "Question Vincent",
                 false, zl5, zlocin
             )
 
             val zl3 = insertZadatak(
-                "Check the phone",
+                8,"Check the phone",
                 "Study the contacts on the victim's phone",
                 false, zl4, zlocin
             )
 
             val zl2 = insertZadatak(
-                "Interview witnesses",
+                9,"Interview witnesses",
                 "Question Amelia",
                 false, zl3, zlocin
             )
 
             val zl0 = insertZadatak(
-                "Knife with blood traces found",
+                10,"Knife with blood traces found",
                 "Send the knife for analysis",
                 false,
                 zl2,
                 zlocin
             )
 
-            var dokazZadatakNoz=insertDokazZadatak("Send Evidence for Analysis", dokaz1,false,zl0)
+            var dokazZadatakNoz=insertDokazZadatak(1,"Send Evidence for Analysis", dokaz1,false,zl0)
 
-            var dokazZadatakNoz2=insertDokazZadatak("Send Evidence for Analysis", dokaz5,false,zl6)
+            var dokazZadatakNoz2=insertDokazZadatak(2,"Send Evidence for Analysis", dokaz5,false,zl6)
 
-            var dokazKraljicaSrca = insertDokazZadatak("View",dokaz6,false,zl10)
+            var dokazKraljicaSrca = insertDokazZadatak(3,"View",dokaz6,false,zl10)
 
-            var forenzickiDokazZadatak = insertForenzickiDokazZadatak("Send",forenzickiDokaz,false,zl7)
+            var forenzickiDokazZadatak = insertForenzickiDokazZadatak(1,"Send",forenzickiDokaz,false,zl7)
 
-            var ispitivanjeSvedokaZadatakAmelia=insertIspitivanjeSvedokaZadatak(svedokAmeliaFontaine,zl2,false)
+            var ispitivanjeSvedokaZadatakAmelia=insertIspitivanjeSvedokaZadatak(1,svedokAmeliaFontaine,zl2,false)
 
-            var telefonZadatak=insertTelefonZadatak(telefon,zl3, false)
+            var telefonZadatak=insertTelefonZadatak(1,telefon,zl3, false)
 
             var ispitivanjeOsumnjicenogZadatakVincent = insertIspitivanjeOsumnjicenogZadatak(osumnjiceniVincentDuval,zl4,false)
 
@@ -1800,13 +1797,13 @@ class RealmViewModel @Inject constructor(
             val kontaktLuc = insertWhatsAppKontakt(5,zlocin, "Luc Moreau", "+33612345678", R.drawable.whatsapp_profile_picture)
             val kontaktMe = insertWhatsAppKontakt(6,zlocin, "Me", "+33612345678", R.drawable.whatsapp_profile_picture)
 
-            if (kontaktAmelia != null && kontaktMe != null) insertWhatsAppPoruka(kontaktAmelia, kontaktMe, "I can't believe what happened to Isabelle.", RealmInstant.from(Instant.parse("2025-04-10T11:18:41Z").epochSecond, Instant.parse("2025-04-10T11:18:41Z").nano), true)
-            if (kontaktAmelia != null && kontaktMe != null) insertWhatsAppPoruka(kontaktMe, kontaktAmelia, "Me neither", RealmInstant.from(Instant.parse("2025-04-11T11:18:41Z").epochSecond, Instant.parse("2025-04-11T11:18:41Z").nano), true)
-            if (kontaktVincent != null && kontaktMe != null) insertWhatsAppPoruka(kontaktVincent, kontaktMe, "We need to talk. Urgently.", RealmInstant.now(), false)
-            if (kontaktVincent != null && kontaktMe != null) insertWhatsAppPoruka(kontaktMe, kontaktVincent, "Okay I agree. Let's met at the coffee place tomorrow at 5pm.", RealmInstant.now(), false)
-            if (kontaktMarco != null && kontaktMe != null) insertWhatsAppPoruka(kontaktMarco, kontaktMe, "Meet me at the fountain tonight. Come alone.", RealmInstant.now(), true)
-            if (kontaktLuc != null && kontaktMe != null) insertWhatsAppPoruka(kontaktLuc, kontaktMe, "I saw something... but I'm not sure what it means.", RealmInstant.now(), false)
-            if (kontaktIsabelle != null && kontaktMe != null) insertWhatsAppPoruka(kontaktIsabelle, kontaktMe, "They’re watching me. I don’t feel safe anymore.", RealmInstant.now(), true)
+            if (kontaktAmelia != null && kontaktMe != null) insertWhatsAppPoruka(1,kontaktAmelia, kontaktMe, "I can't believe what happened to Isabelle.", RealmInstant.from(Instant.parse("2025-04-10T11:18:41Z").epochSecond, Instant.parse("2025-04-10T11:18:41Z").nano), true)
+            if (kontaktAmelia != null && kontaktMe != null) insertWhatsAppPoruka(2,kontaktMe, kontaktAmelia, "Me neither", RealmInstant.from(Instant.parse("2025-04-11T11:18:41Z").epochSecond, Instant.parse("2025-04-11T11:18:41Z").nano), true)
+            if (kontaktVincent != null && kontaktMe != null) insertWhatsAppPoruka(3,kontaktVincent, kontaktMe, "We need to talk. Urgently.", RealmInstant.now(), false)
+            if (kontaktVincent != null && kontaktMe != null) insertWhatsAppPoruka(4,kontaktMe, kontaktVincent, "Okay I agree. Let's met at the coffee place tomorrow at 5pm.", RealmInstant.now(), false)
+            if (kontaktMarco != null && kontaktMe != null) insertWhatsAppPoruka(5,kontaktMarco, kontaktMe, "Meet me at the fountain tonight. Come alone.", RealmInstant.now(), true)
+            if (kontaktLuc != null && kontaktMe != null) insertWhatsAppPoruka(6,kontaktLuc, kontaktMe, "I saw something... but I'm not sure what it means.", RealmInstant.now(), false)
+            if (kontaktIsabelle != null && kontaktMe != null) insertWhatsAppPoruka(7,kontaktIsabelle, kontaktMe, "They’re watching me. I don’t feel safe anymore.", RealmInstant.now(), true)
 
             val kontaktJean = insertOneContact(1,zlocin, "Jean Rousseau", "+33612345678", null)
             val kontaktClaire = insertOneContact(2,zlocin, "Claire Dubois", "+33687654321", R.drawable.whatsapp_profile_picture)

@@ -1324,11 +1324,11 @@ fun getZadatakListaData(): List<ZadatakData> {
     return zadatakList
 }
 
-fun updateZadatakListData(zadatakList: List<ZadatakData>) {
+fun updateZadatakListData(zadatakList: List<ZadatakData>,zlocin: ZlocinData) {
     val query = """
         UPDATE zadatak
         SET nextZadatak = ?
-        WHERE idZadatak = ?
+        WHERE idZadatak = ? AND idZlocin = ?
     """
 
     var conn: Connection? = null
@@ -1344,6 +1344,7 @@ fun updateZadatakListData(zadatakList: List<ZadatakData>) {
 
             statement?.setInt(1, nextZadatak.idZadatak)
             statement?.setInt(2, currentZadatak.idZadatak)
+            statement?.setInt(3, zlocin.idZlocin)
             statement?.addBatch()
         }
 

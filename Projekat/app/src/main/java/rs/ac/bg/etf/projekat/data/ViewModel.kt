@@ -19,16 +19,20 @@ import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.MotivR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
+import rs.ac.bg.etf.projekat.data.realm.OneContactR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
+import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
 import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
+import rs.ac.bg.etf.projekat.data.realm.TelefonR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
 import rs.ac.bg.etf.projekat.data.realm.TipDokazaR
 import rs.ac.bg.etf.projekat.data.realm.TipOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
+import rs.ac.bg.etf.projekat.data.realm.WhatsAppKontaktR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
@@ -284,7 +288,7 @@ class MyViewModel @Inject constructor(
 
         val jsonString = """
 {
-  "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele. Tip osumnjicenog moze biti samo pojedinac ili organizacija. Tip dokaza moze biti fizicki, digitalni ili svedok. statusSvedok moze biti 'aktivno', 'zasticen', 'nesaradnja'.  tipForenzickiDokaz moze biti 'otisak', 'DNK', 'dokument'.  os moze biti 'IOS' ili 'Android'. Mora da postoji samo jedan zlocinR, nemoj da mi pravis listu. Koristi sledeće tabele za popunjavanje podataka. Popuni mi sve tabele koje ti prosledim kao primer. Popuni mi i primere za tabelu zadatakR sa njenim poljima idZadatak, tekst, korak koji je tipa String, uradjen, next, zlocinId. Popuni mi i tabelu telefonZadatakR i obicnaPorukaR. Obavezno dodaj i jedan whatsAppKontaktR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa whatsAppKontaktR. Obavezno dodaj i jedan oneContactR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa oneContactR. Zelim da mi dodas vise od jednog objekta tipa whatsAppKontaktR. Popuni mi i tabelu whatsAppPorukaR. OBAVEZNO mi popuni i tabelu obicnaPorukaR. OBAVEZNO mi popuni i tabelu oneCallR. Nemoj da vracas null vrednosti za polja. Zlocin tabela  je jedna nije lista. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
+  "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele. Tip osumnjicenog moze biti samo pojedinac ili organizacija. Tip dokaza moze biti fizicki, digitalni ili svedok. statusSvedok moze biti 'aktivno', 'zasticen', 'nesaradnja'.  tipForenzickiDokaz moze biti 'otisak', 'DNK', 'dokument'.  os moze biti 'IOS' ili 'Android'. Mora da postoji samo jedan zlocinR, nemoj da mi pravis listu. Koristi sledeće tabele za popunjavanje podataka. Popuni mi sve tabele koje ti prosledim kao primer. Popuni mi i primere za tabelu zadatakR sa njenim poljima idZadatak, tekst, korak koji je tipa String, uradjen, next, zlocinId. Popuni mi i tabelu telefonZadatakR i obicnaPorukaR. Obavezno dodaj i jedan whatsAppKontaktR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa whatsAppKontaktR. Obavezno dodaj i jedan oneContactR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa oneContactR. Zelim da mi dodas vise od jednog objekta tipa whatsAppKontaktR. Popuni mi i tabelu whatsAppPorukaR. OBAVEZNO mi popuni i tabelu obicnaPorukaR. OBAVEZNO mi popuni i tabelu oneCallR. Nemoj da vracas null vrednosti za polja. Zlocin tabela  je jedna nije lista. Popuni tabele DokazZadatak sa odgovarajucim dokazom i zadatkom. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
   "tables": {
   "zlocinR": {
     "idZlocin": 1,
@@ -869,6 +873,9 @@ class MyViewModel @Inject constructor(
             Log.d("GEMINI ZLOCIN",response.zlocinRetrofit.toString())
 
             var zlocin: ZlocinR? =null
+            val dokazi:MutableList<DokazR> =mutableListOf()
+            val telefonLista:MutableList<TelefonR> =mutableListOf()
+            val forenzickiDokazLista: MutableList<ForenzickiDokazR> = mutableListOf()
 
             if (response.zlocinRetrofit!=null) {
                 zlocin= realmViewModel.insertZlocin(
@@ -905,7 +912,7 @@ class MyViewModel @Inject constructor(
                     }
                 }
 
-                val dokazi:MutableList<DokazR> =mutableListOf()
+
                 for(d in response.dokaziRetrofit!!){
                     val dk = realmViewModel.insertDokaz(
                         d.idDokaz,
@@ -921,18 +928,21 @@ class MyViewModel @Inject constructor(
                 }
 
                 for(t in response.telefoniRetrofit!!){
-                    realmViewModel.insertTelefon(
+                    val tl = realmViewModel.insertTelefon(
                         idTelefonT = t.idTelefon,
                         modelT = t.model,
                         osT = t.os,
                         zrtvaT = zrtva,
                         sifraT = t.sifra
                     )
+                    if (tl != null) {
+                        telefonLista.add(tl)
+                    }
                 }
 
 
                 for(f in response.forenzickiDokazRetrofit!!){
-                    realmViewModel.insertForenzickiDokaz(
+                    val foren=realmViewModel.insertForenzickiDokaz(
                         idForenzickiDokazFD = f.idForenzickiDokaz,
                         tipFD = f.tipForenzickiDokaz,
                         opisFD = f.opis,
@@ -940,6 +950,10 @@ class MyViewModel @Inject constructor(
                         zrtvaFD = zrtva,
                         vezaFD = f.veza
                     )
+
+                    if (foren != null) {
+                        forenzickiDokazLista.add(foren)
+                    }
                 }
                 if(response.obdukcijaRetrofit!=null){
                     var obdukcija: ObdukcijaR? = realmViewModel.insertObdukcija(
@@ -995,7 +1009,7 @@ class MyViewModel @Inject constructor(
                 }
             }
             */
-
+            val svedokLista = mutableListOf<SvedokR>()
             for(s in response.svedociRetrofit!!){
                 val millisSvedok = s.osobaId?.datum
                 val instantSvedok = millisSvedok?.let { Instant.ofEpochMilli(it) }
@@ -1004,7 +1018,7 @@ class MyViewModel @Inject constructor(
 
                 s.osobaId?.let {
                     s.osobaId.kontakt?.let { it1 ->
-                        realmViewModel.insertSvedok(
+                        val sv=realmViewModel.insertSvedok(
                             imeS = it.ime,
                             kontaktS = it1,
                             izjavaS = s.izjava,
@@ -1015,14 +1029,21 @@ class MyViewModel @Inject constructor(
                             zanimanjS = s.osobaId.zanimanje,
                             polS = s.osobaId.pol
                         )
+                        if (sv != null) {
+                            svedokLista.add(sv)
+                        }
                     }
                 }
             }
 
+            val oneContactLista: MutableList<OneContactR> = mutableListOf()
             for(k in response.oneContactRetrofit!!){
-                realmViewModel.insertOneContact(
+                val o=realmViewModel.insertOneContact(
                     k.idOneContact,zlocin, k.ime,k.broj, k.slika
                 )
+                if (o != null) {
+                    oneContactLista.add(o)
+                }
             }
 
             for (g in response.galleryRetrofit!!){
@@ -1058,49 +1079,164 @@ class MyViewModel @Inject constructor(
                 )
             }
 
+            val whatsAppLista: MutableList<WhatsAppKontaktR> = mutableListOf()
             for(wa in response.whatsappKontaktRetrofit!!){
                 wa.slika?.let {
-                    realmViewModel.insertWhatsAppKontakt(
+                    val w=realmViewModel.insertWhatsAppKontakt(
                         idWhatsAppKontaktW = wa.idWhatsAppKontakt,
                         zlocinIdW = zlocin,
                         imeW = wa.ime,
                         brojW = wa.broj,
                         slikaW = it
                     )
+                    if (w != null) {
+                        whatsAppLista.add(w)
+                    }
                 }
             }
 
-            //WHATSAPP PORUKA
-            //ONE CALL
-            //ObicnaPorukaData
+            for(waP in response.whatsappPorukaRetrofit!!){
+                val kontKoSalje =whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKoSalje }
+                val kontKomeSalje =whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKomeSalje }
+
+                val millisWhatsappPoruka = waP.datum
+                val instantWhatsappPoruka = millisWhatsappPoruka?.let { Instant.ofEpochMilli(it) }
+                val realmInstantWhatsappPoruka = instantWhatsappPoruka?.let { RealmInstant.from(instantWhatsappPoruka.epochSecond, it.nano) }
+                    ?: RealmInstant.now()
+
+                if (kontKoSalje != null && kontKomeSalje!=null) {
+                    realmViewModel.insertWhatsAppPoruka(
+                        idWhatsAppPorukaW = waP.idWhatsAppPoruka,
+                        kontaktKoSalje = kontKoSalje,
+                        kontaktKomeSalje = kontKomeSalje,
+                        tekstW = waP.tekst,
+                        datumW = realmInstantWhatsappPoruka,
+                        procitanaW = waP.procitana
+                    )
+                }
+            }
+
+            for(oC in response.oneCallRetrofit!!){
+                val oneCont =oneContactLista.find { it.idOneContact == oC.idOneCall }
+
+                val millisOneCall = oC.datum
+                val instantOneCall = millisOneCall?.let { Instant.ofEpochMilli(it) }
+                val realmInstantOneCall = instantOneCall?.let { RealmInstant.from(instantOneCall.epochSecond, it.nano) }
+                    ?: RealmInstant.now()
+
+                realmViewModel.insertOneCall(
+                    kontaktC = oneCont,
+                    datumC = realmInstantOneCall,
+                    propustenC = oC.propusten,
+                    dolazniC = oC.dolazni
+                )
+            }
+
             //OdnosOsumnjicenZrtvaData
 
-
+            val pitanjaLista: MutableList<PitanjeR> = mutableListOf()
             for(p in response.pitanjaRetrofit!!){
-                realmViewModel.insertPitanje(
+                val pit=realmViewModel.insertPitanje(
                     idPitanjeP = p.idPitanje,
                     zlocinIdP = zlocin,
                     tekstP = p.tekst
                 )
+                if (pit != null) {
+                    pitanjaLista.add(pit)
+                }
             }
 
-            //ODGOVOR
+            for(o in response.odgovoriRetrofit!!){
+                val pit =pitanjaLista.find { it.idPitanje == o.pitanjeId }
+                realmViewModel.insertOdogovor(
+                    idOdogovorO = o.idOdogovor,
+                    pitanjeIdO = pit,
+                    tekstOdgovoraO = o.tekstOdgovora,
+                    tacanO = o.tacan,
+                    bodoviO = o.bodovi
+                )
+            }
+
             //pitanjeIspitivanjeOsumnjicenog
-            //PitanjeIspitivanjeSvedokaData
 
+            for(p in response.pitanjeIspitivanjeSvedokaRetrofit!!){
+                val sved =svedokLista.find { it.idSvedok == p.svedokId }
+                realmViewModel.insertPitanjeIspitivanjeSvedoka(
+                    svedokZ = sved,
+                    tekstZ = p.tekst,
+                    odgovorZ =p.odgovor
+                )
+            }
 
-
-            //ISPRAVITI
+            //ISPRAVITI nextZ=null
+            val zadatakLista = mutableListOf<ZadatakR>()
             for(z in response.zadaciRetrofit!!){
-                realmViewModel.insertZadatak(
+                val zad=realmViewModel.insertZadatak(
+                    idZadatakZ = z.idZadatak,
                     tekstZ = z.tekst,
                     korakZ = z.korak,
                     uradjenZ = z.uradjen,
                     nextZ = null,
                     zlocinZ = zlocin
                 )
+                if (zad != null) {
+                    zadatakLista.add(zad)
+                }
             }
 
+            for(dokZ in response.dokaziZadaciRetrofit!!){
+                val zad =zadatakLista.find { it.idZadatak ==dokZ.zadatakId }
+                val dok = dokazi.find { it.idDokaz == dokZ.dokazId }
+                realmViewModel.insertDokazZadatak(
+                    idDokazZadatakZ = dokZ.idDokazZadatak,
+                    tekstZ = dokZ.tekst,
+                    dokazIdZ = dok,
+                    uradjenZ = dokZ.uradjen,
+                    zadatakIdZ = zad
+                )
+            }
+            /*
+            for(isp in response.ispitivanjeOsumnjicenogZadaciRetrofit!!){
+                realmViewModel.insertIspitivanjeOsumnjicenogZadatak(
+                    osumnjicenIdZ = TODO(),
+                    zadatakIdZ = TODO(),
+                    uradjenZ = TODO()
+                )
+            }*/
+
+            for(isp in response.ispitivanjeSvedokaZadaciRetrofit!!){
+                val zad =zadatakLista.find { it.idZadatak ==isp.zadatakId }
+                val sv =svedokLista.find { it.idSvedok ==isp.svedokId }
+                realmViewModel.insertIspitivanjeSvedokaZadatak(
+                    idIspitivanjeSvedokaZadatakZ = isp.idIspitivanjeSvedokaZadatak,
+                    svedokIdZ = sv,
+                    zadatakIdZ = zad,
+                    uradjenZ = isp.uradjen
+                )
+            }
+
+            for (tel in response.telefonZadaciRetrofit!!){
+                val zad =zadatakLista.find { it.idZadatak ==tel.zadatakId }
+                val t =telefonLista.find { it.idTelefon ==tel.idTelefonZadatak }
+                realmViewModel.insertTelefonZadatak(
+                    idTelefonZadatakZ = tel.idTelefonZadatak,
+                    telefonZ = t,
+                    zadatakIdZ = zad,
+                    uradjenZ = tel.uradjen
+                )
+            }
+
+            for(forenz in response.forenzickiDokazZadaciRetrofit!!){
+                val zad =zadatakLista.find { it.idZadatak ==forenz.zadatakId }
+                val f =forenzickiDokazLista.find { it.idForenzickiDokaz ==forenz.forenzickiDokazId }
+                realmViewModel.insertForenzickiDokazZadatak(
+                    idForenzickiDokazZadatakZ = forenz.idForenzickiDokazZadatak,
+                    tekstZ = forenz.tekst,
+                    forenzickiDokazIdZ = f,
+                    uradjenZ = forenz.uradjen,
+                    zadatakIdZ = zad
+                )
+            }
 
             realmViewModel.callGetTitleDatePlaceDescFromCrime()
         }

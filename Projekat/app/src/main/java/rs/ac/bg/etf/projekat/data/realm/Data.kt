@@ -168,7 +168,7 @@ open class DokazR : RealmObject {
 
 // DokazZadatakR table
 open class DokazZadatakR: RealmObject {
-    @PrimaryKey
+    //@PrimaryKey
     var idDokazZadatak: Int =0
     var tekst: String =""
     var dokazId: DokazR? =null

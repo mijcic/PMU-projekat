@@ -498,6 +498,7 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse): GeminiResponseRetrofit
 
                 val zadaciLista = insertGeminiZadatak(geminiResponse2, zl)
                 updateGeminiZadatakList(geminiResponse2,geminiResponseRetrofit, zl)
+                geminiResponseRetrofit.zadaciRetrofit = zadaciLista
 
                 // dokazZadatak
 
@@ -1543,8 +1544,8 @@ fun updateGeminiZadatakList(geminiResponse2: GeminiResponse2, geminiResponseRetr
     val zadaci = geminiResponse2.zadatakR
     var lista: List<ZadatakData> = emptyList()
     lista = getZadatakListaData()
-    updateZadatakListData(lista)
-    geminiResponseRetrofit.zadaciRetrofit =lista
+    updateZadatakListData(lista,zlocin)
+    //geminiResponseRetrofit.zadaciRetrofit =lista
 }
 
 fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponse2,geminiResponseRetrofit: GeminiResponseRetrofit, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>) {
