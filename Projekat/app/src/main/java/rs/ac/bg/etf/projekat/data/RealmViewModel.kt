@@ -14,6 +14,7 @@ import rs.ac.bg.etf.projekat.MainActivity
 import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realm.AlibiR
+import rs.ac.bg.etf.projekat.data.realm.AplikacijaR
 import rs.ac.bg.etf.projekat.data.realm.BeleskaR
 import rs.ac.bg.etf.projekat.data.realm.DokazOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.DokazR
@@ -52,6 +53,7 @@ import rs.ac.bg.etf.projekat.data.realm.TipForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.TipOdnosaR
 import rs.ac.bg.etf.projekat.data.realm.TipOsumnjicenR
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
+import rs.ac.bg.etf.projekat.data.realm.TragR
 import rs.ac.bg.etf.projekat.data.realm.WhatsAppKontaktR
 import rs.ac.bg.etf.projekat.data.realm.WhatsAppPorukaR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
@@ -219,12 +221,12 @@ class RealmViewModel @Inject constructor(
         var osumnjiceni: OsumnjicenR? = null
 
         // Unos osobe i osiguranje da je povezana sa Realm bazom
-        var osoba: OsobaR? = insertOsoba(imeO, kontaktO, datumO, zanimanjO, polO, zlocinO)
-
-        var osobaZ = 1
-        if (osoba != null) {
-            osobaZ = osoba.idOsoba
-        }
+       // var osoba: OsobaR? = insertOsoba(imeO, kontaktO, datumO, zanimanjO, polO, zlocinO)
+       var osoba: OsobaR? =null
+       // var osobaZ = 1
+       // if (osoba != null) {
+         //   osobaZ = osoba.idOsoba
+        //}
 
         realm.write {
             // Ako motivO nije unet u bazu, unesite ga i povežite sa Realm bazom
@@ -1023,6 +1025,58 @@ class RealmViewModel @Inject constructor(
             copyToRealm(beleska!!)
         }
         return beleska
+    }
+
+    suspend fun insertAplikacija(idAplikacijeA:Int, zrtvaA: ZrtvaR?, nazivA: String, tipA:Int, aktivnaA:Boolean,informacijeA:String): AplikacijaR? {
+        var aplikacija: AplikacijaR? = null
+        realm.write {
+
+            val existingZrtva = query<ZrtvaR>("idZrtva == $0", zrtvaA?.idZrtva).find().firstOrNull()
+                ?: zrtvaA?.let {
+                    copyToRealm(it)
+                }
+
+
+            aplikacija = query<AplikacijaR>("idAplikacije ==$0 AND naziv == $1 AND tip == $2 AND zrtvaId == $3 AND aktivna == $4 AND informacije ==$5",
+                idAplikacijeA,nazivA, tipA, existingZrtva,aktivnaA,informacijeA).find().firstOrNull()
+                ?: AplikacijaR().apply {
+                    idAplikacije=idAplikacijeA
+                    naziv = nazivA
+                    tip= tipA
+                    zrtvaId=existingZrtva
+                    aktivna = aktivnaA
+                    informacije =informacijeA
+                }
+            copyToRealm(aplikacija!!)
+        }
+        return aplikacija
+    }
+
+    suspend fun insertTrag(idTragT:Int, forenzickiDokazIdT: ForenzickiDokazR,osumnjicenIdT:OsumnjicenR): TragR? {
+        var trag: TragR? = null
+        realm.write {
+
+            val existingOsumnjicen = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenIdT?.idOsumnjicen).find().firstOrNull()
+                ?: osumnjicenIdT?.let {
+                    copyToRealm(it)
+                }
+
+
+            val existingForenzickiDokaz = query<ForenzickiDokazR>("idForenzickiDokaz == $0", forenzickiDokazIdT?.idForenzickiDokaz).find().firstOrNull()
+                ?: forenzickiDokazIdT?.let {
+                    copyToRealm(it)
+                }
+
+            trag = query<TragR>("idTrag ==$0 AND forenzickiDokazId == $1 AND osumnjicenId == $2",
+                idTragT,existingForenzickiDokaz,existingOsumnjicen).find().firstOrNull()
+                ?: TragR().apply {
+                    var idTrag= idTragT
+                    var forenzickiDokazId =existingForenzickiDokaz
+                    var osumnjicenId=existingOsumnjicen
+                }
+            copyToRealm(trag!!)
+        }
+        return trag
     }
 
     suspend fun insertWhatsAppKontakt(idWhatsAppKontaktW:Int,zlocinIdW: ZlocinR?, imeW: String, brojW: String, slikaW: Int): WhatsAppKontaktR? {

@@ -288,7 +288,7 @@ class MyViewModel @Inject constructor(
 
         val jsonString = """
 {
-  "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele. Tip osumnjicenog moze biti samo pojedinac ili organizacija. Tip dokaza moze biti fizicki, digitalni ili svedok. statusSvedok moze biti 'aktivno', 'zasticen', 'nesaradnja'.  tipForenzickiDokaz moze biti 'otisak', 'DNK', 'dokument'.  os moze biti 'IOS' ili 'Android'. Mora da postoji samo jedan zlocinR, nemoj da mi pravis listu. Koristi sledeće tabele za popunjavanje podataka. Popuni mi sve tabele koje ti prosledim kao primer. Popuni mi i primere za tabelu zadatakR sa njenim poljima idZadatak, tekst, korak koji je tipa String, uradjen, next, zlocinId. Popuni mi i tabelu telefonZadatakR i obicnaPorukaR. Obavezno dodaj i jedan whatsAppKontaktR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa whatsAppKontaktR. Obavezno dodaj i jedan oneContactR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa oneContactR. Zelim da mi dodas vise od jednog objekta tipa whatsAppKontaktR. Popuni mi i tabelu whatsAppPorukaR. OBAVEZNO mi popuni i tabelu obicnaPorukaR. OBAVEZNO mi popuni i tabelu oneCallR. Nemoj da vracas null vrednosti za polja. Zlocin tabela  je jedna nije lista. Popuni tabele DokazZadatak sa odgovarajucim dokazom i zadatkom. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
+  "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele. Tip osumnjicenog moze biti samo pojedinac ili organizacija. Tip dokaza moze biti fizicki, digitalni ili svedok. statusSvedok moze biti 'aktivno', 'zasticen', 'nesaradnja'.  tipForenzickiDokaz moze biti 'otisak', 'DNK', 'dokument'.  os moze biti 'IOS' ili 'Android'. Mora da postoji samo jedan zlocinR, nemoj da mi pravis listu. Koristi sledeće tabele za popunjavanje podataka. Popuni mi sve tabele koje ti prosledim kao primer. Popuni mi i primere za tabelu zadatakR sa njenim poljima idZadatak, tekst, korak koji je tipa String, uradjen, next, zlocinId. Popuni mi i tabelu telefonZadatakR i obicnaPorukaR. Obavezno dodaj i jedan whatsAppKontaktR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa whatsAppKontaktR. Obavezno dodaj i jedan oneContactR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa oneContactR. Zelim da mi dodas vise od jednog objekta tipa whatsAppKontaktR. Popuni mi i tabelu whatsAppPorukaR. OBAVEZNO mi popuni i tabelu obicnaPorukaR. OBAVEZNO mi popuni i tabelu oneCallR. Nemoj da vracas null vrednosti za polja. Zlocin tabela  je jedna nije lista. Popuni tabele DokazZadatak sa odgovarajucim dokazom i zadatkom. Sve tabele mi popuni sa podacima, bas sve! Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
   "tables": {
   "zlocinR": {
     "idZlocin": 1,
@@ -888,14 +888,14 @@ class MyViewModel @Inject constructor(
                     response.zlocinRetrofit!!.status
                 )
             }
-
+            var zrtva:ZrtvaR?=null
             if(response.zrtvaRetrofit!=null){
                 val millis = response.zrtvaRetrofit!!.osobaId?.datum
                 val instant = millis?.let { Instant.ofEpochMilli(it) }
                 val realmInstantZrtva = instant?.let { RealmInstant.from(instant.epochSecond, it.nano) }
                     ?: RealmInstant.now()
 
-                val zrtva: ZrtvaR? = response.zrtvaRetrofit!!.osobaId?.let {
+                zrtva = response.zrtvaRetrofit!!.osobaId?.let {
                     response.zrtvaRetrofit!!.osobaId.kontakt?.let { it1 ->
                         realmViewModel.insertZrtva(
                             response.zrtvaRetrofit!!.idZrtva,
@@ -975,10 +975,19 @@ class MyViewModel @Inject constructor(
                         zrtvaK = zrtva
                     )
                 }
+
+                for(a in response.aplikacijeRetrofit!!){
+                    realmViewModel.insertAplikacija(
+                        idAplikacijeA = a.idAplikacije,
+                        zrtvaA = zrtva,
+                        nazivA = a.naziv,
+                        tipA = a.tip,
+                        aktivnaA = a.aktivna,
+                        informacijeA = a.informacije
+                    )
+                }
             }
 
-            //OSUMNJICENI NEKA GRESKA
-            /*
             var osumnjiceni:MutableList<OsumnjicenR> = mutableListOf()
             for (o in response.osumnjiceniRetrofit!!){
                 val m=o.motiv?.let { realmViewModel.insertMotiv(it.opis) }
@@ -988,27 +997,33 @@ class MyViewModel @Inject constructor(
                 val realmInstantOsumnjiceni = instantOsumnjiceni?.let { RealmInstant.from(instantOsumnjiceni.epochSecond, it.nano) }
                     ?: RealmInstant.now()
 
-                var os=o.osobaId?.kontakt?.let {
-                    o.osobaId?.let { it1 ->
-                        realmViewModel.insertOsumnjiceni(
-                            imeO = it1.ime,
-                            statusO = o.status,
-                            tipOsumnjicenO = o.tipOsumnjicen,
-                            motivO = m,
-                            zlocinO = zlocin,
-                            krivO = o.kriv,
-                            kontaktO = it,
-                            datumO = realmInstantOsumnjiceni,
-                            zanimanjO = o.osobaId.zanimanje,
-                            polO = o.osobaId.pol
-                        )
-                    }
-                }
+                realmViewModel.insertOsoba(
+                    imeZ = o.osobaId.ime,
+                    kontaktZ = o.osobaId.kontakt,
+                    datumZ = realmInstantOsumnjiceni,
+                    zanimanjeZ = o.osobaId.zanimanje,
+                    polZ = o.osobaId.pol,
+                    zlocinZ = zlocin
+                )
+
+                var os=realmViewModel.insertOsumnjiceni(
+                    imeO = o.osobaId.ime,
+                    statusO = o.status,
+                    tipOsumnjicenO = o.tipOsumnjicen,
+                    motivO = m,
+                    zlocinO = zlocin,
+                    krivO = o.kriv,
+                    kontaktO = o.osobaId.kontakt,
+                    datumO = realmInstantOsumnjiceni,
+                    zanimanjO = o.osobaId.zanimanje,
+                    polO = o.osobaId.pol
+                )
+
                 if (os != null) {
                     osumnjiceni.add(os)
                 }
             }
-            */
+
             val svedokLista = mutableListOf<SvedokR>()
             for(s in response.svedociRetrofit!!){
                 val millisSvedok = s.osobaId?.datum
@@ -1062,9 +1077,27 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            //APLIKACIJE
-            //TRAG
-            //DOKAZ OSUMNJICEN
+            for(t in response.tragoviRetrofit!!){
+                val osum =osumnjiceni.find { it.idOsumnjicen == t.osumnjicenId.idOsumnjicen }
+                val foren =forenzickiDokazLista.find { it.idForenzickiDokaz == t.forenzickiDokazId.idForenzickiDokaz }
+                if (osum != null && foren!=null) {
+                    realmViewModel.insertTrag(
+                        idTragT = t.idTrag,
+                        forenzickiDokazIdT = foren,
+                        osumnjicenIdT = osum
+                    )
+                }
+            }
+
+            for(d in response.dokaziOsumnjiceniRetrofit!!){
+                val osum =osumnjiceni.find { it.idOsumnjicen == d.osumnjicenId.idOsumnjicen }
+                val dokaz =dokazi.find { it.idDokaz == d.dokazId.idDokaz }
+
+                realmViewModel.insertDokazOsumnjicenog(
+                    dokazIdDO = dokaz,
+                    osumnjicenIdDO = osum
+                )
+            }
 
             for(b in response.beleskeRetrofit!!){
                 val millisBeleska = b.datum
@@ -1132,7 +1165,16 @@ class MyViewModel @Inject constructor(
                 )
             }
 
-            //OdnosOsumnjicenZrtvaData
+
+            for(odnosOZ in response.odnosiOsumnjiceniZrtvaRetrofit!!){
+                val osum =osumnjiceni.find { it.idOsumnjicen == odnosOZ.osumnjicenId }
+
+                realmViewModel.insertOdnosOsumnjicenZrtva(
+                    osumnjicenOOZ = osum,
+                    zrtvaOOZ = zrtva,
+                    tipOdnosaOOZ = odnosOZ.tipOdnosa
+                )
+            }
 
             val pitanjaLista: MutableList<PitanjeR> = mutableListOf()
             for(p in response.pitanjaRetrofit!!){
@@ -1157,7 +1199,16 @@ class MyViewModel @Inject constructor(
                 )
             }
 
-            //pitanjeIspitivanjeOsumnjicenog
+            for(p in response.pitanjeIspitivanjeOsumnjicenogRetrofit!!){
+                val osum =osumnjiceni.find { it.idOsumnjicen == p.osumnjicenId }
+                realmViewModel.insertPitanjeIspitivanjeOsumnjicenog(
+                    osumnjicenZ = osum,
+                    kategorijaZ = p.kategorija,
+                    tekstZ = p.tekst,
+                    odgovorZ = p.odgovor,
+                    komentarZ = p.komentar
+                )
+            }
 
             for(p in response.pitanjeIspitivanjeSvedokaRetrofit!!){
                 val sved =svedokLista.find { it.idSvedok == p.svedokId }
@@ -1195,14 +1246,16 @@ class MyViewModel @Inject constructor(
                     zadatakIdZ = zad
                 )
             }
-            /*
+
             for(isp in response.ispitivanjeOsumnjicenogZadaciRetrofit!!){
+                val osum =osumnjiceni.find { it.idOsumnjicen == isp.osumnjicenId }
+                val zad =zadatakLista.find { it.idZadatak ==isp.zadatakId }
                 realmViewModel.insertIspitivanjeOsumnjicenogZadatak(
-                    osumnjicenIdZ = TODO(),
-                    zadatakIdZ = TODO(),
-                    uradjenZ = TODO()
+                    osumnjicenIdZ = osum,
+                    zadatakIdZ = zad,
+                    uradjenZ = isp.uradjen
                 )
-            }*/
+            }
 
             for(isp in response.ispitivanjeSvedokaZadaciRetrofit!!){
                 val zad =zadatakLista.find { it.idZadatak ==isp.zadatakId }

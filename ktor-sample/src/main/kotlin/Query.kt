@@ -1328,7 +1328,7 @@ fun updateZadatakListData(zadatakList: List<ZadatakData>,zlocin: ZlocinData) {
     val query = """
         UPDATE zadatak
         SET nextZadatak = ?
-        WHERE idZadatak = ? AND idZlocin = ?
+        WHERE idZadatak = ? AND zlocinId = ?
     """
 
     var conn: Connection? = null
