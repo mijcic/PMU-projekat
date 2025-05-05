@@ -28,9 +28,9 @@ object Module {
 
         val okHttpClient = OkHttpClient.Builder().apply {
             addInterceptor(httpLoggingInterceptor)
-            connectTimeout(30, TimeUnit.SECONDS)  // Set connect timeout
-            writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
-            readTimeout(30, TimeUnit.SECONDS)     // Set read timeout
+            connectTimeout(60, TimeUnit.SECONDS)  // Set connect timeout
+            writeTimeout(60, TimeUnit.SECONDS)    // Set write timeout
+            readTimeout(60, TimeUnit.SECONDS)     // Set read timeout
         }.build()
 
         val retrofit = Retrofit.Builder()
