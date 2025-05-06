@@ -280,5 +280,11 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationPhoneSettingsPage") {
             PhoneSettingsPage(navController)
         }
+        composable("destinationInvestigationPage") {
+            InvestigationScreen(navController)
+        }
+        composable("destinationMedicalReportPage") {
+            MedicalReportScreen(navController)
+        }
     }
 }

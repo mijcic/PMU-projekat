@@ -134,13 +134,21 @@ object destinationPhoneSettingsPage : NavigationDestinations {
     override val route = "destinationPhoneSettingsPage"
 }
 
+object destinationInvestigationPage : NavigationDestinations {
+    override val route = "destinationInvestigationPage"
+}
+
+object destinationMedicalReportPage : NavigationDestinations {
+    override val route = "destinationMedicalReportPage"
+}
+
 val navigationDestinations = listOf(destinationMainScreen1, destinationMainScreen2,
     destinationCardsPage,destinationMissionPage, destinationSettingsPage,
     destinationScorePage, destinationLoginPage, destinationSignUpPage, destinationPhonePage,
     questionsPage, destinationWhatsAppPage, destinationWhatsAppChatPage, destinationNotesPage,
     destinationOneNotePage, destinationCallsPage, destinationPhonebookPage, destinationOneContactPage,
     destinationKeypadPage, destinationMessagesPage, destinationChatPage, destinationGalleryPage,
-    destinationOnePhotoPage, destinationPhoneSettingsPage)
+    destinationOnePhotoPage, destinationPhoneSettingsPage,destinationInvestigationPage,destinationMedicalReportPage)
 
 val phoneBarDestinations = listOf(
     destinationCallsPage,
