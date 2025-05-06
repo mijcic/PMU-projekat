@@ -1335,6 +1335,17 @@ class RealmViewModel @Inject constructor(
             .find()
     }
 
+    suspend fun getMotiveAlibiStatus(osobaId: Int): List<String> {
+        val suspect = realm.query<OsumnjicenR>("osobaId.idOsoba == $0", osobaId).first().find()
+        val motiveDescription = suspect?.motiv?.opis ?: ""
+        val alibi = realm.query<AlibiR>("osumnjicenId.idOsumnjicen == $0", suspect?.idOsumnjicen).first().find()
+        val alibiDescription = alibi?.opis ?: ""
+        val status = suspect?.status
+        val statusDescription = if (suspect?.status == 0) "Oslobodjen"
+                                else "Osumnjicen"
+        return listOf<String>(motiveDescription, alibiDescription, statusDescription)
+    }
+
     fun insertDataForMurder()  {
         viewModelScope.launch {
             val tipZlocina: TipZlocinaR? = inserTipZlocina("Murder")
@@ -1951,6 +1962,15 @@ suspend fun selectPitanjaByOsumnjicenAndCategory(osumnjicenId: String, category:
         osumnjicenId,
         category
     ).find()
+
+//    pitanja = realm.query<PitanjeIspitivanjeOsumnjicenogR>("kategorija == $0", category)
+//        .find()
+//        .filter { it.osumnjicenId?.osobaId?.ime == osumnjicenId }
+//
+//    Log.d("REALM", "Upit za osumnjicenog=$osumnjicenId, kategorija=$category: našao ${pitanja.size} pitanja")
+//    pitanja.forEach {
+//        Log.d("REALM", "Pitanje=${it.tekst}, osumnjicen=${it.osumnjicenId?.osobaId?.ime}")
+//    }
 
     return pitanja
 }

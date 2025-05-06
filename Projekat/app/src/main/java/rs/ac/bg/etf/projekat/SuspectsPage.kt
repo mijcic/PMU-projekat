@@ -120,6 +120,7 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
                         uiStateDataZlocin.suspects.forEach { i->
                             i.osobaId?.let {
                                 SuspectCardWithImage(
+                                    it.idOsoba,
                                     R.drawable.suspect,
                                     it.ime,
                                     navController,
@@ -135,13 +136,13 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
 }
 
 @Composable
-fun SuspectCardWithImage(image: Int, title: String, navController: NavController,myViewModel: MyViewModel) {
+fun SuspectCardWithImage(osobaId: Int, image: Int, title: String, navController: NavController,myViewModel: MyViewModel) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .clickable {
                 myViewModel.getPitanjaZaOsumnjicenog(title)
-                navController.navigate(destinationSuspectDetailsPage.route + "/" + image + "/" + title)
+                navController.navigate(destinationSuspectDetailsPage.route + "/" + osobaId + "/" + image + "/" + title)
             }
             .height(200.dp)
             .fillMaxWidth(0.4f),
