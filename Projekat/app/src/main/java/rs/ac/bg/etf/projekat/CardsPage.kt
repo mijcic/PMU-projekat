@@ -232,7 +232,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                         "", "", "", "",myViewModel,realmViewModel
                     )
 
-                    CardWithImage(
+                    CardWithImage2(
                         R.drawable.m_symptoms,
                         "Mysterious Symptoms ⚕\uFE0F ",
                         "Investigate strange diseases or unusual deaths, connecting the " +
@@ -369,6 +369,72 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
             .clickable{
                 showDialog=true
                 }
+            .padding(bottom = 18.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(11.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1A2B2D)
+        ),
+        border = BorderStroke(1.dp, Color.White)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Image(
+                painter = painterResource(id = image),
+                contentDescription = "Image",
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text(
+                    text = title,
+                    style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        ),
+                        color = Color.Black
+                    ),
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = text,
+                    style = TextStyle(
+                        fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        ),
+                        color = Color.Black
+                    ),
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CardWithImage2(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
+
+    Card(
+        modifier = Modifier
+            .padding(1.dp)
+            .clickable{
+                navController.navigate(
+                    destinationInvestigationPage.route
+                )
+            }
             .padding(bottom = 18.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(11.dp),

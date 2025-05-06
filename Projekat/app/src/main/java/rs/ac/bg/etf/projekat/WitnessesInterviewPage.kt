@@ -41,11 +41,15 @@ fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewMode
             currentQuestionIndex++
         }
         else{
-            selectIspitivanjeSvedokaZadatak(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
-                myViewModel.updateWitnessTask(
-                    it
-                )
+            if(uiPitanjaZaSvedoka.questions.isEmpty()==false){
+                selectIspitivanjeSvedokaZadatak(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
+                    myViewModel.updateWitnessTask(
+                        it
+                    )
+                }
             }
+
+
             navController.popBackStack()
         }
     }

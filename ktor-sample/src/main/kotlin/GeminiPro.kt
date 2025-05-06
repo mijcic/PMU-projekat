@@ -8,7 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.time.LocalDate
@@ -323,22 +323,31 @@ suspend fun queryGemini(prompt: String,tables:String): Any {
     )
 
     try {
+        val t0 = System.currentTimeMillis()
         // Model: gemini-1.5-flash je brz i efikasan. Možeš koristiti i gemini-pro.
         val response: HttpResponse = geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }
 
-        println("Gemini - Status: ${response.status}")
+        //println("Gemini - Status: ${response.status}")
+        val t1 = System.currentTimeMillis()
+        println("Gemini API trajanje: ${t1 - t0}ms")
 
 
         return if (response.status == HttpStatusCode.OK) {
             val geminiResponse: GeminiResponse = response.body()
             //println("${geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text}")
+            val t2 = System.currentTimeMillis()
+            println("Parsiranje trajanje: ${t2 - t1}ms")
+
 
             //to insert data into mysql database
             val geminiResponseRetrofit =getDataGeminiResponse(geminiResponse)
             //println("GEMINI RESPONSE RETROF\n "+geminiResponseRetrofit)
+
+            val t3 = System.currentTimeMillis()
+            println("Insert trajanje: ${t3 - t2}ms")
 
             geminiResponseRetrofit
             //geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
@@ -446,21 +455,11 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse): GeminiResponseRetrofit
                 // whatsAppKontakt
                 val whatsAppKontaktiLista = insertGeminiWhatsAppKontakt(geminiResponse2, geminiResponseRetrofit,zl)
 
-                //  whatsAppPoruka
+                val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-                insertGeminiWhatsAppPoruka(geminiResponse2, geminiResponseRetrofit, whatsAppKontaktiLista, timestamp)
-
-                // one call
-
-                insertGeminiOneCall(geminiResponse2, geminiResponseRetrofit,kontaktiLista, timestamp)
-
-                // gallery
-
-                insertGeminiGallery(geminiResponse2, geminiResponseRetrofit,zl, timestamp)
-
-                //  obicnaPoruka
-
-                insertGeminiObicnaPoruka(geminiResponse2,geminiResponseRetrofit, kontaktiLista, timestamp)
+                scope.launch {
+                    suspendInsertKontakti(whatsAppKontaktiLista,geminiResponse2,geminiResponseRetrofit,timestamp,kontaktiLista,zl)
+                }
 
                 // odnos osumnjicen zrtva
 
@@ -478,21 +477,9 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse): GeminiResponseRetrofit
 
                 val pitanjaLista = insertGeminiPitanje(geminiResponse2, geminiResponseRetrofit,zl)
 
-                // odgovor
-
-                insertGeminiOdgovor(geminiResponse2, geminiResponseRetrofit,pitanjaLista)
-
-                // pitanjeIspitivanjeOsumnjicenog
-
-                insertGeminiPitanjeIspitivanjeOsumnjicenog(geminiResponse2, geminiResponseRetrofit,osumnjiceniLista)
-
-                // pitanjeIspitivanjeSvedoka
-
-                insertGeminiPitanjeIspitivanjeSvedoka(geminiResponse2, geminiResponseRetrofit,svedociLista)
-
-                // osoba
-
-                insertGeminiOsoba(geminiResponse2, geminiResponseRetrofit, zl, timestamp)
+                scope.launch {
+                    suspendInsertPitanja(pitanjaLista,geminiResponse2,geminiResponseRetrofit,timestamp,osumnjiceniLista,svedociLista,zl)
+                }
 
                 // zadatak
 
@@ -500,25 +487,9 @@ fun getDataGeminiResponse(geminiResponse:GeminiResponse): GeminiResponseRetrofit
                 updateGeminiZadatakList(geminiResponse2,geminiResponseRetrofit, zl)
                 geminiResponseRetrofit.zadaciRetrofit = zadaciLista
 
-                // dokazZadatak
-
-                insertGeminiDokazZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.dokaziLista, zadaciLista)
-
-                // ispitivanjeOsumnjicenogZadatak
-
-                insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, zadaciLista)
-
-                // ispitivanjeSvedokaZadatak
-
-                insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista, zadaciLista)
-
-                // telefonZadatak
-
-                insertGeminiTelefonZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.telefoniLista, zadaciLista)
-
-                // forenzickiDokazZadatak
-
-                insertGeminiForenzickiDokazZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.forenzickiDokaziLista, zadaciLista)
+                scope.launch {
+                    suspendInsertZadaci(zadaciLista, geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, svedociLista, sviDokaziZrtva)
+                }
 
                 // porukeZadatak
 
@@ -1684,3 +1655,109 @@ fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponse2, geminiR
 //        }
 //    }
 //}
+
+suspend fun suspendInsertKontakti(
+    whatsAppKontaktiLista: MutableList<WhatsAppKontaktData>,
+    geminiResponse2: GeminiResponse2,
+    geminiResponseRetrofit: GeminiResponseRetrofit,
+    timestamp: Long,
+    kontaktiLista: MutableList<OneContactData>,
+    zl: ZlocinData
+) = coroutineScope {
+
+    //  whatsAppPoruka
+    val whatsAppPorukaDeferred = async(Dispatchers.IO) {
+        insertGeminiWhatsAppPoruka(geminiResponse2, geminiResponseRetrofit, whatsAppKontaktiLista, timestamp)
+    }
+    // one call
+    val oneCallDeferred = async(Dispatchers.IO) {
+        insertGeminiOneCall(geminiResponse2, geminiResponseRetrofit,kontaktiLista, timestamp)
+    }
+    // gallery
+    val galleryDeferred = async(Dispatchers.IO) {
+        insertGeminiGallery(geminiResponse2, geminiResponseRetrofit,zl, timestamp)
+    }
+    //  obicnaPoruka
+    val obicnaPorukaDeferred = async(Dispatchers.IO) {
+        insertGeminiObicnaPoruka(geminiResponse2,geminiResponseRetrofit, kontaktiLista, timestamp)
+    }
+    // cekanje rezultata
+    whatsAppPorukaDeferred.await()
+    oneCallDeferred.await()
+    galleryDeferred.await()
+    obicnaPorukaDeferred.await()
+}
+
+
+
+suspend fun suspendInsertPitanja(
+    pitanjaLista: MutableList<PitanjeData>,
+    geminiResponse2: GeminiResponse2,
+    geminiResponseRetrofit: GeminiResponseRetrofit,
+    timestamp: Long,
+    osumnjiceniLista: MutableList<OsumnjicenData>,
+    svedociLista: MutableList<SvedokData>,
+    zl: ZlocinData
+) = coroutineScope {
+
+    // odgovor
+    val odgovoriDeferred = async(Dispatchers.IO) {
+        insertGeminiOdgovor(geminiResponse2, geminiResponseRetrofit,pitanjaLista)
+    }
+    // pitanjeIspitivanjeOsumnjicenog
+    val pitanjeIspitivanjeOsumnjicenogDeferred = async(Dispatchers.IO) {
+        insertGeminiPitanjeIspitivanjeOsumnjicenog(geminiResponse2, geminiResponseRetrofit,osumnjiceniLista)
+    }
+    // pitanjeIspitivanjeSvedoka
+    val pitanjeIspitivanjeSvedokaDeferred = async(Dispatchers.IO) {
+        insertGeminiPitanjeIspitivanjeSvedoka(geminiResponse2, geminiResponseRetrofit,svedociLista)
+    }
+    //  osoba
+    val osobaDeferred = async(Dispatchers.IO) {
+        insertGeminiOsoba(geminiResponse2, geminiResponseRetrofit, zl, timestamp)
+    }
+    // cekanje rezultata
+    odgovoriDeferred.await()
+    pitanjeIspitivanjeOsumnjicenogDeferred.await()
+    pitanjeIspitivanjeSvedokaDeferred.await()
+    osobaDeferred.await()
+}
+
+
+suspend fun suspendInsertZadaci(
+    zadaciLista: MutableList<ZadatakData>,
+    geminiResponse2: GeminiResponse2,
+    geminiResponseRetrofit: GeminiResponseRetrofit,
+    osumnjiceniLista: MutableList<OsumnjicenData>,
+    svedociLista: MutableList<SvedokData>,
+    sviDokaziZrtva:SviDokaziOdZrtve
+) = coroutineScope {
+    // dokazZadatak
+    val dokazZadatakDeferred = async(Dispatchers.IO) {
+        insertGeminiDokazZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.dokaziLista, zadaciLista)
+    }
+    // ispitivanjeOsumnjicenogZadatak
+    val ispitivanjeOsumnjicenogZadatakDeferred = async(Dispatchers.IO) {
+        insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, zadaciLista)
+    }
+    // ispitivanjeSvedokaZadatak
+    val ispitivanjeSvedokaZadatakDeferred = async(Dispatchers.IO) {
+        insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista, zadaciLista)
+    }
+    // telefonZadatak
+    val telefonZadatakDeferred = async(Dispatchers.IO) {
+        insertGeminiTelefonZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.telefoniLista, zadaciLista)
+    }
+
+    // forenzickiDokazZadatak
+    val forenzickiDokazZadatakDeferred = async(Dispatchers.IO) {
+        insertGeminiForenzickiDokazZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.forenzickiDokaziLista, zadaciLista)
+
+    }
+    // cekanje rezultata
+    dokazZadatakDeferred.await()
+    ispitivanjeOsumnjicenogZadatakDeferred.await()
+    ispitivanjeSvedokaZadatakDeferred.await()
+    telefonZadatakDeferred.await()
+    forenzickiDokazZadatakDeferred.await()
+}
