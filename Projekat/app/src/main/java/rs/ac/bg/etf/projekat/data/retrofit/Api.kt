@@ -36,7 +36,6 @@ interface Api {
     @GET("scoreKorisnika")
     suspend fun scoreKorisnika():List<ScorePageKorisnikResponse>
 
-
     @POST("gemini")
     suspend fun geminiData(@Body request: RequestBody):GeminiResponseRetrofit
 }

@@ -149,13 +149,16 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationSuspectsPage"){
             SuspectsPage(navController,viewModel,realmViewModel)
         }
-        composable(route = "destinationSuspectDetailsPage/{image}/{title}",
-            arguments = listOf(navArgument("image") { type = NavType.IntType },
+        composable(route = "destinationSuspectDetailsPage/{idOsoba}/{image}/{title}",
+            arguments = listOf(
+                navArgument("idOsoba") { type = NavType.IntType },
+                navArgument("image") { type = NavType.IntType },
                 navArgument("title") { type = NavType.StringType }),
         ) { navBackStackEntry ->
+            val idOsoba = navBackStackEntry.arguments?.getInt("idOsoba") ?: 0
             val image = navBackStackEntry.arguments?.getInt("image") ?: 0
             val title =navBackStackEntry.arguments?.getString("title") ?:""
-            SuspectDetailsPage(image=image,title=title,navController)
+            SuspectDetailsPage(idOsoba=idOsoba, image=image,title=title,navController)
         }
         composable(route = "destinationSuspectsInterviewPage/{title}",
             arguments = listOf(

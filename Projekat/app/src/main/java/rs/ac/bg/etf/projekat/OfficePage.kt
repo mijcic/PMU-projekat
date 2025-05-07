@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -81,16 +82,26 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                 },
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(60.dp),
-                shape = MaterialTheme.shapes.medium,
-                containerColor = Color.Black,
+                    .size(70.dp),
+                //shape = MaterialTheme.shapes.medium,
+                shape = CircleShape,
+                //containerColor = Color.Black,
+                containerColor = Color.Transparent,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
+//                Icon(
+//                    imageVector = Icons.Default.Check,
+//                    contentDescription = "Tasks",
+//                    tint = Color.White,
+//                    modifier = Modifier.size(32.dp)
+//                )
+                Image(
+                    painter = painterResource(id = R.drawable.tasks),
                     contentDescription = "Tasks",
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
                 )
             }
         },
@@ -133,6 +144,7 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                             color = Color.White, textAlign =  TextAlign.Center
                         )
                     )}
+                    Spacer(modifier = Modifier.height(10.dp))
                     crimeData.value.date?.let {
                         Text(
                             text = "Location: "+crimeData.value.place+" – Date:"+it,
@@ -141,37 +153,65 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                             modifier = Modifier.padding(top = 4.dp, bottom = 32.dp),
                             style = TextStyle(
                                 fontFamily = FontFamily(Font(R.font.special_elite)),
-                                color = Color.White
+                                color = Color.White, textAlign = TextAlign.Center
                             )
                         )
                     }
 
-                    // First row (2 buttons)
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
+//                    // First row (2 buttons)
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceEvenly,
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        OfficeButton(label = "Suspects", icon = R.drawable.ic_suspect) {
+//                            navController.navigate(destinationSuspectsPage.route)
+//                        }
+//                        OfficeButton(label = "Witnesses", icon = R.drawable.ic_witness) {
+//                            navController.navigate(destinationWitnessesPage.route)
+//                        }
+//                    }
+//
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    // Second row (2 buttons)
+//                    Row(
+//                        horizontalArrangement = Arrangement.SpaceEvenly,
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        OfficeButton(label = "Evidence", icon = R.drawable.ic_evidence) {
+//                            myViewModel.getEvidences()
+//                            myViewModel.getForensicEvidences()
+//                            navController.navigate(destinationEvidencePage.route)
+//                        }
+//                        OfficeButton(label = "Phone", icon = R.drawable.ic_phone) {
+//                            selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
+//                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
+//                            navController.navigate(destinationPhonePage.route)
+//                        }
+//                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         OfficeButton(label = "Suspects", icon = R.drawable.ic_suspect) {
                             navController.navigate(destinationSuspectsPage.route)
                         }
+                        Spacer(modifier = Modifier.height(10.dp))
                         OfficeButton(label = "Witnesses", icon = R.drawable.ic_witness) {
                             navController.navigate(destinationWitnessesPage.route)
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Second row (2 buttons)
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OfficeButton(label = "Evidence", icon = R.drawable.ic_evidence) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        OfficeButton(label = "Evidences",
+//                            icon = R.drawable.ic_evidence
+                            icon = R.drawable.evidences
+                        ) {
                             myViewModel.getEvidences()
                             myViewModel.getForensicEvidences()
                             navController.navigate(destinationEvidencePage.route)
                         }
-                        OfficeButton(label = "Phone", icon = R.drawable.ic_phone) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        OfficeButton(label = "Victim's Phone", icon = R.drawable.ic_phone) {
                             selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
                             selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
                             navController.navigate(destinationPhonePage.route)
@@ -197,8 +237,8 @@ fun OfficeButton(label: String, icon: Int, onClick: () -> Unit) {
 
     Card(
         modifier = Modifier
-            .padding(8.dp)
-            .size(width = 150.dp, height = 100.dp)
+            .padding(4.dp)
+            .size(width = 170.dp, height = 100.dp)
             .scale(scale),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
@@ -215,7 +255,9 @@ fun OfficeButton(label: String, icon: Int, onClick: () -> Unit) {
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = icon),
@@ -226,11 +268,13 @@ fun OfficeButton(label: String, icon: Int, onClick: () -> Unit) {
                 Text(
                     text = label,
                     color = Color.White,
+                    maxLines = 1,
                     style = TextStyle(
                         fontFamily = FontFamily(Font(R.font.special_elite)),
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
-                    )
+                    ),
+                    textAlign = TextAlign.Center
                 )
             }
         }

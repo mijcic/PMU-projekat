@@ -22,6 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +42,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realm.BeleskaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
 import rs.ac.bg.etf.projekat.data.retrofit.models.AlibiData
 import rs.ac.bg.etf.projekat.data.retrofit.models.DokazData
@@ -54,9 +59,16 @@ import java.util.Date
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun SuspectDetailsPage(image: Int, title: String, navController: NavController) {
+fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: NavController) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
+
+    val realmViewModel: RealmViewModel = hiltViewModel()
+    var motiveAlibiStatus by remember { mutableStateOf<List<String>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        motiveAlibiStatus = realmViewModel.getMotiveAlibiStatus(idOsoba)!!
+    }
 
     Surface(
         modifier = Modifier
@@ -97,39 +109,41 @@ fun SuspectDetailsPage(image: Int, title: String, navController: NavController) 
             Spacer(modifier = Modifier.height(24.dp)) // Razmak između slike i teksta
 
             // Informacije o osumnjičenom (motiv, alibi, status)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Motive: ?",
-                    color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.special_elite)),
-                        fontSize = 18.sp,
+            if (motiveAlibiStatus.isNotEmpty()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Motive: " + if (motiveAlibiStatus.get(0).isNotEmpty()) motiveAlibiStatus.get(0) else "?",
+                        color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.special_elite)),
+                            fontSize = 18.sp,
+                        )
                     )
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Alibi: ?",
-                    color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.special_elite)),
-                        fontSize = 18.sp,
+                    Text(
+                        text = "Alibi: " + if (motiveAlibiStatus.get(1).isNotEmpty()) motiveAlibiStatus.get(1) else "?",
+                        color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.special_elite)),
+                            fontSize = 18.sp,
+                        )
                     )
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Status: ?",
-                    color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.special_elite)),
-                        fontSize = 18.sp,
+                    Text(
+                        text = "Status: " + if (motiveAlibiStatus.get(2).isNotEmpty()) motiveAlibiStatus.get(2) else "?",
+                        color = Color.White,
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.special_elite)),
+                            fontSize = 18.sp,
+                        )
                     )
-                )
+                }
             }
 
             Spacer(modifier = Modifier.height(30.dp))

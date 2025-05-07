@@ -124,7 +124,7 @@ class MyViewModel @Inject constructor(
     private val _uiStatePitanjaZaOsumnjicenog = MutableStateFlow(UiStatePitanjaZaOsumnjicenog())
     val uiStatePitanjaZaOsumnjicenog : StateFlow<UiStatePitanjaZaOsumnjicenog> = _uiStatePitanjaZaOsumnjicenog
 
-    fun getPitanjaZaOsumnjicenog(osumnjicen:String) = viewModelScope.launch {
+    fun getPitanjaZaOsumnjicenog(osumnjicen: String) = viewModelScope.launch {
         try {
             val response1 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"opsta")
             val response2 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"alibi")
