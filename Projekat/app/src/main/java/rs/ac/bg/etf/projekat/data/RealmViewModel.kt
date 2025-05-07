@@ -623,13 +623,10 @@ class RealmViewModel @Inject constructor(
         }
     }
 
-    suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int,osumnjicenZ: OsumnjicenR?, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {
+    suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {
         var pitanje: PitanjeIspitivanjeOsumnjicenogR? = null
         realm.write {
-            val existingOsumnjicen = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenZ?.idOsumnjicen).find().firstOrNull()
-                ?: osumnjicenZ?.let {
-                    copyToRealm(it)
-                }
+            val existingOsumnjicen = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenIdZ).find().firstOrNull()
 
             pitanje = query<PitanjeIspitivanjeOsumnjicenogR>("idPitanjeIspitivanjeOsumnjicenog ==$0 AND kategorija == $1 AND tekst == $2 AND odgovor == $3 AND komentar == $4 AND osumnjicenId == $5",
                 idPitanjeIspitivanjeOsumnjicenogZ,kategorijaZ, tekstZ, odgovorZ, komentarZ, existingOsumnjicen).find().firstOrNull()
@@ -705,6 +702,18 @@ class RealmViewModel @Inject constructor(
             copyToRealm(zadatak!!)
         }
         return zadatak
+    }
+
+    suspend fun updateZadatak(idZadatakZ: Int, idNextZadatak: Int) {
+        realm.write {
+            val existingZadatak = query<ZadatakR>("idZadatak == $0", idZadatakZ).find().firstOrNull()
+
+            val existingNextZadatak = query<ZadatakR>("idZadatak == $0", idNextZadatak).find().firstOrNull()
+
+            if (existingZadatak != null && existingNextZadatak != null) {
+                existingZadatak.next = existingNextZadatak
+            }
+        }
     }
 
     suspend fun insertDokazZadatak(
@@ -1539,14 +1548,14 @@ class RealmViewModel @Inject constructor(
 
             // Marco Bellini - General Questions
             insertPitanjeIspitivanjeOsumnjicenog(24,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "opsta",
                 "What was your relationship with Isabelle Moreau before her death?",
                 "We had a business relationship. I didn’t know her personally, just met occasionally for work.",
                 "His tone is flat, possibly trying to keep a distance from her. Quick answer, maybe rehearsed."
             )
             insertPitanjeIspitivanjeOsumnjicenog(1,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "opsta",
                 "Why did you feel Isabelle owed you money?",
                 "She had gambling debts. It affected our relationship because she couldn’t pay me back.",
@@ -1554,14 +1563,14 @@ class RealmViewModel @Inject constructor(
             )
             // Marco Bellini - Alibi Questions
             insertPitanjeIspitivanjeOsumnjicenog(2,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "alibi",
                 "Where were you at the time of Isabelle’s murder?",
                 "I was at the casino, playing poker. Never left the table at that time.",
                 "No hesitation, but his answer feels too perfect, might be trying to cover up something."
             )
             insertPitanjeIspitivanjeOsumnjicenog(3,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "alibi",
                 "Did you leave the casino during the night Isabelle was killed?",
                 "No, I didn’t leave. I played poker the whole time.",
@@ -1569,14 +1578,14 @@ class RealmViewModel @Inject constructor(
             )
             // Marco Bellini - Evidence Questions
             insertPitanjeIspitivanjeOsumnjicenog(4,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "dokaz",
                 "Did you know that threatening messages sent to Isabelle were linked to your number?",
                 "That’s a mistake. I don’t know anything about those messages. Someone must have used my number.",
                 "His answer is fast, possibly nervous about the connection to his number, but he tries to explain it away."
             )
             insertPitanjeIspitivanjeOsumnjicenog(5,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "dokaz",
                 "Is there any reason your initials would be linked to the knife found at the crime scene?",
                 "I don’t know why it was there. I’ve never used that knife.",
@@ -1584,14 +1593,14 @@ class RealmViewModel @Inject constructor(
             )
             // Marco Bellini - Contradiction Questions
             insertPitanjeIspitivanjeOsumnjicenog(6,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "kontradikcija",
                 "You said you were at the casino when Isabelle was killed, but witnesses didn’t see you. How do you explain that?",
                 "It must have been a mistake. I was at the casino the whole time.",
                 "His response is too quick, maybe trying to brush off the discrepancy. Sounds defensive."
             )
             insertPitanjeIspitivanjeOsumnjicenog(7,
-                osumnjiceniMarcoBellini,
+                osumnjiceniMarcoBellini?.idOsumnjicen ?: -1,
                 "kontradikcija",
                 "There are claims you were seen leaving Isabelle’s room. Can you deny that?",
                 "That’s an absolute lie. I was never in her room.",
@@ -1600,14 +1609,14 @@ class RealmViewModel @Inject constructor(
 
             // Vincent Duval - General Questions
             insertPitanjeIspitivanjeOsumnjicenog(8,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "opsta",
                 "What was your relationship with Isabelle Moreau before her death?",
                 "We were in a romantic relationship, though it wasn’t easy. Isabelle had her own world, and I was jealous.",
                 "He’s emotional in his response, which could be revealing. His jealousy seems genuine but might have been a motive."
             )
             insertPitanjeIspitivanjeOsumnjicenog(9,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "opsta",
                 "Did you ever have a serious conflict with Isabelle before her death?",
                 "Yes, a few times. Her relationship with someone else made me uncontrollably jealous.",
@@ -1616,14 +1625,14 @@ class RealmViewModel @Inject constructor(
 
             // Vincent Duval - Alibi Questions
             insertPitanjeIspitivanjeOsumnjicenog(10,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "alibi",
                 "Where were you at the time of Isabelle’s murder?",
                 "I was in the hotel, in my room. No one saw me.",
                 "His answer is calm but feels a bit unsure. There’s a slight hesitation, as if trying to cover all bases."
             )
             insertPitanjeIspitivanjeOsumnjicenog(11,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "alibi",
                 "Did you have any contact with Isabelle shortly before her murder?",
                 "No. We hadn’t spoken in days.",
@@ -1632,14 +1641,14 @@ class RealmViewModel @Inject constructor(
 
             // Vincent Duval - Evidence Questions
             insertPitanjeIspitivanjeOsumnjicenog(12,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "dokaz",
                 "Were there any threatening messages or evidence connecting your number to Isabelle?",
                 "I never sent threatening messages. This is all a lie.",
                 "His answer is quick, but something about the directness feels like he’s deflecting."
             )
             insertPitanjeIspitivanjeOsumnjicenog(13,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "dokaz",
                 "A knife with your initials was found at the crime scene. Can you explain that?",
                 "I’ve never been near that knife. It must be a set-up.",
@@ -1648,14 +1657,14 @@ class RealmViewModel @Inject constructor(
 
             // Vincent Duval - Contradiction Questions
             insertPitanjeIspitivanjeOsumnjicenog(14,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "kontradikcija",
                 "You said you were in your room when Isabelle was killed, but witnesses saw you near her. How do you explain that?",
                 "It’s a mistake. I never left my room.",
                 "He’s defensive, trying to deny everything. The quickness of his answer might be a sign of stress."
             )
             insertPitanjeIspitivanjeOsumnjicenog(15,
-                osumnjiceniVincentDuval,
+                osumnjiceniVincentDuval?.idOsumnjicen ?: -1,
                 "kontradikcija",
                 "There are claims that you were jealous because of Isabelle’s other relationships. Can you deny that?",
                 "Jealousy wasn’t the reason for her death. That’s just gossip.",
@@ -1664,14 +1673,14 @@ class RealmViewModel @Inject constructor(
 
             // Amelia Fontaine - General Questions
             insertPitanjeIspitivanjeOsumnjicenog(16,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "opsta",
                 "How would you describe your relationship with Isabelle Moreau?",
                 "Isabelle was a competitor, but also a friend. We were in different industries, so we didn’t have much conflict.",
                 "She tries to keep it neutral. Doesn’t want to reveal too much about her real feelings."
             )
             insertPitanjeIspitivanjeOsumnjicenog(17,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "opsta",
                 "How did you feel about her business success?",
                 "She was successful, no doubt. But honestly, sometimes it was hard to watch.",
@@ -1680,14 +1689,14 @@ class RealmViewModel @Inject constructor(
 
             // Amelia Fontaine - Alibi Questions
             insertPitanjeIspitivanjeOsumnjicenog(18,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "alibi",
                 "Where were you at the time of Isabelle’s murder?",
                 "I was at home, working.",
                 "Her answer is quick and simple. There’s no real detail to back it up, which seems suspicious."
             )
             insertPitanjeIspitivanjeOsumnjicenog(19,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "alibi",
                 "Did you have any contact with Isabelle right before her death?",
                 "No, we hadn’t spoken for months.",
@@ -1696,14 +1705,14 @@ class RealmViewModel @Inject constructor(
 
             // Amelia Fontaine - Evidence Questions
             insertPitanjeIspitivanjeOsumnjicenog(20,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "dokaz",
                 "Were there any messages or evidence linking you to threatening Isabelle?",
                 "No, I never sent any threatening messages.",
                 "Her response is quick, but there’s something about her tone that feels off. Almost too rehearsed."
             )
             insertPitanjeIspitivanjeOsumnjicenog(21,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "dokaz",
                 "A knife with your initials was found at the crime scene. Can you explain that?",
                 "I don’t know why it was there. I’ve never used that knife.",
@@ -1712,14 +1721,14 @@ class RealmViewModel @Inject constructor(
 
             // Amelia Fontaine - Contradiction Questions
             insertPitanjeIspitivanjeOsumnjicenog(22,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "kontradikcija",
                 "You said you were at home when Isabelle was killed, but witnesses saw you near the crime scene. How do you explain that?",
                 "That’s not true. I was home, like I said.",
                 "Her answer is too firm. Could be a defensive reaction, or maybe she’s hiding something."
             )
             insertPitanjeIspitivanjeOsumnjicenog(23,
-                osumnjiceniAmeliaFontaine,
+                osumnjiceniAmeliaFontaine?.idOsumnjicen ?: -1,
                 "kontradikcija",
                 "There were rumors about your jealousy of Isabelle. Can you deny that?",
                 "Jealousy wasn’t the reason for what happened. That’s just talk.",

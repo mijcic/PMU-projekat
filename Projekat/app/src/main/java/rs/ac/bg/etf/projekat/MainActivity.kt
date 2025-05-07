@@ -95,6 +95,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("NewApi")
 @Composable
 fun NavigationGraph(navController: NavHostController) {
 
@@ -104,8 +105,9 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         //startDestination = "destinationMainScreen1"
-        startDestination = "destinationMainScreen2"
-        //startDestination = "destinationQuestionsPage"
+        //startDestination = "destinationMainScreen2"
+        startDestination = "destinationOfficePage"
+        //startDestination = "destinationSuspectDetailsPage/${1}/${R.drawable.whatsapp_profile_picture}/${"Blabla"}"
     ) {
         composable("destinationMainScreen1") {
             MainScreen1(navController)

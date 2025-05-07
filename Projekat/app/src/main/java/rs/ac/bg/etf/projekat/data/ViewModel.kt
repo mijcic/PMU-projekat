@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.types.RealmInstant
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import rs.ac.bg.etf.projekat.data.realm.DokazR
@@ -1211,19 +1213,20 @@ class MyViewModel @Inject constructor(
                 )
             }
 
+            withContext(Dispatchers.IO) {
+                for(p in response.pitanjeIspitivanjeOsumnjicenogRetrofit!!){
+                    val osum = osumnjiceni.find { it.idOsumnjicen == p.osumnjicenId }
 
-            for(p in response.pitanjeIspitivanjeOsumnjicenogRetrofit!!){
-                val osum =osumnjiceni.find { it.idOsumnjicen == p.osumnjicenId }
-                realmViewModel.insertPitanjeIspitivanjeOsumnjicenog(
-                    idPitanjeIspitivanjeOsumnjicenogZ = p.idPitanjeIspitivanjeOsumnjicenog,
-                    osumnjicenZ = osum,
-                    kategorijaZ = p.kategorija,
-                    tekstZ = p.tekst,
-                    odgovorZ = p.odgovor,
-                    komentarZ = p.komentar
-                )
+                    realmViewModel.insertPitanjeIspitivanjeOsumnjicenog(
+                        idPitanjeIspitivanjeOsumnjicenogZ = p.idPitanjeIspitivanjeOsumnjicenog,
+                        osumnjicenIdZ = osum?.idOsumnjicen ?: -1,
+                        kategorijaZ = p.kategorija,
+                        tekstZ = p.tekst,
+                        odgovorZ = p.odgovor,
+                        komentarZ = p.komentar
+                    )
+                }
             }
-
 
             for(pIS in response.pitanjeIspitivanjeSvedokaRetrofit!!){
                 val sv = svedokLista.find {it.idSvedok == pIS.svedokId}
@@ -1252,16 +1255,26 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(dokZ in response.dokaziZadaciRetrofit!!){
+            for (i in 0 until zadatakLista.size - 1) {
+                val trenutniZadatak = zadatakLista[i]
+                val naredniZadatak = zadatakLista[i + 1]
+                trenutniZadatak.next = naredniZadatak
+                realmViewModel.updateZadatak(trenutniZadatak.idZadatak, naredniZadatak.idZadatak)
+            }
+
+            for(dokZ in response.dokaziZadaciRetrofit!!) {
                 val zad =zadatakLista.find { it.idZadatak ==dokZ.zadatakId }
                 val dok = dokazi.find { it.idDokaz == dokZ.dokazId }
-                realmViewModel.insertDokazZadatak(
-                    idDokazZadatakZ = dokZ.idDokazZadatak,
-                    tekstZ = dokZ.tekst,
-                    dokazIdZ = dok,
-                    uradjenZ = dokZ.uradjen,
-                    zadatakIdZ = zad
-                )
+
+                if (zad != null && dok != null) {
+                    realmViewModel.insertDokazZadatak(
+                        idDokazZadatakZ = dokZ.idDokazZadatak,
+                        tekstZ = dokZ.tekst,
+                        dokazIdZ = dok,
+                        uradjenZ = dokZ.uradjen,
+                        zadatakIdZ = zad
+                    )
+                }
             }
 
             for(isp in response.ispitivanjeOsumnjicenogZadaciRetrofit!!){

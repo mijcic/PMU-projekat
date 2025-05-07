@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.protolite.well.known.types)
     implementation(libs.material)
+    implementation(libs.androidx.compose.testing)
+    implementation(libs.androidx.animation.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
