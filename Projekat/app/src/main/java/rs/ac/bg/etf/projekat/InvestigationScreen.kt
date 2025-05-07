@@ -1,8 +1,5 @@
 package rs.ac.bg.etf.projekat
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,19 +15,25 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.UiStateMysteriousSymptoms
 
 @Composable
-fun InvestigationScreen(navController: NavController) {
+fun InvestigationScreen(navController: NavController,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
+    val data by realmViewModel.uiStateMysteriousSymptoms.collectAsState()
     val tabs = listOf("🏠 Uvod", "👤 Pacijent", "📍 Lokacije", "🧾 Dokazi", "⚖️ Zaključak")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -77,7 +80,7 @@ fun InvestigationScreen(navController: NavController) {
 
         when (selectedTabIndex) {
             0 -> UvodScreen()
-            1 -> PacijentScreen(navController)
+            1 -> PacijentScreen(navController,data)
             2 -> LokacijeScreen(navController)
             3 -> DokaziScreen(navController)
             4 -> ZakljucakScreen()
@@ -109,7 +112,8 @@ fun UvodScreen() {
                 text = "Muškarac u kasnim dvadesetim primljen je na urgentno odeljenje u katatoničnom stanju.\n\nNema povreda, nema tragova nasilja. Lekari ne mogu da utvrde uzrok.\n\nTi, kao detektiv specijalizovan za 'neobične slučajeve', pozvan si da istražiš.",
                 color = Color.White,
                 fontSize = 18.sp,
-                lineHeight = 26.sp
+                lineHeight = 26.sp,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
             )
         }
         Box(
@@ -121,41 +125,55 @@ fun UvodScreen() {
 }
 
 @Composable
-fun PacijentScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF121212))
-            .padding(20.dp)
+fun PacijentScreen(navController: NavController, data: UiStateMysteriousSymptoms) {
+
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            "👤 Pacijent: Marko Maric",
-            style = MaterialTheme.typography.headlineSmall.copy(color = Color.White),
-            fontWeight = FontWeight.Bold
+        Image(
+            painter = painterResource(id = R.drawable.patient),
+            contentDescription = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp)
+        ) {
+            Text(
+                " Pacijent: ${data.osobaPacijent?.ime}",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                fontSize = 22.sp,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+            )
 
-        Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        ExpandableSection(title = "📌 Detalji o pacijentu") {
-            DetailItem("Godine", "28")
-            DetailItem("Zanimanje", "Softverski inženjer")
-            DetailItem("Simptomi", "Katatonično stanje, ne reaguje na zvuke")
-            DetailItem("Datum prijema", "03.04.2025.")
-            DetailItem("Prijavila", "Sestra")
-        }
+            Spacer(modifier = Modifier.height(30.dp))
 
-        Spacer(modifier = Modifier.height(20.dp))
+            ExpandableSection(title = " Detalji o pacijentu") {
+                DetailItem("Godine", "28")
+                DetailItem("Zanimanje", "${data.osobaPacijent?.zanimanje}")
+                DetailItem("Simptomi", "${data.pacijentR?.simptomi}")
+                DetailItem("Datum prijema", "/")
+                DetailItem("Prijavila", "${data.pacijentR?.prijavio}")
+            }
 
-        ExpandableSection(title = "🧾 Dokumenti") {
-            PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
-                { navController.navigate(destinationMedicalReportPage.route) })
-            PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(destinationMedicalReportPage.route) })
-            PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(destinationMedicalReportPage.route) })
-            PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(destinationMedicalReportPage.route) })
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ExpandableSection(title = " Dokumenti") {
+                PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
+                    { navController.navigate(destinationMedicalReportPage.route) })
+                PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(destinationMedicalReportPage.route) })
+                PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(destinationMedicalReportPage.route) })
+                PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(destinationMedicalReportPage.route) })
+            }
         }
     }
+
 }
 
 @Composable
@@ -179,8 +197,9 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
                     color = Color(0xFFBBBBBB),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
-                    modifier = Modifier.weight(1f)
-                )
+                    modifier = Modifier.weight(1f),
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White),
+                    textAlign = TextAlign.Center)
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = null,
@@ -279,8 +298,12 @@ fun ZakljucakScreen() {
 @Composable
 fun DetailItem(label: String, value: String) {
     Row(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text("$label: ", color = Color.LightGray, fontWeight = FontWeight.Bold)
-        Text(value, color = Color.White)
+        Text("$label: ", color = Color.LightGray, fontWeight = FontWeight.Bold,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+        )
+        Text(value, color = Color.White,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+        )
     }
 }
 
@@ -294,10 +317,16 @@ fun PacijentInfoCard(icon: String, title: String, description: String, onClick: 
         colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(icon, fontSize = 22.sp, modifier = Modifier.padding(end = 12.dp))
+            Text(icon, fontSize = 22.sp, modifier = Modifier.padding(end = 12.dp),
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+            )
             Column {
-                Text(title, color = Color.White, fontWeight = FontWeight.Bold)
-                Text(description, color = Color.LightGray, fontSize = 14.sp)
+                Text(title, color = Color.White, fontWeight = FontWeight.Bold,
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+                )
+                Text(description, color = Color.LightGray, fontSize = 14.sp,
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+                )
             }
         }
     }

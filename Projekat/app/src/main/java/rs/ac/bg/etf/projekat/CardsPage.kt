@@ -239,7 +239,9 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "dots between mysterious health " +
                                 "conditions and criminal activity.",
                         navController,
-                        {},
+                        {
+                            realmViewModel.insertDataForMysteriousSymptoms()
+                        },
                         "", "", "", "",myViewModel,realmViewModel
                     )
                     CardWithImage(
@@ -431,6 +433,8 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
         modifier = Modifier
             .padding(1.dp)
             .clickable{
+                MainActivity.clearDatabase()
+                realmViewModel.insertDataForMysteriousSymptoms()
                 navController.navigate(
                     destinationInvestigationPage.route
                 )

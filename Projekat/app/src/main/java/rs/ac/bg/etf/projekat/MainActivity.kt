@@ -286,10 +286,13 @@ fun NavigationGraph(navController: NavHostController) {
             PhoneSettingsPage(navController)
         }
         composable("destinationInvestigationPage") {
-            InvestigationScreen(navController)
+            InvestigationScreen(navController, viewModel,realmViewModel)
         }
         composable("destinationMedicalReportPage") {
             MedicalReportScreen(navController)
+        }
+        composable("destinationPatientPage"){
+            PatientScreen(navController,realmViewModel)
         }
     }
 }

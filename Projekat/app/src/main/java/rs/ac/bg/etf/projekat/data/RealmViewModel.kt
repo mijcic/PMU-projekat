@@ -36,6 +36,7 @@ import rs.ac.bg.etf.projekat.data.realm.OneCallR
 import rs.ac.bg.etf.projekat.data.realm.OneContactR
 import rs.ac.bg.etf.projekat.data.realm.OsobaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
+import rs.ac.bg.etf.projekat.data.realm.PacijentR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
@@ -906,6 +907,53 @@ class RealmViewModel @Inject constructor(
             copyToRealm(porukeZadatak!!)
         }
         return porukeZadatak
+    }
+
+    suspend fun insertPacijent(
+        idPacijentP: Int,
+        simptomiP: String,
+        statusPacijentaP: String,
+        datumPrijaveP: RealmInstant,
+        prijavioP: String,
+        zlocinP: ZlocinR,
+        osobaP: OsobaR
+    ): PacijentR? {
+
+        var pacijent: PacijentR? = null
+        realm.write {
+            val existingZlocin =
+                query<ZlocinR>("idZlocin == $0", zlocinP.idZlocin).find().firstOrNull()
+                    ?: zlocinP?.let {
+                        copyToRealm(it)
+                    }
+
+            val existingOsoba = query<OsobaR>("idOsoba == $0", osobaP.idOsoba).find().firstOrNull()
+                ?: osobaP?.let {
+                    copyToRealm(it)
+                }
+
+            pacijent = query<PacijentR>(
+                "idPacijent ==$0 AND simptomi == $1 AND statusPacijenta == $2 AND datumPrijave ==$3 AND prijavio ==$4 AND zlocinId==$5 AND osobaId==$6",
+                idPacijentP,
+                simptomiP,
+                statusPacijentaP,
+                datumPrijaveP,
+                prijavioP,
+                existingZlocin,
+                existingOsoba
+            ).find().firstOrNull()
+                ?: PacijentR().apply {
+                    idPacijent = idPacijentP
+                    simptomi = simptomiP
+                    statusPacijenta = statusPacijentaP
+                    datumPrijave = datumPrijaveP
+                    prijavio = prijavioP
+                    zlocinId = existingZlocin
+                    osobaId = existingOsoba
+                }
+            copyToRealm(pacijent!!)
+        }
+        return pacijent
     }
 
     suspend fun getTitleDatePlaceDescFromCrime() {
@@ -1898,6 +1946,49 @@ class RealmViewModel @Inject constructor(
             if (kontaktJulien != null && obicanKontaktMe != null) insertObicnaPoruka(kontaktJulien, obicanKontaktMe,"She was scared. That I’m sure of.", RealmInstant.now(), false)
         }
     }
+    private var _uiStateMysteriousSymptoms = MutableStateFlow(UiStateMysteriousSymptoms())
+    val uiStateMysteriousSymptoms: StateFlow<UiStateMysteriousSymptoms> = _uiStateMysteriousSymptoms
+
+    fun insertDataForMysteriousSymptoms() {
+        viewModelScope.launch {
+            val tipZlocina: TipZlocinaR? = inserTipZlocina("Mysterious Symptoms")
+
+            val zlocin: ZlocinR? = insertZlocin(
+                1,
+                tipZlocina,
+                "Pacijent 0",
+                "1746124800000",
+                "Bolnica St Thomas' Hospital, London",
+                "Pacijentkinja bez identiteta sa anomalijama moždane aktivnosti, bez pulsa",
+                stZlocinR.u_istrazi.name
+            )
+
+            var osoba =insertOsoba(
+                idOsobaO = 1,
+                imeZ = "Nepoznata",
+                kontaktZ = "N/A",
+                datumZ = RealmInstant.now(),
+                zanimanjeZ = "Nepoznato",
+                polZ = "zenski",
+                zlocinZ = zlocin
+            )
+            var pacijent:PacijentR? =null
+            if (zlocin != null && osoba !=null) {
+                pacijent =insertPacijent(
+                    idPacijentP = 1,
+                    simptomiP = "Bez pulsa, ali očuvana moždana aktivnost",
+                    statusPacijentaP = "ziva",
+                    datumPrijaveP = RealmInstant.now(),
+                    prijavioP = "Dr. Ana King",
+                    zlocinP = zlocin,
+                    osobaP = osoba
+                )
+            }
+
+            _uiStateMysteriousSymptoms.value = UiStateMysteriousSymptoms(zlocin,tipZlocina,pacijent,osoba)
+
+        }
+    }
 }
 
 data class UiStateUserData (
@@ -1906,6 +1997,13 @@ data class UiStateUserData (
 
 data class UiStateZlocinSave (
     val zlocin: ZlocinR? =null
+)
+
+data class UiStateMysteriousSymptoms (
+    val zlocin: ZlocinR? =null,
+    val tipZlocina: TipZlocinaR? =null,
+    val pacijentR: PacijentR? = null,
+    val osobaPacijent: OsobaR? =null
 )
 
 data class UiStateCrimeData (
@@ -1958,15 +2056,6 @@ suspend fun selectPitanjaByOsumnjicenAndCategory(osumnjicenId: String, category:
         osumnjicenId,
         category
     ).find()
-
-//    pitanja = realm.query<PitanjeIspitivanjeOsumnjicenogR>("kategorija == $0", category)
-//        .find()
-//        .filter { it.osumnjicenId?.osobaId?.ime == osumnjicenId }
-//
-//    Log.d("REALM", "Upit za osumnjicenog=$osumnjicenId, kategorija=$category: našao ${pitanja.size} pitanja")
-//    pitanja.forEach {
-//        Log.d("REALM", "Pitanje=${it.tekst}, osumnjicen=${it.osumnjicenId?.osobaId?.ime}")
-//    }
 
     return pitanja
 }

@@ -577,6 +577,47 @@ open class ObicnaPorukaR : RealmObject {
     var procitana: Boolean = false
 }
 
+// Mysterious Symptoms
+
+open class PacijentR: RealmObject {
+    var idPacijent: Int =0
+    var simptomi: String = ""
+    var statusPacijenta: String ="" //ziva,mrtva
+    var datumPrijave : RealmInstant ?= null
+    var prijavio: String = ""
+    var zlocinId: ZlocinR ?=null
+    var osobaId: OsobaR? =null
+}
+
+open class MedicinskiIzvestajR: RealmObject {
+    var idMedicinskiIzvestaj: Int =0
+    var rezime: String = ""
+    var CTnalaz: String = ""
+    var MRInalaz: String = ""
+    var krvnaSlika: String = ""
+    var toksikoloskeAnalize: String = ""
+    var zakljucak: String = ""
+    var pacijentId: PacijentR? =null
+}
+
+open class IzjavaZaPacijentaR: RealmObject {
+    var idIzjavaZaPacijenta: Int =0
+    var izjava: String = ""
+    var pacijentId: PacijentR? =null
+}
+
+open class LekarskiTestR: RealmObject {
+    var idLekarskiTest: Int =0
+    var izvestaj: String = ""
+}
+
+open class LokacijeIstrageR: RealmObject {
+    var idLokacijeIstrage: Int =0
+    var mesto: String = ""
+    var naziv: String = ""
+    var opis: String = ""
+}
+
 val realmClasses = listOf(
     ZlocinR::class,
     TipZlocinaR::class,
@@ -623,5 +664,10 @@ val realmClasses = listOf(
     IspitivanjeSvedokaZadatakR::class,
     TelefonZadatakR::class,
     ForenzickiDokazZadatakR::class,
-    PorukeZadatakR::class
+    PorukeZadatakR::class,
+    PacijentR::class,
+    MedicinskiIzvestajR::class,
+    IzjavaZaPacijentaR::class,
+    LekarskiTestR::class,
+    LokacijeIstrageR::class
 )
