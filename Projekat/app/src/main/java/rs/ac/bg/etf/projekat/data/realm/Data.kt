@@ -604,6 +604,7 @@ open class IzjavaZaPacijentaR: RealmObject {
     var idIzjavaZaPacijenta: Int =0
     var izjava: String = ""
     var pacijentId: PacijentR? =null
+    var osobaId: OsobaR? =null
 }
 
 open class LekarskiTestR: RealmObject {

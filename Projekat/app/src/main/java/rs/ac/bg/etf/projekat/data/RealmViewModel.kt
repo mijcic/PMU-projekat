@@ -24,6 +24,7 @@ import rs.ac.bg.etf.projekat.data.realm.GalleryR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
+import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
 import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
@@ -954,6 +955,44 @@ class RealmViewModel @Inject constructor(
             copyToRealm(pacijent!!)
         }
         return pacijent
+    }
+
+    suspend fun insertIzjavaZaPacijenta(
+        idIzjavaZaPacijentaI: Int,
+        izjavaI: String,
+        pacijentIdI: PacijentR,
+        osobaP: OsobaR
+    ): IzjavaZaPacijentaR? {
+        var izjavaZ: IzjavaZaPacijentaR? = null
+        realm.write {
+
+
+            val existingOsoba = query<OsobaR>("idOsoba == $0", osobaP.idOsoba).find().firstOrNull()
+                ?: osobaP?.let {
+                    copyToRealm(it)
+                }
+
+            val existingPacijent = query<PacijentR>("idPacijent == $0", pacijentIdI.idPacijent).find().firstOrNull()
+                ?:  pacijentIdI?.let {
+                    copyToRealm(it)
+                }
+
+            izjavaZ = query<IzjavaZaPacijentaR>(
+                "idIzjavaZaPacijenta ==$0 AND izjava == $1 AND pacijentId == $2 AND osobaId ==$3",
+                idIzjavaZaPacijentaI,
+                izjavaI,
+                existingPacijent,
+                existingOsoba
+            ).find().firstOrNull()
+                ?: IzjavaZaPacijentaR().apply {
+                    idIzjavaZaPacijenta = idIzjavaZaPacijentaI
+                    izjava = izjavaI
+                    pacijentId = existingPacijent
+                    osobaId = existingOsoba
+                }
+            copyToRealm(izjavaZ!!)
+        }
+        return izjavaZ
     }
 
     suspend fun getTitleDatePlaceDescFromCrime() {
@@ -1984,8 +2023,26 @@ class RealmViewModel @Inject constructor(
                     osobaP = osoba
                 )
             }
+            var osobaKojaJeNaslaPacijenta =insertOsoba(
+                idOsobaO = 2,
+                imeZ = "Dr. Ana King",
+                kontaktZ = "+399 2149 453",
+                datumZ = RealmInstant.now(),
+                zanimanjeZ = "doktor",
+                polZ = "zenski",
+                zlocinZ = zlocin
+            )
+            var izjava: IzjavaZaPacijentaR?= null
+            if (osobaKojaJeNaslaPacijenta != null && pacijent!= null) {
+                izjava =insertIzjavaZaPacijenta(
+                    idIzjavaZaPacijentaI = 1,
+                    izjavaI = "Pronašla sam je kako leži na stepeništu iza stare zgrade kod bolnice. Nije reagovala, ali mi se učinilo da njene oči prate pokret. Nisam mogla da ostavim ženu u takvom stanju. Ne znam ko je, niti kako je dospela tamo. Nije imala nikakve dokumente kod sebe. Nisam videla nikoga u blizini, sve je delovalo jezivo tiho. Samo... imala je neki uređaj u ruci koji mi je ispao dok sam je unosila. Nestao je kad sam se vratila da ga potražim.",
+                    pacijentIdI = pacijent,
+                    osobaP = osobaKojaJeNaslaPacijenta
+                )
+            }
 
-            _uiStateMysteriousSymptoms.value = UiStateMysteriousSymptoms(zlocin,tipZlocina,pacijent,osoba)
+            _uiStateMysteriousSymptoms.value = UiStateMysteriousSymptoms(zlocin,tipZlocina,pacijent,osoba, osobaKojaJeNaslaPacijenta,izjava)
 
         }
     }
@@ -2003,7 +2060,9 @@ data class UiStateMysteriousSymptoms (
     val zlocin: ZlocinR? =null,
     val tipZlocina: TipZlocinaR? =null,
     val pacijentR: PacijentR? = null,
-    val osobaPacijent: OsobaR? =null
+    val osobaPacijent: OsobaR? =null,
+    val osobaKojaJeNaslaPacijenta: OsobaR? =null,
+    val izjavaZaPacijenta: IzjavaZaPacijentaR? =null
 )
 
 data class UiStateCrimeData (
@@ -2124,7 +2183,7 @@ private fun evidenceIds(evidences: List<DokazR>): List<Int> {
 }
 
 suspend fun updateDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId: Int ) {
-    val realm = MainActivity.realm
+    val realm = realm
     realm.write {
         val dokazZadaci = query(DokazZadatakR::class).find()
 
@@ -2145,7 +2204,7 @@ suspend fun updateDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId: Int ) {
 }
 
 suspend fun updateForenzickiDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId: Int ) {
-    val realm = MainActivity.realm
+    val realm = realm
     realm.write {
         val dokazZadaci = query(ForenzickiDokazZadatakR::class).find()
 
@@ -2166,7 +2225,7 @@ suspend fun updateForenzickiDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId
 }
 
 suspend fun updateIspitivanjeOsumnjicenogZadatak(ispitivanjeOsumnjicenogZadatak: Int,zadatakId:Int ) {
-    val realm = MainActivity.realm
+    val realm = realm
 
     realm.write {
         val ispitivanje = query(IspitivanjeOsumnjicenogZadatakR::class).find()
@@ -2201,7 +2260,7 @@ fun selectIspitivanjeOsumnjicenogZadatak(osumnjicenZ: OsumnjicenR?): Ispitivanje
 
 
 suspend fun updateIspitivanjeSvedokaZadatak(ispitivanjeSvedokaZadatak: Int,zadatakId:Int ) {
-    val realm = MainActivity.realm
+    val realm = realm
 
     realm.write {
         val ispitivanje = query(IspitivanjeSvedokaZadatakR::class).find()
@@ -2234,7 +2293,7 @@ fun selectIspitivanjeSvedokaZadatak(svedokZ: SvedokR?): IspitivanjeSvedokaZadata
 
 
 suspend fun updateTelefonZadatak(telefonZadatak: Int,zadatakId:Int ) {
-    val realm = MainActivity.realm
+    val realm = realm
 
     realm.write {
         val telefon = query(TelefonZadatakR::class).find()
@@ -2258,7 +2317,7 @@ suspend fun updateTelefonZadatak(telefonZadatak: Int,zadatakId:Int ) {
 
 
 suspend fun updatePorukeZadatak(porukeZadatak: Int,zadatakId:Int ) {
-    val realm = MainActivity.realm
+    val realm = realm
 
     realm.write {
         val poruke = query(PorukeZadatakR::class).find()

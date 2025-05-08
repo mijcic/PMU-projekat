@@ -105,8 +105,8 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         //startDestination = "destinationMainScreen1"
-        //startDestination = "destinationMainScreen2"
-        startDestination = "destinationOfficePage"
+        startDestination = "destinationMainScreen2"
+        //startDestination = "destinationOfficePage"
         //startDestination = "destinationSuspectDetailsPage/${1}/${R.drawable.whatsapp_profile_picture}/${"Blabla"}"
     ) {
         composable("destinationMainScreen1") {
@@ -293,6 +293,9 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("destinationPatientPage"){
             PatientScreen(navController,realmViewModel)
+        }
+        composable("destinationMedicalStatementPage"){
+            MedicalStatementPage(navController,realmViewModel)
         }
     }
 }
