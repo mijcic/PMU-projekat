@@ -1635,7 +1635,7 @@ fun insertMedicinskiIzvestajData(medicinskiIzvestaj: MedicinskiIzvestajData) {
 
 fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
     val query = """
-        INSERT INTO lekarskitest (izjava)
+        INSERT INTO lekarskitest (pacijentId, izjava)
         VALUES (?)
     """
 
@@ -1647,7 +1647,8 @@ fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
-        statement?.setString(1, lekarskiTest.izvestaj)
+        statement?.setInt(1, lekarskiTest.pacijentId.idPacijent)
+        statement?.setString(2, lekarskiTest.izvestaj)
         statement?.executeUpdate()
 
         resultSet = statement?.generatedKeys
@@ -1685,6 +1686,37 @@ fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
         resultSet = statement?.generatedKeys
         if (resultSet?.next() == true) {
             lokacijeIstrage.idLokacijeIstrage = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+fun insertIzjavaZaPacijentaData(izjavaZaPacijenta: IzjavaZaPacijentaData, pacijentData: PacijentData, osobaData: OsobaData) {
+    val query = """
+        INSERT INTO izjavaZaPacijenta (izjava, pacijentId, osobaId)
+        VALUES (?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, izjavaZaPacijenta.izjava)
+        statement?.setInt(2, pacijentData.idPacijent)
+        statement?.setInt(3, osobaData.idOsoba)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            izjavaZaPacijenta.idIzjavaZaPacijenta = resultSet.getInt(1)
         }
     } catch (e: SQLException) {
         e.printStackTrace()

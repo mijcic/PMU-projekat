@@ -8,7 +8,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
@@ -47,9 +46,9 @@ data class TablesMysteriousSymptoms(
     */
     val pacijentR: PacijentR,
     val medicinskiIzvestajR: MedicinskiIzvestajR,
-    //val lekarskiTestR: LekarskiTestR,
-    val lokacijeIstrageR: List<LokacijeIstrageR>
-    //val izjavaZaPacijentaR: IzjavaZaPacijentaR
+    val lekarskiTestR: LekarskiTestR,
+    val lokacijeIstrageR: List<LokacijeIstrageR>,
+    val izjavaZaPacijentaR: List<IzjavaZaPacijentaR>
 )
 
 @Serializable
@@ -60,11 +59,13 @@ data class PacijentR (var idPacijent: Int, val simptomi: String, val statusPacij
 data class MedicinskiIzvestajR (var idMedicinskiIzvestaj: Int, val rezime: String, val CTnalaz: String, val MRInalaz: String, val krvnaSlika: String, val toksikoloskeAnalize: String, val zakljucak: String, var pacijentId: Int)
 
 @Serializable
-data class LekarskiTestR (var idLekarskiTest: Int, val izvestaj: String)
+data class LekarskiTestR (var idLekarskiTest: Int, var pacijentId: PacijentR, val izvestaj: String)
 
 @Serializable
 data class LokacijeIstrageR (var idLokacijeIstrage: Int, val mesto: String, val naziv: String, val opis: String)
 
+@Serializable
+open class IzjavaZaPacijentaR (var idIzjavaZaPacijenta: Int, var izjava: String = "", var pacijentId: PacijentR, var osobaId: OsobaR)
 
 @Serializable
 data class GeminiResponse2MysteriousSymptoms(
@@ -91,9 +92,10 @@ data class GeminiResponse2MysteriousSymptoms(
     */
     val pacijentR: PacijentR,
     val medicinskiIzvestajR: MedicinskiIzvestajR,
-    //val lekarskiTestR: LekarskiTestR,
-    val lokacijeIstrageR: List<LokacijeIstrageR>
+    val lekarskiTestR: LekarskiTestR,
+    val lokacijeIstrageR: List<LokacijeIstrageR>,
     //val izjavaZaPacijentaR: IzjavaZaPacijentaR
+    val izjavaZaPacijentaR: List<IzjavaZaPacijentaR>
 )
 
 
@@ -121,16 +123,15 @@ data class GeminiResponseRetrofitMysteriousSymptoms(
 
     var pacijentRetrofit: PacijentData?,
     var medicinskiIzvestajRetrofit: MedicinskiIzvestajData?,
-    val lekarskiTestRetrofit: LekarskiTestData?,
-    var lokacijeIstrageRetrofit: List<LokacijeIstrageData>?
-    //val izjavaZaPacijentaR: IzjavaZaPacijentaData
+    var lekarskiTestRetrofit: LekarskiTestData?,
+    var lokacijeIstrageRetrofit: List<LokacijeIstrageData>?,
+    var izjavaZaPacijentaRetrofit: List<IzjavaZaPacijentaData>?
 )
 
 
 fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl:ZlocinData): PacijentData? {
     val pacijent = geminiResponse2.pacijentR
 
-    println("OVDE  "+pacijent.toString())
     val datumString = geminiResponse2.pacijentR.datumPrijave
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val datum = datumString?.let { LocalDate.parse(it, formatter) }
@@ -222,6 +223,42 @@ fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSym
     geminiResponseRetrofit.medicinskiIzvestajRetrofit=medIzv
 }
 
+fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData, osobeList: MutableList<OsobaData>) {
+    val izjave = geminiResponse2.izjavaZaPacijentaR
+    val izjaveZaPacijenta = mutableListOf<IzjavaZaPacijentaData>()
+
+    for(i in izjave) {
+        val osoba = osobeList.find { it.idOsoba == i.osobaId.idOsoba }
+
+        if (osoba != null) {
+            val izjava = IzjavaZaPacijentaData(
+                idIzjavaZaPacijenta = i.idIzjavaZaPacijenta,
+                izjava = i.izjava,
+                pacijentId = pacijent,
+                osobaId = osoba
+            )
+
+            insertIzjavaZaPacijentaData(izjava, pacijent, osoba)
+            izjaveZaPacijenta.add(izjava)
+        }
+    }
+    geminiResponseRetrofit.izjavaZaPacijentaRetrofit = izjaveZaPacijenta
+}
+
+fun insertGeminiLekarskiTest(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData) {
+    val test = geminiResponse2.lekarskiTestR
+
+    val lekarskiTest = LekarskiTestData(
+        idLekarskiTest = test.idLekarskiTest,
+        pacijentId = pacijent,
+        izvestaj = test.izvestaj
+    )
+
+    insertLekarskiTestData(lekarskiTest)
+
+    geminiResponseRetrofit.lekarskiTestRetrofit = lekarskiTest
+}
+
 fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms) {
     val lokacijeIstrage = geminiResponse2.lokacijeIstrageR
     var lokacijeLista= mutableListOf<LokacijeIstrageData>()
@@ -264,7 +301,6 @@ suspend fun queryGeminiMysteriousSymptoms(prompt: String,tables:String): Any {
 
 
             //to insert data into mysql database
-            println(geminiResponse)
             val geminiResponseRetrofit = getDataGeminiResponseMysteriousSymptoms(geminiResponse)
 
             val t3 = System.currentTimeMillis()
@@ -322,7 +358,8 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
         pacijentRetrofit = null,
         medicinskiIzvestajRetrofit = null,
         lekarskiTestRetrofit = null,
-        lokacijeIstrageRetrofit = null
+        lokacijeIstrageRetrofit = null,
+        izjavaZaPacijentaRetrofit = null
     )
 
     if (geminiResponse2 != null) {
@@ -354,6 +391,8 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
 
                 insertGeminiLokacijeIstrage(geminiResponse2,geminiResponseRetrofit)
 
+                // insertGeminiIzjavaZaPacijenta(geminiResponse2, geminiResponseRetrofit, pacijent: PacijentData, osobeList: MutableList<OsobaData>)
+                // insertGeminiLekarskiTest(geminiResponse2, geminiResponseRetrofit, pacijent: PacijentData)
             }
         }
     }

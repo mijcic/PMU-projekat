@@ -486,6 +486,7 @@ open class MedicinskiIzvestajData (
 @Serializable
 open class LekarskiTestData (
     var idLekarskiTest: Int,
+    var pacijentId: PacijentData,
     var izvestaj: String,
 )
 
@@ -497,10 +498,10 @@ open class LokacijeIstrageData (
     var opis: String,
 )
 
-/*
-Table IzjavaZaPacijenta {
-    idIzjavaZaPacijenta integer [primary key]
-    izjava varchar
-            pacijentId integer [ref: >  Pacijent.idPacijent]
-    osobaId integer [ref: > Osoba.idOsoba]
-}*/
+@Serializable
+open class IzjavaZaPacijentaData (
+    var idIzjavaZaPacijenta: Int,
+    var izjava: String = "",
+    var pacijentId: PacijentData,
+    var osobaId: OsobaData
+)

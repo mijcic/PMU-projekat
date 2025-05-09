@@ -605,9 +605,10 @@ DROP TABLE IF EXISTS `LekarskiTest`;
 -- Tabela za LekarskiTest
 CREATE TABLE LekarskiTest (
     idLekarskiTest INT AUTO_INCREMENT PRIMARY KEY,
-    izjava varchar(255) NOT NULL
+    pacijentId INT NOT NULL,
+    izjava varchar(255) NOT NULL,
+    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent)
 );
-
 
 DROP TABLE IF EXISTS `LokacijeIstrage`;
 -- Tabela za LokacijeIstrage
