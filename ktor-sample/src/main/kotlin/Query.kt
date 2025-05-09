@@ -1561,6 +1561,9 @@ fun insertForenzickiDokazZadatakData(forenzickiDokazZadatakData: ForenzickiDokaz
 //mysterious symptoms
 
 fun insertPacijentData(pacijent: PacijentData) {
+    if (pacijent.statusPacijenta!="ziva" || pacijent.statusPacijenta!="mrtva"){
+        pacijent.statusPacijenta="ziva"
+    }
     val query = """
         INSERT INTO pacijent (simptomi, statusPacijenta, datumPrijave, prijavio, zlocinId)
         VALUES (?, ?, ?, ?, ?)

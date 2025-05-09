@@ -569,8 +569,10 @@ CREATE TABLE Pacijent (
     datumPrijave DATETIME DEFAULT CURRENT_TIMESTAMP,
     prijavio INT NOT NULL,
     zlocinId INT NOT NULL,
+    osobaId INT NOT NULL,
     FOREIGN KEY (prijavio) REFERENCES Osoba(idOsoba),
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
 );
 
 

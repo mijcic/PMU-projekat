@@ -80,7 +80,7 @@ fun Application.configureRouting() {
         //gemini
         post("/geminiMS") {
             try {
-                val requestData = call.receive<GeminiRequest2>()
+                val requestData = call.receive<GeminiRequest2MysteriousSymptoms>()
                 val prompt = requestData.prompt
                 val tables = requestData.tables
 
@@ -225,8 +225,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        //"1234"
-        "mia123"
+        "1234"
+        //"mia123"
     )
 }
 
