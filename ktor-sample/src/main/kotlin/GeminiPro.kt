@@ -301,7 +301,7 @@ data class GeminiResponseRetrofit(
     var ispitivanjeOsumnjicenogZadaciRetrofit: List<IspitivanjeOsumnjicenogZadatakData>?,
     var ispitivanjeSvedokaZadaciRetrofit: List<IspitivanjeSvedokaZadatakData>?,
     var telefonZadaciRetrofit: List<TelefonZadatakData>?,
-    var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?
+    var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?,
 )
 
 // http klijent za komunikaciju sa gemini api-jem
