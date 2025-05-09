@@ -559,3 +559,59 @@ CREATE TABLE DokazOsumnjicen (
     FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
 );
 
+
+DROP TABLE IF EXISTS `Pacijent`;
+-- Tabela za Pacijent
+CREATE TABLE Pacijent (
+    idPacijent INT AUTO_INCREMENT PRIMARY KEY,
+    simptomi varchar(255) NOT NULL,
+    statusPacijenta ENUM('ziva', 'mrtva') NOT NULL,
+    datumPrijave DATETIME DEFAULT CURRENT_TIMESTAMP,
+    prijavio INT NOT NULL,
+    zlocinId INT NOT NULL,
+    FOREIGN KEY (prijavio) REFERENCES Osoba(idOsoba),
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+);
+
+
+DROP TABLE IF EXISTS `MedicinskiIzvestaj`;
+-- Tabela za MedicinskiIzvestaj
+CREATE TABLE MedicinskiIzvestaj (
+    idMedicinskiIzvestaj INT AUTO_INCREMENT PRIMARY KEY,
+    rezime varchar(255) NOT NULL,
+    CTnalaz varchar(255) NOT NULL,
+    MRInalaz varchar(255) NOT NULL,
+    krvnaSlika varchar(255) NOT NULL,
+    toksikoloskeAnalize varchar(255) NOT NULL,
+    zakljucak varchar(255) NOT NULL,
+    pacijentId INT NOT NULL,
+    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent)
+);
+
+DROP TABLE IF EXISTS `IzjavaZaPacijenta`;
+-- Tabela za IzjavaZaPacijenta
+CREATE TABLE IzjavaZaPacijenta (
+    idIzjavaZaPacijenta INT AUTO_INCREMENT PRIMARY KEY,
+    izjava varchar(255) NOT NULL,
+    pacijentId INT NOT NULL,
+    osobaId INT NOT NULL,
+    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent),
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
+);
+
+DROP TABLE IF EXISTS `LekarskiTest`;
+-- Tabela za LekarskiTest
+CREATE TABLE LekarskiTest (
+    idLekarskiTest INT AUTO_INCREMENT PRIMARY KEY,
+    izjava varchar(255) NOT NULL
+);
+
+
+DROP TABLE IF EXISTS `LokacijeIstrage`;
+-- Tabela za LokacijeIstrage
+CREATE TABLE LokacijeIstrage (
+    idLokacijeIstrage INT AUTO_INCREMENT PRIMARY KEY,
+    mesto varchar(100) NOT NULL,
+    naziv varchar(100) NOT NULL,
+    opis varchar(100) NOT NULL
+);

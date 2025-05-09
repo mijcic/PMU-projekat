@@ -1555,3 +1555,137 @@ fun insertForenzickiDokazZadatakData(forenzickiDokazZadatakData: ForenzickiDokaz
 //        closeResources(conn, statement, null)
 //    }
 //}
+
+
+
+//mysterious symptoms
+
+fun insertPacijentData(pacijent: PacijentData) {
+    val query = """
+        INSERT INTO pacijent (simptomi, statusPacijenta, datumPrijave, prijavio, zlocinId)
+        VALUES (?, ?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, pacijent.simptomi)
+        statement?.setString(2, pacijent.statusPacijenta)
+        statement?.setTimestamp(3, java.sql.Timestamp(pacijent.datumPrijave))
+        statement?.setInt(4, pacijent.prijavio.idOsoba)
+        statement?.setInt(5, pacijent.zlocinId.idZlocin)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            pacijent.idPacijent = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+
+fun insertMedicinskiIzvestajData(medicinskiIzvestaj: MedicinskiIzvestajData) {
+    val query = """
+        INSERT INTO medicinskiizvestaj (rezime, CTnalaz, MRInalaz, krvnaSlika, toksikoloskeAnalize, zakljucak,pacijentId )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, medicinskiIzvestaj.rezime)
+        statement?.setString(2, medicinskiIzvestaj.CTnalaz)
+        statement?.setString(3, medicinskiIzvestaj.MRInalaz)
+        statement?.setString(4, medicinskiIzvestaj.krvnaSlika)
+        statement?.setString(5, medicinskiIzvestaj.toksikoloskeAnalize)
+        statement?.setString(6, medicinskiIzvestaj.zakljucak)
+        statement?.setInt(7, medicinskiIzvestaj.pacijentId.idPacijent)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            medicinskiIzvestaj.idMedicinskiIzvestaj = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+
+fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
+    val query = """
+        INSERT INTO lekarskitest (izjava)
+        VALUES (?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, lekarskiTest.izvestaj)
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            lekarskiTest.idLekarskiTest = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}
+
+
+fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
+    val query = """
+        INSERT INTO lokacijeistrage (mesto, naziv, opis)
+        VALUES (?, ?, ?)
+    """
+
+    var conn: Connection? = null
+    var statement: PreparedStatement? = null
+    var resultSet: ResultSet? = null
+
+    try {
+        conn = getDatabaseConnection()
+        statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+        statement?.setString(1, lokacijeIstrage.mesto)
+        statement?.setString(2, lokacijeIstrage.naziv)
+        statement?.setString(3, lokacijeIstrage.opis)
+
+        statement?.executeUpdate()
+
+        resultSet = statement?.generatedKeys
+        if (resultSet?.next() == true) {
+            lokacijeIstrage.idLokacijeIstrage = resultSet.getInt(1)
+        }
+    } catch (e: SQLException) {
+        e.printStackTrace()
+    } finally {
+        closeResources(conn, statement, null)
+    }
+}

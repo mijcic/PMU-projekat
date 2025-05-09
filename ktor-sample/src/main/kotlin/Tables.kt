@@ -458,3 +458,49 @@ open class DokazOsumnjicenData (
     var dokazId: DokazData,
     var osumnjicenId: OsumnjicenData
 )
+
+@Serializable
+open class PacijentData (
+    var idPacijent: Int,
+    var simptomi: String,
+    var statusPacijenta: String, //ziva,mrtva
+    var datumPrijave: Long,
+    var prijavio: OsobaData,
+    var zlocinId: ZlocinData,
+    var osobaId: OsobaData
+)
+
+
+@Serializable
+open class MedicinskiIzvestajData (
+    var idMedicinskiIzvestaj: Int,
+    var rezime: String,
+    var CTnalaz: String,
+    var MRInalaz: String,
+    var krvnaSlika: String,
+    var toksikoloskeAnalize: String,
+    var zakljucak: String,
+    var pacijentId: PacijentData
+)
+
+@Serializable
+open class LekarskiTestData (
+    var idLekarskiTest: Int,
+    var izvestaj: String,
+)
+
+@Serializable
+open class LokacijeIstrageData (
+    var idLokacijeIstrage: Int,
+    var mesto: String,
+    var naziv: String,
+    var opis: String,
+)
+
+/*
+Table IzjavaZaPacijenta {
+    idIzjavaZaPacijenta integer [primary key]
+    izjava varchar
+            pacijentId integer [ref: >  Pacijent.idPacijent]
+    osobaId integer [ref: > Osoba.idOsoba]
+}*/

@@ -75,6 +75,40 @@ fun Application.configureRouting() {
             }
         }
 
+        //gemini mysterious symptoms
+
+        //gemini
+        post("/geminiMS") {
+            try {
+                val requestData = call.receive<GeminiRequest2>()
+                val prompt = requestData.prompt
+                val tables = requestData.tables
+
+                if (prompt.isBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'prompt' is required and cannot be empty."))
+                    return@post
+                }
+                if (tables == null) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'tables' is required and cannot be empty."))
+                    return@post
+                }
+
+                val geminiResponseText = queryGeminiMysteriousSymptoms(prompt, tables.toString())
+                println(geminiResponseText)
+
+                //call.respond(mapOf("response" to geminiResponseText))
+                call.respond(geminiResponseText as Any)
+
+            } catch (e: ContentTransformationException) {
+                call.respond(HttpStatusCode.BadRequest,
+                    mapOf("error" to "Invalid request format. A JSON object with the keys 'prompt' and 'tables' is expected."))
+            } catch (e: Exception) {
+                println("Unexpected error at the /gemini endpoint: ${e.message}")
+                e.printStackTrace()
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "An internal server error occurred."))
+            }
+        }
+
         // get request
         get("/") {
             call.respondText("Hello World!")
