@@ -22,6 +22,7 @@ protoliteWellKnownTypes = "18.0.0"
 material = "1.12.0"
 composeTesting = "1.0.0-alpha03"
 animationAndroid = "1.7.2"
+foundationLayoutAndroid = "1.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,7 @@ protolite-well-known-types = { group = "com.google.firebase", name = "protolite-
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-compose-testing = { group = "androidx.xr.compose", name = "compose-testing", version.ref = "composeTesting" }
 androidx-animation-android = { group = "androidx.compose.animation", name = "animation-android", version.ref = "animationAndroid" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -170,7 +170,8 @@ fun PacijentScreen(navController: NavController, data: UiStateMysteriousSymptoms
                 PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(destinationMedicalReportPage.route) })
                 PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",
                     { navController.navigate(destinationMedicalStatementPage.route) })
-                PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(destinationMedicalReportPage.route) })
+                PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",
+                    { navController.navigate(destinationLekarskiTestPage.route) })
             }
         }
     }

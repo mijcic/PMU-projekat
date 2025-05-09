@@ -150,6 +150,10 @@ object destinationMedicalStatementPage : NavigationDestinations {
     override val route = "destinationMedicalStatementPage"
 }
 
+object destinationLekarskiTestPage : NavigationDestinations {
+    override val route = "destinationLekarskiTestPage"
+}
+
 val navigationDestinations = listOf(destinationMainScreen1, destinationMainScreen2,
     destinationCardsPage,destinationMissionPage, destinationSettingsPage,
     destinationScorePage, destinationLoginPage, destinationSignUpPage, destinationPhonePage,
@@ -157,7 +161,7 @@ val navigationDestinations = listOf(destinationMainScreen1, destinationMainScree
     destinationOneNotePage, destinationCallsPage, destinationPhonebookPage, destinationOneContactPage,
     destinationKeypadPage, destinationMessagesPage, destinationChatPage, destinationGalleryPage,
     destinationOnePhotoPage, destinationPhoneSettingsPage,destinationInvestigationPage,destinationMedicalReportPage,
-    destinationPatientPage,destinationMedicalStatementPage)
+    destinationPatientPage,destinationMedicalStatementPage, destinationLekarskiTestPage)
 
 val phoneBarDestinations = listOf(
     destinationCallsPage,
