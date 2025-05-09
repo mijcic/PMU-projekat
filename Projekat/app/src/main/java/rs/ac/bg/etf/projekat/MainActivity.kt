@@ -297,5 +297,8 @@ fun NavigationGraph(navController: NavHostController) {
         composable("destinationMedicalStatementPage"){
             MedicalStatementPage(navController,realmViewModel)
         }
+        composable("destinationLekarskiTestPage"){
+            LekarskiTestPage()
+        }
     }
 }

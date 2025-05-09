@@ -26,6 +26,7 @@ import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
+import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
 import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.MotivR
@@ -995,6 +996,30 @@ class RealmViewModel @Inject constructor(
         return izjavaZ
     }
 
+    suspend fun insertLekarskiTest(idLekarskiTestL: Int, pacijentIdL: PacijentR, izvestajL: String): LekarskiTestR? {
+        var lekarskiTest: LekarskiTestR? = null
+        realm.write {
+            val existingPacijent = query<PacijentR>("idPacijent == $0", pacijentIdL.idPacijent).find().firstOrNull()
+                ?:  pacijentIdL?.let {
+                    copyToRealm(it)
+                }
+
+            lekarskiTest = query<LekarskiTestR>(
+                "idLekarskiTest ==$0 AND pacijentId == $1 AND izvestaj == $2",
+                idLekarskiTestL,
+                existingPacijent,
+                izvestajL
+            ).find().firstOrNull()
+                ?: LekarskiTestR().apply {
+                    idLekarskiTest = idLekarskiTestL
+                    pacijentId = existingPacijent
+                    izvestaj = izvestajL
+                }
+            copyToRealm(lekarskiTest!!)
+        }
+        return lekarskiTest
+    }
+
     suspend fun getTitleDatePlaceDescFromCrime() {
         var title: String? = ""
         var date: RealmInstant? = null
@@ -1424,6 +1449,28 @@ class RealmViewModel @Inject constructor(
         val statusDescription = if (suspect?.status == 0) "Oslobodjen"
                                 else "Osumnjicen"
         return listOf<String>(motiveDescription, alibiDescription, statusDescription)
+    }
+
+    data class LekarskiTestRezultat (
+        var ime: String,
+        var datum: RealmInstant?,
+        var pol: String,
+        var izvestaj: String
+    )
+
+    suspend fun getLastLekarskiTest(): LekarskiTestRezultat? {
+        val lastId = realm.query<LekarskiTestR>().max("idLekarskiTest", Int::class).find() ?: return null
+        val test = realm.query<LekarskiTestR>("idLekarskiTest == $0", lastId).first().find() ?: return null
+
+        val pacijent = test.pacijentId
+        val osoba = pacijent?.osobaId
+
+        return LekarskiTestRezultat(
+            ime = osoba?.ime ?: "Nepoznato",
+            datum = osoba?.datum,
+            pol = osoba?.pol ?: "Nepoznat",
+            izvestaj = test.izvestaj
+        )
     }
 
     fun insertDataForMurder()  {
@@ -2042,8 +2089,17 @@ class RealmViewModel @Inject constructor(
                 )
             }
 
-            _uiStateMysteriousSymptoms.value = UiStateMysteriousSymptoms(zlocin,tipZlocina,pacijent,osoba, osobaKojaJeNaslaPacijenta,izjava)
+            if (pacijent != null) insertLekarskiTest(idLekarskiTestL = 1, pacijentIdL = pacijent, izvestajL =
+            "Hematološki nalazi:\n" +
+                    "- Hemoglobin: 146 g/L (135 – 180) – Normalna oksigenacija\n" +
+                    "- Eritrociti: 4.7 x10¹²/L (4.3 – 5.9) – Normalna\n" +
+                    "- Leukociti: 8.5 x10⁹/L (4.0 – 10.0) – Bez leukocitoze\n" +
+                    "- Trombociti: 220 x10⁹/L (150 – 400) – Normalna hemostaza\n" +
+                    "- Hematokrit: 0.43 (0.40 – 0.50) – Normalan\n" +
+                    "- Sedimentacija (SE): 9 mm/h (0 – 15) – Nema zapaljenskog odgovora\n"
+            )
 
+            _uiStateMysteriousSymptoms.value = UiStateMysteriousSymptoms(zlocin,tipZlocina,pacijent,osoba, osobaKojaJeNaslaPacijenta,izjava)
         }
     }
 }
