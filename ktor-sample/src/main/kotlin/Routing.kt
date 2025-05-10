@@ -147,7 +147,7 @@ fun Application.configureRouting() {
                 insertZlocinData(zlocin.zlocin)
                 //insertZrtva(zlocin.zrtva,zlocin.zlocin)
                 //insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
-                insertTelefonData(zlocin.telefon, zlocin.zrtva)
+                //insertTelefonData(zlocin.telefon, zlocin.zrtva)
 
                 for (i in zlocin.motivi.indices) {
                     val motiv = zlocin.motivi[i]
@@ -166,7 +166,7 @@ fun Application.configureRouting() {
                     insertAlibiData(alibi,zlocin.zlocin,zlocin.osumnjicen,zlocin.svedok)
                 }
                 for(forenzickiDokaz in zlocin.forenzickiDokazi){
-                    insertForenzickiDokaz(forenzickiDokaz, zlocin.zrtva)
+                   // insertForenzickiDokaz(forenzickiDokaz, zlocin.zrtva)
                 }
                 for (misijaPoruka in zlocin.misijaPoruka){
                     insertMisijaPorukaData(misijaPoruka, zlocin.zlocin)

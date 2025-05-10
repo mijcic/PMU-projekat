@@ -83,5 +83,8 @@ dependencies {
     //implementation(libs.io.realm.gradle.plugin)
     implementation(kotlin("reflect"))
 
+
     implementation("androidx.compose.material:material:1.5.4")
+
+    implementation("org.osmdroid:osmdroid-android:6.1.11")
 }

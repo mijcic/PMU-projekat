@@ -467,7 +467,7 @@ open class PacijentData (
     var datumPrijave: Long,
     var prijavio: OsobaData,
     var zlocinId: ZlocinData,
-    var osobaId: OsobaData
+    var zrtvaId: ZrtvaData
 )
 
 
@@ -496,6 +496,7 @@ open class LokacijeIstrageData (
     var mesto: String,
     var naziv: String,
     var opis: String,
+    var zlocinId: Int
 )
 
 @Serializable

@@ -230,9 +230,9 @@ fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData){
 
         statement?.setString(1, dokaz.tipDokaza)
         statement?.setString(2, dokaz.opis)
-        statement?.setInt(3, dokaz.status)  // status osumnjičenog
-        statement?.setInt(4, zlocin.idZlocin)  // tip osumnjičenog (pojedinac, organizacija itd.)
-        statement?.setInt(5, zrtva.idZrtva)  // motiv osumnjičenog (ID motiva)
+        statement?.setInt(3, dokaz.status)
+        statement?.setInt(4, zlocin.idZlocin)
+        statement?.setInt(5, zrtva.idZrtva)
 
         statement?.executeUpdate()
 
@@ -388,6 +388,7 @@ fun insertForenzickiDokaz(forenzickiDokaz: ForenzickiDokazData, zrtva: ZrtvaData
         statement?.setString(2, forenzickiDokaz.opis)
         statement?.setInt(3,  forenzickiDokaz.statusS)
         statement?.setInt(4,  zrtva.idZrtva)
+
         statement?.setString(5, forenzickiDokaz.veza)
 
         statement?.executeUpdate()
@@ -419,6 +420,7 @@ fun insertTelefonData(telefon: TelefonData, zrtva: ZrtvaData){
         statement?.setString(1, telefon.model)
         statement?.setString(2, telefon.os)
         statement?.setInt(3,  zrtva.idZrtva)
+
         statement?.setString(4,  telefon.sifra)
         statement?.setString(5, telefon.informacije)
 
@@ -1565,8 +1567,8 @@ fun insertPacijentData(pacijent: PacijentData) {
         pacijent.statusPacijenta="ziva"
     }
     val query = """
-        INSERT INTO pacijent (simptomi, statusPacijenta, datumPrijave, prijavio, zlocinId)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO pacijent (simptomi, statusPacijenta, datumPrijave, prijavio, zlocinId,zrtvaId)
+        VALUES (?, ?, ?, ?, ?,?)
     """
 
     var conn: Connection? = null
@@ -1582,6 +1584,7 @@ fun insertPacijentData(pacijent: PacijentData) {
         statement?.setTimestamp(3, java.sql.Timestamp(pacijent.datumPrijave))
         statement?.setInt(4, pacijent.prijavio.idOsoba)
         statement?.setInt(5, pacijent.zlocinId.idZlocin)
+        statement?.setInt(6, pacijent.zrtvaId.idZrtva)
 
         statement?.executeUpdate()
 
@@ -1635,8 +1638,8 @@ fun insertMedicinskiIzvestajData(medicinskiIzvestaj: MedicinskiIzvestajData) {
 
 fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
     val query = """
-        INSERT INTO lekarskitest (pacijentId, izjava)
-        VALUES (?)
+        INSERT INTO lekarskitest (pacijentId,izjava)
+        VALUES (?,?)
     """
 
     var conn: Connection? = null
@@ -1665,8 +1668,8 @@ fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
 
 fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
     val query = """
-        INSERT INTO lokacijeistrage (mesto, naziv, opis)
-        VALUES (?, ?, ?)
+        INSERT INTO lokacijeistrage (mesto, naziv, opis, zlocinId)
+        VALUES (?, ?, ?, ?)
     """
 
     var conn: Connection? = null
@@ -1680,6 +1683,7 @@ fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
         statement?.setString(1, lokacijeIstrage.mesto)
         statement?.setString(2, lokacijeIstrage.naziv)
         statement?.setString(3, lokacijeIstrage.opis)
+        statement?.setInt(4, lokacijeIstrage.zlocinId)
 
         statement?.executeUpdate()
 

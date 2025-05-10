@@ -17,6 +17,49 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+interface GeminiResponseCommon2{
+    val dokazR: List<DokazR>
+    val dokazZadatakR:List<DokazZadatakR>
+    val osobaR:  List<OsobaR>
+    val forenzickiDokazR: List<ForenzickiDokazR>
+    val forenzickiDokazZadatakR: List<ForenzickiDokazZadatakR>
+    val telefonR: List<TelefonR>
+    val telefonZadatakR: List<TelefonZadatakR>
+    val aplikacijaKtor: List<AplikacijaKtor>
+
+    val oneContactR: List<OneContactR>
+    val beleskaR: List<BeleskaR>
+    val whatsAppKontaktR: List<WhatsAppKontaktR>
+    val whatsAppPorukaR: List<WhatsAppPorukaR>
+    val oneCallR: List<OneCallR>
+    val galleryR: List<GalleryR>
+    val obicnaPorukaR: List<ObicnaPorukaR>
+    val pitanjeR: List<PitanjeR>
+    val odgovorR: List<OdgovorR>
+    val zadatakR: List<ZadatakR>
+}
+interface GeminiResponseRetrofitCommon{
+    var osobeRetrofit: List<OsobaData>?
+    var dokaziRetrofit:List<DokazData>?
+    var forenzickiDokazRetrofit: List<ForenzickiDokazData>?
+    var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?
+    var telefoniRetrofit: List<TelefonData>?
+    var telefonZadaciRetrofit: List<TelefonZadatakData>?
+    var aplikacijeRetrofit: List<AplikacijaData>?
+
+    var oneContactRetrofit: List<OneContactData>?
+    var beleskeRetrofit: List<BeleskaData>?
+    var whatsappKontaktRetrofit: List<WhatsAppKontaktData>?
+    var whatsappPorukaRetrofit: List<WhatsAppPorukaData>?
+    var oneCallRetrofit: List<OneCallData>?
+    var galleryRetrofit: List<GalleryData>?
+    var obicnePorukeRetrofit: List<ObicnaPorukaData>?
+    var pitanjaRetrofit: List<PitanjeData>?
+    var odgovoriRetrofit: List<OdgovorData>?
+    var zadaciRetrofit: List<ZadatakData>?
+    var dokaziZadaciRetrofit: List<DokazZadatakData>?
+}
+
 @Serializable
 data class GeminiRequest2(
     val prompt: String,
@@ -226,15 +269,15 @@ data class Candidate(
 @Serializable
 data class GeminiResponse2(
     val zlocinR: ZlocinR,
-    val osobaR:  List<OsobaR>,
+    override val osobaR:  List<OsobaR>,
     //val motivR: List<MotivR>,
     val osumnjicenR:  List<OsumnjicenR>,
-    val dokazR:  List<DokazR>,
+    override val dokazR:  List<DokazR>,
     val svedokR:  List<SvedokR>,
     val zrtvaR:  ZrtvaR,
     val obdukcijaR: ObdukcijaR,
-    val forenzickiDokazR: List<ForenzickiDokazR>,
-    val telefonR: List<TelefonR>,
+    override val forenzickiDokazR: List<ForenzickiDokazR>,
+    override val telefonR: List<TelefonR>,
     //val dokazOsumnjicenR: List<DokazOsumnjicenR>,
     //val zadatakR: ZadatakR,
     //val alibiR: List<AlibiR>,
@@ -242,67 +285,67 @@ data class GeminiResponse2(
     val porukeKtor: List<PorukeKtor>,
     val poziviKtor: List<PoziviKtor>,
     val galerijaKtor: List<GalerijaKtor>,
-    val aplikacijaKtor: List<AplikacijaKtor>,
+    override val aplikacijaKtor: List<AplikacijaKtor>,
     val tragKtor: List<TragKtor>,
     val dokazOsumnjicenKtor: List<DokazOsumnjicenKtor>,
-    val oneContactR: List<OneContactR>,
-    val beleskaR: List<BeleskaR>,
-    val whatsAppKontaktR: List<WhatsAppKontaktR>,
-    val whatsAppPorukaR: List<WhatsAppPorukaR>,
-    val oneCallR: List<OneCallR>,
-    val galleryR: List<GalleryR>,
-    val obicnaPorukaR: List<ObicnaPorukaR>,
+    override val oneContactR: List<OneContactR>,
+    override val beleskaR: List<BeleskaR>,
+    override val whatsAppKontaktR: List<WhatsAppKontaktR>,
+    override val whatsAppPorukaR: List<WhatsAppPorukaR>,
+    override val oneCallR: List<OneCallR>,
+    override val galleryR: List<GalleryR>,
+    override val obicnaPorukaR: List<ObicnaPorukaR>,
     val odnosOsumnjicenZrtvaR: List<OdnosOsumnjicenZrtvaR>,
     val prijavljeniKorisnikR: List<PrijavljeniKorisnikR>,
-    val pitanjeR: List<PitanjeR>,
-    val odgovorR: List<OdgovorR>,
+    override val pitanjeR: List<PitanjeR>,
+    override val odgovorR: List<OdgovorR>,
     val pitanjeIspitivanjeOsumnjicenogR: List<PitanjeIspitivanjeOsumnjicenogR>,
     val pitanjeIspitivanjeSvedokaR: List<PitanjeIspitivanjeSvedokaR>,
-    val zadatakR: List<ZadatakR>,
-    val dokazZadatakR: List<DokazZadatakR>,
+    override val zadatakR: List<ZadatakR>,
+    override val dokazZadatakR: List<DokazZadatakR>,
     val ispitivanjeOsumnjicenogZadatakR: List<IspitivanjeOsumnjicenogZadatakR>,
     val ispitivanjeSvedokaZadatakR: List<IspitivanjeSvedokaZadatakR>,
-    val telefonZadatakR: List<TelefonZadatakR>,
-    val forenzickiDokazZadatakR: List<ForenzickiDokazZadatakR>,
-)
+    override val telefonZadatakR: List<TelefonZadatakR>,
+    override val forenzickiDokazZadatakR: List<ForenzickiDokazZadatakR>,
+) : GeminiResponseCommon2
 
 @Serializable
 data class GeminiResponseRetrofit(
     var zlocinRetrofit: ZlocinData?,
     var zrtvaRetrofit: ZrtvaData?,
     var osumnjiceniRetrofit: List<OsumnjicenData>?,
-    var dokaziRetrofit: List<DokazData>?,
-    var telefoniRetrofit: List<TelefonData>?,
-    var forenzickiDokazRetrofit: List<ForenzickiDokazData>?,
+    override var dokaziRetrofit: List<DokazData>?,
+    override var telefoniRetrofit: List<TelefonData>?,
+    override var forenzickiDokazRetrofit: List<ForenzickiDokazData>?,
     var obdukcijaRetrofit: ObdukcijaData?,
     var svedociRetrofit: List<SvedokData>?,
-    var oneContactRetrofit: List<OneContactData>?,
+    override var oneContactRetrofit: List<OneContactData>?,
     var kontaktiRetrofit: List<KontaktData>?,
     var porukeRetrofit: List<PorukeData>?,
     var poziviRetrofit: List<PoziviData>?,
     var galerijaRetrofit: List<GalerijaData>?,
-    var aplikacijeRetrofit: List<AplikacijaData>?,
+    override var aplikacijeRetrofit: List<AplikacijaData>?,
     var tragoviRetrofit: List<TragData>?,
     var dokaziOsumnjiceniRetrofit: List<DokazOsumnjicenData>?,
-    var beleskeRetrofit: List<BeleskaData>?,
-    var whatsappKontaktRetrofit: List<WhatsAppKontaktData>?,
-    var whatsappPorukaRetrofit: List<WhatsAppPorukaData>?,
-    var oneCallRetrofit: List<OneCallData>?,
-    var galleryRetrofit: List<GalleryData>?,
-    var obicnePorukeRetrofit: List<ObicnaPorukaData>?,
+    override var beleskeRetrofit: List<BeleskaData>?,
+    override var whatsappKontaktRetrofit: List<WhatsAppKontaktData>?,
+    override var whatsappPorukaRetrofit: List<WhatsAppPorukaData>?,
+    override var oneCallRetrofit: List<OneCallData>?,
+    override var galleryRetrofit: List<GalleryData>?,
+    override var obicnePorukeRetrofit: List<ObicnaPorukaData>?,
     var odnosiOsumnjiceniZrtvaRetrofit: List<OdnosOsumnjicenZrtvaData>?,
-    var pitanjaRetrofit: List<PitanjeData>?,
-    var odgovoriRetrofit: List<OdgovorData>?,
+    override var pitanjaRetrofit: List<PitanjeData>?,
+    override var odgovoriRetrofit: List<OdgovorData>?,
     var pitanjeIspitivanjeOsumnjicenogRetrofit: List<PitanjeIspitivanjeOsumnjicenogData>?,
     var pitanjeIspitivanjeSvedokaRetrofit: List<PitanjeIspitivanjeSvedokaData>?,
-    var osobeRetrofit: List<OsobaData>?,
-    var zadaciRetrofit: List<ZadatakData>?,
-    var dokaziZadaciRetrofit: List<DokazZadatakData>?,
+    override var osobeRetrofit: List<OsobaData>?,
+    override var zadaciRetrofit: List<ZadatakData>?,
+    override var dokaziZadaciRetrofit: List<DokazZadatakData>?,
     var ispitivanjeOsumnjicenogZadaciRetrofit: List<IspitivanjeOsumnjicenogZadatakData>?,
     var ispitivanjeSvedokaZadaciRetrofit: List<IspitivanjeSvedokaZadatakData>?,
-    var telefonZadaciRetrofit: List<TelefonZadatakData>?,
-    var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?,
-)
+    override var telefonZadaciRetrofit: List<TelefonZadatakData>?,
+    override var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?,
+):GeminiResponseRetrofitCommon
 
 // http klijent za komunikaciju sa gemini api-jem
 val geminiClient = HttpClient(CIO) {
@@ -596,33 +639,41 @@ fun insertGeminiZrtva(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: 
     return SviDokaziOdZrtve(dokaziLista, telefoniLista, forenzickiDokaziLista, zr)
 }
 
-fun insertGeminiDokaz(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,zl:ZlocinData, zrtva:ZrtvaData): MutableList<DokazData> {
+fun insertGeminiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zl:ZlocinData, zrtva:ZrtvaData): MutableList<DokazData> {
     val dokazi = geminiResponse2.dokazR
     var dokaziLista = mutableListOf<DokazData>()
 
     for(d in dokazi){
         val prev = d.idDokaz
-        val dokaz = DokazData(
-            idDokaz = d.idDokaz,
-            tipDokaza = d.tipDokaza,
-            opis = d.opis,
-            zlocinId = zl.idZlocin,
-            zrtvaId = zrtva.idZrtva,
-            status = d.status
-        )
+        var dokaz:DokazData?=null
+        if(zrtva!=null){
+             dokaz = DokazData(
+                idDokaz = d.idDokaz,
+                tipDokaza = d.tipDokaza,
+                opis = d.opis,
+                zlocinId = zl.idZlocin,
+                zrtvaId = zrtva.idZrtva,
+                status = d.status
+            )
+        }
 
-        insertDokazData(dokaz, zl, zrtva)
+
+        if (dokaz != null) {
+            insertDokazData(dokaz, zl, zrtva)
+        }
 
         val dokazZadatak = geminiResponse2.dokazZadatakR.find { it.dokazId == prev }
-        dokazZadatak?.dokazId = dokaz.idDokaz
+        if (dokaz != null) {
+            dokazZadatak?.dokazId = dokaz.idDokaz
+            dokaziLista.add(dokaz)
+        }
 
-        dokaziLista.add(dokaz)
         geminiResponseRetrofit.dokaziRetrofit=dokaziLista
     }
     return dokaziLista
 }
 
-fun insertGeminiTelefon(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zrtva:ZrtvaData): MutableList<TelefonData> {
+fun insertGeminiTelefon(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva:ZrtvaData): MutableList<TelefonData> {
     val telefoni = geminiResponse2.telefonR
     var telefoniLista = mutableListOf<TelefonData>()
 
@@ -638,6 +689,7 @@ fun insertGeminiTelefon(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
 
         insertTelefonData(tel, zrtva)
 
+
         val telefonZadatak = geminiResponse2.telefonZadatakR.find { it.telefonId == prev }
         telefonZadatak?.telefonId = tel.idTelefon
 
@@ -648,7 +700,7 @@ fun insertGeminiTelefon(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
     return telefoniLista
 }
 
-fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zrtva:ZrtvaData): MutableList<ForenzickiDokazData> {
+fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva:ZrtvaData): MutableList<ForenzickiDokazData> {
     val dokazi = geminiResponse2.forenzickiDokazR
     val dokaziLista = mutableListOf<ForenzickiDokazData>()
 
@@ -662,7 +714,10 @@ fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponse2, geminiResponse
             veza = d.veza
         )
 
-        insertForenzickiDokaz(dokaz, zrtva)
+        if (zrtva!=null){
+            insertForenzickiDokaz(dokaz, zrtva)
+        }
+
 
         val forenzickiDokazZadatak = geminiResponse2.forenzickiDokazZadatakR.find { it.forenzickiDokazId == prev }
         forenzickiDokazZadatak?.forenzickiDokazId = dokaz.idForenzickiDokaz
@@ -834,7 +889,7 @@ fun insertGeminiSvedok(geminiResponse2: GeminiResponse2,geminiResponseRetrofit: 
     return svedociLista
 }
 
-fun insertGeminiOneContact(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zl:ZlocinData): MutableList<OneContactData> {
+fun insertGeminiOneContact(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl:ZlocinData): MutableList<OneContactData> {
     val kontakti = geminiResponse2.oneContactR
     val kontaktiLista = mutableListOf<OneContactData>()
 
@@ -1000,7 +1055,7 @@ fun insertGeminiGalerija(geminiResponse2: GeminiResponse2, geminiResponseRetrofi
     geminiResponseRetrofit.galerijaRetrofit = galerijaLista
 }
 
-fun insertGeminiAplikacija(geminiResponse2: GeminiResponse2,geminiResponseRetrofit: GeminiResponseRetrofit,zrtva: ZrtvaData){
+fun insertGeminiAplikacija(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon,zrtva: ZrtvaData){
     val aplikacija =geminiResponse2.aplikacijaKtor
     val aplikacijaLista = mutableListOf<AplikacijaData>()
 
@@ -1120,7 +1175,7 @@ suspend fun queryGeminiRetrofit(prompt: String,tables:String): Any? {
     }
 }
 
-fun insertGeminiBeleska(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zl: ZlocinData, timestamp: Long) {
+fun insertGeminiBeleska(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, timestamp: Long) {
     val beleske = geminiResponse2.beleskaR
     val beleskaLista = mutableListOf<BeleskaData>()
 
@@ -1139,7 +1194,6 @@ fun insertGeminiBeleska(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
             zlocinId = b.zlocinId,
             tekst = b.tekst,
             datum = timestamp2,
-
         )
 
         insertBeleskaData(beleska, zl)
@@ -1148,7 +1202,7 @@ fun insertGeminiBeleska(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
     geminiResponseRetrofit.beleskeRetrofit = beleskaLista
 }
 
-fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,zl: ZlocinData): MutableList<WhatsAppKontaktData> {
+fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zl: ZlocinData): MutableList<WhatsAppKontaktData> {
     val whatsAppKontakti = geminiResponse2.whatsAppKontaktR
     val whatsAppLista = mutableListOf<WhatsAppKontaktData>()
 
@@ -1177,7 +1231,7 @@ fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponse2, geminiResponse
     return whatsAppLista
 }
 
-fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,kontaktiLista: MutableList<WhatsAppKontaktData>, timestamp: Long) {
+fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,kontaktiLista: MutableList<WhatsAppKontaktData>, timestamp: Long) {
     val whatsAppPoruke = geminiResponse2.whatsAppPorukaR
     val whatsAppPorukaLista = mutableListOf<WhatsAppPorukaData>()
 
@@ -1212,7 +1266,7 @@ fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponse2, geminiResponseR
     geminiResponseRetrofit.whatsappPorukaRetrofit = whatsAppPorukaLista
 }
 
-fun insertGeminiOneCall(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,kontaktiLista: MutableList<OneContactData>, timestamp: Long) {
+fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,kontaktiLista: MutableList<OneContactData>, timestamp: Long) {
     val pozivi = geminiResponse2.oneCallR
     val poziviLista = mutableListOf<OneCallData>()
 
@@ -1244,7 +1298,7 @@ fun insertGeminiOneCall(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
     geminiResponseRetrofit.oneCallRetrofit = poziviLista
 }
 
-fun insertGeminiGallery(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,zl: ZlocinData, timestamp: Long) {
+fun insertGeminiGallery(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zl: ZlocinData, timestamp: Long) {
     val galerija = geminiResponse2.galleryR
     val galleryLista = mutableListOf<GalleryData>()
 
@@ -1272,7 +1326,7 @@ fun insertGeminiGallery(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
     geminiResponseRetrofit.galleryRetrofit= galleryLista
 }
 
-fun insertGeminiObicnaPoruka(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, kontaktiLista: MutableList<OneContactData>, timestamp: Long) {
+fun insertGeminiObicnaPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<OneContactData>, timestamp: Long) {
     val obicnePoruke = geminiResponse2.obicnaPorukaR
     val obicnePorukeLista = mutableListOf<ObicnaPorukaData>()
 
@@ -1346,7 +1400,7 @@ fun insertGeminiPrijavljeniKorisnik(geminiResponse2: GeminiResponse2) {
     }
 }
 
-fun insertGeminiPitanje(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zl: ZlocinData): MutableList<PitanjeData> {
+fun insertGeminiPitanje(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData): MutableList<PitanjeData> {
     val pitanja = geminiResponse2.pitanjeR
     val pitanjeList = mutableListOf<PitanjeData>()
 
@@ -1369,7 +1423,7 @@ fun insertGeminiPitanje(geminiResponse2: GeminiResponse2, geminiResponseRetrofit
     return pitanjeList
 }
 
-fun insertGeminiOdgovor(geminiResponse2: GeminiResponse2,geminiResponseRetrofit: GeminiResponseRetrofit, pitanjeLista: MutableList<PitanjeData>) {
+fun insertGeminiOdgovor(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon, pitanjeLista: MutableList<PitanjeData>) {
     val odgovori = geminiResponse2.odgovorR
     val odgovoriLista = mutableListOf<OdgovorData>()
 
@@ -1443,7 +1497,7 @@ fun insertGeminiPitanjeIspitivanjeSvedoka(geminiResponse2: GeminiResponse2, gemi
     geminiResponseRetrofit.pitanjeIspitivanjeSvedokaRetrofit = pitanjeIspitivanjeSvedokaLista
 }
 
-fun insertGeminiOsoba(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,zlocin: ZlocinData, timestamp: Long) {
+fun insertGeminiOsoba(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zlocin: ZlocinData, timestamp: Long) {
     val osobe = geminiResponse2.osobaR
     val osobeLista = mutableListOf<OsobaData>()
 
@@ -1519,7 +1573,7 @@ fun updateGeminiZadatakList(geminiResponse2: GeminiResponse2, geminiResponseRetr
     //geminiResponseRetrofit.zadaciRetrofit =lista
 }
 
-fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponse2,geminiResponseRetrofit: GeminiResponseRetrofit, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>) {
+fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>) {
     val dokazi = geminiResponse2.dokazZadatakR
     val dokaziLista = mutableListOf<DokazZadatakData>()
 
@@ -1589,7 +1643,7 @@ fun insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2: GeminiResponse2, gemi
     geminiResponseRetrofit.ispitivanjeSvedokaZadaciRetrofit = ispitivanjeSvedokaZadatakLista
 }
 
-fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit,telefonList: MutableList<TelefonData>, zadatakList: MutableList<ZadatakData>) {
+fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,telefonList: MutableList<TelefonData>, zadatakList: MutableList<ZadatakData>) {
     val zadaci = geminiResponse2.telefonZadatakR
     val telefonZadatakLista = mutableListOf<TelefonZadatakData>()
 
@@ -1612,7 +1666,7 @@ fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponse2, geminiResponseR
     geminiResponseRetrofit.telefonZadaciRetrofit = telefonZadatakLista
 }
 
-fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, forenzickiDokazList: MutableList<ForenzickiDokazData>, zadatakList: MutableList<ZadatakData>) {
+fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, forenzickiDokazList: MutableList<ForenzickiDokazData>, zadatakList: MutableList<ZadatakData>) {
     val zadaci = geminiResponse2.forenzickiDokazZadatakR
     val forenzickiDokazZadaciLista = mutableListOf<ForenzickiDokazZadatakData>()
 
