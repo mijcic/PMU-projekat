@@ -86,5 +86,6 @@ dependencies {
 
     implementation("androidx.compose.material:material:1.5.4")
 
+    //za mapu
     implementation("org.osmdroid:osmdroid-android:6.1.11")
 }

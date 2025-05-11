@@ -1,9 +1,6 @@
-package rs.ac.bg.etf.projekat
+package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -38,9 +35,13 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.UiStateMysteriousSymptoms
+import rs.ac.bg.etf.projekat.destinationLekarskiTestPage
+import rs.ac.bg.etf.projekat.destinationMedicalReportPage
+import rs.ac.bg.etf.projekat.destinationMedicalStatementPage
 
 @Composable
 fun InvestigationScreen(navController: NavController,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
@@ -92,8 +93,6 @@ fun InvestigationScreen(navController: NavController,myViewModel: MyViewModel,re
         when (selectedTabIndex) {
             0 -> UvodScreen()
             1 -> PacijentScreen(navController,data)
-            2 -> LokacijeScreen(navController)
-            3 -> DokaziScreen(navController)
             4 -> ZakljucakScreen()
         }
     }
@@ -165,7 +164,7 @@ fun PacijentScreen(navController: NavController, data: UiStateMysteriousSymptoms
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            ExpandableSection(title = " Detalji o pacijentu") {
+            ExpandableSection(title = "Detalji o pacijentu") {
                 DetailItem("Godine", "28")
                 DetailItem("Zanimanje", "${data.osobaPacijent?.zanimanje}")
                 DetailItem("Simptomi", "${data.pacijentR?.simptomi}")
@@ -175,10 +174,12 @@ fun PacijentScreen(navController: NavController, data: UiStateMysteriousSymptoms
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            ExpandableSection(title = " Dokumenti") {
+            ExpandableSection(title = "Dokumenti") {
                 PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
                     { navController.navigate(destinationMedicalReportPage.route) })
-                PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(destinationMedicalReportPage.route) })
+                PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(
+                    destinationMedicalReportPage.route
+                ) })
                 PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",
                     { navController.navigate(destinationMedicalStatementPage.route) })
                 PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",
@@ -234,93 +235,6 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
     }
 }
 
-
-@Composable
-fun LokacijeScreen(navController: NavController) {
-    /*
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF1A1A1A))
-            .padding(20.dp)
-    ) {
-        Text("📍 Lokacije istrage:", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        PacijentInfoCard("🧘", "Duhovni centar 'Novi Krug'", "Vođa centra i instruktorka meditacije izbegavaju odgovore. Nađeni: sveska, flašica nepoznatog napitka.",{ navController.navigate(destinationMedicalReportPage.route) })
-        PacijentInfoCard("🏠", "Porodični stan", "Sestra ga pronašla nepomičnog. Tragovi meditacije u sobi.",
-            { navController.navigate(destinationMedicalReportPage.route) })
-        PacijentInfoCard("🖥️", "Markov računar", "Nedavni pretraživački pojmovi: 'proširena svest', 'ritual inicijacije'.",
-            { navController.navigate(destinationMedicalReportPage.route) })
-        PacijentInfoCard("🏥", "Bolnica", "Lekari nemoćni da objasne uzrok, potrebne dodatne analize.",
-            { navController.navigate(destinationMedicalReportPage.route) })
-    }*/
-
-    val context = LocalContext.current
-
-    AndroidView(
-        factory = {
-            Configuration.getInstance().load(context, context.getSharedPreferences("osm_prefs", Context.MODE_PRIVATE))
-            val mapView = MapView(context)
-            mapView.setTileSource(TileSourceFactory.MAPNIK)
-            mapView.setMultiTouchControls(true)
-
-            val controller = mapView.controller
-            controller.setZoom(13.0)
-            val startPoint = GeoPoint(44.8020, 20.4620) // centar Beograda
-            controller.setCenter(startPoint)
-
-            // Lista lokacija
-            val lokacije = listOf(
-                Triple("🧘 Duhovni centar 'Novi Krug'", GeoPoint(44.8189, 20.4632), "Sveska, nepoznat napitak"),
-                Triple("🏠 Porodični stan", GeoPoint(44.8025, 20.4481), "Sestra ga pronašla"),
-                Triple("🖥️ Markov računar", GeoPoint(44.7900, 20.4680), "Pretrage: 'proširena svest'..."),
-                Triple("🏥 Bolnica", GeoPoint(44.8020, 20.4780), "Lekari bez objašnjenja")
-            )
-
-            // Dodaj markere
-            for ((naziv, geo, opis) in lokacije) {
-                val marker = Marker(mapView).apply {
-                    position = geo
-                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    title = naziv
-                    subDescription = opis
-                    isDraggable = false
-                }
-                
-                mapView.overlays.add(marker)
-            }
-
-
-
-            mapView
-        },
-        modifier =Modifier
-            .fillMaxSize().padding(20.dp)
-    )
-}
-
-@Composable
-fun DokaziScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF222222))
-            .padding(20.dp)
-    ) {
-        Text("🧾 Prikupljeni dokazi:", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        PacijentInfoCard("📄", "Sveska iz centra", "Kriptirane poruke: 'Sve je povezano', crteži simbola.",
-            { navController.navigate(destinationMedicalReportPage.route) })
-        PacijentInfoCard("🧪", "Flašica nepoznatog napitka", "Čeka se analiza na nepoznate supstance.",
-            { navController.navigate(destinationMedicalReportPage.route) })
-        PacijentInfoCard("🎥", "Kamera iz centra", "Snimak Markovog odlaska iz sale, delovao dezorijentisano.",
-            { navController.navigate(destinationMedicalReportPage.route) })
-        PacijentInfoCard("📱", "SMS poslednja poruka", "Poruka u 23:45: 'Sve je povezano.'",
-            { navController.navigate(destinationMedicalReportPage.route) })
-    }
-}
 
 @Composable
 fun ZakljucakScreen() {

@@ -1,4 +1,4 @@
-package rs.ac.bg.etf.projekat
+package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 
 @Composable

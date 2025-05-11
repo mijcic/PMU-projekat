@@ -1,4 +1,4 @@
-package rs.ac.bg.etf.projekat
+package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -40,16 +40,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.RealmViewModel
-import rs.ac.bg.etf.projekat.data.UiStateMysteriousSymptoms
+import rs.ac.bg.etf.projekat.destinationLekarskiTestPage
+import rs.ac.bg.etf.projekat.destinationMedicalReportPage
+import rs.ac.bg.etf.projekat.destinationMedicalStatementPage
+import rs.ac.bg.etf.projekat.destinationPhonePage
 
 @Composable
 fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel) {
     val data by realmViewModel.uiStateMysteriousSymptoms.collectAsState()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.patient),
             contentDescription = "Background Image",
@@ -58,22 +60,18 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel) 
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp)
+            modifier = Modifier.fillMaxSize().padding(20.dp)
         ) {
             Text(
-                "👤 Pacijent: ${data.osobaPacijent?.ime}",
+                text = "Pacijent: ${data.osobaPacijent?.ime}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
-            Spacer(modifier = Modifier.height(30.dp))
-
-            PatientExpandableSection(title = "📌 Detalji o pacijentu") {
+            PatientExpandableSection(title = "Detalji o pacijentu") {
                 DetailItem("Godine", "28")
                 DetailItem("Zanimanje", "${data.osobaPacijent?.zanimanje}")
                 DetailItem("Simptomi", "${data.pacijentR?.simptomi}")
@@ -83,12 +81,18 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel) 
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            ExpandableSection(title = "🧾 Dokumenti") {
+            ExpandableSection(title = "Dokumenti") {
                 PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
                     { navController.navigate(destinationMedicalReportPage.route) })
-                PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(destinationMedicalReportPage.route) })
-                PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(destinationMedicalReportPage.route) })
-                PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(destinationMedicalReportPage.route) })
+                PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(
+                    destinationPhonePage.route
+                ) })
+                PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(
+                    destinationMedicalStatementPage.route
+                ) })
+                PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(
+                    destinationLekarskiTestPage.route
+                ) })
             }
         }
     }
@@ -128,9 +132,7 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
 
             AnimatedVisibility(visible = expanded) {
                 Column(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .animateContentSize()
+                    modifier = Modifier.padding(top = 8.dp).animateContentSize()
                 ) {
                     content()
                 }
@@ -138,4 +140,3 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
         }
     }
 }
-
