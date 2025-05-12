@@ -1,4 +1,4 @@
-package rs.ac.bg.etf.projekat
+package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

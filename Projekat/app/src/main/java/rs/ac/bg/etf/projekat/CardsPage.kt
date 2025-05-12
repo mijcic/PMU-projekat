@@ -437,7 +437,7 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
                 myViewModel.getGeminiDataMS(realmViewModel)
                 realmViewModel.insertDataForMysteriousSymptoms()
                 navController.navigate(
-                    destinationInvestigationPage.route
+                    destinationHospitalPage.route
                 )
             }
             .padding(bottom = 18.dp)
