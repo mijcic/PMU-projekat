@@ -40,16 +40,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.R
+import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.destinationLekarskiTestPage
 import rs.ac.bg.etf.projekat.destinationMedicalReportPage
 import rs.ac.bg.etf.projekat.destinationMedicalStatementPage
 import rs.ac.bg.etf.projekat.destinationPhonePage
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
-fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel) {
-    val data by realmViewModel.uiStateMysteriousSymptoms.collectAsState()
+fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel,myViewModel: MyViewModel) {
+    val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -62,8 +67,22 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel) 
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp)
         ) {
+            val datum: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.datum
+            val datumPrijave: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.datumPrijave
+            var formattedDateDatum:String=""
+            var formattedDate:String=""
+            datum?.let {
+                val date = Date(it.epochSeconds)
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                formattedDateDatum = dateFormat.format(date)
+            }
+            datumPrijave?.let {
+                val date = Date(it.epochSeconds)
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                formattedDate = dateFormat.format(date)
+            }
             Text(
-                text = "Pacijent: ${data.osobaPacijent?.ime}",
+                text = "Pacijent: ${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.ime}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
@@ -72,11 +91,11 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel) 
             Spacer(modifier = Modifier.height(50.dp))
 
             PatientExpandableSection(title = "Detalji o pacijentu") {
-                DetailItem("Godine", "28")
-                DetailItem("Zanimanje", "${data.osobaPacijent?.zanimanje}")
-                DetailItem("Simptomi", "${data.pacijentR?.simptomi}")
-                DetailItem("Datum prijema", "/")
-                DetailItem("Prijavila", "${data.pacijentR?.prijavio}")
+                DetailItem("Datum rodjenja", "${formattedDateDatum}")
+                DetailItem("Zanimanje", "${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.zanimanje}")
+                DetailItem("Simptomi", "${uiStateDataMysteriousSymptoms.patient?.simptomi}")
+                DetailItem("Datum prijema", "${formattedDate}")
+                DetailItem("Prijavila", "${uiStateDataMysteriousSymptoms.patient?.prijavio}")
             }
 
             Spacer(modifier = Modifier.height(20.dp))

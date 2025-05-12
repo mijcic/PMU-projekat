@@ -26,11 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
+import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 
 @Composable
-fun MedicalStatementPage(navController: NavController, realmViewModel: RealmViewModel) {
-    val data by realmViewModel.uiStateMysteriousSymptoms.collectAsState()
+fun MedicalStatementPage(navController: NavController, realmViewModel: RealmViewModel,myViewModel: MyViewModel) {
+    val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -60,7 +62,7 @@ fun MedicalStatementPage(navController: NavController, realmViewModel: RealmView
         ) {
             // Title - the word "Izjava"
             Text(
-                text = "Izjava ${data.osobaKojaJeNaslaPacijenta?.ime}",
+                text = "Izjava ${uiStateDataMysteriousSymptoms.statement?.osobaId?.ime}",
                 color = Color.White,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
@@ -71,7 +73,7 @@ fun MedicalStatementPage(navController: NavController, realmViewModel: RealmView
 
             // Statement Text - the actual content of the statement
             Text(
-                text = data.izjavaZaPacijenta?.izjava ?: "Nema dostupne izjave.",
+                text = uiStateDataMysteriousSymptoms.statement?.izjava?: "Nema dostupne izjave.",
                 color = Color.White,
                 fontSize = 18.sp,
                 lineHeight = 24.sp,

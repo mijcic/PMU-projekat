@@ -1054,23 +1054,17 @@ class RealmViewModel @Inject constructor(
 
     suspend fun insertMedicinskiIzvestaj(idMedicinskiIzvestajM: Int, rezimeM: String, CTnalazM: String, MRInalazM: String, krvnaSlikaM: String, toksikoloskeAnalizeM: String, zakljucakM: String, pacijentIdM: PacijentR): MedicinskiIzvestajR? {
         var medicinskiIzvestaj: MedicinskiIzvestajR? = null
+        Log.d("GEMINI MED",idMedicinskiIzvestajM.toString())
         realm.write {
             val existingPacijent = query<PacijentR>("idPacijent == $0", pacijentIdM.idPacijent).find().firstOrNull()
                 ?:  pacijentIdM?.let {
                     copyToRealm(it)
                 }
 
+
             medicinskiIzvestaj = query<MedicinskiIzvestajR>(
-                "idMedicinskiIzvestaj ==$0 AND rezime == $1 AND CTnalaz == $2 AND MRInalaz == $3" +
-                        "AND krvnaSlika == $4 AND toksikoloskeAnalize == $5 AND zakljucak == $6 AND pacijentId == $7",
-                idMedicinskiIzvestajM,
-                rezimeM,
-                CTnalazM,
-                MRInalazM,
-                krvnaSlikaM,
-                toksikoloskeAnalizeM,
-                zakljucakM,
-                existingPacijent
+                "idMedicinskiIzvestaj ==$0 AND rezime == $1 AND CTnalaz == $2 AND MRInalaz == $3 AND krvnaSlika == $4 AND toksikoloskeAnalize == $5 AND zakljucak == $6 AND pacijentId == $7",
+                idMedicinskiIzvestajM, rezimeM, CTnalazM, MRInalazM, krvnaSlikaM, toksikoloskeAnalizeM, zakljucakM, existingPacijent
             ).find().firstOrNull()
                 ?: MedicinskiIzvestajR().apply {
                     idMedicinskiIzvestaj = idMedicinskiIzvestajM
@@ -2496,4 +2490,37 @@ fun selectPorukeZadatak(): PorukeZadatakR? {
     ).find()
 
     return zadaci.firstOrNull()
+}
+
+
+//Mysterious Symptoms
+
+suspend fun selectPacijent(): PacijentR {
+    val pacijent: PacijentR
+    pacijent = realm.query<PacijentR>().find().first()
+    return pacijent
+}
+
+suspend fun selectMedicinskiIzvestaj(): MedicinskiIzvestajR {
+    val med: MedicinskiIzvestajR
+    med = realm.query<MedicinskiIzvestajR>().find().first()
+    return med
+}
+
+suspend fun selectLekarskiTest(): LekarskiTestR {
+    val lek: LekarskiTestR
+    lek = realm.query<LekarskiTestR>().find().first()
+    return lek
+}
+
+suspend fun selectIzjavaZaPacijenta(): IzjavaZaPacijentaR {
+    val izj: IzjavaZaPacijentaR
+    izj = realm.query<IzjavaZaPacijentaR>().find().first()
+    return izj
+}
+
+suspend fun selectLokacijeIstrageR(): List<LokacijeIstrageR> {
+    val lokacije: List<LokacijeIstrageR>
+    lokacije = realm.query<LokacijeIstrageR>().find()
+    return lokacije
 }

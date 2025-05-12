@@ -264,16 +264,16 @@ fun NavigationGraph(navController: NavHostController) {
             InvestigationScreen(navController, viewModel,realmViewModel)
         }
         composable("destinationMedicalReportPage") {
-            MedicalReportScreen(navController)
+            MedicalReportScreen(navController, viewModel)
         }
         composable("destinationPatientPage"){
-            PatientScreen(navController,realmViewModel)
+            PatientScreen(navController,realmViewModel, viewModel)
         }
         composable("destinationMedicalStatementPage"){
-            MedicalStatementPage(navController,realmViewModel)
+            MedicalStatementPage(navController,realmViewModel,viewModel)
         }
         composable("destinationLekarskiTestPage"){
-            LekarskiTestPage()
+            LekarskiTestPage(viewModel)
         }
         composable("destinationCultsAndSectsPage"){
             CultAndSectsPage()

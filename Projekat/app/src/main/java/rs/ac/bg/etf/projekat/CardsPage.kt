@@ -435,7 +435,7 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
             .clickable{
                 MainActivity.clearDatabase()
                 myViewModel.getGeminiDataMS(realmViewModel)
-                realmViewModel.insertDataForMysteriousSymptoms()
+                //realmViewModel.insertDataForMysteriousSymptoms()
                 navController.navigate(
                     destinationHospitalPage.route
                 )

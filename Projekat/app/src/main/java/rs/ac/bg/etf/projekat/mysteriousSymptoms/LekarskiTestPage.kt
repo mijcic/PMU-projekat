@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,19 +38,25 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.R
+import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel.LekarskiTestRezultat
+import java.sql.Date
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
-fun LekarskiTestPage() {
+fun LekarskiTestPage(myViewModel: MyViewModel) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 
     val realmViewModel: RealmViewModel = hiltViewModel()
     var test by remember { mutableStateOf<LekarskiTestRezultat?>(null) }
+    val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
+
 
     LaunchedEffect(Unit) {
         test = realmViewModel.getLastLekarskiTest()!!
@@ -95,6 +102,13 @@ fun LekarskiTestPage() {
                     modifier = Modifier.matchParentSize()
                 )
 
+                val datum: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.datum
+                var formattedDateDatum:String=""
+                datum?.let {
+                    val date = Date(it.epochSeconds)
+                    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    formattedDateDatum = dateFormat.format(date)
+                }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -104,7 +118,7 @@ fun LekarskiTestPage() {
                 ) {
                     if (test != null) {
                         Text(
-                            text = "Ime i prezime: ${test!!.ime}",
+                            text = "Ime i prezime: ${uiStateDataMysteriousSymptoms.tests?.pacijentId?.zrtvaId?.osobaId?.ime}",
                             color = Color(0xFF000070),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -113,7 +127,7 @@ fun LekarskiTestPage() {
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Datum rodjenja: ${realmInstantToDateBirth(test!!.datum)}",
+                            text = "Datum rodjenja: ${formattedDateDatum}",
                             color = Color(0xFF000070),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -122,7 +136,7 @@ fun LekarskiTestPage() {
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Pol: ${test!!.pol}",
+                            text = "Pol: ${uiStateDataMysteriousSymptoms.tests?.pacijentId?.zrtvaId?.osobaId?.pol}",
                             color = Color(0xFF000070),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -130,14 +144,16 @@ fun LekarskiTestPage() {
                             lineHeight = 16.sp
                         )
                         Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = test!!.izvestaj,
-                            color = Color(0xFF000070),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Left,
-                            lineHeight = 18.sp
-                        )
+                        uiStateDataMysteriousSymptoms.tests?.izvestaj?.let {
+                            Text(
+                                text = it,
+                                color = Color(0xFF000070),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Left,
+                                lineHeight = 18.sp
+                            )
+                        }
                     }
                 }
             }

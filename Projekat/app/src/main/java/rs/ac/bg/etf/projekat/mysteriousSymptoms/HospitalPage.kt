@@ -121,6 +121,7 @@ fun HospitalPage(navController: NavController, myViewModel: MyViewModel, realmVi
                     CardItem(
                         title = "Patient",
                         onClick = {
+                            myViewModel.getAllDataMysteriousSymptoms()
                             navController.navigate(destinationPatientPage.route)
                         }
                     )

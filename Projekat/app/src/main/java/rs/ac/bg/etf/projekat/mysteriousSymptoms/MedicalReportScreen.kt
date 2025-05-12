@@ -22,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,9 +35,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import io.realm.kotlin.types.RealmInstant
+import rs.ac.bg.etf.projekat.data.MyViewModel
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
-fun MedicalReportScreen(navController: NavController) {
+fun MedicalReportScreen(navController: NavController,myViewModel: MyViewModel) {
+    val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -113,10 +122,24 @@ fun MedicalReportScreen(navController: NavController) {
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+                val datum: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.datum
+                val datumPrijave: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.datumPrijave
+                var formattedDateDatum:String=""
+                var formattedDate:String=""
+                datum?.let {
+                    val date = Date(it.epochSeconds)
+                    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    formattedDateDatum = dateFormat.format(date)
+                }
+                datumPrijave?.let {
+                    val date = Date(it.epochSeconds)
+                    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    formattedDate = dateFormat.format(date)
+                }
 
-                InfoRowPdf("Patient", "Marko Maric")
-                InfoRowPdf("Age", "28")
-                InfoRowPdf("Date of Admission", "April 3, 2025")
+                InfoRowPdf("Patient", "${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.ime}")
+                InfoRowPdf("Date", formattedDateDatum)
+                InfoRowPdf("Date of Admission", formattedDate)
 
                 Divider(
                     color = Color.LightGray,
@@ -126,8 +149,7 @@ fun MedicalReportScreen(navController: NavController) {
 
                 SectionTitlePdf("Summary")
                 SectionTextPdf(
-                    "The patient was admitted in a catatonic state, unresponsive to verbal or physical stimuli. " +
-                            "Initial neurological examination revealed no focal deficits."
+                    "${uiStateDataMysteriousSymptoms.medicalReport?.rezime}"
                 )
 
                 Divider(
@@ -137,8 +159,8 @@ fun MedicalReportScreen(navController: NavController) {
                 )
 
                 SectionTitlePdf("Imaging")
-                BulletTextPdf("- CT scan: No acute intracranial pathology detected.")
-                BulletTextPdf("- MRI scan: No abnormalities detected in brain structure.")
+                BulletTextPdf("- CT scan:${uiStateDataMysteriousSymptoms.medicalReport?.CTnalaz}")
+                BulletTextPdf("- MRI scan: ${uiStateDataMysteriousSymptoms.medicalReport?.MRInalaz}")
 
                 Divider(
                     color = Color.LightGray.copy(alpha = 0.6f),
@@ -147,8 +169,8 @@ fun MedicalReportScreen(navController: NavController) {
                 )
 
                 SectionTitlePdf("Laboratory")
-                BulletTextPdf("- Blood tests: Within normal limits.")
-                BulletTextPdf("- Toxicology screen: Negative for known psychoactive substances.")
+                BulletTextPdf("- Blood tests: ${uiStateDataMysteriousSymptoms.medicalReport?.krvnaSlika}")
+                BulletTextPdf("- Toxicology screen: ${uiStateDataMysteriousSymptoms.medicalReport?.toksikoloskeAnalize}")
 
                 Divider(
                     color = Color.LightGray.copy(alpha = 0.6f),
@@ -158,8 +180,7 @@ fun MedicalReportScreen(navController: NavController) {
 
                 SectionTitlePdf("Observations")
                 SectionTextPdf(
-                    "Despite normal imaging and laboratory findings, the patient remains non-responsive. " +
-                            "Psychological evaluation is pending."
+                    "${uiStateDataMysteriousSymptoms.medicalReport?.zakljucak}"
                 )
 
                 Divider(

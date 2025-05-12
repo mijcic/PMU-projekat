@@ -2131,6 +2131,7 @@ class MyViewModel @Inject constructor(
                 )
             }
 
+
             if (response.medicinskiIzvestajRetrofit != null && pacijent != null) {
                 realmViewModel.insertMedicinskiIzvestaj(
                     idMedicinskiIzvestajM = response.medicinskiIzvestajRetrofit!!.idMedicinskiIzvestaj,
@@ -2199,6 +2200,28 @@ class MyViewModel @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateGeminiDataMS.value = UiStateGeminiDataMS(null)
+        }
+    }
+
+
+    //Mysterious Symptoms
+
+    private val _uiStateMysteriousSymptomsData = MutableStateFlow(UiStateDataMysteriousSymptoms())
+    val uiStateMysteriousSymptomsData: StateFlow<UiStateDataMysteriousSymptoms> = _uiStateMysteriousSymptomsData
+
+    fun getAllDataMysteriousSymptoms() = viewModelScope.launch {
+        try {
+            val response = selectPacijent()
+            val responseMed = selectMedicinskiIzvestaj()
+            val responseIzjava = selectIzjavaZaPacijenta()
+            val responseLekarskiTest= selectLekarskiTest()
+            val responseLokacije = selectLokacijeIstrageR()
+            _uiStateMysteriousSymptomsData.value =
+                UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = responseLekarskiTest, locations = responseLokacije)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _uiStateMysteriousSymptomsData.value =
+                UiStateDataMysteriousSymptoms(patient = null,medicalReport = null, statement = null, tests = null, locations = emptyList())
         }
     }
 }
@@ -2281,4 +2304,14 @@ data class UiStateGeminiData(
 
 data class UiStateGeminiDataMS(
     val geminiDataMS: GeminiResponseRetrofitMysteriousSymptoms? =null
+)
+
+//Mysterious Symptoms
+
+data class UiStateDataMysteriousSymptoms(
+    val patient: PacijentR? =null,
+    val medicalReport:MedicinskiIzvestajR?=null,
+    val tests:LekarskiTestR?=null,
+    val statement:IzjavaZaPacijentaR?=null,
+    val locations: List<LokacijeIstrageR> = emptyList()
 )

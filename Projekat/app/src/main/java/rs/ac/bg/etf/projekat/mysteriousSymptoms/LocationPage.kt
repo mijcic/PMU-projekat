@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,7 @@ import rs.ac.bg.etf.projekat.data.RealmViewModel
 
 @Composable
 fun LocationPage(navController: NavController,viewModel: MyViewModel,realmViewModel: RealmViewModel) {
+    val uiStateDataMysteriousSymptoms by viewModel.uiStateMysteriousSymptomsData.collectAsState()
 
     val context = LocalContext.current
 
@@ -34,6 +37,10 @@ fun LocationPage(navController: NavController,viewModel: MyViewModel,realmViewMo
             controller.setZoom(13.0)
             val startPoint = GeoPoint(44.8020, 20.4620) // centar Beograda
             controller.setCenter(startPoint)
+
+            for(loc in uiStateDataMysteriousSymptoms.locations){
+                Triple("${loc.naziv}", GeoPoint(44.8189, 20.4632), "${loc.opis}")
+            }
 
             // Lista lokacija
             val lokacije = listOf(
