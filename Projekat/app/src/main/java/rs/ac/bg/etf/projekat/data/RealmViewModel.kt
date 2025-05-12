@@ -27,6 +27,8 @@ import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
 import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
+import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
+import rs.ac.bg.etf.projekat.data.realm.MedicinskiIzvestajR
 import rs.ac.bg.etf.projekat.data.realm.MisijaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.MisijaR
 import rs.ac.bg.etf.projekat.data.realm.MotivR
@@ -911,6 +913,8 @@ class RealmViewModel @Inject constructor(
         return porukeZadatak
     }
 
+    // MENJALA
+
     suspend fun insertPacijent(
         idPacijentP: Int,
         simptomiP: String,
@@ -918,9 +922,8 @@ class RealmViewModel @Inject constructor(
         datumPrijaveP: RealmInstant,
         prijavioP: String,
         zlocinP: ZlocinR,
-        osobaP: OsobaR
+        zrtvaP: ZrtvaR
     ): PacijentR? {
-
         var pacijent: PacijentR? = null
         realm.write {
             val existingZlocin =
@@ -929,20 +932,20 @@ class RealmViewModel @Inject constructor(
                         copyToRealm(it)
                     }
 
-            val existingOsoba = query<OsobaR>("idOsoba == $0", osobaP.idOsoba).find().firstOrNull()
-                ?: osobaP?.let {
+            val existingZrtva = query<ZrtvaR>("idZrtva == $0", zrtvaP.idZrtva).find().firstOrNull()
+                ?: zrtvaP?.let {
                     copyToRealm(it)
                 }
 
             pacijent = query<PacijentR>(
-                "idPacijent ==$0 AND simptomi == $1 AND statusPacijenta == $2 AND datumPrijave ==$3 AND prijavio ==$4 AND zlocinId==$5 AND osobaId==$6",
+                "idPacijent ==$0 AND simptomi == $1 AND statusPacijenta == $2 AND datumPrijave ==$3 AND prijavio ==$4 AND zlocinId==$5 AND zrtvaId==$6",
                 idPacijentP,
                 simptomiP,
                 statusPacijentaP,
                 datumPrijaveP,
                 prijavioP,
                 existingZlocin,
-                existingOsoba
+                existingZrtva
             ).find().firstOrNull()
                 ?: PacijentR().apply {
                     idPacijent = idPacijentP
@@ -951,7 +954,7 @@ class RealmViewModel @Inject constructor(
                     datumPrijave = datumPrijaveP
                     prijavio = prijavioP
                     zlocinId = existingZlocin
-                    osobaId = existingOsoba
+                    zrtvaId = existingZrtva
                 }
             copyToRealm(pacijent!!)
         }
@@ -1018,6 +1021,70 @@ class RealmViewModel @Inject constructor(
             copyToRealm(lekarskiTest!!)
         }
         return lekarskiTest
+    }
+
+    suspend fun insertLokacijeIstrage(idLokacijeIstrageL: Int, mestoL: String, nazivL: String, opisL: String, zlocinIdL: ZlocinR): LokacijeIstrageR? {
+        var lokacijaIstrage: LokacijeIstrageR? = null
+        realm.write {
+            val existingZlocin =
+                query<ZlocinR>("idZlocin == $0", zlocinIdL.idZlocin).find().firstOrNull()
+                    ?: zlocinIdL?.let {
+                        copyToRealm(it)
+                    }
+
+            lokacijaIstrage = query<LokacijeIstrageR>(
+                "idLokacijeIstrage ==$0 AND mesto == $1 AND naziv == $2 AND opis == $3 AND zlocinId == $4",
+                idLokacijeIstrageL,
+                mestoL,
+                nazivL,
+                opisL,
+                existingZlocin
+            ).find().firstOrNull()
+                ?: LokacijeIstrageR().apply {
+                    idLokacijeIstrage = idLokacijeIstrageL
+                    mesto = mestoL
+                    naziv = nazivL
+                    opis = opisL
+                    zlocinId = existingZlocin
+                }
+            copyToRealm(lokacijaIstrage!!)
+        }
+        return lokacijaIstrage
+    }
+
+    suspend fun insertMedicinskiIzvestaj(idMedicinskiIzvestajM: Int, rezimeM: String, CTnalazM: String, MRInalazM: String, krvnaSlikaM: String, toksikoloskeAnalizeM: String, zakljucakM: String, pacijentIdM: PacijentR): MedicinskiIzvestajR? {
+        var medicinskiIzvestaj: MedicinskiIzvestajR? = null
+        realm.write {
+            val existingPacijent = query<PacijentR>("idPacijent == $0", pacijentIdM.idPacijent).find().firstOrNull()
+                ?:  pacijentIdM?.let {
+                    copyToRealm(it)
+                }
+
+            medicinskiIzvestaj = query<MedicinskiIzvestajR>(
+                "idMedicinskiIzvestaj ==$0 AND rezime == $1 AND CTnalaz == $2 AND MRInalaz == $3" +
+                        "AND krvnaSlika == $4 AND toksikoloskeAnalize == $5 AND zakljucak == $6 AND pacijentId == $7",
+                idMedicinskiIzvestajM,
+                rezimeM,
+                CTnalazM,
+                MRInalazM,
+                krvnaSlikaM,
+                toksikoloskeAnalizeM,
+                zakljucakM,
+                existingPacijent
+            ).find().firstOrNull()
+                ?: MedicinskiIzvestajR().apply {
+                    idMedicinskiIzvestaj = idMedicinskiIzvestajM
+                    rezime = rezimeM
+                    CTnalaz = CTnalazM
+                    MRInalaz = MRInalazM
+                    krvnaSlika = krvnaSlikaM
+                    toksikoloskeAnalize = toksikoloskeAnalizeM
+                    zakljucak = zakljucakM
+                    pacijentId = existingPacijent
+                }
+            copyToRealm(medicinskiIzvestaj!!)
+        }
+        return medicinskiIzvestaj
     }
 
     suspend fun getTitleDatePlaceDescFromCrime() {
@@ -1463,12 +1530,12 @@ class RealmViewModel @Inject constructor(
         val test = realm.query<LekarskiTestR>("idLekarskiTest == $0", lastId).first().find() ?: return null
 
         val pacijent = test.pacijentId
-        val osoba = pacijent?.osobaId
+        val zrtva = pacijent?.zrtvaId
 
         return LekarskiTestRezultat(
-            ime = osoba?.ime ?: "Nepoznato",
-            datum = osoba?.datum,
-            pol = osoba?.pol ?: "Nepoznat",
+            ime = zrtva?.osobaId?.ime ?: "Nepoznato",
+            datum = zrtva?.osobaId?.datum,
+            pol = zrtva?.osobaId?.pol ?: "Nepoznat",
             izvestaj = test.izvestaj
         )
     }
@@ -2058,8 +2125,24 @@ class RealmViewModel @Inject constructor(
                 polZ = "zenski",
                 zlocinZ = zlocin
             )
+
+            // MENJALA
+            var zrtva: ZrtvaR? =null
+            zrtva = insertZrtva(
+                idZrtvaZ = 1,
+                tipZ = "",
+                imeZ = osoba?.ime ?: "Nepoznata",
+                detaljiZ = "",
+                statusZ = "ziva, bolesna",
+                zlocinZ = zlocin,
+                kontaktZ = osoba?.kontakt ?: "N/A",
+                datumZ = osoba?.datum ?: RealmInstant.now(),
+                zanimanjeZ = osoba?.zanimanje ?: "Nepoznato",
+                polZ = osoba?.pol ?: "Nepoznat"
+            )
+
             var pacijent:PacijentR? =null
-            if (zlocin != null && osoba !=null) {
+            if (zlocin != null && osoba !=null && zrtva != null) {
                 pacijent =insertPacijent(
                     idPacijentP = 1,
                     simptomiP = "Bez pulsa, ali očuvana moždana aktivnost",
@@ -2067,7 +2150,7 @@ class RealmViewModel @Inject constructor(
                     datumPrijaveP = RealmInstant.now(),
                     prijavioP = "Dr. Ana King",
                     zlocinP = zlocin,
-                    osobaP = osoba
+                    zrtvaP = zrtva
                 )
             }
             var osobaKojaJeNaslaPacijenta =insertOsoba(

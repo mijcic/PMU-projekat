@@ -586,7 +586,7 @@ open class PacijentR: RealmObject {
     var datumPrijave : RealmInstant ?= null
     var prijavio: String = ""
     var zlocinId: ZlocinR ?=null
-    var osobaId: OsobaR? =null
+    var zrtvaId: ZrtvaR? =null
 }
 
 open class MedicinskiIzvestajR: RealmObject {
@@ -618,6 +618,7 @@ open class LokacijeIstrageR: RealmObject {
     var mesto: String = ""
     var naziv: String = ""
     var opis: String = ""
+    var zlocinId: ZlocinR? = null
 }
 
 val realmClasses = listOf(

@@ -434,6 +434,7 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
             .padding(1.dp)
             .clickable{
                 MainActivity.clearDatabase()
+                myViewModel.getGeminiDataMS(realmViewModel)
                 realmViewModel.insertDataForMysteriousSymptoms()
                 navController.navigate(
                     destinationInvestigationPage.route

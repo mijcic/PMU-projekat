@@ -137,7 +137,7 @@ data class OsumnjicenData(
 @Serializable
 data class DokazData(
     var idDokaz:Int,
-    val tipDokaza: String,
+    var tipDokaza: String,
     val opis: String,
     val zlocinId: Int,
     val zrtvaId:Int,

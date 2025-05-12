@@ -408,6 +408,50 @@ open class DokazOsumnjicenData (
     var osumnjicenId: OsumnjicenData
 )
 
+// RETROFIT 2
+
+data class PacijentData (
+    var idPacijent: Int,
+    var simptomi: String,
+    var statusPacijenta: String, //ziva,mrtva
+    var datumPrijave: Long,
+    var prijavio: OsobaData,
+    var zlocinId: ZlocinData,
+    var zrtvaId: ZrtvaData
+)
+
+data class MedicinskiIzvestajData (
+    var idMedicinskiIzvestaj: Int,
+    var rezime: String,
+    var CTnalaz: String,
+    var MRInalaz: String,
+    var krvnaSlika: String,
+    var toksikoloskeAnalize: String,
+    var zakljucak: String,
+    var pacijentId: PacijentData
+)
+
+data class LekarskiTestData (
+    var idLekarskiTest: Int,
+    var pacijentId: PacijentData,
+    var izvestaj: String,
+)
+
+data class LokacijeIstrageData (
+    var idLokacijeIstrage: Int,
+    var mesto: String,
+    var naziv: String,
+    var opis: String,
+    var zlocinId: Int
+)
+
+data class IzjavaZaPacijentaData (
+    var idIzjavaZaPacijenta: Int,
+    var izjava: String = "",
+    var pacijentId: PacijentData,
+    var osobaId: OsobaData
+)
+
 data class GeminiResponseRetrofit(
     var zlocinRetrofit: ZlocinData?,
     var zrtvaRetrofit: ZrtvaData?,
@@ -443,4 +487,34 @@ data class GeminiResponseRetrofit(
     var ispitivanjeSvedokaZadaciRetrofit: List<IspitivanjeSvedokaZadatakData>?,
     var telefonZadaciRetrofit: List<TelefonZadatakData>?,
     var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?
+)
+
+// RETROFIT 2
+
+data class GeminiResponseRetrofitMysteriousSymptoms(
+    var zlocinRetrofit: ZlocinData?,
+    var dokaziRetrofit: List<DokazData>?,
+    var telefoniRetrofit: List<TelefonData>?,
+    var forenzickiDokazRetrofit: List<ForenzickiDokazData>?,
+    var oneContactRetrofit: List<OneContactData>?,
+    var aplikacijeRetrofit: List<AplikacijaData>?,
+    var beleskeRetrofit: List<BeleskaData>?,
+    var whatsappKontaktRetrofit: List<WhatsAppKontaktData>?,
+    var whatsappPorukaRetrofit: List<WhatsAppPorukaData>?,
+    var oneCallRetrofit: List<OneCallData>?,
+    var galleryRetrofit: List<GalleryData>?,
+    var obicnePorukeRetrofit: List<ObicnaPorukaData>?,
+    var pitanjaRetrofit: List<PitanjeData>?,
+    var odgovoriRetrofit: List<OdgovorData>?,
+    var osobeRetrofit: List<OsobaData>?,
+    var zadaciRetrofit: List<ZadatakData>?,
+    var dokaziZadaciRetrofit: List<DokazZadatakData>?,
+    var telefonZadaciRetrofit: List<TelefonZadatakData>?,
+    var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?,
+
+    var pacijentRetrofit: PacijentData?,
+    var medicinskiIzvestajRetrofit: MedicinskiIzvestajData?,
+    var lekarskiTestRetrofit: LekarskiTestData?,
+    var lokacijeIstrageRetrofit: List<LokacijeIstrageData>?,
+    var izjavaZaPacijentaRetrofit: IzjavaZaPacijentaData?
 )

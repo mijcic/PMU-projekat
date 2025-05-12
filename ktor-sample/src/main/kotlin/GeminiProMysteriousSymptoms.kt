@@ -309,7 +309,7 @@ fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSympto
            mesto = l.mesto,
            naziv = l.naziv,
            opis = l.naziv,
-           zlocinId = l.zlocinId
+           zlocinId = zl.idZlocin
         )
         insertLokacijeIstrageData(
             lokacijeIstrage = lok

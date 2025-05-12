@@ -18,9 +18,16 @@ import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
+import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
+import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
+import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
+import rs.ac.bg.etf.projekat.data.realm.MedicinskiIzvestajR
 import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
+import rs.ac.bg.etf.projekat.data.realm.ObicnaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.OneContactR
+import rs.ac.bg.etf.projekat.data.realm.OsobaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
+import rs.ac.bg.etf.projekat.data.realm.PacijentR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeOsumnjicenogR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
@@ -34,6 +41,7 @@ import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
+import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
@@ -47,194 +55,205 @@ class MyViewModel @Inject constructor(
     private val MyRepository: Repository
 ) : ViewModel() {
 
-    private val _uiState= MutableStateFlow(UiStateZlocin())
-    val uiState : StateFlow<UiStateZlocin> = _uiState
+    private val _uiState = MutableStateFlow(UiStateZlocin())
+    val uiState: StateFlow<UiStateZlocin> = _uiState
 
     private val _uiStatePostZlocin = MutableStateFlow(UiStatePostZlocin())
-    val uiStatePostZlocin : StateFlow<UiStatePostZlocin> = _uiStatePostZlocin
+    val uiStatePostZlocin: StateFlow<UiStatePostZlocin> = _uiStatePostZlocin
 
-    fun insertDataZlocin(zlocin: ZlocinRequest)=viewModelScope.launch {
+    fun insertDataZlocin(zlocin: ZlocinRequest) = viewModelScope.launch {
         try {
             val response = MyRepository.insertData(zlocin)
             _uiStatePostZlocin.value = UiStatePostZlocin(message = response)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStatePostZlocin.value = UiStatePostZlocin(message = null)
         }
     }
 
     private val _uiStateSignUp = MutableStateFlow(UiStateSignUp())
-    val uiStateSignUp : StateFlow<UiStateSignUp> = _uiStateSignUp
+    val uiStateSignUp: StateFlow<UiStateSignUp> = _uiStateSignUp
 
-    fun signUp(korisnik: KorisnikRequest)=viewModelScope.launch {
+    fun signUp(korisnik: KorisnikRequest) = viewModelScope.launch {
         try {
             val response = MyRepository.signUp(korisnik)
             _uiStateSignUp.value = UiStateSignUp(message = response, isRefreshing = false)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            _uiStateSignUp.value = UiStateSignUp(message = null, isRefreshing = false, error = e.localizedMessage)
+            _uiStateSignUp.value =
+                UiStateSignUp(message = null, isRefreshing = false, error = e.localizedMessage)
         }
     }
 
-    private val _uiStateScoreKorisnika= MutableStateFlow(UiStateScoreKorisnika())
-    val uiStateScoreKorisnika : StateFlow<UiStateScoreKorisnika> = _uiStateScoreKorisnika
+    private val _uiStateScoreKorisnika = MutableStateFlow(UiStateScoreKorisnika())
+    val uiStateScoreKorisnika: StateFlow<UiStateScoreKorisnika> = _uiStateScoreKorisnika
 
     fun scoreKorisnika() = viewModelScope.launch {
-        Log.d("SCORE","ovde")
+        Log.d("SCORE", "ovde")
         try {
             val response = MyRepository.scoreKorisnika()
-            Log.d("SCORE",response.toString())
-            _uiStateScoreKorisnika.value = UiStateScoreKorisnika(scoreList = response, isRefreshing = false)
-        }
-        catch (e:Exception){
+            Log.d("SCORE", response.toString())
+            _uiStateScoreKorisnika.value =
+                UiStateScoreKorisnika(scoreList = response, isRefreshing = false)
+        } catch (e: Exception) {
             e.printStackTrace()
-            _uiStateScoreKorisnika.value = UiStateScoreKorisnika(scoreList= emptyList(), isRefreshing = false, error = e.localizedMessage)
+            _uiStateScoreKorisnika.value = UiStateScoreKorisnika(
+                scoreList = emptyList(),
+                isRefreshing = false,
+                error = e.localizedMessage
+            )
         }
     }
 
     private val _uiStateLogIn = MutableStateFlow(UiStateLogIn())
-    val uiStateLogIn : StateFlow<UiStateLogIn> = _uiStateLogIn
+    val uiStateLogIn: StateFlow<UiStateLogIn> = _uiStateLogIn
 
     fun logIn(korisnik: KorisnikRequest) = viewModelScope.launch {
         try {
             val response = MyRepository.logIn(korisnik)
             _uiStateLogIn.value = UiStateLogIn(message = response)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStateLogIn.value = UiStateLogIn(message = null)
         }
     }
 
     private val _uiStateZlocinData = MutableStateFlow(UiStateDataZlocin())
-    val uiStateZlocinData : StateFlow<UiStateDataZlocin> = _uiStateZlocinData
+    val uiStateZlocinData: StateFlow<UiStateDataZlocin> = _uiStateZlocinData
 
     fun getAllDataZlocin() = viewModelScope.launch {
         try {
             val response = selectAllOsumnjiceni()
             val response2 = selectAllSvedoci()
             _uiStateZlocinData.value = UiStateDataZlocin(suspects = response, witnesses = response2)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            _uiStateZlocinData.value = UiStateDataZlocin(suspects = emptyList(), witnesses =  emptyList())
+            _uiStateZlocinData.value =
+                UiStateDataZlocin(suspects = emptyList(), witnesses = emptyList())
         }
     }
 
     private val _uiStatePitanjaZaOsumnjicenog = MutableStateFlow(UiStatePitanjaZaOsumnjicenog())
-    val uiStatePitanjaZaOsumnjicenog : StateFlow<UiStatePitanjaZaOsumnjicenog> = _uiStatePitanjaZaOsumnjicenog
+    val uiStatePitanjaZaOsumnjicenog: StateFlow<UiStatePitanjaZaOsumnjicenog> =
+        _uiStatePitanjaZaOsumnjicenog
 
     fun getPitanjaZaOsumnjicenog(osumnjicen: String) = viewModelScope.launch {
         try {
-            val response1 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"opsta")
-            val response2 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"alibi")
-            val response3 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"dokaz")
-            val response4 = selectPitanjaByOsumnjicenAndCategory(osumnjicen,"kontradikcija")
-            _uiStatePitanjaZaOsumnjicenog.value = UiStatePitanjaZaOsumnjicenog(response1,response2,response3,response4)
-        }
-        catch (e:Exception){
+            val response1 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "opsta")
+            val response2 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "alibi")
+            val response3 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "dokaz")
+            val response4 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "kontradikcija")
+            _uiStatePitanjaZaOsumnjicenog.value =
+                UiStatePitanjaZaOsumnjicenog(response1, response2, response3, response4)
+        } catch (e: Exception) {
             e.printStackTrace()
-            _uiStatePitanjaZaOsumnjicenog.value = UiStatePitanjaZaOsumnjicenog(emptyList(),emptyList(),emptyList(),emptyList())
+            _uiStatePitanjaZaOsumnjicenog.value =
+                UiStatePitanjaZaOsumnjicenog(emptyList(), emptyList(), emptyList(), emptyList())
         }
     }
 
     private val _uiStatePitanjaZaSvedoka = MutableStateFlow(UiStatePitanjaZaSvedoka())
-    val uiStatePitanjaZaSvedoka : StateFlow<UiStatePitanjaZaSvedoka> = _uiStatePitanjaZaSvedoka
+    val uiStatePitanjaZaSvedoka: StateFlow<UiStatePitanjaZaSvedoka> = _uiStatePitanjaZaSvedoka
 
-    fun getPitanjaZaSvedoka(svedok:String) = viewModelScope.launch {
+    fun getPitanjaZaSvedoka(svedok: String) = viewModelScope.launch {
         try {
             val response = selectPitanjaBySvedok(svedok)
             _uiStatePitanjaZaSvedoka.value = UiStatePitanjaZaSvedoka(response)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStatePitanjaZaSvedoka.value = UiStatePitanjaZaSvedoka(emptyList())
         }
     }
 
     private val _uiStateTasks = MutableStateFlow(UiStateTasks())
-    val uiStateTasks : StateFlow<UiStateTasks> = _uiStateTasks
+    val uiStateTasks: StateFlow<UiStateTasks> = _uiStateTasks
 
     fun getTasks() = viewModelScope.launch {
         try {
             val response = selectTasks()
             _uiStateTasks.value = UiStateTasks(response)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStateTasks.value = UiStateTasks(emptyList())
         }
     }
 
     private val _uiStateEvidence = MutableStateFlow(UiStateEvidences())
-    val uiStateEvidence : StateFlow<UiStateEvidences> = _uiStateEvidence
+    val uiStateEvidence: StateFlow<UiStateEvidences> = _uiStateEvidence
 
     fun getEvidences() = viewModelScope.launch {
         try {
             val response = selectEvidences()
-            val response2 =selectEvidencesTasks(response)
-            _uiStateEvidence.value = UiStateEvidences(response,response2)
-        }
-        catch (e:Exception){
+            val response2 = selectEvidencesTasks(response)
+            _uiStateEvidence.value = UiStateEvidences(response, response2)
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStateEvidence.value = UiStateEvidences(emptyList(), emptyList())
         }
     }
 
     private val _uiStateCntEvidence = MutableStateFlow(UiStateCntEvidence())
-    val uiStateCntEvidence : StateFlow<UiStateCntEvidence> = _uiStateCntEvidence
+    val uiStateCntEvidence: StateFlow<UiStateCntEvidence> = _uiStateCntEvidence
 
     private val _uiStateCntForensicEvidence = MutableStateFlow(UiStateCntForensicEvidence())
-    val uiStateCntForensicEvidence : StateFlow<UiStateCntForensicEvidence> = _uiStateCntForensicEvidence
+    val uiStateCntForensicEvidence: StateFlow<UiStateCntForensicEvidence> =
+        _uiStateCntForensicEvidence
 
-    fun cntIncrement(cnt: Int) =viewModelScope.launch {
+    fun cntIncrement(cnt: Int) = viewModelScope.launch {
         try {
-            _uiStateCntEvidence.value = UiStateCntEvidence(cnt=cnt+1)
-        }
-        catch (e:Exception){
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt = cnt + 1)
+        } catch (e: Exception) {
             e.printStackTrace()
-            _uiStateCntEvidence.value = UiStateCntEvidence(cnt=0)
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt = 0)
         }
     }
 
-    fun cntForensicIncrement(cnt: Int) =viewModelScope.launch {
+    fun cntForensicIncrement(cnt: Int) = viewModelScope.launch {
         try {
-            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = cnt+1)
-        }
-        catch (e:Exception){
+            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = cnt + 1)
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = 0)
         }
     }
 
     private val _uiStateForensicEvidence = MutableStateFlow(UiStateForensicEvidences())
-    val uiStateForensicEvidence : StateFlow<UiStateForensicEvidences> = _uiStateForensicEvidence
+    val uiStateForensicEvidence: StateFlow<UiStateForensicEvidences> = _uiStateForensicEvidence
 
     fun getForensicEvidences() = viewModelScope.launch {
         try {
             val response = selectForensicEvidences()
-            val response2 =selectForensicEvidencesTasks(response)
-            _uiStateForensicEvidence.value = UiStateForensicEvidences(response,response2)
-        }
-        catch (e:Exception){
+            val response2 = selectForensicEvidencesTasks(response)
+            _uiStateForensicEvidence.value = UiStateForensicEvidences(response, response2)
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStateForensicEvidence.value = UiStateForensicEvidences(emptyList(), emptyList())
         }
     }
 
     fun updateEvidenceAndEvidenceTask(zadatakDokaz: DokazZadatakR) = viewModelScope.launch {
-        zadatakDokaz.zadatakId?.idZadatak?.let { updateDokazZadatakAndZadatak(it,zadatakDokaz.idDokazZadatak) }
+        zadatakDokaz.zadatakId?.idZadatak?.let {
+            updateDokazZadatakAndZadatak(
+                it,
+                zadatakDokaz.idDokazZadatak
+            )
+        }
     }
 
-    fun updateForensicEvidenceAndForensicEvidenceTask(zadatakDokaz: ForenzickiDokazZadatakR) = viewModelScope.launch {
-        zadatakDokaz.zadatakId?.idZadatak?.let { updateForenzickiDokazZadatakAndZadatak(it,zadatakDokaz.idForenzickiDokazZadatak) }
-    }
+    fun updateForensicEvidenceAndForensicEvidenceTask(zadatakDokaz: ForenzickiDokazZadatakR) =
+        viewModelScope.launch {
+            zadatakDokaz.zadatakId?.idZadatak?.let {
+                updateForenzickiDokazZadatakAndZadatak(
+                    it,
+                    zadatakDokaz.idForenzickiDokazZadatak
+                )
+            }
+        }
 
     fun updateSuspectTask(zadatak: IspitivanjeOsumnjicenogZadatakR) = viewModelScope.launch {
         zadatak.zadatakId?.idZadatak?.let {
-            updateIspitivanjeOsumnjicenogZadatak(zadatak.idIspitivanjeOsumnjicenogZadatak,
+            updateIspitivanjeOsumnjicenogZadatak(
+                zadatak.idIspitivanjeOsumnjicenogZadatak,
                 it
             )
         }
@@ -242,7 +261,8 @@ class MyViewModel @Inject constructor(
 
     fun updateWitnessTask(zadatak: IspitivanjeSvedokaZadatakR) = viewModelScope.launch {
         zadatak.zadatakId?.idZadatak?.let {
-            updateIspitivanjeSvedokaZadatak(zadatak.idIspitivanjeSvedokaZadatak,
+            updateIspitivanjeSvedokaZadatak(
+                zadatak.idIspitivanjeSvedokaZadatak,
                 it
             )
         }
@@ -257,15 +277,14 @@ class MyViewModel @Inject constructor(
     }
 
     private val _uiSteteSelectedAnswers = MutableStateFlow(UiSteteSelectedAnswers())
-    val uiSteteSelectedAnswers : StateFlow<UiSteteSelectedAnswers> = _uiSteteSelectedAnswers
+    val uiSteteSelectedAnswers: StateFlow<UiSteteSelectedAnswers> = _uiSteteSelectedAnswers
 
-    fun updateSelectedanswes(answers:Map<Int, Int?> ) = viewModelScope.launch {
-        Log.d("ANSWERS",answers.toString())
+    fun updateSelectedanswes(answers: Map<Int, Int?>) = viewModelScope.launch {
+        Log.d("ANSWERS", answers.toString())
         try {
 
             _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(answers)
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(emptyMap())
         }
@@ -275,7 +294,7 @@ class MyViewModel @Inject constructor(
     //gemini
 
     private val _uiStateGeminiData = MutableStateFlow(UiStateGeminiData())
-    val uiStateGeminiData : StateFlow<UiStateGeminiData> = _uiStateGeminiData
+    val uiStateGeminiData: StateFlow<UiStateGeminiData> = _uiStateGeminiData
 
     fun getGeminiData(realmViewModel: RealmViewModel) = viewModelScope.launch {
 
@@ -858,20 +877,20 @@ class MyViewModel @Inject constructor(
 
         val requestBody = jsonString.toRequestBody("application/json".toMediaType())
         try {
-            val response=MyRepository.geminiData(requestBody)
-            Log.d("GEMINI",response.toString())
+            val response = MyRepository.geminiData(requestBody)
+            Log.d("GEMINI", response.toString())
             _uiStateGeminiData.value = UiStateGeminiData(response)
 
             val tipZlocina: TipZlocinaR? = realmViewModel.inserTipZlocina("Murder")
-            Log.d("GEMINI ZLOCIN",response.zlocinRetrofit.toString())
+            Log.d("GEMINI ZLOCIN", response.zlocinRetrofit.toString())
 
-            var zlocin: ZlocinR? =null
-            val dokazi:MutableList<DokazR> =mutableListOf()
-            val telefonLista:MutableList<TelefonR> =mutableListOf()
+            var zlocin: ZlocinR? = null
+            val dokazi: MutableList<DokazR> = mutableListOf()
+            val telefonLista: MutableList<TelefonR> = mutableListOf()
             val forenzickiDokazLista: MutableList<ForenzickiDokazR> = mutableListOf()
 
-            if (response.zlocinRetrofit!=null) {
-                zlocin= realmViewModel.insertZlocin(
+            if (response.zlocinRetrofit != null) {
+                zlocin = realmViewModel.insertZlocin(
                     response.zlocinRetrofit!!.idZlocin,
                     tipZlocina,
                     response.zlocinRetrofit!!.naziv,
@@ -881,12 +900,13 @@ class MyViewModel @Inject constructor(
                     response.zlocinRetrofit!!.status
                 )
             }
-            var zrtva:ZrtvaR?=null
-            if(response.zrtvaRetrofit!=null){
+            var zrtva: ZrtvaR? = null
+            if (response.zrtvaRetrofit != null) {
                 val millis = response.zrtvaRetrofit!!.osobaId?.datum
                 val instant = millis?.let { Instant.ofEpochMilli(it) }
-                val realmInstantZrtva = instant?.let { RealmInstant.from(instant.epochSecond, it.nano) }
-                    ?: RealmInstant.now()
+                val realmInstantZrtva =
+                    instant?.let { RealmInstant.from(instant.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
 
                 zrtva = response.zrtvaRetrofit!!.osobaId?.let {
                     response.zrtvaRetrofit!!.osobaId.kontakt?.let { it1 ->
@@ -906,7 +926,7 @@ class MyViewModel @Inject constructor(
                 }
 
 
-                for(d in response.dokaziRetrofit!!){
+                for (d in response.dokaziRetrofit!!) {
                     val dk = realmViewModel.insertDokaz(
                         d.idDokaz,
                         d.tipDokaza,
@@ -920,7 +940,7 @@ class MyViewModel @Inject constructor(
                     }
                 }
 
-                for(t in response.telefoniRetrofit!!){
+                for (t in response.telefoniRetrofit!!) {
                     val tl = realmViewModel.insertTelefon(
                         idTelefonT = t.idTelefon,
                         modelT = t.model,
@@ -934,8 +954,8 @@ class MyViewModel @Inject constructor(
                 }
 
 
-                for(f in response.forenzickiDokazRetrofit!!){
-                    val foren=realmViewModel.insertForenzickiDokaz(
+                for (f in response.forenzickiDokazRetrofit!!) {
+                    val foren = realmViewModel.insertForenzickiDokaz(
                         idForenzickiDokazFD = f.idForenzickiDokaz,
                         tipFD = f.tipForenzickiDokaz,
                         opisFD = f.opis,
@@ -948,7 +968,7 @@ class MyViewModel @Inject constructor(
                         forenzickiDokazLista.add(foren)
                     }
                 }
-                if(response.obdukcijaRetrofit!=null){
+                if (response.obdukcijaRetrofit != null) {
                     realmViewModel.insertObdukcija(
                         response.obdukcijaRetrofit!!.idObdukcija,
                         response.obdukcijaRetrofit!!.izvestaj,
@@ -959,7 +979,7 @@ class MyViewModel @Inject constructor(
                     )
                 }
 
-                for(k in response.kontaktiRetrofit!!){
+                for (k in response.kontaktiRetrofit!!) {
                     realmViewModel.insertKontakt(
                         idKontaktK = k.idKontakt,
                         imeK = k.ime,
@@ -969,7 +989,7 @@ class MyViewModel @Inject constructor(
                     )
                 }
 
-                for(a in response.aplikacijeRetrofit!!){
+                for (a in response.aplikacijeRetrofit!!) {
                     realmViewModel.insertAplikacija(
                         idAplikacijeA = a.idAplikacije,
                         zrtvaA = zrtva,
@@ -982,14 +1002,18 @@ class MyViewModel @Inject constructor(
             }
 
 
-
-            var osumnjiceni:MutableList<OsumnjicenR> = mutableListOf()
-            for (o in response.osumnjiceniRetrofit!!){
-                val m=o.motiv?.let { realmViewModel.insertMotiv(it.opis) }
+            var osumnjiceni: MutableList<OsumnjicenR> = mutableListOf()
+            for (o in response.osumnjiceniRetrofit!!) {
+                val m = o.motiv?.let { realmViewModel.insertMotiv(it.opis) }
 
                 val millisOsumnjiceni = o.osobaId?.datum
                 val instantOsumnjiceni = millisOsumnjiceni?.let { Instant.ofEpochMilli(it) }
-                val realmInstantOsumnjiceni = instantOsumnjiceni?.let { RealmInstant.from(instantOsumnjiceni.epochSecond, it.nano) }
+                val realmInstantOsumnjiceni = instantOsumnjiceni?.let {
+                    RealmInstant.from(
+                        instantOsumnjiceni.epochSecond,
+                        it.nano
+                    )
+                }
                     ?: RealmInstant.now()
 
                 realmViewModel.insertOsoba(
@@ -1002,7 +1026,7 @@ class MyViewModel @Inject constructor(
                     zlocinZ = zlocin
                 )
 
-                var os=realmViewModel.insertOsumnjiceni(
+                var os = realmViewModel.insertOsumnjiceni(
                     idOsumnjicenO = o.idOsumnjicen,
                     imeO = o.osobaId.ime,
                     statusO = o.status,
@@ -1022,17 +1046,16 @@ class MyViewModel @Inject constructor(
             }
 
 
-
-
             val svedokLista = mutableListOf<SvedokR>()
-            for(s in response.svedociRetrofit!!){
+            for (s in response.svedociRetrofit!!) {
                 val millisSvedok = s.osobaId?.datum
                 val instantSvedok = millisSvedok?.let { Instant.ofEpochMilli(it) }
-                val realmInstantSvedok = instantSvedok?.let { RealmInstant.from(instantSvedok.epochSecond, it.nano) }
-                    ?: RealmInstant.now()
+                val realmInstantSvedok =
+                    instantSvedok?.let { RealmInstant.from(instantSvedok.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
 
 
-               realmViewModel.insertOsoba(
+                realmViewModel.insertOsoba(
                     idOsobaO = s.osobaId.idOsoba,
                     imeZ = s.osobaId.ime,
                     kontaktZ = s.osobaId.kontakt,
@@ -1042,7 +1065,7 @@ class MyViewModel @Inject constructor(
                     zlocinZ = zlocin
                 )
 
-                val sv=realmViewModel.insertSvedok(
+                val sv = realmViewModel.insertSvedok(
                     idSvedokS = s.idSvedok,
                     imeS = s.osobaId.ime,
                     kontaktS = s.osobaId.kontakt,
@@ -1060,20 +1083,37 @@ class MyViewModel @Inject constructor(
             }
 
             val oneContactLista: MutableList<OneContactR> = mutableListOf()
-            for(k in response.oneContactRetrofit!!){
-                val o=realmViewModel.insertOneContact(
-                    k.idOneContact,zlocin, k.ime,k.broj, k.slika
+            for (k in response.oneContactRetrofit!!) {
+                val o = realmViewModel.insertOneContact(
+                    k.idOneContact, zlocin, k.ime, k.broj, k.slika
                 )
                 if (o != null) {
                     oneContactLista.add(o)
                 }
             }
 
-            for (g in response.galleryRetrofit!!){
+            for (o in response.obicnePorukeRetrofit!!) {
+                val millisPoruka = o.datum
+                val instantPoruka = millisPoruka?.let { Instant.ofEpochMilli(it) }
+                val realmInstantPoruka =
+                    instantPoruka?.let { RealmInstant.from(instantPoruka.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
+
+                realmViewModel.insertObicnaPoruka(
+                    kontaktKoSaljeO = oneContactLista.find { it.idOneContact == o.kontaktKoSalje },
+                    kontaktKomeSaljeO = oneContactLista.find { it.idOneContact == o.kontaktKomeSalje },
+                    tekstO = o.tekst,
+                    datumO = realmInstantPoruka,
+                    procitanaO = o.procitana
+                )
+            }
+
+            for (g in response.galleryRetrofit!!) {
                 val millisGallery = g.datum
                 val instantGallery = millisGallery?.let { Instant.ofEpochMilli(it) }
-                val realmInstantGallery = instantGallery?.let { RealmInstant.from(instantGallery.epochSecond, it.nano) }
-                    ?: RealmInstant.now()
+                val realmInstantGallery =
+                    instantGallery?.let { RealmInstant.from(instantGallery.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
                 g.slika?.let {
                     realmViewModel.insertGalleryPhoto(
                         idPhotoG = g.idPhoto,
@@ -1087,10 +1127,11 @@ class MyViewModel @Inject constructor(
 
 
 
-            for(t in response.tragoviRetrofit!!){
-                val osum =osumnjiceni.find { it.idOsumnjicen == t.osumnjicenId.idOsumnjicen }
-                val foren =forenzickiDokazLista.find { it.idForenzickiDokaz == t.forenzickiDokazId.idForenzickiDokaz }
-                if (osum != null && foren!=null) {
+            for (t in response.tragoviRetrofit!!) {
+                val osum = osumnjiceni.find { it.idOsumnjicen == t.osumnjicenId.idOsumnjicen }
+                val foren =
+                    forenzickiDokazLista.find { it.idForenzickiDokaz == t.forenzickiDokazId.idForenzickiDokaz }
+                if (osum != null && foren != null) {
                     realmViewModel.insertTrag(
                         idTragT = t.idTrag,
                         forenzickiDokazIdT = foren,
@@ -1099,9 +1140,9 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(d in response.dokaziOsumnjiceniRetrofit!!){
-                val osum =osumnjiceni.find { it.idOsumnjicen == d.osumnjicenId.idOsumnjicen }
-                val dokaz =dokazi.find { it.idDokaz == d.dokazId.idDokaz }
+            for (d in response.dokaziOsumnjiceniRetrofit!!) {
+                val osum = osumnjiceni.find { it.idOsumnjicen == d.osumnjicenId.idOsumnjicen }
+                val dokaz = dokazi.find { it.idDokaz == d.dokazId.idDokaz }
 
                 realmViewModel.insertDokazOsumnjicenog(
                     idDokazOsumnjicenDO = d.idDokazOsumnjicen,
@@ -1112,11 +1153,12 @@ class MyViewModel @Inject constructor(
 
 
 
-            for(b in response.beleskeRetrofit!!){
+            for (b in response.beleskeRetrofit!!) {
                 val millisBeleska = b.datum
                 val instantBeleska = millisBeleska?.let { Instant.ofEpochMilli(it) }
-                val realmInstantBeleska = instantBeleska?.let { RealmInstant.from(instantBeleska.epochSecond, it.nano) }
-                    ?: RealmInstant.now()
+                val realmInstantBeleska =
+                    instantBeleska?.let { RealmInstant.from(instantBeleska.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
                 realmViewModel.insertBeleska(
                     idBeleskaB = b.idBeleska,
                     zlocinIdB = zlocin,
@@ -1126,9 +1168,9 @@ class MyViewModel @Inject constructor(
             }
 
             val whatsAppLista: MutableList<WhatsAppKontaktR> = mutableListOf()
-            for(wa in response.whatsappKontaktRetrofit!!){
+            for (wa in response.whatsappKontaktRetrofit!!) {
                 wa.slika?.let {
-                    val w=realmViewModel.insertWhatsAppKontakt(
+                    val w = realmViewModel.insertWhatsAppKontakt(
                         idWhatsAppKontaktW = wa.idWhatsAppKontakt,
                         zlocinIdW = zlocin,
                         imeW = wa.ime,
@@ -1141,16 +1183,22 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(waP in response.whatsappPorukaRetrofit!!){
-                val kontKoSalje =whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKoSalje }
-                val kontKomeSalje =whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKomeSalje }
+            for (waP in response.whatsappPorukaRetrofit!!) {
+                val kontKoSalje = whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKoSalje }
+                val kontKomeSalje =
+                    whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKomeSalje }
 
                 val millisWhatsappPoruka = waP.datum
                 val instantWhatsappPoruka = millisWhatsappPoruka?.let { Instant.ofEpochMilli(it) }
-                val realmInstantWhatsappPoruka = instantWhatsappPoruka?.let { RealmInstant.from(instantWhatsappPoruka.epochSecond, it.nano) }
+                val realmInstantWhatsappPoruka = instantWhatsappPoruka?.let {
+                    RealmInstant.from(
+                        instantWhatsappPoruka.epochSecond,
+                        it.nano
+                    )
+                }
                     ?: RealmInstant.now()
 
-                if (kontKoSalje != null && kontKomeSalje!=null) {
+                if (kontKoSalje != null && kontKomeSalje != null) {
                     realmViewModel.insertWhatsAppPoruka(
                         idWhatsAppPorukaW = waP.idWhatsAppPoruka,
                         kontaktKoSalje = kontKoSalje,
@@ -1162,13 +1210,14 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(oC in response.oneCallRetrofit!!){
-                val oneCont =oneContactLista.find { it.idOneContact == oC.idOneCall }
+            for (oC in response.oneCallRetrofit!!) {
+                val oneCont = oneContactLista.find { it.idOneContact == oC.idOneCall }
 
                 val millisOneCall = oC.datum
                 val instantOneCall = millisOneCall?.let { Instant.ofEpochMilli(it) }
-                val realmInstantOneCall = instantOneCall?.let { RealmInstant.from(instantOneCall.epochSecond, it.nano) }
-                    ?: RealmInstant.now()
+                val realmInstantOneCall =
+                    instantOneCall?.let { RealmInstant.from(instantOneCall.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
 
                 realmViewModel.insertOneCall(
                     idOneCallC = oC.idOneCall,
@@ -1179,8 +1228,8 @@ class MyViewModel @Inject constructor(
                 )
             }
 
-            for(odnosOZ in response.odnosiOsumnjiceniZrtvaRetrofit!!){
-                val osum =osumnjiceni.find { it.idOsumnjicen == odnosOZ.osumnjicenId }
+            for (odnosOZ in response.odnosiOsumnjiceniZrtvaRetrofit!!) {
+                val osum = osumnjiceni.find { it.idOsumnjicen == odnosOZ.osumnjicenId }
 
                 realmViewModel.insertOdnosOsumnjicenZrtva(
                     idOdnosOOZ = odnosOZ.idOdnos,
@@ -1191,8 +1240,8 @@ class MyViewModel @Inject constructor(
             }
 
             val pitanjaLista: MutableList<PitanjeR> = mutableListOf()
-            for(p in response.pitanjaRetrofit!!){
-                val pit=realmViewModel.insertPitanje(
+            for (p in response.pitanjaRetrofit!!) {
+                val pit = realmViewModel.insertPitanje(
                     idPitanjeP = p.idPitanje,
                     zlocinIdP = zlocin,
                     tekstP = p.tekst
@@ -1202,8 +1251,8 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(o in response.odgovoriRetrofit!!){
-                val pit =pitanjaLista.find { it.idPitanje == o.pitanjeId }
+            for (o in response.odgovoriRetrofit!!) {
+                val pit = pitanjaLista.find { it.idPitanje == o.pitanjeId }
                 realmViewModel.insertOdogovor(
                     idOdogovorO = o.idOdogovor,
                     pitanjeIdO = pit,
@@ -1214,7 +1263,7 @@ class MyViewModel @Inject constructor(
             }
 
             withContext(Dispatchers.IO) {
-                for(p in response.pitanjeIspitivanjeOsumnjicenogRetrofit!!){
+                for (p in response.pitanjeIspitivanjeOsumnjicenogRetrofit!!) {
                     val osum = osumnjiceni.find { it.idOsumnjicen == p.osumnjicenId }
 
                     realmViewModel.insertPitanjeIspitivanjeOsumnjicenog(
@@ -1228,8 +1277,8 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(pIS in response.pitanjeIspitivanjeSvedokaRetrofit!!){
-                val sv = svedokLista.find {it.idSvedok == pIS.svedokId}
+            for (pIS in response.pitanjeIspitivanjeSvedokaRetrofit!!) {
+                val sv = svedokLista.find { it.idSvedok == pIS.svedokId }
                 realmViewModel.insertPitanjeIspitivanjeSvedoka(
                     idPitanjeIspitivanjeSvedokaP = pIS.idPitanjeIspitivanjeSvedoka,
                     svedokZ = sv,
@@ -1241,8 +1290,8 @@ class MyViewModel @Inject constructor(
 
             //ISPRAVITI nextZ=null
             val zadatakLista = mutableListOf<ZadatakR>()
-            for(z in response.zadaciRetrofit!!){
-                val zad=realmViewModel.insertZadatak(
+            for (z in response.zadaciRetrofit!!) {
+                val zad = realmViewModel.insertZadatak(
                     idZadatakZ = z.idZadatak,
                     tekstZ = z.tekst,
                     korakZ = z.korak,
@@ -1262,8 +1311,8 @@ class MyViewModel @Inject constructor(
                 realmViewModel.updateZadatak(trenutniZadatak.idZadatak, naredniZadatak.idZadatak)
             }
 
-            for(dokZ in response.dokaziZadaciRetrofit!!) {
-                val zad =zadatakLista.find { it.idZadatak ==dokZ.zadatakId }
+            for (dokZ in response.dokaziZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == dokZ.zadatakId }
                 val dok = dokazi.find { it.idDokaz == dokZ.dokazId }
 
                 if (zad != null && dok != null) {
@@ -1277,9 +1326,9 @@ class MyViewModel @Inject constructor(
                 }
             }
 
-            for(isp in response.ispitivanjeOsumnjicenogZadaciRetrofit!!){
-                val osum =osumnjiceni.find { it.idOsumnjicen == isp.osumnjicenId }
-                val zad =zadatakLista.find { it.idZadatak ==isp.zadatakId }
+            for (isp in response.ispitivanjeOsumnjicenogZadaciRetrofit!!) {
+                val osum = osumnjiceni.find { it.idOsumnjicen == isp.osumnjicenId }
+                val zad = zadatakLista.find { it.idZadatak == isp.zadatakId }
                 realmViewModel.insertIspitivanjeOsumnjicenogZadatak(
                     idIspitivanjeOsumnjicenogZadatakZ = isp.idIspitivanjeOsumnjicenogZadatak,
                     osumnjicenIdZ = osum,
@@ -1289,9 +1338,9 @@ class MyViewModel @Inject constructor(
             }
 
 
-            for(isp in response.ispitivanjeSvedokaZadaciRetrofit!!){
-                val zad =zadatakLista.find { it.idZadatak ==isp.zadatakId }
-                val sv =svedokLista.find { it.idSvedok ==isp.svedokId }
+            for (isp in response.ispitivanjeSvedokaZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == isp.zadatakId }
+                val sv = svedokLista.find { it.idSvedok == isp.svedokId }
 
                 realmViewModel.insertIspitivanjeSvedokaZadatak(
                     idIspitivanjeSvedokaZadatakZ = isp.idIspitivanjeSvedokaZadatak,
@@ -1301,9 +1350,9 @@ class MyViewModel @Inject constructor(
                 )
             }
 
-            for (tel in response.telefonZadaciRetrofit!!){
-                val zad =zadatakLista.find { it.idZadatak ==tel.zadatakId }
-                val t =telefonLista.find { it.idTelefon ==tel.idTelefonZadatak }
+            for (tel in response.telefonZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == tel.zadatakId }
+                val t = telefonLista.find { it.idTelefon == tel.idTelefonZadatak }
                 realmViewModel.insertTelefonZadatak(
                     idTelefonZadatakZ = tel.idTelefonZadatak,
                     telefonZ = t,
@@ -1312,9 +1361,10 @@ class MyViewModel @Inject constructor(
                 )
             }
 
-            for(forenz in response.forenzickiDokazZadaciRetrofit!!){
-                val zad =zadatakLista.find { it.idZadatak ==forenz.zadatakId }
-                val f =forenzickiDokazLista.find { it.idForenzickiDokaz ==forenz.forenzickiDokazId }
+            for (forenz in response.forenzickiDokazZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == forenz.zadatakId }
+                val f =
+                    forenzickiDokazLista.find { it.idForenzickiDokaz == forenz.forenzickiDokazId }
                 realmViewModel.insertForenzickiDokazZadatak(
                     idForenzickiDokazZadatakZ = forenz.idForenzickiDokazZadatak,
                     tekstZ = forenz.tekst,
@@ -1325,10 +1375,830 @@ class MyViewModel @Inject constructor(
             }
 
             realmViewModel.callGetTitleDatePlaceDescFromCrime()
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             _uiStateGeminiData.value = UiStateGeminiData(null)
+        }
+    }
+
+
+// RETROFIT 2
+
+    private val _uiStateGeminiDataMS = MutableStateFlow(UiStateGeminiDataMS())
+    val uiStateGeminiDataMS: StateFlow<UiStateGeminiDataMS> = _uiStateGeminiDataMS
+
+    fun getGeminiDataMS(realmViewModel: RealmViewModel) = viewModelScope.launch {
+
+        Log.d("POZVANO", "POZVANO")
+
+        val jsonString = """
+    
+    {
+      "prompt": "Come up with a story for a detective app about a mysterious case in a hospital. A patient is admitted to the hospital (they may be alive or dead afterward), and the doctors cannot determine the cause. They call in a detective who specializes in unusual cases to solve it. Fill in all the data in the tables as shown in the example I provided below, but I don't want the story and data to be the same — generate a new story and based on that, fill in the tables. Fill in only the tables I provided as examples: zlocinR, pacijentR, medicinskiIzvestajR, lokacijeIstrageR, lekarskiTestR, izjavaZaPacijentaR,osobaR, dokazR, forenzickiDokazR, telefonR, aplikacijaKtor, oneContactR, beleskaR, whatsAppKontaktR, whatsAppPorukaR, oneCallR, galleryR, obicnaPorukaR, pitanjeR, odgovorR, zadatakR, dokazZadatakR, telefonZadatakR, forenzickiDokazZadatakR. izjavaZaPacijentaR has field osobaId,idIzjavaZaPacijenta,izjava and pacijentId. lokacijeIstrageR is array. Fill in the PacijentR table with data and return it in your response! There must not be any null values (zanimanje, kontakt, datum are not null). But write the response only in JSON format and do not include additional square brackets [].",
+      "tables": {
+      "zlocinR": {
+        "idZlocin": 1,
+        "tipZlocinaId": 1,
+        "naziv": "Pacijent 00",
+        "datum": "2025-04-17",
+        "mesto": "Bolnica Spasa, Paris",
+        "opis": "Muskarac u kasnim dvadesetim primljen je na urgentno odeljenje u katatonicnom stanju. Nema povreda, nema tragova nasilja. Lekari ne mogu da utvrde uzrok. Ti, kao detektiv specijalizovan za neobicne slucajeve, pozvan si da istrazis.",
+        "status": "u_istrazi"
+      },
+        "pacijentR":{
+          "idPacijent":0,
+          "simptomi":"",
+          "statusPacijenta":"ziva",
+          "datumPrijave":"2025-04-17",
+          "prijavio":{
+            "idOsoba": 5,
+            "ime": "Dr. Ana King",
+            "kontakt": "+33644455566",
+            "datum": "1987-12-01",
+            "zanimanje": "doktor",
+            "pol": "zenski",
+            "zlocinId": 1
+          },
+          "zlocinId":1,
+          "zrtvaId":{
+            "idZrtva": 1,
+            "tipZrtve": "",
+            "detalji": "zrtva",
+            "statusZrtva": "ziva",
+            "zlocinId": 1,
+            "osobaId": {
+                "idOsoba": 1,
+                "ime": "",
+                "kontakt": "+33612345678",
+                "datum": "1993-04-12",
+                "zanimanje": "Gambler",
+                "pol": "zenski",
+                "zlocinId": 1
+            }
+        }
+        },
+        "medicinskiIzvestajR":{
+          "idMedicinskiIzvestaj":1,
+          "rezime": "Patient experienced a short period of cardiac arrest with spontaneous recovery. All tests returned normal results.",
+          "CTnalaz": "No anomalies or trauma visible on brain or chest CT scan.",
+          "MRInalaz": "MRI results clean; no evidence of neurological irregularities.",
+          "krvnaSlika": "All parameters within normal limits.",
+          "toksikoloskeAnalize": "No substances detected in blood or urine.",
+          "zakljucak": "Cause of cardiac arrest unexplained. No physical or toxicological basis found.",
+          "pacijentId":1
+        },
+        "lokacijeIstrageR":[{
+            "idLokacijeIstrage":1,
+            "mesto":"",
+            "naziv":"",
+            "opis":"",
+            "zlocinId":1
+        }],
+        "izjavaZaPacijentaR":{
+            "idIzjavaZaPacijenta":1,
+            "izjava":"",
+            "pacijentId":1,
+            "osobaId":1
+        },
+        "lekarskiTestR":{
+            "idLekarskiTest":1,
+            "pacijentId":1,
+            "izvestaj":""
+        },
+        "dokazR": [
+        {
+          "idDokaz": 1,
+          "tipDokaza": "fizicki",
+          "opis": "Cudne knjige u stanu",
+          "zlocinId": 1,
+          "zrtvaId": 1,
+          "status": 0
+        },
+        {
+          "idDokaz": 2,
+          "tipDokaza": "digitalni",
+          "opis": "Threatening messages found on Isabelle's phone.",
+          "zlocinId": 1,
+          "zrtvaId": 1,
+          "status": 0
+        }
+      ],
+      "forenzickiDokazR": [
+        {
+          "idForenzickiDokaz": 1,
+          "tipForenzickiDokaz": "DNK",
+          "opis": "",
+          "statusS": 0,
+          "veza": ""
+        }
+      ],
+      "telefonR": [
+        {
+          "idTelefon": 1,
+          "model": "iPhone 12",
+          "os": "IOS",
+          "sifra": "123456",
+          "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature."
+        },
+        {
+          "idTelefon": 2,
+          "model": "Samsung Galaxy S20",
+          "os": "Android",
+          "sifra": "654321",
+          "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death."
+        }
+      ],
+      "oneContactR": [
+        {
+          "idOneContact": 1,
+          "zlocinId": 1,
+          "ime": "Marco",
+          "broj": "+33698765432",
+          "slika": 1
+        },
+        {
+          "idOneContact": 2,
+          "zlocinId": 1,
+          "ime": "Amelia",
+          "broj": "+33623456789",
+          "slika": 1
+        }
+      ],
+      "beleskaR": [
+        {
+          "idBeleska": 1,
+          "zlocinId": 1,
+          "tekst": "",
+          "datum": "2025-04-17"
+        },
+        {
+          "idBeleska": 2,
+          "zlocinId": 1,
+          "tekst": "",
+          "datum": "2025-04-17"
+        }
+      ],
+      "whatsAppKontaktR": [
+      {
+        "idWhatsAppKontakt": 1,
+        "zlocinId": 1,
+        "ime": "Oliver",
+        "broj": "+12065559900",
+        "slika": 1
+      },
+      {
+        "idWhatsAppKontakt": 2,
+        "zlocinId": 1,
+        "ime": "Sophia",
+        "broj": "+12067771122",
+        "slika": 1
+      }],
+      "whatsAppPorukaR": [
+          {
+            "idWhatsAppPoruka": 1,
+            "kontaktKoSalje": 1,
+            "kontaktKomeSalje": 2,
+            "tekst": ".",
+            "datum": "2025-04-17",
+            "procitana": true
+          },
+          {
+            "idWhatsAppPoruka": 2,
+            "kontaktKoSalje": 2,
+            "kontaktKomeSalje": 1,
+            "tekst": ".",
+            "datum": "2025-04-17",
+            "procitana": false
+          }
+        ],
+        "oneCallR": [
+        {
+          "idOneCall": 1,
+          "kontakt": 1,
+          "datum": "2025-04-17",
+          "propusten": false,
+          "dolazni": true
+        },
+        {
+          "idOneCall": 2,
+          "kontakt": 2,
+          "datum": "2025-04-17",
+          "propusten": true,
+          "dolazni": false
+        }
+      ],
+      "galleryR": [
+      {
+        "idPhoto": 1,
+        "zlocinId": 1,
+        "slika": 1,
+        "datum": "2025-04-17",
+        "mesto": "Paris"
+      },
+      {
+        "idPhoto": 2,
+        "zlocinId": 1,
+        "slika": 2,
+        "datum": "2025-04-17",
+        "mesto": ""
+      }
+    ],
+    "obicnaPorukaR": [
+        {
+          "idObicnaPoruka": 1,
+          "kontaktKoSalje": 1,
+          "kontaktKomeSalje": 2,
+          "tekst": "",
+          "datum": "2025-04-17",
+          "procitana": true
+        },
+        {
+          "idObicnaPoruka": 2,
+          "kontaktKoSalje": 2,
+          "kontaktKomeSalje": 1,
+          "tekst": "",
+          "datum": "2025-04-17",
+          "procitana": false
+        }
+      ],
+      "pitanjeR": [
+      {
+        "idPitanje": 1,
+        "zlocinId": 1,
+        "tekst": ""
+      },
+      {
+        "idPitanje": 2,
+        "zlocinId": 1,
+        "tekst": ""
+      },
+      {
+        "idPitanje": 3,
+        "zlocinId": 1,
+        "tekst": ""
+      }
+    ],
+    "odgovorR": [
+      {
+        "idOdogovor": 1,
+        "pitanjeId": 1,
+        "tekstOdgovora": "",
+        "tacan": true,
+        "bodovi": 10
+      },
+      {
+        "idOdogovor": 2,
+        "pitanjeId": 1,
+        "tekstOdgovora": "",
+        "tacan": false,
+        "bodovi": 0
+      },
+      {
+        "idOdogovor": 3,
+        "pitanjeId": 1,
+        "tekstOdgovora": "",
+        "tacan": false,
+        "bodovi": 0
+      }
+    ],
+    "osobaR": [
+        {
+          "idOsoba": 1,
+          "ime": "Marko Marković",
+          "kontakt": "123456789",
+          "datum": "2025-04-17",
+          "zanimanje": "Detektiv",
+          "pol": "Muški",
+          "zlocinId": 101
+        },
+        {
+          "idOsoba": 2,
+          "ime": "Jovana Jovanović",
+          "kontakt": "987654321",
+          "datum": "2025-04-17",
+          "zanimanje": "Advokat",
+          "pol": "Ženski",
+          "zlocinId": 102
+        },
+        {
+          "idOsoba": 3,
+          "ime": "Nikola Nikolić",
+          "kontakt": "1122334455",
+          "datum": "2025-04-17",
+          "zanimanje": "Novinar",
+          "pol": "Muški",
+          "zlocinId": 103
+        }
+      ],
+      "zadatakR": [
+      {
+        "idZadatak": 1,
+        "tekst": "",
+        "korak": "1",
+        "uradjen": false,
+        "nextZadatak": 2,
+        "zlocinId": 101
+      },
+      {
+        "idZadatak": 2,
+        "tekst": "",
+        "korak": "2",
+        "uradjen": false,
+        "nextZadatak": 3,
+        "zlocinId": 101
+      }
+    ],
+    "dokazZadatakR": [
+      {
+        "idDokazZadatak": 1,
+        "tekst": "",
+        "dokazId": 1,
+        "uradjen": false,
+        "zadatakId": 2
+      },
+      {
+        "idDokazZadatak": 2,
+        "tekst": "",
+        "dokazId": 2,
+        "uradjen": false,
+        "zadatakId": 3
+      }],
+    "telefonZadatakR": [
+          {
+            "idTelefonZadatak": 1,
+            "telefonId": 10,
+            "zadatakId": 3,
+            "uradjen": false
+          },
+          {
+            "idTelefonZadatak": 2,
+            "telefonId": 11,
+            "zadatakId": 4,
+            "uradjen": true
+          }
+    ],
+    "forenzickiDokazZadatakR": [
+      {
+        "idForenzickiDokazZadatak": 1,
+        "tekst": "",
+        "forenzickiDokazId": 1,
+        "uradjen": false,
+        "zadatakId": 1
+      },
+      {
+        "idForenzickiDokazZadatak": 2,
+        "tekst": "",
+        "forenzickiDokazId": 1,
+        "uradjen": false,
+        "zadatakId": 2
+      }
+    ],
+    "aplikacijaKtor":[{
+            "idAplikacije":0,
+            "naziv": "",
+            "tip": 0,
+            "zrtvaId": 0,
+            "aktivna": false,
+            "informacije": ""
+    }]
+    }
+    }
+    """.trimIndent()
+
+        val requestBody = jsonString.toRequestBody("application/json".toMediaType())
+        try {
+            val response = MyRepository.geminiDataMS(requestBody)
+            Log.d("GEMINI2", response.toString())
+            _uiStateGeminiDataMS.value = UiStateGeminiDataMS(response)
+
+            val tipZlocina: TipZlocinaR? = realmViewModel.inserTipZlocina("Mysterious Symptoms")
+            Log.d("GEMINI ZLOCIN 2", response.zlocinRetrofit.toString())
+
+            var zlocin: ZlocinR? = null
+            val dokazi: MutableList<DokazR> = mutableListOf()
+            val telefonLista: MutableList<TelefonR> = mutableListOf()
+            val forenzickiDokazLista: MutableList<ForenzickiDokazR> = mutableListOf()
+            var pacijent: PacijentR? = null
+            var osoba: OsobaR? = null
+            var zrtva: ZrtvaR? = null
+
+            if (response.zlocinRetrofit != null) {
+                zlocin = realmViewModel.insertZlocin(
+                    response.zlocinRetrofit!!.idZlocin,
+                    tipZlocina,
+                    response.zlocinRetrofit!!.naziv,
+                    response.zlocinRetrofit!!.datum.toString(),
+                    response.zlocinRetrofit!!.mesto,
+                    response.zlocinRetrofit!!.opis,
+                    response.zlocinRetrofit!!.status
+                )
+            }
+
+            if (response.pacijentRetrofit != null && zlocin != null) {
+                val millisOsoba = response.pacijentRetrofit!!.zrtvaId.osobaId.datum
+                val instantOsoba = millisOsoba?.let { Instant.ofEpochMilli(it) }
+                val realmInstantOsoba = instantOsoba?.let {
+                    RealmInstant.from(
+                        instantOsoba.epochSecond,
+                        it.nano
+                    )
+                }
+                    ?: RealmInstant.now()
+
+                osoba = realmViewModel.insertOsoba(
+                    idOsobaO = response.pacijentRetrofit!!.zrtvaId.osobaId.idOsoba,
+                    imeZ = response.pacijentRetrofit!!.zrtvaId.osobaId.ime,
+                    kontaktZ = response.pacijentRetrofit!!.zrtvaId.osobaId.kontakt,
+                    datumZ = realmInstantOsoba,
+                    zanimanjeZ = response.pacijentRetrofit!!.zrtvaId.osobaId.zanimanje,
+                    polZ = response.pacijentRetrofit!!.zrtvaId.osobaId.pol,
+                    zlocinZ = zlocin
+                )
+
+                if (osoba != null) {
+                    val millisZrtva = response.pacijentRetrofit!!.zrtvaId.osobaId.datum
+                    val instantZrtva = millisZrtva?.let { Instant.ofEpochMilli(it) }
+                    val realmInstantZrtva = instantZrtva?.let {
+                        RealmInstant.from(
+                            instantZrtva.epochSecond,
+                            it.nano
+                        )
+                    }
+                        ?: RealmInstant.now()
+
+                    zrtva = realmViewModel.insertZrtva(
+                        idZrtvaZ = response.pacijentRetrofit!!.zrtvaId.idZrtva,
+                        tipZ = response.pacijentRetrofit!!.zrtvaId.tipZrtve,
+                        imeZ = response.pacijentRetrofit!!.zrtvaId.osobaId.ime,
+                        detaljiZ = response.pacijentRetrofit!!.zrtvaId.detalji,
+                        statusZ = response.pacijentRetrofit!!.zrtvaId.statusZrtva,
+                        zlocinZ = zlocin,
+                        kontaktZ = response.pacijentRetrofit!!.zrtvaId.osobaId.kontakt,
+                        datumZ = realmInstantZrtva,
+                        zanimanjeZ = response.pacijentRetrofit!!.zrtvaId.osobaId.zanimanje,
+                        polZ = response.pacijentRetrofit!!.zrtvaId.osobaId.pol
+                    )
+
+                    if (zrtva != null) {
+                        pacijent = realmViewModel.insertPacijent(
+                            idPacijentP = response.pacijentRetrofit!!.idPacijent,
+                            simptomiP = response.pacijentRetrofit!!.simptomi,
+                            statusPacijentaP = response.pacijentRetrofit!!.statusPacijenta,
+                            datumPrijaveP = realmInstantZrtva,
+                            prijavioP = response.pacijentRetrofit!!.prijavio.ime,
+                            zlocinP = zlocin,
+                            zrtvaP = zrtva
+                        )
+                    }
+                }
+            }
+
+            val osobeList = mutableListOf<OsobaR>()
+            for (o in response.osobeRetrofit!!) {
+                val millisOsoba = o.datum
+                val instantOsoba = millisOsoba?.let { Instant.ofEpochMilli(it) }
+                val realmInstantOsoba =
+                    instantOsoba?.let { RealmInstant.from(instantOsoba.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
+
+                val osoba = realmViewModel.insertOsoba(
+                    idOsobaO = o.idOsoba,
+                    imeZ = o.ime,
+                    kontaktZ = o.kontakt,
+                    datumZ = realmInstantOsoba,
+                    zanimanjeZ = o.zanimanje,
+                    polZ = o.pol,
+                    zlocinZ = zlocin
+                )
+                if (osoba != null) {
+                    osobeList.add(osoba)
+                }
+            }
+
+            for (d in response.dokaziRetrofit!!) {
+                val dk = realmViewModel.insertDokaz(
+                    d.idDokaz,
+                    d.tipDokaza,
+                    d.opis,
+                    zlocin,
+                    zrtva,
+                    d.status
+                )
+                if (dk != null) {
+                    dokazi.add(dk)
+                }
+            }
+
+            for (t in response.telefoniRetrofit!!) {
+                val tl = realmViewModel.insertTelefon(
+                    idTelefonT = t.idTelefon,
+                    modelT = t.model,
+                    osT = t.os,
+                    zrtvaT = zrtva,
+                    sifraT = t.sifra
+                )
+                if (tl != null) {
+                    telefonLista.add(tl)
+                }
+            }
+
+
+            for (f in response.forenzickiDokazRetrofit!!) {
+                val foren = realmViewModel.insertForenzickiDokaz(
+                    idForenzickiDokazFD = f.idForenzickiDokaz,
+                    tipFD = f.tipForenzickiDokaz,
+                    opisFD = f.opis,
+                    statusFD = f.statusS,
+                    zrtvaFD = zrtva,
+                    vezaFD = f.veza
+                )
+
+                if (foren != null) {
+                    forenzickiDokazLista.add(foren)
+                }
+            }
+
+            for (a in response.aplikacijeRetrofit!!) {
+                realmViewModel.insertAplikacija(
+                    idAplikacijeA = a.idAplikacije,
+                    zrtvaA = zrtva,
+                    nazivA = a.naziv,
+                    tipA = a.tip,
+                    aktivnaA = a.aktivna,
+                    informacijeA = a.informacije
+                )
+            }
+
+            val oneContactLista: MutableList<OneContactR> = mutableListOf()
+            for (k in response.oneContactRetrofit!!) {
+                val o = realmViewModel.insertOneContact(
+                    k.idOneContact, zlocin, k.ime, k.broj, k.slika
+                )
+                if (o != null) {
+                    oneContactLista.add(o)
+                }
+            }
+
+            for (o in response.obicnePorukeRetrofit!!) {
+                val millisPoruka = o.datum
+                val instantPoruka = millisPoruka?.let { Instant.ofEpochMilli(it) }
+                val realmInstantPoruka =
+                    instantPoruka?.let { RealmInstant.from(instantPoruka.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
+
+                realmViewModel.insertObicnaPoruka(
+                    kontaktKoSaljeO = oneContactLista.find { it.idOneContact == o.kontaktKoSalje },
+                    kontaktKomeSaljeO = oneContactLista.find { it.idOneContact == o.kontaktKomeSalje },
+                    tekstO = o.tekst,
+                    datumO = realmInstantPoruka,
+                    procitanaO = o.procitana
+                )
+            }
+
+            for (g in response.galleryRetrofit!!) {
+                val millisGallery = g.datum
+                val instantGallery = millisGallery?.let { Instant.ofEpochMilli(it) }
+                val realmInstantGallery =
+                    instantGallery?.let { RealmInstant.from(instantGallery.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
+                g.slika?.let {
+                    realmViewModel.insertGalleryPhoto(
+                        idPhotoG = g.idPhoto,
+                        zlocinIdG = zlocin,
+                        slikaG = it,
+                        datumG = realmInstantGallery,
+                        mestoG = g.mesto
+                    )
+                }
+            }
+
+            for (b in response.beleskeRetrofit!!) {
+                val millisBeleska = b.datum
+                val instantBeleska = millisBeleska?.let { Instant.ofEpochMilli(it) }
+                val realmInstantBeleska =
+                    instantBeleska?.let { RealmInstant.from(instantBeleska.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
+                realmViewModel.insertBeleska(
+                    idBeleskaB = b.idBeleska,
+                    zlocinIdB = zlocin,
+                    tekstB = b.tekst,
+                    datumB = realmInstantBeleska
+                )
+            }
+
+            val whatsAppLista: MutableList<WhatsAppKontaktR> = mutableListOf()
+            for (wa in response.whatsappKontaktRetrofit!!) {
+                wa.slika?.let {
+                    val w = realmViewModel.insertWhatsAppKontakt(
+                        idWhatsAppKontaktW = wa.idWhatsAppKontakt,
+                        zlocinIdW = zlocin,
+                        imeW = wa.ime,
+                        brojW = wa.broj,
+                        slikaW = it
+                    )
+                    if (w != null) {
+                        whatsAppLista.add(w)
+                    }
+                }
+            }
+
+            for (waP in response.whatsappPorukaRetrofit!!) {
+                val kontKoSalje = whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKoSalje }
+                val kontKomeSalje =
+                    whatsAppLista.find { it.idWhatsAppKontakt == waP.kontaktKomeSalje }
+
+                val millisWhatsappPoruka = waP.datum
+                val instantWhatsappPoruka = millisWhatsappPoruka?.let { Instant.ofEpochMilli(it) }
+                val realmInstantWhatsappPoruka = instantWhatsappPoruka?.let {
+                    RealmInstant.from(
+                        instantWhatsappPoruka.epochSecond,
+                        it.nano
+                    )
+                }
+                    ?: RealmInstant.now()
+
+                if (kontKoSalje != null && kontKomeSalje != null) {
+                    realmViewModel.insertWhatsAppPoruka(
+                        idWhatsAppPorukaW = waP.idWhatsAppPoruka,
+                        kontaktKoSalje = kontKoSalje,
+                        kontaktKomeSalje = kontKomeSalje,
+                        tekstW = waP.tekst,
+                        datumW = realmInstantWhatsappPoruka,
+                        procitanaW = waP.procitana
+                    )
+                }
+            }
+
+            for (oC in response.oneCallRetrofit!!) {
+                val oneCont = oneContactLista.find { it.idOneContact == oC.idOneCall }
+
+                val millisOneCall = oC.datum
+                val instantOneCall = millisOneCall?.let { Instant.ofEpochMilli(it) }
+                val realmInstantOneCall =
+                    instantOneCall?.let { RealmInstant.from(instantOneCall.epochSecond, it.nano) }
+                        ?: RealmInstant.now()
+
+                realmViewModel.insertOneCall(
+                    idOneCallC = oC.idOneCall,
+                    kontaktC = oneCont,
+                    datumC = realmInstantOneCall,
+                    propustenC = oC.propusten,
+                    dolazniC = oC.dolazni
+                )
+            }
+
+            val pitanjaLista: MutableList<PitanjeR> = mutableListOf()
+            for (p in response.pitanjaRetrofit!!) {
+                val pit = realmViewModel.insertPitanje(
+                    idPitanjeP = p.idPitanje,
+                    zlocinIdP = zlocin,
+                    tekstP = p.tekst
+                )
+                if (pit != null) {
+                    pitanjaLista.add(pit)
+                }
+            }
+
+            for (o in response.odgovoriRetrofit!!) {
+                val pit = pitanjaLista.find { it.idPitanje == o.pitanjeId }
+                realmViewModel.insertOdogovor(
+                    idOdogovorO = o.idOdogovor,
+                    pitanjeIdO = pit,
+                    tekstOdgovoraO = o.tekstOdgovora,
+                    tacanO = o.tacan,
+                    bodoviO = o.bodovi
+                )
+            }
+
+            val zadatakLista = mutableListOf<ZadatakR>()
+            for (z in response.zadaciRetrofit!!) {
+                val zad = realmViewModel.insertZadatak(
+                    idZadatakZ = z.idZadatak,
+                    tekstZ = z.tekst,
+                    korakZ = z.korak,
+                    uradjenZ = z.uradjen,
+                    nextZ = null,
+                    zlocinZ = zlocin
+                )
+                if (zad != null) {
+                    zadatakLista.add(zad)
+                }
+            }
+
+            for (i in 0 until zadatakLista.size - 1) {
+                val trenutniZadatak = zadatakLista[i]
+                val naredniZadatak = zadatakLista[i + 1]
+                trenutniZadatak.next = naredniZadatak
+                realmViewModel.updateZadatak(trenutniZadatak.idZadatak, naredniZadatak.idZadatak)
+            }
+
+            for (dokZ in response.dokaziZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == dokZ.zadatakId }
+                val dok = dokazi.find { it.idDokaz == dokZ.dokazId }
+
+                if (zad != null && dok != null) {
+                    realmViewModel.insertDokazZadatak(
+                        idDokazZadatakZ = dokZ.idDokazZadatak,
+                        tekstZ = dokZ.tekst,
+                        dokazIdZ = dok,
+                        uradjenZ = dokZ.uradjen,
+                        zadatakIdZ = zad
+                    )
+                }
+            }
+
+            for (tel in response.telefonZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == tel.zadatakId }
+                val t = telefonLista.find { it.idTelefon == tel.idTelefonZadatak }
+                realmViewModel.insertTelefonZadatak(
+                    idTelefonZadatakZ = tel.idTelefonZadatak,
+                    telefonZ = t,
+                    zadatakIdZ = zad,
+                    uradjenZ = tel.uradjen
+                )
+            }
+
+            for (forenz in response.forenzickiDokazZadaciRetrofit!!) {
+                val zad = zadatakLista.find { it.idZadatak == forenz.zadatakId }
+                val f =
+                    forenzickiDokazLista.find { it.idForenzickiDokaz == forenz.forenzickiDokazId }
+                realmViewModel.insertForenzickiDokazZadatak(
+                    idForenzickiDokazZadatakZ = forenz.idForenzickiDokazZadatak,
+                    tekstZ = forenz.tekst,
+                    forenzickiDokazIdZ = f,
+                    uradjenZ = forenz.uradjen,
+                    zadatakIdZ = zad
+                )
+            }
+
+            if (response.medicinskiIzvestajRetrofit != null && pacijent != null) {
+                realmViewModel.insertMedicinskiIzvestaj(
+                    idMedicinskiIzvestajM = response.medicinskiIzvestajRetrofit!!.idMedicinskiIzvestaj,
+                    rezimeM = response.medicinskiIzvestajRetrofit!!.rezime,
+                    CTnalazM = response.medicinskiIzvestajRetrofit!!.CTnalaz,
+                    MRInalazM = response.medicinskiIzvestajRetrofit!!.MRInalaz,
+                    krvnaSlikaM = response.medicinskiIzvestajRetrofit!!.krvnaSlika,
+                    toksikoloskeAnalizeM = response.medicinskiIzvestajRetrofit!!.toksikoloskeAnalize,
+                    zakljucakM = response.medicinskiIzvestajRetrofit!!.zakljucak,
+                    pacijentIdM = pacijent
+                )
+            }
+
+            if (response.lekarskiTestRetrofit != null && pacijent != null) {
+                realmViewModel.insertLekarskiTest(
+                    idLekarskiTestL = response.lekarskiTestRetrofit!!.idLekarskiTest,
+                    pacijentIdL = pacijent,
+                    izvestajL = response.lekarskiTestRetrofit!!.izvestaj
+                )
+            }
+
+            for (l in response.lokacijeIstrageRetrofit!!) {
+                if (zlocin != null) {
+                    realmViewModel.insertLokacijeIstrage(
+                        idLokacijeIstrageL = l.idLokacijeIstrage,
+                        mestoL = l.mesto,
+                        nazivL = l.naziv,
+                        opisL = l.opis,
+                        zlocinIdL = zlocin
+                    )
+                }
+            }
+
+            if (response.izjavaZaPacijentaRetrofit != null && pacijent != null) {
+                val millisOsoba = response.izjavaZaPacijentaRetrofit!!.osobaId.datum
+                val instantOsoba = millisOsoba?.let { Instant.ofEpochMilli(it) }
+                val realmInstantOsoba = instantOsoba?.let {
+                    RealmInstant.from(
+                        instantOsoba.epochSecond,
+                        it.nano
+                    )
+                }
+                    ?: RealmInstant.now()
+
+                var osobaIzjava = realmViewModel.insertOsoba(
+                    idOsobaO = response.izjavaZaPacijentaRetrofit!!.osobaId.idOsoba,
+                    imeZ = response.izjavaZaPacijentaRetrofit!!.osobaId.ime,
+                    kontaktZ = response.izjavaZaPacijentaRetrofit!!.osobaId.kontakt,
+                    datumZ = realmInstantOsoba,
+                    zanimanjeZ = response.izjavaZaPacijentaRetrofit!!.osobaId.zanimanje,
+                    polZ = response.izjavaZaPacijentaRetrofit!!.osobaId.pol,
+                    zlocinZ = zlocin
+                )
+
+                if (osobaIzjava != null) {
+                    realmViewModel.insertIzjavaZaPacijenta(
+                        idIzjavaZaPacijentaI = response.izjavaZaPacijentaRetrofit!!.idIzjavaZaPacijenta,
+                        izjavaI = response.izjavaZaPacijentaRetrofit!!.izjava,
+                        pacijentIdI = pacijent,
+                        osobaP = osobaIzjava
+                    )
+                }
+            }
+
+            // realmViewModel.callGetTitleDatePlaceDescFromCrime()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _uiStateGeminiDataMS.value = UiStateGeminiDataMS(null)
         }
     }
 }
@@ -1405,4 +2275,10 @@ data class UiStateScoreKorisnika(
 
 data class UiStateGeminiData(
     val geminiData: GeminiResponseRetrofit? =null
+)
+
+// RETROFIT 2
+
+data class UiStateGeminiDataMS(
+    val geminiDataMS: GeminiResponseRetrofitMysteriousSymptoms? =null
 )

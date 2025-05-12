@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
+import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
@@ -38,4 +39,9 @@ interface Api {
 
     @POST("gemini")
     suspend fun geminiData(@Body request: RequestBody):GeminiResponseRetrofit
+
+    // RETROFIT 2
+
+    @POST("geminiMS")
+    suspend fun geminiDataMS(@Body request: RequestBody): GeminiResponseRetrofitMysteriousSymptoms
 }

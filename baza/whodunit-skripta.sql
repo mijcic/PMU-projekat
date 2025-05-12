@@ -616,5 +616,7 @@ CREATE TABLE LokacijeIstrage (
     idLokacijeIstrage INT AUTO_INCREMENT PRIMARY KEY,
     mesto varchar(100) NOT NULL,
     naziv varchar(100) NOT NULL,
-    opis varchar(100) NOT NULL
+    opis varchar(100) NOT NULL,
+    zlocinId INT NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
 );

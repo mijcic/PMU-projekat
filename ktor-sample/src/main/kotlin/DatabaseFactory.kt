@@ -17,7 +17,7 @@ object DatabaseFactory {
                 url = "jdbc:mysql://localhost:3306/whodunit",
                 driver = "com.mysql.cj.jdbc.Driver",
                 user = "root",
-                password = "1234"
+                password = "mia123"
             )
             println("Uspesno povezan sa bazom.")
             println("uspesno izvrsena transakcija")

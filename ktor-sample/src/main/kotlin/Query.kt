@@ -228,6 +228,8 @@ fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData){
         conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
+        if (dokaz.tipDokaza != "digitalni" && dokaz.tipDokaza != "fizicki") dokaz.tipDokaza = "fizicki"
+
         statement?.setString(1, dokaz.tipDokaza)
         statement?.setString(2, dokaz.opis)
         statement?.setInt(3, dokaz.status)
