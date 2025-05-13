@@ -55,7 +55,7 @@ data class MedicinskiIzvestajR (var idMedicinskiIzvestaj: Int, val rezime: Strin
 data class LekarskiTestR (var idLekarskiTest: Int, var pacijentId: Int, val izvestaj: String)
 
 @Serializable
-data class LokacijeIstrageR (var idLokacijeIstrage: Int, val mesto: String, val naziv: String, val opis: String,val zlocinId:Int)
+data class LokacijeIstrageR (var idLokacijeIstrage: Int, val mesto: String, val naziv: String, val opis: String,val zlocinId:Int,var geoTackaALatitude:Double, var geoTackaALongitude:Double)
 
 @Serializable
 open class IzjavaZaPacijentaR (var idIzjavaZaPacijenta: Int, var izjava: String, var pacijentId: Int, var osobaId: Int)
@@ -305,11 +305,13 @@ fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSympto
 
     for(l in lokacijeIstrage){
         var lok=LokacijeIstrageData(
-           idLokacijeIstrage = l.idLokacijeIstrage,
-           mesto = l.mesto,
-           naziv = l.naziv,
-           opis = l.naziv,
-           zlocinId = zl.idZlocin
+            idLokacijeIstrage = l.idLokacijeIstrage,
+            mesto = l.mesto,
+            naziv = l.naziv,
+            opis = l.naziv,
+            zlocinId = zl.idZlocin,
+            geoTackaALatitude = l.geoTackaALatitude,
+            geoTackaALongitude = l.geoTackaALongitude
         )
         insertLokacijeIstrageData(
             lokacijeIstrage = lok

@@ -1023,7 +1023,7 @@ class RealmViewModel @Inject constructor(
         return lekarskiTest
     }
 
-    suspend fun insertLokacijeIstrage(idLokacijeIstrageL: Int, mestoL: String, nazivL: String, opisL: String, zlocinIdL: ZlocinR): LokacijeIstrageR? {
+    suspend fun insertLokacijeIstrage(idLokacijeIstrageL: Int, mestoL: String, nazivL: String, opisL: String, zlocinIdL: ZlocinR,geoTackaALatitudeL:Double, geoTackaALongitudeL:Double): LokacijeIstrageR? {
         var lokacijaIstrage: LokacijeIstrageR? = null
         realm.write {
             val existingZlocin =
@@ -1038,7 +1038,7 @@ class RealmViewModel @Inject constructor(
                 mestoL,
                 nazivL,
                 opisL,
-                existingZlocin
+                existingZlocin,geoTackaALatitudeL,geoTackaALongitudeL
             ).find().firstOrNull()
                 ?: LokacijeIstrageR().apply {
                     idLokacijeIstrage = idLokacijeIstrageL
@@ -1046,6 +1046,8 @@ class RealmViewModel @Inject constructor(
                     naziv = nazivL
                     opis = opisL
                     zlocinId = existingZlocin
+                    geoTackaALatitude = geoTackaALatitudeL
+                    geoTackaALongitude = geoTackaALongitudeL
                 }
             copyToRealm(lokacijaIstrage!!)
         }
@@ -2522,5 +2524,6 @@ suspend fun selectIzjavaZaPacijenta(): IzjavaZaPacijentaR {
 suspend fun selectLokacijeIstrageR(): List<LokacijeIstrageR> {
     val lokacije: List<LokacijeIstrageR>
     lokacije = realm.query<LokacijeIstrageR>().find()
+    Log.d("GEMINI LOKACIJE SELECT",lokacije.toString())
     return lokacije
 }

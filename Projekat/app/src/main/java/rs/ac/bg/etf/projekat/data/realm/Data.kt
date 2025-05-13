@@ -619,6 +619,8 @@ open class LokacijeIstrageR: RealmObject {
     var naziv: String = ""
     var opis: String = ""
     var zlocinId: ZlocinR? = null
+    var geoTackaALatitude:Double = 0.0
+    var geoTackaALongitude:Double =0.0
 }
 
 val realmClasses = listOf(

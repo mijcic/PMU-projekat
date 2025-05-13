@@ -4,8 +4,11 @@ import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,26 @@ fun LocationPage(navController: NavController,viewModel: MyViewModel,realmViewMo
     val uiStateDataMysteriousSymptoms by viewModel.uiStateMysteriousSymptomsData.collectAsState()
 
     val context = LocalContext.current
+    val mapViewRef = remember { mutableStateOf<MapView?>(null) }
+
+
+    LaunchedEffect(uiStateDataMysteriousSymptoms.locations) {
+        val mapView = mapViewRef.value
+        val controller = mapView?.controller
+
+        if (!uiStateDataMysteriousSymptoms.locations.isNullOrEmpty() && controller != null) {
+            val firstPoint = GeoPoint(
+                uiStateDataMysteriousSymptoms.locations[0].geoTackaALatitude,
+                uiStateDataMysteriousSymptoms.locations[0].geoTackaALongitude
+            )
+            controller.setZoom(13.0)
+            controller.setCenter(firstPoint)
+        }
+
+        if (mapView != null) {
+            mapView.invalidate()
+        }
+    }
 
     AndroidView(
         factory = {
@@ -35,20 +58,26 @@ fun LocationPage(navController: NavController,viewModel: MyViewModel,realmViewMo
 
             val controller = mapView.controller
             controller.setZoom(13.0)
-            val startPoint = GeoPoint(44.8020, 20.4620) // centar Beograda
+            var startPoint = GeoPoint(0.0,0.0)
+            if(!uiStateDataMysteriousSymptoms.locations.isEmpty()){
+                startPoint = GeoPoint(uiStateDataMysteriousSymptoms.locations[0].geoTackaALatitude, uiStateDataMysteriousSymptoms.locations[0].geoTackaALongitude) // centar Beograda
+                //controller.setCenter(startPoint)
+            }
             controller.setCenter(startPoint)
+            // Lista lokacija
+            var lokacije = mutableListOf<Triple<String,GeoPoint,String>>()
 
             for(loc in uiStateDataMysteriousSymptoms.locations){
-                Triple("${loc.naziv}", GeoPoint(44.8189, 20.4632), "${loc.opis}")
-            }
+                lokacije.add(Triple("${loc.naziv}", GeoPoint(loc.geoTackaALatitude, loc.geoTackaALongitude), "${loc.mesto} \n  ${loc.opis}"))
 
-            // Lista lokacija
+            }
+            /*
             val lokacije = listOf(
                 Triple("🧘 Duhovni centar 'Novi Krug'", GeoPoint(44.8189, 20.4632), "Sveska, nepoznat napitak"),
                 Triple("🏠 Porodični stan", GeoPoint(44.8025, 20.4481), "Sestra ga pronašla"),
                 Triple("🖥️ Markov računar", GeoPoint(44.7900, 20.4680), "Pretrage: 'proširena svest'..."),
                 Triple("🏥 Bolnica", GeoPoint(44.8020, 20.4780), "Lekari bez objašnjenja")
-            )
+            )*/
 
             // Dodaj markere
             for ((naziv, geo, opis) in lokacije) {
@@ -62,7 +91,7 @@ fun LocationPage(navController: NavController,viewModel: MyViewModel,realmViewMo
 
                 mapView.overlays.add(marker)
             }
-
+            mapViewRef.value = mapView
 
 
             mapView

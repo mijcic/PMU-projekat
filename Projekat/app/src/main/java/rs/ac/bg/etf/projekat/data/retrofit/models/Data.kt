@@ -442,7 +442,9 @@ data class LokacijeIstrageData (
     var mesto: String,
     var naziv: String,
     var opis: String,
-    var zlocinId: Int
+    var zlocinId: Int,
+    var geoTackaALatitude:Double,
+    var geoTackaALongitude:Double
 )
 
 data class IzjavaZaPacijentaData (

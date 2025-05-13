@@ -1394,7 +1394,7 @@ class MyViewModel @Inject constructor(
         val jsonString = """
     
     {
-      "prompt": "Come up with a story for a detective app about a mysterious case in a hospital. A patient is admitted to the hospital (they may be alive or dead afterward), and the doctors cannot determine the cause. They call in a detective who specializes in unusual cases to solve it. Fill in all the data in the tables as shown in the example I provided below, but I don't want the story and data to be the same — generate a new story and based on that, fill in the tables. Fill in only the tables I provided as examples: zlocinR, pacijentR, medicinskiIzvestajR, lokacijeIstrageR, lekarskiTestR, izjavaZaPacijentaR,osobaR, dokazR, forenzickiDokazR, telefonR, aplikacijaKtor, oneContactR, beleskaR, whatsAppKontaktR, whatsAppPorukaR, oneCallR, galleryR, obicnaPorukaR, pitanjeR, odgovorR, zadatakR, dokazZadatakR, telefonZadatakR, forenzickiDokazZadatakR. izjavaZaPacijentaR has field osobaId,idIzjavaZaPacijenta,izjava and pacijentId. lokacijeIstrageR is array. Fill in the PacijentR table with data and return it in your response! There must not be any null values (zanimanje, kontakt, datum are not null). But write the response only in JSON format and do not include additional square brackets [].",
+      "prompt": "Come up with a story for a detective app about a mysterious case in a hospital. A patient is admitted to the hospital (they may be alive or dead afterward), and the doctors cannot determine the cause. They call in a detective who specializes in unusual cases to solve it. Fill in all the data in the tables as shown in the example I provided below, but I don't want the story and data to be the same — generate a new story and based on that, fill in the tables. Fill in only the tables I provided as examples: zlocinR, pacijentR, medicinskiIzvestajR, lokacijeIstrageR, lekarskiTestR, izjavaZaPacijentaR,osobaR, dokazR, forenzickiDokazR, telefonR, aplikacijaKtor, oneContactR, beleskaR, whatsAppKontaktR, whatsAppPorukaR, oneCallR, galleryR, obicnaPorukaR, pitanjeR, odgovorR, zadatakR, dokazZadatakR, telefonZadatakR, forenzickiDokazZadatakR. izjavaZaPacijentaR has field osobaId,idIzjavaZaPacijenta,izjava and pacijentId. lokacijeIstrageR is array. Fill in the PacijentR table with data and return it in your response! There must not be any null values (zanimanje, kontakt, datum are not null). LokacijeIstrage have >3 tables and first is start geo point. But write the response only in JSON format and do not include additional square brackets [].",
       "tables": {
       "zlocinR": {
         "idZlocin": 1,
@@ -1452,7 +1452,9 @@ class MyViewModel @Inject constructor(
             "mesto":"",
             "naziv":"",
             "opis":"",
-            "zlocinId":1
+            "zlocinId":1,
+            "geoTackaALatitude":44.3,
+            "geoTackaALongitude":46.7
         }],
         "izjavaZaPacijentaR":{
             "idIzjavaZaPacijenta":1,
@@ -1773,6 +1775,7 @@ class MyViewModel @Inject constructor(
 
             val tipZlocina: TipZlocinaR? = realmViewModel.inserTipZlocina("Mysterious Symptoms")
             Log.d("GEMINI ZLOCIN 2", response.zlocinRetrofit.toString())
+            Log.d("GEMINI LOKACIJE ",response.lokacijeIstrageRetrofit.toString())
 
             var zlocin: ZlocinR? = null
             val dokazi: MutableList<DokazR> = mutableListOf()
@@ -2160,7 +2163,9 @@ class MyViewModel @Inject constructor(
                         mestoL = l.mesto,
                         nazivL = l.naziv,
                         opisL = l.opis,
-                        zlocinIdL = zlocin
+                        zlocinIdL = zlocin,
+                        geoTackaALatitudeL = l.geoTackaALatitude,
+                        geoTackaALongitudeL = l.geoTackaALongitude
                     )
                 }
             }
@@ -2216,6 +2221,7 @@ class MyViewModel @Inject constructor(
             val responseIzjava = selectIzjavaZaPacijenta()
             val responseLekarskiTest= selectLekarskiTest()
             val responseLokacije = selectLokacijeIstrageR()
+            Log.d("GEMINI GET LOKACIJE",responseLokacije.toString())
             _uiStateMysteriousSymptomsData.value =
                 UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = responseLekarskiTest, locations = responseLokacije)
         } catch (e: Exception) {
