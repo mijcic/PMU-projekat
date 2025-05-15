@@ -14,7 +14,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 
-//const val BASE_URL = "http://192.168.0.14:8080/"
+//const val BASE_URL = "http://192.168.0.12:8080/"
 const val BASE_URL = "http://10.0.2.2:8080/"
 
 interface Api {

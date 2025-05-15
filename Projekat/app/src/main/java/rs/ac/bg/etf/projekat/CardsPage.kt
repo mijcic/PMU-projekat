@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -296,6 +297,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
     }
 }
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun CardWithImage(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
     var showDialog by remember { mutableStateOf(false) }
@@ -341,7 +343,7 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
                                     "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF5350)) // crvena nijansa
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_purple))
                 ) {
                     Text("Start New", color = Color.White)
                 }
@@ -356,7 +358,7 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
                         )
                     }
                 ) {
-                    Text("Continue")
+                    Text("Continue",color = Color.White)
                 }
             },
             containerColor = Color(0xFF1A2B2D),

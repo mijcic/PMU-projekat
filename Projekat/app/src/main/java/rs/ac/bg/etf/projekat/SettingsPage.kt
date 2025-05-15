@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun SettingsPage(navController: NavController) {
     var musicVolume by rememberSaveable { mutableStateOf(0.5f) }
@@ -34,15 +37,15 @@ fun SettingsPage(navController: NavController) {
 
     Surface(modifier = Modifier
         .fillMaxSize()
-        .background(Color(0xFF34452F))
+        .background(Color(R.color.dark_purple))
         .padding(top = 48.dp)) {
 
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .border(BorderStroke(1.dp, Color.White), shape = RoundedCornerShape(16.dp))
-                .background(Color(0xFF2F4825), shape = RoundedCornerShape(11.dp))
+                //.border(BorderStroke(1.dp, Color.White), shape = RoundedCornerShape(16.dp))
+                .background(Color(R.color.dark_purple), shape = RoundedCornerShape(11.dp))
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -136,11 +139,12 @@ fun SettingsPage(navController: NavController) {
                         }
                     },
                     modifier = Modifier.padding(8.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple))
                 ) {
                     Text(
                         text = "Send a Message",
-                        color = Color.Black,
+                        color = Color.White,
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.special_elite)),
                             fontSize = 16.sp
@@ -160,9 +164,9 @@ fun SettingsPage(navController: NavController) {
                     selectedLanguage = "ENG"
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple))
             ) {
-                Text("Reset to Default", color = Color.Black)
+                Text("Reset to Default", color = Color.White)
             }
         }
     }
