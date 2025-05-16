@@ -194,6 +194,7 @@ open class SvedokR : RealmObject {
     var osobaId: OsobaR? = null
 }
 
+
 // Enum for StatusSvedok
 enum class StatusSvedokR {
     aktivno,

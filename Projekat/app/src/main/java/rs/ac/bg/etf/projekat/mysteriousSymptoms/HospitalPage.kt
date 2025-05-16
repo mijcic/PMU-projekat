@@ -92,7 +92,8 @@ fun HospitalPage(navController: NavController, myViewModel: MyViewModel, realmVi
                 Column(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Intro text
