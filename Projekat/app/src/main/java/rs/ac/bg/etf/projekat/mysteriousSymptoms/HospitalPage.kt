@@ -33,9 +33,6 @@ import rs.ac.bg.etf.projekat.destinationEvidencePage
 import rs.ac.bg.etf.projekat.destinationLocationPage
 import rs.ac.bg.etf.projekat.destinationMapPage
 import rs.ac.bg.etf.projekat.destinationPatientPage
-import rs.ac.bg.etf.projekat.destinationPhonePage
-import rs.ac.bg.etf.projekat.destinationSuspectsPage
-import rs.ac.bg.etf.projekat.destinationWitnessesPage
 
 @Composable
 fun HospitalPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
