@@ -21,7 +21,6 @@ import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.realmClasses
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.HospitalPage
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.InvestigationScreen
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.LekarskiTestPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.LocationPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.MedicalReportScreen
@@ -78,8 +77,9 @@ fun NavigationGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        //startDestination = "destinationMainScreen1"
-        startDestination = "destinationMainScreen2"
+        startDestination = "destinationMainScreen1"
+        //startDestination = "destinationMainScreen2"
+        //startDestination = "destinationEvidencePage"
         //startDestination = "destinationCultsAndSectsPage"
         //startDestination = "destinationHospitalPage"
         //startDestination = "destinationSuspectDetailsPage/${1}/${R.drawable.whatsapp_profile_picture}/${"Blabla"}"
@@ -259,9 +259,6 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("destinationPhoneSettingsPage") {
             PhoneSettingsPage(navController)
-        }
-        composable("destinationInvestigationPage") {
-            InvestigationScreen(navController, viewModel,realmViewModel)
         }
         composable("destinationMedicalReportPage") {
             MedicalReportScreen(navController, viewModel)

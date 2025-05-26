@@ -37,6 +37,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -65,7 +66,8 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel,m
         )
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(20.dp)
+            modifier = Modifier.fillMaxSize().padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val datum: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.datum
             val datumPrijave: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.datumPrijave
@@ -85,34 +87,43 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel,m
                 text = "Pacijent: ${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.ime}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
-                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(top = 30.dp)
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-            PatientExpandableSection(title = "Detalji o pacijentu") {
-                DetailItem("Datum rodjenja", "${formattedDateDatum}")
-                DetailItem("Zanimanje", "${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.zanimanje}")
-                DetailItem("Simptomi", "${uiStateDataMysteriousSymptoms.patient?.simptomi}")
-                DetailItem("Datum prijema", "${formattedDate}")
-                DetailItem("Prijavila", "${uiStateDataMysteriousSymptoms.patient?.prijavio}")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                PatientExpandableSection(title = "Detalji o pacijentu") {
+                    DetailItem("Datum rodjenja", "${formattedDateDatum}")
+                    DetailItem("Zanimanje", "${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.zanimanje}")
+                    DetailItem("Simptomi", "${uiStateDataMysteriousSymptoms.patient?.simptomi}")
+                    DetailItem("Datum prijema", "${formattedDate}")
+                    DetailItem("Prijavila", "${uiStateDataMysteriousSymptoms.patient?.prijavio}")
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                ExpandableSection(title = "Dokumenti") {
+                    PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
+                        { navController.navigate(destinationMedicalReportPage.route) })
+                    PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(
+                        destinationPhonePage.route
+                    ) })
+                    PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(
+                        destinationMedicalStatementPage.route
+                    ) })
+                    PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(
+                        destinationLekarskiTestPage.route
+                    ) })
+                }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-
-            ExpandableSection(title = "Dokumenti") {
-                PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
-                    { navController.navigate(destinationMedicalReportPage.route) })
-                PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(
-                    destinationPhonePage.route
-                ) })
-                PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(
-                    destinationMedicalStatementPage.route
-                ) })
-                PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(
-                    destinationLekarskiTestPage.route
-                ) })
-            }
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -139,7 +150,8 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
                     modifier = Modifier.weight(1f),
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White),
+                    textAlign = TextAlign.Center
                 )
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
@@ -155,6 +167,88 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
                 ) {
                     content()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable { expanded = !expanded },
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    title,
+                    color = Color(0xFFBBBBBB),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.weight(1f),
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White),
+                    textAlign = TextAlign.Center)
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.rotate(rotation)
+                )
+            }
+
+            AnimatedVisibility(visible = expanded) {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .animateContentSize()
+                ) {
+                    content()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DetailItem(label: String, value: String) {
+    Row(modifier = Modifier.padding(vertical = 4.dp)) {
+        Text("$label: ", color = Color.LightGray, fontWeight = FontWeight.Bold,
+            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+        )
+        Text(value, color = Color.White,
+            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+        )
+    }
+}
+
+@Composable
+fun PacijentInfoCard(icon: String, title: String, description: String, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp).clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
+    ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(icon, fontSize = 22.sp, modifier = Modifier.padding(end = 12.dp),
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+            )
+            Column {
+                Text(title, color = Color.White, fontWeight = FontWeight.Bold,
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+                )
+                Text(description, color = Color.LightGray, fontSize = 14.sp,
+                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
+                )
             }
         }
     }
