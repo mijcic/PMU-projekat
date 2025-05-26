@@ -184,15 +184,30 @@ fun MissionPage(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { navController.navigate(destinationOfficePage.route) }
+            .clickable {
+                if(image==R.drawable.murder) {
+                    navController.navigate(destinationOfficePage.route)
+                }
+                else{
+                    navController.navigate(
+                        destinationHospitalPage.route
+                    )
+                }
+            }
     ) {
         // Background image
         Image(
-            painter = painterResource(id = R.drawable.murder),
+            painter = painterResource(id = image),
             contentDescription = "Background",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+
+        if(image==R.drawable.m_symptoms2){
+            //Box(
+              //  modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f))
+            //)
+        }
 
         // Super modern card
         Box(

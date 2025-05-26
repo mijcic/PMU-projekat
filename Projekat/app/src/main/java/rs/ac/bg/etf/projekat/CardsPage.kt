@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -164,7 +166,9 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                                 "mystery of a missing person, uncovering hidden secrets along " +
                                 "the way.",
                         navController,
-                        {myViewModel.getGeminiData(realmViewModel)},
+                        {
+                            //myViewModel.getGeminiData(realmViewModel)
+                        },
                         "", "", "", "",myViewModel,realmViewModel
                     )
 
@@ -234,7 +238,7 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
                     )
 
                     CardWithImage2(
-                        R.drawable.m_symptoms,
+                        R.drawable.m_symptoms2,
                         "Mysterious Symptoms ⚕\uFE0F ",
                         "Investigate strange diseases or unusual deaths, connecting the " +
                                 "dots between mysterious health " +
@@ -299,17 +303,32 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
 
 @SuppressLint("ResourceAsColor")
 @Composable
-fun CardWithImage(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
+fun CardWithImage(
+    image: Int,
+    title: String,
+    text: String,
+    navController: NavController,
+    insertIntoDatabase: () -> Unit,
+    titleMP: String,
+    dateMP: String,
+    placeMP: String,
+    descMP: String,
+    myViewModel: MyViewModel,
+    realmViewModel: RealmViewModel
+) {
     var showDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = {
+                if (!isLoading) showDialog = false
+            },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.detective_loupe_magnifying_glass_svgrepo_com),
                     contentDescription = "Detective Icon",
-                    tint = Color(0xFF4CAF50), // zelena nijansa, možeš promeniti
+                    tint = Color(0xFF4CAF50),
                     modifier = Modifier.size(48.dp)
                 )
             },
@@ -327,22 +346,45 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
                         style = MaterialTheme.typography.bodyLarge,
                         lineHeight = 20.sp
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    if (isLoading) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                 }
             },
             confirmButton = {
                 Button(
                     onClick = {
-                        showDialog = false
+                        isLoading = true
                         MainActivity.clearDatabase()
-                        myViewModel.getGeminiData(realmViewModel)
-
-                        insertIntoDatabase()
-                        navController.navigate(
-                            destinationMissionPage.route + "/" + image + "/" +
-                                    "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
+                        myViewModel.getGeminiData(
+                            realmViewModel,
+                            onSuccess = {
+                                isLoading = false
+                                showDialog = false
+                                //insertIntoDatabase()
+                                Log.d("G","TITLE "+ titleMP)
+                                navController.navigate(
+                                    destinationMissionPage.route + "/" + image + "/" +
+                                            "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
+                                )
+                            },
+                            onError = {
+                                isLoading = false
+                                showDialog = false
+                                // Možeš dodati Toast ili snackbar za grešku
+                            }
                         )
                     },
+                    enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_purple))
                 ) {
                     Text("Start New", color = Color.White)
@@ -351,14 +393,17 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
             dismissButton = {
                 OutlinedButton(
                     onClick = {
-                        showDialog = false
-                        navController.navigate(
-                            destinationMissionPage.route + "/" + image + "/" +
-                                    "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
-                        )
-                    }
+                        if (!isLoading) {
+                            showDialog = false
+                            navController.navigate(
+                                destinationMissionPage.route + "/" + image + "/" +
+                                        titleMP + "/" + dateMP + "/" + placeMP + "/" + descMP
+                            )
+                        }
+                    },
+                    enabled = !isLoading
                 ) {
-                    Text("Continue",color = Color.White)
+                    Text("Continue", color = Color.White)
                 }
             },
             containerColor = Color(0xFF1A2B2D),
@@ -370,9 +415,7 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
     Card(
         modifier = Modifier
             .padding(1.dp)
-            .clickable{
-                showDialog=true
-                }
+            .clickable { showDialog = true }
             .padding(bottom = 18.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(11.dp),
@@ -405,28 +448,23 @@ fun CardWithImage(image: Int, title:String, text:String, navController: NavContr
                 Text(
                     text = title,
                     style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.special_elite)
-                        ),
-                        color = Color.Black
-                    ),
-                    color = Color.White
+                        fontFamily = FontFamily(Font(R.font.special_elite)),
+                        color = Color.White
+                    )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = text,
                     style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.special_elite)
-                        ),
-                        color = Color.Black
-                    ),
-                    color = Color.White
+                        fontFamily = FontFamily(Font(R.font.special_elite)),
+                        color = Color.White
+                    )
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun CardWithImage2(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
@@ -438,8 +476,10 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
                 MainActivity.clearDatabase()
                 myViewModel.getGeminiDataMS(realmViewModel)
                 //realmViewModel.insertDataForMysteriousSymptoms()
+
                 navController.navigate(
-                    destinationHospitalPage.route
+                    destinationMissionPage.route + "/" + image + "/" +
+                            "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
                 )
             }
             .padding(bottom = 18.dp)

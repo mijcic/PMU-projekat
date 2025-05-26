@@ -249,7 +249,18 @@ data class Content(
 )
 
 @Serializable
+data class ContentStream(
+    val parts: List<PartStream>
+)
+
+@Serializable
 data class Part(
+    val text: String
+)
+
+@Serializable
+data class PartStream(
+    val section:String,
     val text: String
 )
 
@@ -347,6 +358,83 @@ data class GeminiResponseRetrofit(
     override var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?,
 ):GeminiResponseRetrofitCommon
 
+@Serializable
+data class GeminiResponse2_1(
+    val zlocinR: ZlocinR,
+    val osobaR:  List<OsobaR>,
+    val osumnjicenR:  List<OsumnjicenR>,
+    //override val dokazR:  List<DokazR>,
+    val svedokR:  List<SvedokR>,
+    val zrtvaR:  ZrtvaR,
+    //val obdukcijaR: ObdukcijaR,
+    //override val forenzickiDokazR: List<ForenzickiDokazR>,
+    //override val telefonR: List<TelefonR>,
+    //val kontaktKtor: List<KontaktKtor>,
+    //val porukeKtor: List<PorukeKtor>,
+    //val poziviKtor: List<PoziviKtor>,
+    //val galerijaKtor: List<GalerijaKtor>,
+    //override val aplikacijaKtor: List<AplikacijaKtor>,
+    //val tragKtor: List<TragKtor>,
+    //val dokazOsumnjicenKtor: List<DokazOsumnjicenKtor>,
+    //override val oneContactR: List<OneContactR>,
+    //override val beleskaR: List<BeleskaR>,
+    //override val whatsAppKontaktR: List<WhatsAppKontaktR>,
+    //override val whatsAppPorukaR: List<WhatsAppPorukaR>,
+    //override val oneCallR: List<OneCallR>,
+    //override val galleryR: List<GalleryR>,
+    //override val obicnaPorukaR: List<ObicnaPorukaR>,
+    //val odnosOsumnjicenZrtvaR: List<OdnosOsumnjicenZrtvaR>,
+    //val prijavljeniKorisnikR: List<PrijavljeniKorisnikR>,
+    //override val pitanjeR: List<PitanjeR>,
+    //override val odgovorR: List<OdgovorR>,
+    //val pitanjeIspitivanjeOsumnjicenogR: List<PitanjeIspitivanjeOsumnjicenogR>,
+    //val pitanjeIspitivanjeSvedokaR: List<PitanjeIspitivanjeSvedokaR>,
+    //override val zadatakR: List<ZadatakR>,
+    //override val dokazZadatakR: List<DokazZadatakR>,
+    //val ispitivanjeOsumnjicenogZadatakR: List<IspitivanjeOsumnjicenogZadatakR>,
+    //val ispitivanjeSvedokaZadatakR: List<IspitivanjeSvedokaZadatakR>,
+    //override val telefonZadatakR: List<TelefonZadatakR>,
+    //override val forenzickiDokazZadatakR: List<ForenzickiDokazZadatakR>
+)
+
+@Serializable
+data class GeminiResponseRetrofit_1(
+    var zlocinRetrofit: ZlocinData?,
+    var zrtvaRetrofit: ZrtvaData?,
+    var osumnjiceniRetrofit: List<OsumnjicenData>?,
+    //override var dokaziRetrofit: List<DokazData>?,
+    //override var telefoniRetrofit: List<TelefonData>?,
+    //override var forenzickiDokazRetrofit: List<ForenzickiDokazData>?,
+    //var obdukcijaRetrofit: ObdukcijaData?,
+    var svedociRetrofit: List<SvedokData>?,
+    //override var oneContactRetrofit: List<OneContactData>?,
+    //var kontaktiRetrofit: List<KontaktData>?,
+    //var porukeRetrofit: List<PorukeData>?,
+    //var poziviRetrofit: List<PoziviData>?,
+    //var galerijaRetrofit: List<GalerijaData>?,
+    //override var aplikacijeRetrofit: List<AplikacijaData>?,
+    //var tragoviRetrofit: List<TragData>?,
+    //var dokaziOsumnjiceniRetrofit: List<DokazOsumnjicenData>?,
+    //override var beleskeRetrofit: List<BeleskaData>?,
+    //override var whatsappKontaktRetrofit: List<WhatsAppKontaktData>?,
+    //override var whatsappPorukaRetrofit: List<WhatsAppPorukaData>?,
+    //override var oneCallRetrofit: List<OneCallData>?,
+    //override var galleryRetrofit: List<GalleryData>?,
+    //override var obicnePorukeRetrofit: List<ObicnaPorukaData>?,
+    //var odnosiOsumnjiceniZrtvaRetrofit: List<OdnosOsumnjicenZrtvaData>?,
+    //override var pitanjaRetrofit: List<PitanjeData>?,
+    //override var odgovoriRetrofit: List<OdgovorData>?,
+    //var pitanjeIspitivanjeOsumnjicenogRetrofit: List<PitanjeIspitivanjeOsumnjicenogData>?,
+    //var pitanjeIspitivanjeSvedokaRetrofit: List<PitanjeIspitivanjeSvedokaData>?,
+    var osobeRetrofit: List<OsobaData>?,
+    //override var zadaciRetrofit: List<ZadatakData>?,
+    //override var dokaziZadaciRetrofit: List<DokazZadatakData>?,
+    //var ispitivanjeOsumnjicenogZadaciRetrofit: List<IspitivanjeOsumnjicenogZadatakData>?,
+    //var ispitivanjeSvedokaZadaciRetrofit: List<IspitivanjeSvedokaZadatakData>?,
+    //override var telefonZadaciRetrofit: List<TelefonZadatakData>?,
+    //override var forenzickiDokazZadaciRetrofit: List<ForenzickiDokazZadatakData>?,
+)//:GeminiResponseRetrofitCommon
+
 // http klijent za komunikaciju sa gemini api-jem
 val geminiClient = HttpClient(CIO) {
     install(ContentNegotiation) {
@@ -367,34 +455,25 @@ suspend fun queryGemini(prompt: String,tables:String): Any {
 
     try {
         val t0 = System.currentTimeMillis()
-        // Model: gemini-1.5-flash je brz i efikasan. Možeš koristiti i gemini-pro.
         val response: HttpResponse = geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }
-
-        //println("Gemini - Status: ${response.status}")
         val t1 = System.currentTimeMillis()
         println("Gemini API trajanje: ${t1 - t0}ms")
 
-
         return if (response.status == HttpStatusCode.OK) {
             val geminiResponse: GeminiResponse = response.body()
-            //println("${geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text}")
             val t2 = System.currentTimeMillis()
             println("Parsiranje trajanje: ${t2 - t1}ms")
 
-
             //to insert data into mysql database
             val geminiResponseRetrofit =getDataGeminiResponse(geminiResponse)
-            //println("GEMINI RESPONSE RETROF\n "+geminiResponseRetrofit)
 
             val t3 = System.currentTimeMillis()
             println("Insert trajanje: ${t3 - t2}ms")
 
             geminiResponseRetrofit
-            //geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-              //  ?: "No textual response received from Gemini."
         } else {
             val errorBody = response.bodyAsText()
             println("Error from Gemini: ${response.status} - $errorBody")
@@ -1174,6 +1253,9 @@ suspend fun queryGeminiRetrofit(prompt: String,tables:String): Any? {
         return "Internal error during communication with the AI service."
     }
 }
+
+
+
 
 fun insertGeminiBeleska(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, timestamp: Long) {
     val beleske = geminiResponse2.beleskaR

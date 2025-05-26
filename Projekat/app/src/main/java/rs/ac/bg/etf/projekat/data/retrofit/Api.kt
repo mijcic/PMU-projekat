@@ -44,4 +44,8 @@ interface Api {
 
     @POST("geminiMS")
     suspend fun geminiDataMS(@Body request: RequestBody): GeminiResponseRetrofitMysteriousSymptoms
+
+    @GET("geminiMurder")
+    suspend fun geminiMurder(): GeminiResponseRetrofit
+
 }

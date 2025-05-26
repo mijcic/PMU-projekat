@@ -75,6 +75,8 @@ fun Application.configureRouting() {
             }
         }
 
+
+
         //gemini mysterious symptoms
 
         //gemini
@@ -110,28 +112,153 @@ fun Application.configureRouting() {
         }
 
         // get request
+
+        get("/geminiMurder") {
+            println("\nGEMINI MURDER\n")
+            val id =getUsedZlocinMurder()
+            val zl = id?.let { getZlocin(it) }
+            val tipZl= zl?.let { getTipZlocina(it.tipZlocinaId) }
+            val zrtva = id?.let { getZrtva(it) }
+            val osumnjiceni = id?.let { getOsumnjiceni(it) }
+            val dokazi = zrtva?.let { getDokazi(id, it) }
+            val telefoni = zrtva?.let { getTelefon(it.idZrtva) }
+            val forenzickiDokazi = zrtva?.let { getForenzickiDokazi(it.idZrtva) }
+            val obdukcija = zrtva?.let { getObdukcija(it.idZrtva) }
+            val svedoci = id?.let { getSvedoci(it) }
+            val oneContact = id?.let { getOneContact(it) }
+            val kontakti = zrtva?.let { getKontakti(id, it) }
+            val poruke = zrtva?.let { getPoruke(id, it,kontakti) }
+            val pozivi = zrtva?.let { getPozivi(id, it,kontakti) }
+            val galerija = zrtva?.let { getGalerija(id, it) }
+            val aplikacija = zrtva?.let { getAplikacije(id, it) }
+            val tragovi = zrtva?.let { getTragovi(id, it,forenzickiDokazi,osumnjiceni) }
+            val dokazOsumnjiceni = zrtva?.let { getDokaziOsumnjiceni(id, it,dokazi,osumnjiceni) }
+            val beleske = zrtva?.let { getBeleske(id, it) }
+            val whatsAppKontakti = zrtva?.let { getWhatsAppKontakt(id, it) }
+            val whatsAppPoruke = id?.let { getWhatsAppPoruka(it,whatsAppKontakti) }
+            val gallery = id?.let { getGallery(it) }
+            val odnosOsumnjicenZrtva = id?.let { getOdnosOsumnjicenZrtva(it) }
+            val pitanja = id?.let { getPitanja(it) }
+            val odgovori = id?.let { getOdgovor(it) }
+            val pitanjaIspitivanjeOsumnjicenog = id?.let { getPitanjeIspitivanjeOsumnjicenog(it) }
+            val pitanjaIspitivanjeSvedoka = id?.let { getPitanjeIspitivanjeSvedoka(it) }
+            val osobe = id?.let { getOsobe(it) }
+            val zadaci = id?.let { getZadaci(it) }
+            val dokazZadatak = id?.let { getDokaziZadaci(it,zadaci) }
+            val ispitivanjeOsumnjicenogZadatak = id?.let { getIspitivanjeOsumnjicenogZadatak(it,zadaci) }
+            val ispitivanjeSvedokaZadatak = id?.let { getIspitivanjeSvedokaZadatak(it,zadaci) }
+            val telefonZadaci = id?.let { getTelefonZadaci(it, zadaci) }
+            val forenzickiDokazZadaci = id?.let { getForenzickiDokazZadatak(it,zadaci) }
+            val oneCall = id?.let { getOneCall(it,oneContact) }
+            val obicnaPoruka = id?.let { getObicnaPoruka(it,oneContact) }
+
+
+            val geminiResponseRetrofit:GeminiResponseRetrofit=GeminiResponseRetrofit(
+                zlocinRetrofit = zl,
+                zrtvaRetrofit = zrtva,
+                osumnjiceniRetrofit = osumnjiceni,
+                dokaziRetrofit =dokazi,
+                telefoniRetrofit = telefoni,
+                forenzickiDokazRetrofit = forenzickiDokazi,
+                obdukcijaRetrofit = obdukcija,
+                svedociRetrofit =svedoci,
+                oneContactRetrofit = oneContact,
+                kontaktiRetrofit = kontakti,
+                porukeRetrofit = poruke,
+                poziviRetrofit = pozivi,
+                galerijaRetrofit = galerija,
+                aplikacijeRetrofit = aplikacija,
+                tragoviRetrofit = tragovi,
+                dokaziOsumnjiceniRetrofit = dokazOsumnjiceni,
+                beleskeRetrofit = beleske,
+                whatsappKontaktRetrofit = whatsAppKontakti,
+                whatsappPorukaRetrofit = whatsAppPoruke,
+                oneCallRetrofit = oneCall,
+                galleryRetrofit = gallery,
+                obicnePorukeRetrofit = obicnaPoruka,
+                odnosiOsumnjiceniZrtvaRetrofit = odnosOsumnjicenZrtva,
+                pitanjaRetrofit = pitanja,
+                odgovoriRetrofit = odgovori,
+                pitanjeIspitivanjeOsumnjicenogRetrofit = pitanjaIspitivanjeOsumnjicenog,
+                pitanjeIspitivanjeSvedokaRetrofit = pitanjaIspitivanjeSvedoka,
+                osobeRetrofit = osobe,
+                zadaciRetrofit = zadaci,
+                dokaziZadaciRetrofit = dokazZadatak,
+                ispitivanjeOsumnjicenogZadaciRetrofit = ispitivanjeOsumnjicenogZadatak,
+                ispitivanjeSvedokaZadaciRetrofit = ispitivanjeSvedokaZadatak,
+                telefonZadaciRetrofit = telefonZadaci,
+                forenzickiDokazZadaciRetrofit = forenzickiDokazZadaci
+            )
+
+            println("GEMINI MURDER")
+            call.respond(geminiResponseRetrofit)
+        }
+
+        get("/geminiMysteriousSymptoms") {
+            println("MysteriousSymptoms")
+            val id =getUsedZlocinMysteriousSymptoms()
+            val zl = id?.let { getZlocin(it) }
+            val zrtva = id?.let { getZrtva(it) }
+            val dokazi = zrtva?.let { getDokazi(id, it) }
+            val telefoni = zrtva?.let { getTelefon(it.idZrtva) }
+            val forenzickiDokazi = zrtva?.let { getForenzickiDokazi(it.idZrtva) }
+            val oneContact = id?.let { getOneContact(it) }
+            val aplikacija = zrtva?.let { getAplikacije(id, it) }
+            val beleske = zrtva?.let { getBeleske(id, it) }
+            val whatsAppKontakti = zrtva?.let { getWhatsAppKontakt(id, it) }
+            val whatsAppPoruke = id?.let { getWhatsAppPoruka(it,whatsAppKontakti) }
+            val gallery = id?.let { getGallery(it) }
+            val pitanja = id?.let { getPitanja(it) }
+            val odgovori = id?.let { getOdgovor(it) }
+            val osobe = id?.let { getOsobe(it) }
+            val zadaci = id?.let { getZadaci(it) }
+            val dokazZadatak = id?.let { getDokaziZadaci(it,zadaci) }
+            val telefonZadaci = id?.let { getTelefonZadaci(it, zadaci) }
+            val forenzickiDokazZadaci = id?.let { getForenzickiDokazZadatak(it,zadaci) }
+            val oneCall = id?.let { getOneCall(it,oneContact) }
+            val obicnaPoruka = id?.let { getObicnaPoruka(it,oneContact) }
+            var pacijent: PacijentData? = null
+            if (zrtva != null && osobe != null && zl!=null) {
+                pacijent= getPacijent(id, zl,zrtva,osobe)
+            }
+            val medicinskiIzvestaj = id?.let { getMedicinskiIzvetaj(it,pacijent) }
+            val lekarskiTest = id?.let { getLekarskiTest(it,pacijent) }
+            val lokacijeIstrage = id?.let { getLokacijeIstrage(it) }
+            val izjavaZaPacijenta = pacijent?.let { getIzjavaZaPacijenta(it,osobe) }
+
+            val geminiResponseRetrofit:GeminiResponseRetrofitMysteriousSymptoms= GeminiResponseRetrofitMysteriousSymptoms(
+                zlocinRetrofit = zl,
+                dokaziRetrofit = dokazi,
+                telefoniRetrofit = telefoni,
+                forenzickiDokazRetrofit = forenzickiDokazi,
+                oneContactRetrofit = oneContact,
+                aplikacijeRetrofit = aplikacija,
+                beleskeRetrofit = beleske,
+                whatsappKontaktRetrofit = whatsAppKontakti,
+                whatsappPorukaRetrofit = whatsAppPoruke,
+                oneCallRetrofit = oneCall,
+                galleryRetrofit = gallery,
+                obicnePorukeRetrofit = obicnaPoruka,
+                pitanjaRetrofit = pitanja,
+                odgovoriRetrofit = odgovori,
+                osobeRetrofit = osobe,
+                zadaciRetrofit = zadaci,
+                dokaziZadaciRetrofit = dokazZadatak,
+                telefonZadaciRetrofit = telefonZadaci,
+                forenzickiDokazZadaciRetrofit = forenzickiDokazZadaci,
+                pacijentRetrofit = pacijent,
+                medicinskiIzvestajRetrofit = medicinskiIzvestaj,
+                lekarskiTestRetrofit = lekarskiTest,
+                lokacijeIstrageRetrofit = lokacijeIstrage,
+                izjavaZaPacijentaRetrofit = izjavaZaPacijenta
+            )
+
+            println("\nGEMINI MS\n")
+            call.respond(geminiResponseRetrofit)
+        }
+
         get("/") {
             call.respondText("Hello World!")
-        }
-        get("/tipzlocin") {
-            val zlocini = fetchTipZlocinaFromDatabase()
-            call.respond(zlocini)  // vraca JSON obj
-        }
-        get("/zlocin") {
-            val zlocini = fetchZlocinFromDatabase()
-            call.respond(zlocini)  // vraca JSON obj
-        }
-        get("/clanorganizacije") {
-            val organizacije = fetchClanOrganizacijeFromDatabase()
-            call.respond(organizacije)
-        }
-        get("/dokaz") {
-            val dokazi = fetchDokazFromDatabase()
-            call.respond(dokazi)
-        }
-        get("/forenzickidokaz") {
-            val dokazi = fetchForenzickiDokazFromDatabase()
-            call.respond(dokazi)
         }
         get("/scoreKorisnika"){
             print("scoreKorisnika")
@@ -257,61 +384,6 @@ fun <T> executeQuery(query: String, rowMapper: (ResultSet) -> T): List<T> {
     }
 
     return resultList
-}
-
-fun fetchTipZlocinaFromDatabase(): List<TipZlocinaDC> {
-    val query = "SELECT * FROM tipzlocina"
-    return executeQuery(query) { resultSet ->
-        val id = resultSet.getInt("idTipZlocina")
-        val naziv = resultSet.getString("naziv")
-        TipZlocinaDC(id, naziv)
-    }
-}
-
-fun fetchZlocinFromDatabase(): List<Zlocin> {
-    val query = "SELECT * FROM zlocin"
-    return executeQuery(query) { resultSet ->
-        val id = resultSet.getInt("idZlocin")
-        val naziv = resultSet.getString("naziv")
-        val opis = resultSet.getString("opis")
-        val idTipZlocina = resultSet.getInt("idTipZlocina")
-        val datum = resultSet.getTimestamp("datum").time
-        val mesto = resultSet.getString("mesto")
-        val status = resultSet.getString("status")
-        Zlocin(id, naziv, opis, idTipZlocina, datum,mesto, status)
-    }
-}
-
-fun fetchClanOrganizacijeFromDatabase(): List<ClanOrganizacije> {
-    val query = "SELECT * FROM clanorganizacije"
-    return executeQuery(query) { resultSet ->
-        val idClan = resultSet.getInt("idClan")
-        val idOsumnjicen = resultSet.getInt("idOsumnjicen")
-        val idOrganizacija = resultSet.getInt("idOrganizacija")
-        ClanOrganizacije(idClan, idOsumnjicen, idOrganizacija)
-    }
-}
-
-fun fetchDokazFromDatabase(): List<Dokaz> {
-    val query = "SELECT * FROM dokaz"
-    return executeQuery(query) { resultSet ->
-        val idDokaz = resultSet.getInt("idDokaz")
-        val opis = resultSet.getString("opis")
-        val lokacija = resultSet.getString("lokacija")
-        val idZlocin = resultSet.getInt("idZlocin")
-        Dokaz(idDokaz, opis, lokacija, idZlocin)
-    }
-}
-
-fun fetchForenzickiDokazFromDatabase(): List<ForenzickiDokaz> {
-    val query = "SELECT * FROM forenzickidokaz"
-    return executeQuery(query) { resultSet ->
-        val idForenzickiDokaz = resultSet.getInt("idForenzickiDokaz")
-        val opis = resultSet.getString("opis")
-        val tip = resultSet.getString("tip")
-        val idZlocin = resultSet.getInt("idZlocin")
-        ForenzickiDokaz(idForenzickiDokaz, opis, tip, idZlocin)
-    }
 }
 
 fun fetchScoreKorisnici(): List<ScoreKorisnik> {
