@@ -127,7 +127,7 @@ fun MainScreen2(
 
             Button(
                 onClick = { explanationOn = !explanationOn },
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
+                colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.fillMaxWidth(0.8f).padding(10.dp).shadow(
                     elevation = 20.dp,
@@ -186,7 +186,7 @@ fun MainScreen2(
             ) {
                 Button(
                     onClick = { navController.navigate("destinationCardsPage") },
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
+                    colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
                     shape = RoundedCornerShape(15.dp),
                     modifier = Modifier.padding(10.dp).wrapContentWidth().shadow(
                         elevation = 20.dp,

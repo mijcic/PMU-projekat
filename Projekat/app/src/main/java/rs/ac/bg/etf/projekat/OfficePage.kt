@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,12 +41,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -67,35 +73,27 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
     val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { AnimatedInfoBar() },
+        bottomBar = { },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
                     myViewModel.getTasks()
                     navController.navigate(destinationMapPage.route)
                 },
+//                containerColor = colorResource(R.color.dark_purple),
+                //containerColor = colorResource(id = R.color.light_gray),
+                containerColor = Color(0XFFA99367),
+                shape = CircleShape,
+                elevation = FloatingActionButtonDefaults.elevation(8.dp),
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(60.dp),
-                //shape = MaterialTheme.shapes.medium,
-                shape = CircleShape,
-                //containerColor = Color.Black,
-                containerColor = Color.Transparent,
-                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 8.dp)
+                    .size(60.dp)
             ) {
-//                Icon(
-//                    imageVector = Icons.Default.Check,
-//                    contentDescription = "Tasks",
-//                    tint = Color.White,
-//                    modifier = Modifier.size(32.dp)
-//                )
-                Image(
-                    painter = painterResource(id = R.drawable.tasks2),
+                Icon(
+                    painter = painterResource(id = R.drawable.planning),
                     contentDescription = "Tasks",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
+                    tint = Color.White,
+                    modifier = Modifier.size(40.dp)
                 )
             }
         },
@@ -239,118 +237,7 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                         )
                     }
 
-//                    Spacer(modifier = Modifier.height(20.dp))
-//
-//                    Text(
-//                        text = "CASE: Nathan's murder",
-//                        style = TextStyle(
-//                            fontFamily = FontFamily(Font(R.font.special_elite)),
-//                            fontSize = 18.sp,
-//                            //fontWeight = FontWeight.Bold,
-//                            color = Color.LightGray, textAlign =  TextAlign.Center
-//                        )
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(3.dp))
-//
-//                    Text(
-//                        text = "Location: "+crimeData.value.place+" – Date: 25.08.2016.",
-//                        color = Color.LightGray,
-//                        fontSize = 18.sp,
-//                        modifier = Modifier.padding(top = 4.dp, bottom = 32.dp),
-//                        style = TextStyle(
-//                            fontFamily = FontFamily(Font(R.font.special_elite)),
-//                            color = Color.White, textAlign = TextAlign.Center
-//                        )
-//                    )
-
-//                    // Case title
-//                    crimeData.value.title?.let {
-//                        Text(
-//                            text = "CASE: "+it,
-//                        style = TextStyle(
-//                            fontFamily = FontFamily(Font(R.font.special_elite)),
-//                            fontSize = 28.sp,
-//                            fontWeight = FontWeight.Bold,
-//                            color = Color.White, textAlign =  TextAlign.Center
-//                        )
-//                    )}
-//                    Spacer(modifier = Modifier.height(10.dp))
-//                    crimeData.value.date?.let {
-//                        Text(
-//                            text = "Location: "+crimeData.value.place+" – Date:"+it,
-//                            color = Color.LightGray,
-//                            fontSize = 14.sp,
-//                            modifier = Modifier.padding(top = 4.dp, bottom = 32.dp),
-//                            style = TextStyle(
-//                                fontFamily = FontFamily(Font(R.font.special_elite)),
-//                                color = Color.White, textAlign = TextAlign.Center
-//                            )
-//                        )
-//                    }
-
-//                    // First row (2 buttons)
-//                    Row(
-//                        horizontalArrangement = Arrangement.SpaceEvenly,
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        OfficeButton(label = "Suspects", icon = R.drawable.ic_suspect) {
-//                            navController.navigate(destinationSuspectsPage.route)
-//                        }
-//                        OfficeButton(label = "Witnesses", icon = R.drawable.ic_witness) {
-//                            navController.navigate(destinationWitnessesPage.route)
-//                        }
-//                    }
-//
-//                    Spacer(modifier = Modifier.height(16.dp))
-//
-//                    // Second row (2 buttons)
-//                    Row(
-//                        horizontalArrangement = Arrangement.SpaceEvenly,
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        OfficeButton(label = "Evidence", icon = R.drawable.ic_evidence) {
-//                            myViewModel.getEvidences()
-//                            myViewModel.getForensicEvidences()
-//                            navController.navigate(destinationEvidencePage.route)
-//                        }
-//                        OfficeButton(label = "Phone", icon = R.drawable.ic_phone) {
-//                            selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
-//                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
-//                            navController.navigate(destinationPhonePage.route)
-//                        }
-//                    }
-
-//                    Column(
-//                        horizontalAlignment = Alignment.CenterHorizontally,
-//                        verticalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        OfficeButton(label = "Suspects", icon = R.drawable.ic_suspect) {
-//                            navController.navigate(destinationSuspectsPage.route)
-//                        }
-//                        Spacer(modifier = Modifier.height(10.dp))
-//                        OfficeButton(label = "Witnesses", icon = R.drawable.ic_witness) {
-//                            navController.navigate(destinationWitnessesPage.route)
-//                        }
-//                        Spacer(modifier = Modifier.height(10.dp))
-//                        OfficeButton(label = "Evidences",
-////                            icon = R.drawable.ic_evidence
-//                            icon = R.drawable.evidences
-//                        ) {
-//                            myViewModel.getEvidences()
-//                            myViewModel.getForensicEvidences()
-//                            navController.navigate(destinationEvidencePage.route)
-//                        }
-//                        Spacer(modifier = Modifier.height(10.dp))
-//                        OfficeButton(label = "Victim's Phone", icon = R.drawable.ic_phone) {
-//                            selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
-//                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
-//                            navController.navigate(destinationPhonePage.route)
-//                        }
-//                    }
-
                     Spacer(modifier = Modifier.height(24.dp))
-
                 }
             }
         }

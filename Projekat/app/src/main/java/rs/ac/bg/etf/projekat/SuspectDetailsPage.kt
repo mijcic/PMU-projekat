@@ -2,6 +2,7 @@ package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -32,11 +33,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -53,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -60,6 +64,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -104,240 +109,181 @@ fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: N
         motiveAlibiStatus = realmViewModel.getMotiveAlibiStatus(idOsoba) ?: emptyList()
     }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF233331))
-            .padding(top = 22.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF233331))
-                .padding(top = (screenWidth / 8).dp)
-                .animateContentSize(animationSpec = tween(durationMillis = 600)),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = title,
-                color = Color.White,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.special_elite)),
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Image(
-                painter = painterResource(id = image),
-                contentDescription = "Suspect Image",
-                modifier = Modifier
-                    .size(180.dp)
-                    .clip(CircleShape)
-                    .border(4.dp, Color.White, CircleShape)
-                    .shadow(8.dp, CircleShape)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            var isButtonClicked by remember { mutableStateOf(false) }
-
-            Button(
-                onClick = {
-                    isButtonClicked = !isButtonClicked
-                },
-                colors = ButtonDefaults.buttonColors(Color(0xFFB8860B)),
-                shape = RectangleShape,
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .padding(horizontal = 16.dp)
-                    .heightIn(min = 50.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = if (!isButtonClicked) "If you want more information about the suspect..."
-                        else "If you want less information about the suspect...",
-                        color = Color.White,
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        ),
-                    )
-                    Icon(
-                        painter = painterResource(id = if (!isButtonClicked) R.drawable.arrow_down else R.drawable.arrow_up),
-                        contentDescription = "Arrow",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .size(20.dp)
-                            .graphicsLayer(
-                                scaleX = 1.7f,
-                                scaleY = 1.7f
-                            )
-                    )
-                }
-            }
-
-            AnimatedVisibility(
-                visible = isButtonClicked,
-                enter = expandVertically(animationSpec = tween(900)),
-                exit = shrinkVertically(animationSpec = tween(900))
-            ) {
-                if (motiveAlibiStatus.isNotEmpty()) {
-                    CustomTable(motiveAlibiStatus)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(22.dp))
-
-            Button(
-                onClick = {
-                    navController.navigate(destinationSuspectsInterviewPage.route + "/" + title)
-                },
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF1F2D2D)),
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .padding(horizontal = 16.dp)
-                    .height(50.dp)
-                    .border(
-                        width = 1.dp,
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            ) {
-                Text(
-                    text = "Interrogate the Suspect",
-                    color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.special_elite)),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-@Composable
-fun CustomTable(motiveAlibiStatus: List<String>) {
-//    val tableData = listOf(
-//        listOf("Motive", motiveAlibiStatus.getOrNull(0).takeUnless { it.isNullOrBlank() } ?: "?"),
-//        listOf("Alibi", motiveAlibiStatus.getOrNull(1).takeUnless { it.isNullOrBlank() } ?: "?"),
-//        listOf("Status", motiveAlibiStatus.getOrNull(2).takeUnless { it.isNullOrBlank() } ?: "?")
-//    )
-
     val tableData = listOf(
         listOf("Motive", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
         listOf("Alibi", motiveAlibiStatus.getOrNull(1).takeUnless { it.isNullOrBlank() } ?: "?"),
         listOf("Status", motiveAlibiStatus.getOrNull(2).takeUnless { it.isNullOrBlank() } ?: "?")
     )
 
-    // PAPIR
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.suspects_details_background),
+                contentDescription = "Background",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
 
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 16.dp, vertical = 0.dp)
-//            .heightIn(min = 350.dp, max = 500.dp)
-//            .clip(RoundedCornerShape(16.dp)),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.paper_with_data),
-//            contentDescription = null,
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(400.dp)
-//        )
-//
-//        Column(
-//            modifier = Modifier
-//                .align(Alignment.Center)
-//                .fillMaxWidth(0.7f)
-//                .padding(16.dp)
-//                .verticalScroll(rememberScrollState())
-//        ) {
-//            Text(
-//                text = "Information about the suspect",
-//                color = Color(0xFF000070),
-//                fontSize = 19.sp,
-//                fontWeight = FontWeight.Bold,
-//                textAlign = TextAlign.Center
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//
-//            tableData.forEach { (label, value) ->
-//                Text(
-//                    text = "$label: $value",
-//                    color = Color(0xFF000070),
-//                    fontSize = 17.sp,
-//                    fontWeight = FontWeight.Bold
-//                )
-//                Spacer(modifier = Modifier.height(8.dp))
-//            }
-//        }
-//    }
-
-    // KRAJ PAPIR
-
-    // TABELA
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .padding(horizontal = 16.dp, vertical = 0.dp)
-            .background(Color.Transparent)
-    ) {
-        tableData.forEach { row ->
-            var rowHeight by remember { mutableStateOf(0) }
-
-            Row(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f))
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                row.forEach { cellText ->
-                    Box(
+                Box(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth(0.92f)
+                        .shadow(12.dp, RoundedCornerShape(24.dp), clip = true)
+                        .background(colorResource(id = R.color.light_gray))
+                        .padding(16.dp)
+                ) {
+                    Column(
                         modifier = Modifier
-                            .weight(1f)
-                            .border(1.dp, Color(0xFFB8860B))
-                            .background(Color.White)
-                            .padding(8.dp)
-                            .onGloballyPositioned { coordinates ->
-                                rowHeight = maxOf(rowHeight, coordinates.size.height)
-                            }
-                            .heightIn(min = with(LocalDensity.current) { rowHeight.toDp() }),
-                        contentAlignment = Alignment.Center
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
                     ) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
                         Text(
-                            text = cellText,
-                            fontSize = 16.sp,
-                            color = Color.DarkGray,
-                            textAlign = TextAlign.Center,
+                            text = "Suspect Info",
+                            color = Color.Black,
                             style = TextStyle(
                                 fontFamily = FontFamily(Font(R.font.special_elite)),
-                                //fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            ),
+                                fontSize = 18.sp
+                            )
                         )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Image(
+                            painter = painterResource(id = image),
+                            contentDescription = "Suspect Image",
+                            modifier = Modifier
+                                .size(130.dp)
+                                .clip(CircleShape)
+                                .border(1.5.dp, Color.Black, CircleShape)
+                                .shadow(8.dp, CircleShape)
+                        )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Text(
+                            text = title,
+                            color = Color.Black,
+                            style = TextStyle(
+                                fontFamily = FontFamily(Font(R.font.special_elite)),
+                                fontSize = 23.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(25.dp))
+
+                        if (tableData.isNotEmpty()) {
+                            oneRowAboutSuspect("Motive", tableData.get(0).get(1))
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
+                            Spacer(modifier = Modifier.height(5.dp))
+                            oneRowAboutSuspect("Alibi", tableData.get(1).get(1))
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
+                            Spacer(modifier = Modifier.height(5.dp))
+                            oneRowAboutSuspect("Status", tableData.get(2).get(1))
+                        }
+
+                        Spacer(modifier = Modifier.height(25.dp))
+
+                        Button(
+                            onClick = {
+                                navController.navigate(destinationSuspectsInterviewPage.route + "/" + title)
+                            },
+                            shape = RoundedCornerShape(16.dp),
+//                            colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
+//                            colors = ButtonDefaults.buttonColors(colorResource(R.color.dark_purple)),
+                            colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
+                            modifier = Modifier
+                                .fillMaxWidth(0.7f)
+                                .padding(horizontal = 16.dp)
+                                .height(50.dp)
+//                                .border(
+//                                    width = 1.dp,
+//                                    color = Color.White,
+//                                    shape = RoundedCornerShape(16.dp)
+//                                )
+                        ) {
+                            Text(
+                                text = "Interrogate the Suspect",
+                                color = Color.White,
+                                style = TextStyle(
+                                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun oneRowAboutSuspect(tekst1: String, tekst2: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Box(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .weight(1f),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(
+                text = tekst1,
+                color = Color.Black,
+                maxLines = 100,
+                softWrap = true,
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                    fontSize = 17.sp
+                )
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .weight(1f),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            Text(
+                text = tekst2,
+                color = Color.Black,
+                maxLines = 100,
+                softWrap = true,
+                textAlign = TextAlign.End,
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                    fontSize = 17.sp,
+                )
+            )
         }
     }
 }

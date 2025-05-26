@@ -45,7 +45,8 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 @Composable
 fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewModel: MyViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val imagePainter = painterResource(id = R.drawable.street_score)
+//        val imagePainter = painterResource(id = R.drawable.street_score)
+        val imagePainter = painterResource(id = R.drawable.library_books)
         val realmViewModel: RealmViewModel = hiltViewModel()
 
         var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
@@ -124,14 +125,14 @@ fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewM
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp),
-                            horizontalAlignment = Alignment.Start
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = question.tekst,
                                 fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                                 fontSize = 18.sp,
                                 color = Color.White,
-                                textAlign = TextAlign.Start
+                                textAlign = TextAlign.Center
                             )
 
                             val tacniOdgovori = questionAnswersMap[question] ?: emptyList()
@@ -144,14 +145,16 @@ fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewM
                                             else Color(0xFFB71C1C).copy(alpha = 0.8f),
                                             shape = RoundedCornerShape(12.dp)
                                         )
-                                        .padding(12.dp)
+                                        .padding(12.dp),
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = answer.tekstOdgovora + " " +
                                                 if (selectedAnswers.selectedAnswers?.get(question.idPitanje) == answer.idOdogovor)  "✅" else "❌",
                                                 fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.Normal)),
                                         fontSize = 15.sp,
-                                        color = Color.White
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }

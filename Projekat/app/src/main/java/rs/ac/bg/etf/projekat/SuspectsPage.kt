@@ -35,10 +35,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,7 +50,6 @@ import rs.ac.bg.etf.projekat.data.RealmViewModel
 
 @Composable
 fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
-
     LaunchedEffect(Unit) {
         //realmViewModel.insertDataForMurder()
         //myViewModel.getAllDataZlocin()
@@ -71,7 +72,7 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
             modifier = Modifier.fillMaxSize()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.paper),
+                painter = painterResource(id = R.drawable.suspects_background),
                 contentDescription = "Background Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -80,10 +81,9 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
             Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
+                    .background(Color.Black.copy(alpha = 0.3f))
             )
         }
-
 
         Column(modifier = Modifier
             .align(Alignment.TopCenter).padding(top = 22.dp),
@@ -104,7 +104,8 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
                             Font(R.font.special_elite)
                         ),
                         fontSize = 26.sp,
-                        color = Color.Black
+                        color = Color.Black,
+                        fontWeight = FontWeight.ExtraBold
                     )
                 )
             }
@@ -144,13 +145,15 @@ fun SuspectCardWithImage(osobaId: Int, image: Int, title: String, navController:
                 myViewModel.getPitanjaZaOsumnjicenog(title)
                 navController.navigate(destinationSuspectDetailsPage.route + "/" + osobaId + "/" + image + "/" + title)
             }
-            .height(200.dp)
+            .height(170.dp)
             .fillMaxWidth(0.4f),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1A2B2D)
+            containerColor = Color(0XFFA99367)
         ),
-        border = BorderStroke(1.dp, Color.White)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 12.dp
+        )
     ) {
         Column(
             modifier = Modifier
@@ -159,10 +162,11 @@ fun SuspectCardWithImage(osobaId: Int, image: Int, title: String, navController:
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Spacer(modifier = Modifier.height(13.dp))
             Box(
                 modifier = Modifier
                     .size(100.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    //.clip(RoundedCornerShape(8.dp))
             ) {
                 Image(
                     painter = painterResource(id = image),
@@ -172,7 +176,7 @@ fun SuspectCardWithImage(osobaId: Int, image: Int, title: String, navController:
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = title,

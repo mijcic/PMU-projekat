@@ -77,8 +77,9 @@ fun NavigationGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = "destinationMainScreen1"
-        //startDestination = "destinationMainScreen2"
+        //startDestination = "destinationMainScreen1"
+        startDestination = "destinationMainScreen2"
+        //startDestination = "destinationQuestionsPage"
         //startDestination = "destinationEvidencePage"
         //startDestination = "destinationCultsAndSectsPage"
         //startDestination = "destinationHospitalPage"

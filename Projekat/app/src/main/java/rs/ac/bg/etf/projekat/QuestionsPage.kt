@@ -53,7 +53,8 @@ fun QuestionsPage(navController: NavController,myViewModel: MyViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        val imagePainter = painterResource(id = R.drawable.questions_background)
+//        val imagePainter = painterResource(id = R.drawable.questions_background)
+        val imagePainter = painterResource(id = R.drawable.library)
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
         val scope = rememberCoroutineScope()

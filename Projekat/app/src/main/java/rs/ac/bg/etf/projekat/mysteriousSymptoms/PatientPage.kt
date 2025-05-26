@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -59,10 +61,16 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel,m
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = R.drawable.patient),
+            painter = painterResource(id = R.drawable.patient2),
             contentDescription = "Background Image",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.7f))
         )
 
         Column(
@@ -138,7 +146,9 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { expanded = !expanded },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+//        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+        // colors = CardDefaults.cardColors(containerColor = colorResource(R.color.mission_overlay_color)),
+        colors = CardDefaults.cardColors(containerColor = colorResource(R.color.dark_purple)),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -146,7 +156,8 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     title,
-                    color = Color(0xFFBBBBBB),
+//                    color = Color(0xFFBBBBBB),
+                    color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
                     modifier = Modifier.weight(1f),
@@ -182,7 +193,8 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { expanded = !expanded },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+        // colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+        colors = CardDefaults.cardColors(containerColor = colorResource(R.color.dark_purple)),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -190,7 +202,8 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     title,
-                    color = Color(0xFFBBBBBB),
+                    // color = Color(0xFFBBBBBB),
+                    color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
                     modifier = Modifier.weight(1f),
@@ -236,7 +249,8 @@ fun PacijentInfoCard(icon: String, title: String, description: String, onClick: 
             .fillMaxWidth()
             .padding(vertical = 6.dp).clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
+        // colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF342348))
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(icon, fontSize = 22.sp, modifier = Modifier.padding(end = 12.dp),
