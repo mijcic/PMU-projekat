@@ -80,7 +80,12 @@ CREATE TABLE Zlocin (
     FOREIGN KEY (tipZlocinaId) REFERENCES TipZlocina(idTipZlocina)
 );
 
-
+CREATE TABLE UsedZlocin(
+	idUsedZlocin INT AUTO_INCREMENT PRIMARY KEY,
+	zlocinId INT NOT NULL,
+    used BOOLEAN NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+);
 
 
 

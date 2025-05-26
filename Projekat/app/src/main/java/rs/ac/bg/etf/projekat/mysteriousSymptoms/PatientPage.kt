@@ -61,7 +61,7 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel,m
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = R.drawable.patient2),
+            painter = painterResource(id = R.drawable.patient),
             contentDescription = "Background Image",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop

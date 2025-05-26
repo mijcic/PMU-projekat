@@ -22,8 +22,6 @@ import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
 import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
 import rs.ac.bg.etf.projekat.data.realm.MedicinskiIzvestajR
-import rs.ac.bg.etf.projekat.data.realm.ObdukcijaR
-import rs.ac.bg.etf.projekat.data.realm.ObicnaPorukaR
 import rs.ac.bg.etf.projekat.data.realm.OneContactR
 import rs.ac.bg.etf.projekat.data.realm.OsobaR
 import rs.ac.bg.etf.projekat.data.realm.OsumnjicenR
@@ -296,7 +294,7 @@ class MyViewModel @Inject constructor(
     private val _uiStateGeminiData = MutableStateFlow(UiStateGeminiData())
     val uiStateGeminiData: StateFlow<UiStateGeminiData> = _uiStateGeminiData
 
-    fun getGeminiData(realmViewModel: RealmViewModel) = viewModelScope.launch {
+    fun getGeminiData(realmViewModel: RealmViewModel, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
 
         val jsonString = """
 {
@@ -877,7 +875,8 @@ class MyViewModel @Inject constructor(
 
         val requestBody = jsonString.toRequestBody("application/json".toMediaType())
         try {
-            val response = MyRepository.geminiData(requestBody)
+            val response = MyRepository.geminiMurder()
+            //val response2 = MyRepository.geminiData(requestBody)
             Log.d("GEMINI", response.toString())
             _uiStateGeminiData.value = UiStateGeminiData(response)
 
@@ -1373,11 +1372,16 @@ class MyViewModel @Inject constructor(
                     zadatakIdZ = zad
                 )
             }
-
+            onSuccess()
             realmViewModel.callGetTitleDatePlaceDescFromCrime()
+            Log.d("G","SUCCESS")
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateGeminiData.value = UiStateGeminiData(null)
+
+            onError()
+
+            Log.d("G","ERROR")
         }
     }
 

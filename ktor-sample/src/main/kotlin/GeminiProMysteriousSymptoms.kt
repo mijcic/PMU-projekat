@@ -4,6 +4,11 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.utils.io.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
@@ -365,6 +370,58 @@ suspend fun queryGeminiMysteriousSymptoms(prompt: String,tables:String): Any {
         return "Internal error during communication with the AI service."
     }
 }
+
+
+suspend fun queryGeminiMysteriousSymptomsStream(prompt: String, tables: String): Flow<String> {
+    val request = GeminiRequest(
+        contents = listOf(Content(parts = listOf(Part(text = prompt + tables))))
+    )
+
+    return flow {
+        val response: HttpResponse = try {
+            println("saljem zahtev na Gemini API...")
+            geminiClient.post(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?key=$GEMINI_API_KEY"
+            ) {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+        } catch (e: Exception) {
+            println("Greška prilikom slanja zahteva Gemini API-ju: ${e.message}")
+            throw e // Važno je da ponovo bacite izuzetak da bi se `catch` blok u ruti izvršio
+        }
+
+        val channel = response.bodyAsChannel()
+        val buffer = ByteArray(1024)
+
+        val textBuilder = StringBuilder()
+        println("Uspesno poslat zahtev, pocinjem da citam strim.")
+        while (!channel.isClosedForRead) {
+            println("Citam podatke sa strima...")
+            val bytesRead = channel.readAvailable(buffer)
+
+            if (bytesRead > 0) {
+                val chunk = buffer.decodeToString(0, bytesRead)
+
+                // Emit chunk
+                emit(chunk)
+
+                // Optional: accumulate full response
+                textBuilder.append(chunk)
+                println("Primljen chunk: $chunk")
+            }
+        }
+
+        println("Full streamed response:\n${textBuilder.toString()}")
+
+    }.catch { e ->
+        println("Greška tokom stream-a: ${e.message}")
+        // Samo propagiraj grešku – ne emituj ništa!
+        throw e
+    }
+}
+
+
 
 fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): GeminiResponseRetrofitMysteriousSymptoms {
     val json2 = Json {

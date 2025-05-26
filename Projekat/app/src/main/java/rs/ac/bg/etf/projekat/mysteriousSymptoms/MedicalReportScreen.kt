@@ -28,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import io.realm.kotlin.types.RealmInstant
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import java.sql.Date
 import java.text.SimpleDateFormat
@@ -73,7 +76,7 @@ fun MedicalReportScreen(navController: NavController,myViewModel: MyViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .shadow(16.dp, RoundedCornerShape(16.dp)),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFDFDFD)),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
         ) {
@@ -93,14 +96,20 @@ fun MedicalReportScreen(navController: NavController,myViewModel: MyViewModel) {
                     Column {
                         Text(
                             "St. Mary's Hospital",
-                            color = Color(0xFF222222),
+                            color = Color.White,
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            style = TextStyle(fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            ))
                         )
                         Text(
                             "Neurology Department",
-                            color = Color(0xFF666666),
-                            fontSize = 14.sp
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            style = TextStyle(fontFamily = FontFamily(
+                                Font(R.font.special_elite)
+                            ))
                         )
                     }
                 }
@@ -114,11 +123,14 @@ fun MedicalReportScreen(navController: NavController,myViewModel: MyViewModel) {
                 // REPORT TITLE
                 Text(
                     "Medical Report",
-                    color = Color(0xFF111111),
+                    color = Color.White,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    style = TextStyle(fontFamily = FontFamily(
+                        Font(R.font.special_elite)
+                    ))
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -204,14 +216,20 @@ fun MedicalReportScreen(navController: NavController,myViewModel: MyViewModel) {
                 ) {
                     Text(
                         "Signed: Dr. Emily Carter",
-                        color = Color.DarkGray,
+                        color = Color.White,
                         fontSize = 14.sp,
-                        fontStyle = FontStyle.Italic
+                        fontStyle = FontStyle.Italic,
+                        style = TextStyle(fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        ))
                     )
                     Text(
                         "Date: April 4, 2025",
-                        color = Color.DarkGray,
-                        fontSize = 14.sp
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        style = TextStyle(fontFamily = FontFamily(
+                            Font(R.font.special_elite)
+                        ))
                     )
                 }
             }
@@ -224,36 +242,48 @@ fun InfoRowPdf(label: String, value: String) {
     Row(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             "$label:",
-            color = Color(0xFF222222),
+            color = Color.White,
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            style = TextStyle(fontFamily = FontFamily(
+                Font(R.font.special_elite)
+            ))
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(value, color = Color(0xFF333333), fontSize = 16.sp)
+        Text(value, color = Color.White, fontSize = 16.sp)
     }
 }
 
 @Composable
 fun SectionTitlePdf(title: String) {
-    Text(title, color = Color(0xFF111111), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+    Text(title, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.SemiBold,style = TextStyle(fontFamily = FontFamily(
+        Font(R.font.special_elite)
+    )))
 }
 
 @Composable
 fun SectionTextPdf(text: String) {
     Text(
         text,
-        color = Color(0xFF444444),
+        color = Color.White,
         fontSize = 16.sp,
         lineHeight = 22.sp,
-        fontFamily = FontFamily.Serif
+        fontFamily = FontFamily.Serif,
+        style = TextStyle(fontFamily = FontFamily(
+            Font(R.font.special_elite)
+        ))
     )
 }
 
 @Composable
 fun BulletTextPdf(text: String) {
     Row(modifier = Modifier.padding(vertical = 2.dp)) {
-        Text("•", color = Color(0xFF444444), fontSize = 16.sp)
+        Text("•", color = Color.White, fontSize = 16.sp,style = TextStyle(fontFamily = FontFamily(
+            Font(R.font.special_elite)
+        )))
         Spacer(modifier = Modifier.width(6.dp))
-        Text(text, color = Color(0xFF444444), fontSize = 16.sp, fontFamily = FontFamily.Serif)
+        Text(text, color = Color.White, fontSize = 16.sp, fontFamily = FontFamily.Serif,style = TextStyle(fontFamily = FontFamily(
+            Font(R.font.special_elite)
+        )))
     }
 }
