@@ -1,5 +1,11 @@
 package com.example
 
+import com.example.data.remote.GEMINI_API_KEY
+import com.example.data.remote.geminiClient
+import com.example.models.dto.gemini.GeminiResponseRetrofit
+import com.example.parser.DefaultGeminiResponseParser
+import com.example.service.GeminiService
+import com.example.service.GeminiServiceImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -11,38 +17,20 @@ import java.sql.*
 fun Application.configureRouting() {
     routing {
 
+        val geminiService: GeminiService = GeminiServiceImpl(geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
+
         //gemini
         post("/gemini") {
-            try {
-                val requestData = call.receive<GeminiRequest2>()
-                val prompt = requestData.prompt
-                val tables = requestData.tables
+            val requestData = call.receive<GeminiRequest2>()
+            val result = geminiService.generateContent(requestData.prompt, requestData.tables.toString())
+            println(result)
 
-                if (prompt.isBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'prompt' is required and cannot be empty."))
-                    return@post
+            result
+                .onSuccess { call.respond(it) }
+                .onFailure {
+                    call.respond(HttpStatusCode.InternalServerError, mapOf("error" to it.message))
                 }
-                if (tables == null) {
-                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "The field 'tables' is required and cannot be empty."))
-                    return@post
-                }
-
-                val geminiResponseText = queryGemini(prompt, tables.toString())
-                println(geminiResponseText)
-
-                //call.respond(mapOf("response" to geminiResponseText))
-                call.respond(geminiResponseText as Any)
-
-            } catch (e: ContentTransformationException) {
-                call.respond(HttpStatusCode.BadRequest,
-                    mapOf("error" to "Invalid request format. A JSON object with the keys 'prompt' and 'tables' is expected."))
-            } catch (e: Exception) {
-                println("Unexpected error at the /gemini endpoint: ${e.message}")
-                e.printStackTrace()
-                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "An internal server error occurred."))
-            }
         }
-
 
         post("/geminiData") {
             try {
@@ -153,7 +141,7 @@ fun Application.configureRouting() {
             val obicnaPoruka = id?.let { getObicnaPoruka(it,oneContact) }
 
 
-            val geminiResponseRetrofit:GeminiResponseRetrofit=GeminiResponseRetrofit(
+            val geminiResponseRetrofit:GeminiResponseRetrofit= GeminiResponseRetrofit(
                 zlocinRetrofit = zl,
                 zrtvaRetrofit = zrtva,
                 osumnjiceniRetrofit = osumnjiceni,
@@ -352,8 +340,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        //"1234"
-        "mia123"
+        "1234"
+        //"mia123"
     )
 }
 

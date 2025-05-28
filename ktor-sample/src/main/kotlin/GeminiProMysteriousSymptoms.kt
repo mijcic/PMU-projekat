@@ -1,5 +1,10 @@
 package com.example
 
+import com.example.data.remote.GEMINI_API_KEY
+import com.example.data.remote.geminiClient
+import com.example.models.dto.*
+import com.example.models.dto.gemini.*
+import com.example.models.interfaces.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
