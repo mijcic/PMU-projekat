@@ -380,7 +380,7 @@ fun CardWithImage(
                             onError = {
                                 isLoading = false
                                 showDialog = false
-                                // Možeš dodati Toast ili snackbar za grešku
+                                navController.navigate("destinationErrorPage")
                             }
                         )
                     },

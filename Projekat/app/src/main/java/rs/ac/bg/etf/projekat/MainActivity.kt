@@ -79,7 +79,7 @@ fun NavigationGraph(navController: NavHostController) {
         navController = navController,
         //startDestination = "destinationMainScreen1"
         startDestination = "destinationMainScreen2"
-        //startDestination = "destinationQuestionsPage"
+        //startDestination = "destinationErrorPage"
         //startDestination = "destinationEvidencePage"
         //startDestination = "destinationCultsAndSectsPage"
         //startDestination = "destinationHospitalPage"
@@ -281,6 +281,9 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable("destinationLocationPage"){
             LocationPage(navController,viewModel,realmViewModel)
+        }
+        composable("destinationErrorPage"){
+            ErrorPage()
         }
     }
 }

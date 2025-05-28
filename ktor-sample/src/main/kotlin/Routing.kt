@@ -6,6 +6,9 @@ import com.example.models.dto.gemini.GeminiResponseRetrofit
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.service.GeminiService
 import com.example.service.GeminiServiceImpl
+import com.example.repository.Repository
+import com.example.service.GeminiMurderService
+import com.example.service.GeminiMysteriousSymptomsService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -16,6 +19,7 @@ import java.sql.*
 
 fun Application.configureRouting() {
     routing {
+        val repository: Repository = Repository()
 
         val geminiService: GeminiService = GeminiServiceImpl(geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
 
@@ -31,6 +35,7 @@ fun Application.configureRouting() {
                     call.respond(HttpStatusCode.InternalServerError, mapOf("error" to it.message))
                 }
         }
+
 
         post("/geminiData") {
             try {
@@ -102,147 +107,27 @@ fun Application.configureRouting() {
         // get request
 
         get("/geminiMurder") {
-            println("\nGEMINI MURDER\n")
-            val id =getUsedZlocinMurder()
-            val zl = id?.let { getZlocin(it) }
-            val tipZl= zl?.let { getTipZlocina(it.tipZlocinaId) }
-            val zrtva = id?.let { getZrtva(it) }
-            val osumnjiceni = id?.let { getOsumnjiceni(it) }
-            val dokazi = zrtva?.let { getDokazi(id, it) }
-            val telefoni = zrtva?.let { getTelefon(it.idZrtva) }
-            val forenzickiDokazi = zrtva?.let { getForenzickiDokazi(it.idZrtva) }
-            val obdukcija = zrtva?.let { getObdukcija(it.idZrtva) }
-            val svedoci = id?.let { getSvedoci(it) }
-            val oneContact = id?.let { getOneContact(it) }
-            val kontakti = zrtva?.let { getKontakti(id, it) }
-            val poruke = zrtva?.let { getPoruke(id, it,kontakti) }
-            val pozivi = zrtva?.let { getPozivi(id, it,kontakti) }
-            val galerija = zrtva?.let { getGalerija(id, it) }
-            val aplikacija = zrtva?.let { getAplikacije(id, it) }
-            val tragovi = zrtva?.let { getTragovi(id, it,forenzickiDokazi,osumnjiceni) }
-            val dokazOsumnjiceni = zrtva?.let { getDokaziOsumnjiceni(id, it,dokazi,osumnjiceni) }
-            val beleske = zrtva?.let { getBeleske(id, it) }
-            val whatsAppKontakti = zrtva?.let { getWhatsAppKontakt(id, it) }
-            val whatsAppPoruke = id?.let { getWhatsAppPoruka(it,whatsAppKontakti) }
-            val gallery = id?.let { getGallery(it) }
-            val odnosOsumnjicenZrtva = id?.let { getOdnosOsumnjicenZrtva(it) }
-            val pitanja = id?.let { getPitanja(it) }
-            val odgovori = id?.let { getOdgovor(it) }
-            val pitanjaIspitivanjeOsumnjicenog = id?.let { getPitanjeIspitivanjeOsumnjicenog(it) }
-            val pitanjaIspitivanjeSvedoka = id?.let { getPitanjeIspitivanjeSvedoka(it) }
-            val osobe = id?.let { getOsobe(it) }
-            val zadaci = id?.let { getZadaci(it) }
-            val dokazZadatak = id?.let { getDokaziZadaci(it,zadaci) }
-            val ispitivanjeOsumnjicenogZadatak = id?.let { getIspitivanjeOsumnjicenogZadatak(it,zadaci) }
-            val ispitivanjeSvedokaZadatak = id?.let { getIspitivanjeSvedokaZadatak(it,zadaci) }
-            val telefonZadaci = id?.let { getTelefonZadaci(it, zadaci) }
-            val forenzickiDokazZadaci = id?.let { getForenzickiDokazZadatak(it,zadaci) }
-            val oneCall = id?.let { getOneCall(it,oneContact) }
-            val obicnaPoruka = id?.let { getObicnaPoruka(it,oneContact) }
+            val geminiMurderService: GeminiMurderService = GeminiMurderService(repository)
+            val result = geminiMurderService.getGeminiMurder()
 
-
-            val geminiResponseRetrofit:GeminiResponseRetrofit= GeminiResponseRetrofit(
-                zlocinRetrofit = zl,
-                zrtvaRetrofit = zrtva,
-                osumnjiceniRetrofit = osumnjiceni,
-                dokaziRetrofit =dokazi,
-                telefoniRetrofit = telefoni,
-                forenzickiDokazRetrofit = forenzickiDokazi,
-                obdukcijaRetrofit = obdukcija,
-                svedociRetrofit =svedoci,
-                oneContactRetrofit = oneContact,
-                kontaktiRetrofit = kontakti,
-                porukeRetrofit = poruke,
-                poziviRetrofit = pozivi,
-                galerijaRetrofit = galerija,
-                aplikacijeRetrofit = aplikacija,
-                tragoviRetrofit = tragovi,
-                dokaziOsumnjiceniRetrofit = dokazOsumnjiceni,
-                beleskeRetrofit = beleske,
-                whatsappKontaktRetrofit = whatsAppKontakti,
-                whatsappPorukaRetrofit = whatsAppPoruke,
-                oneCallRetrofit = oneCall,
-                galleryRetrofit = gallery,
-                obicnePorukeRetrofit = obicnaPoruka,
-                odnosiOsumnjiceniZrtvaRetrofit = odnosOsumnjicenZrtva,
-                pitanjaRetrofit = pitanja,
-                odgovoriRetrofit = odgovori,
-                pitanjeIspitivanjeOsumnjicenogRetrofit = pitanjaIspitivanjeOsumnjicenog,
-                pitanjeIspitivanjeSvedokaRetrofit = pitanjaIspitivanjeSvedoka,
-                osobeRetrofit = osobe,
-                zadaciRetrofit = zadaci,
-                dokaziZadaciRetrofit = dokazZadatak,
-                ispitivanjeOsumnjicenogZadaciRetrofit = ispitivanjeOsumnjicenogZadatak,
-                ispitivanjeSvedokaZadaciRetrofit = ispitivanjeSvedokaZadatak,
-                telefonZadaciRetrofit = telefonZadaci,
-                forenzickiDokazZadaciRetrofit = forenzickiDokazZadaci
-            )
-
-            println("GEMINI MURDER")
-            call.respond(geminiResponseRetrofit)
+            if (result != null) {
+                call.respond(result)
+            }
+            else {
+                call.respond(HttpStatusCode.NotFound, "Murder data not found.")
+            }
         }
 
         get("/geminiMysteriousSymptoms") {
-            println("MysteriousSymptoms")
-            val id =getUsedZlocinMysteriousSymptoms()
-            val zl = id?.let { getZlocin(it) }
-            val zrtva = id?.let { getZrtva(it) }
-            val dokazi = zrtva?.let { getDokazi(id, it) }
-            val telefoni = zrtva?.let { getTelefon(it.idZrtva) }
-            val forenzickiDokazi = zrtva?.let { getForenzickiDokazi(it.idZrtva) }
-            val oneContact = id?.let { getOneContact(it) }
-            val aplikacija = zrtva?.let { getAplikacije(id, it) }
-            val beleske = zrtva?.let { getBeleske(id, it) }
-            val whatsAppKontakti = zrtva?.let { getWhatsAppKontakt(id, it) }
-            val whatsAppPoruke = id?.let { getWhatsAppPoruka(it,whatsAppKontakti) }
-            val gallery = id?.let { getGallery(it) }
-            val pitanja = id?.let { getPitanja(it) }
-            val odgovori = id?.let { getOdgovor(it) }
-            val osobe = id?.let { getOsobe(it) }
-            val zadaci = id?.let { getZadaci(it) }
-            val dokazZadatak = id?.let { getDokaziZadaci(it,zadaci) }
-            val telefonZadaci = id?.let { getTelefonZadaci(it, zadaci) }
-            val forenzickiDokazZadaci = id?.let { getForenzickiDokazZadatak(it,zadaci) }
-            val oneCall = id?.let { getOneCall(it,oneContact) }
-            val obicnaPoruka = id?.let { getObicnaPoruka(it,oneContact) }
-            var pacijent: PacijentData? = null
-            if (zrtva != null && osobe != null && zl!=null) {
-                pacijent= getPacijent(id, zl,zrtva,osobe)
+            val geminiMysteriousSymptomsService: GeminiMysteriousSymptomsService = GeminiMysteriousSymptomsService(repository)
+            val result = geminiMysteriousSymptomsService.getGeminiMysteriousSymtoms()
+
+            if (result != null) {
+                call.respond(result)
             }
-            val medicinskiIzvestaj = id?.let { getMedicinskiIzvetaj(it,pacijent) }
-            val lekarskiTest = id?.let { getLekarskiTest(it,pacijent) }
-            val lokacijeIstrage = id?.let { getLokacijeIstrage(it) }
-            val izjavaZaPacijenta = pacijent?.let { getIzjavaZaPacijenta(it,osobe) }
-
-            val geminiResponseRetrofit:GeminiResponseRetrofitMysteriousSymptoms= GeminiResponseRetrofitMysteriousSymptoms(
-                zlocinRetrofit = zl,
-                dokaziRetrofit = dokazi,
-                telefoniRetrofit = telefoni,
-                forenzickiDokazRetrofit = forenzickiDokazi,
-                oneContactRetrofit = oneContact,
-                aplikacijeRetrofit = aplikacija,
-                beleskeRetrofit = beleske,
-                whatsappKontaktRetrofit = whatsAppKontakti,
-                whatsappPorukaRetrofit = whatsAppPoruke,
-                oneCallRetrofit = oneCall,
-                galleryRetrofit = gallery,
-                obicnePorukeRetrofit = obicnaPoruka,
-                pitanjaRetrofit = pitanja,
-                odgovoriRetrofit = odgovori,
-                osobeRetrofit = osobe,
-                zadaciRetrofit = zadaci,
-                dokaziZadaciRetrofit = dokazZadatak,
-                telefonZadaciRetrofit = telefonZadaci,
-                forenzickiDokazZadaciRetrofit = forenzickiDokazZadaci,
-                pacijentRetrofit = pacijent,
-                medicinskiIzvestajRetrofit = medicinskiIzvestaj,
-                lekarskiTestRetrofit = lekarskiTest,
-                lokacijeIstrageRetrofit = lokacijeIstrage,
-                izjavaZaPacijentaRetrofit = izjavaZaPacijenta
-            )
-
-            println("\nGEMINI MS\n")
-            call.respond(geminiResponseRetrofit)
+            else {
+                call.respond(HttpStatusCode.NotFound, "Mysterious Symptoms data not found.")
+            }
         }
 
         get("/") {
@@ -340,8 +225,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        "1234"
-        //"mia123"
+        //"1234"
+        "mia123"
     )
 }
 
