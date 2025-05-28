@@ -1,6 +1,6 @@
 package com.example.models.interfaces
 
-import com.example.*
+import com.example.models.dto.*
 
 interface GeminiResponseRetrofitCommon{
     var osobeRetrofit: List<OsobaData>?

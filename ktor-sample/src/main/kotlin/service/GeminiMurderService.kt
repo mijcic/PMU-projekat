@@ -1,8 +1,6 @@
 package com.example.service
 
-import com.example.GeminiResponseRetrofit
-import com.example.GeminiResponseRetrofitMysteriousSymptoms
-import com.example.PacijentData
+import com.example.models.dto.gemini.GeminiResponseRetrofit
 import com.example.repository.Repository
 
 class GeminiMurderService(private val repository: Repository) {
@@ -97,7 +95,6 @@ class GeminiMurderService(private val repository: Repository) {
                 telefonZadaciRetrofit = telefonZadaci,
                 forenzickiDokazZadaciRetrofit = forenzickiDokazZadaci
             )
-
             println("GEMINI MURDER")
             return geminiResponseRetrofit
         }

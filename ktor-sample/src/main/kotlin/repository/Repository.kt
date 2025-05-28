@@ -1,6 +1,7 @@
 package com.example.repository
 
 import com.example.*
+import com.example.models.dto.*
 
 class Repository() {
     fun getUsedZlocinMurder(): Int? {

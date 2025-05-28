@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.models.dto.*
 import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
@@ -45,7 +46,7 @@ fun insertZlocinData(zlocin: ZlocinData) {
 //insertOsobaData
 
 
-fun insertOsobaData(osobaData: OsobaData,zlocin: ZlocinData){
+fun insertOsobaData(osobaData: OsobaData, zlocin: ZlocinData){
     val query = """
         INSERT INTO Osoba (ime, kontakt, datum, zanimanje, pol,zlocinId)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -81,7 +82,7 @@ fun insertOsobaData(osobaData: OsobaData,zlocin: ZlocinData){
 }
 
 
-fun insertZrtva(zrtvaData: ZrtvaData,zlocin: ZlocinData,osoba:OsobaData){
+fun insertZrtva(zrtvaData: ZrtvaData, zlocin: ZlocinData, osoba: OsobaData){
     val query = """
         INSERT INTO Zrtva (tipZrtve, detalji, statusZrtva, zlocinId, osobaId)
         VALUES (?, ?, ?, ?, ?)
@@ -145,7 +146,7 @@ fun insertMotivData(motiv: MotivData){
     }
 }
 
-fun insertOsumnjicenData(osumnjicen: OsumnjicenData,zlocin: ZlocinData, motiv: MotivData, zrtva: ZrtvaData) {
+fun insertOsumnjicenData(osumnjicen: OsumnjicenData, zlocin: ZlocinData, motiv: MotivData, zrtva: ZrtvaData) {
     val query = """
         INSERT INTO osumnjicen (statusS, tipOsumnjicen, motiv, zlocinId, kriv, osobaId)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -648,7 +649,7 @@ fun insertAplikacijaData(aplikacija: AplikacijaData, zrtva: ZrtvaData){
 }
 
 
-fun insertTragData(trag: TragData,forenzickiDokaz: ForenzickiDokazData,osumnjicen: OsumnjicenData){
+fun insertTragData(trag: TragData, forenzickiDokaz: ForenzickiDokazData, osumnjicen: OsumnjicenData){
 
     val query = """
         INSERT INTO trag (forenzickiDokazId, osumnjicenId)
@@ -680,7 +681,7 @@ fun insertTragData(trag: TragData,forenzickiDokaz: ForenzickiDokazData,osumnjice
     }
 }
 
-fun insertDokazOsumnjicenData(dokazOsumnjicen: DokazOsumnjicenData,dokaz: DokazData,osumnjicen: OsumnjicenData){
+fun insertDokazOsumnjicenData(dokazOsumnjicen: DokazOsumnjicenData, dokaz: DokazData, osumnjicen: OsumnjicenData){
 
     val query = """
         INSERT INTO dokazOsumnjicen (dokazId, osumnjicenId)
@@ -1328,7 +1329,7 @@ fun getZadatakListaData(): List<ZadatakData> {
     return zadatakList
 }
 
-fun updateZadatakListData(zadatakList: List<ZadatakData>,zlocin: ZlocinData) {
+fun updateZadatakListData(zadatakList: List<ZadatakData>, zlocin: ZlocinData) {
     val query = """
         UPDATE zadatak
         SET nextZadatak = ?

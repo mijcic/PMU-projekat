@@ -2,7 +2,10 @@ package com.example
 
 import com.example.data.remote.GEMINI_API_KEY
 import com.example.data.remote.geminiClient
-import com.example.models.dto.gemini.GeminiResponseRetrofit
+import com.example.models.dto.KorisnikRequest
+import com.example.models.dto.MessageResponse
+import com.example.models.dto.ScoreKorisnik
+import com.example.models.dto.ZlocinRequest
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.service.GeminiService
 import com.example.service.GeminiServiceImpl
@@ -20,7 +23,6 @@ import java.sql.*
 fun Application.configureRouting() {
     routing {
         val repository: Repository = Repository()
-
         val geminiService: GeminiService = GeminiServiceImpl(geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
 
         //gemini
@@ -35,7 +37,6 @@ fun Application.configureRouting() {
                     call.respond(HttpStatusCode.InternalServerError, mapOf("error" to it.message))
                 }
         }
-
 
         post("/geminiData") {
             try {
@@ -67,7 +68,6 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "An internal server error occurred."))
             }
         }
-
 
 
         //gemini mysterious symptoms

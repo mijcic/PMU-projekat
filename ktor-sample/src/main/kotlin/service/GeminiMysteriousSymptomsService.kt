@@ -1,6 +1,7 @@
 package com.example.service
 
 import com.example.*
+import com.example.models.dto.PacijentData
 import com.example.repository.Repository
 
 class GeminiMysteriousSymptomsService(private val repository: Repository) {

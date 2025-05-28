@@ -10,7 +10,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -131,7 +130,7 @@ data class GeminiResponseRetrofitMysteriousSymptoms(
     var izjavaZaPacijentaRetrofit: IzjavaZaPacijentaData?
 ):GeminiResponseRetrofitCommon
 
-fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl:ZlocinData): PacijentData? {
+fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl: ZlocinData): PacijentData? {
     val pacijent = geminiResponse2.pacijentR
 
     val datumString = geminiResponse2.pacijentR.datumPrijave
@@ -148,11 +147,11 @@ fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, gem
     val datumOsoba = datumStringOsoba?.let { LocalDate.parse(it, formatter) }
     val timestampOsoba = datumOsoba?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
 
-    var prijavio:OsobaData? = null
+    var prijavio: OsobaData? = null
     pacijent.prijavio?.let {
         it.kontakt?.let { it1 ->
             if (timestampPrijavio != null) {
-                prijavio=OsobaData(
+                prijavio= OsobaData(
                     idOsoba = it.idOsoba,
                     ime = it.ime,
                     kontakt = it1,
@@ -165,11 +164,11 @@ fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, gem
         }
     }
 
-    var osoba:OsobaData? =null
+    var osoba: OsobaData? =null
     pacijent.zrtvaId?.osobaId?.let {
         if (timestampOsoba != null) {
             it.kontakt?.let { it1 ->
-                osoba=OsobaData(
+                osoba= OsobaData(
                     idOsoba = it.idOsoba,
                     ime = it.ime,
                     kontakt = it1,
@@ -182,7 +181,7 @@ fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, gem
         }
     }
 
-    var zrtva:ZrtvaData? = null
+    var zrtva: ZrtvaData? = null
     pacijent.zrtvaId?.let {
         zrtva= osoba?.let { it1 ->
             ZrtvaData(
@@ -200,11 +199,11 @@ fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, gem
     osoba?.let { insertOsobaData(it, zl) }
     zrtva?.let { osoba?.let { it1 -> insertZrtva(zrtva!!,zl, it1) } }
 
-    var pac:PacijentData?= null
+    var pac: PacijentData?= null
     prijavio?.let {
         if (timestamp != null) {
             zrtva?.let { it1 ->
-                pac=PacijentData(
+                pac= PacijentData(
                     idPacijent = pacijent.idPacijent,
                     simptomi = pacijent.simptomi,
                     statusPacijenta = pacijent.statusPacijenta,
@@ -222,10 +221,10 @@ fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, gem
     return pac
 }
 
-fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,pacijent:PacijentData) {
+fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,pacijent: PacijentData) {
     val medicinskiIzvestaj = geminiResponse2.medicinskiIzvestajR
 
-    var medIzv=MedicinskiIzvestajData(
+    var medIzv= MedicinskiIzvestajData(
         idMedicinskiIzvestaj = medicinskiIzvestaj.idMedicinskiIzvestaj,
         rezime = medicinskiIzvestaj.rezime,
         CTnalaz = medicinskiIzvestaj.CTnalaz,
@@ -240,7 +239,7 @@ fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSym
     geminiResponseRetrofit.medicinskiIzvestajRetrofit=medIzv
 }
 
-fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData,zl: ZlocinData) {
+fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData, zl: ZlocinData) {
     val izjave = geminiResponse2.izjavaZaPacijentaR
 
     val datumString = "2025-11-12"
@@ -249,7 +248,7 @@ fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymp
     val timestamp = datum?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
 
 
-    var osoba:OsobaData? =null
+    var osoba: OsobaData? =null
     /*
     izjave.osobaId?.kontakt?.let {
         if (timestamp != null) {
@@ -309,12 +308,12 @@ fun insertGeminiLekarskiTest(geminiResponse2: GeminiResponse2MysteriousSymptoms,
     geminiResponseRetrofit.lekarskiTestRetrofit = lekarskiTest
 }
 
-fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl:ZlocinData) {
+fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl: ZlocinData) {
     val lokacijeIstrage = geminiResponse2.lokacijeIstrageR
     var lokacijeLista= mutableListOf<LokacijeIstrageData>()
 
     for(l in lokacijeIstrage){
-        var lok=LokacijeIstrageData(
+        var lok= LokacijeIstrageData(
             idLokacijeIstrage = l.idLokacijeIstrage,
             mesto = l.mesto,
             naziv = l.naziv,
@@ -477,7 +476,7 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
         geminiResponse2.zlocinR.datum?.let {
             if (timestamp != null) {
 
-                val zl =ZlocinData(
+                val zl = ZlocinData(
                     idZlocin = geminiResponse2.zlocinR.idZlocin,
                     tipZlocinaId = 1,
                     naziv = geminiResponse2.zlocinR.naziv,

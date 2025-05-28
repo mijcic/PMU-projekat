@@ -1,4 +1,4 @@
-package com.example
+package com.example.models.dto
 
 import kotlinx.serialization.Serializable
 
@@ -6,40 +6,6 @@ import kotlinx.serialization.Serializable
 data class TipZlocinaDC(
     val id: Int,
     val naziv: String,
-)
-
-@Serializable
-data class Zlocin(
-    val id: Int,
-    val naziv: String,
-    val opis: String,
-    val idTipZlocina: Int,
-    val datum: Long,
-    val mesto:String,
-    val status: String
-)
-
-@Serializable
-data class ClanOrganizacije(
-    val idClan:Int,
-    val idOsumnjicen:Int,
-    val idOrganizacija:Int
-)
-
-@Serializable
-data class Dokaz(
-    val idDokaz:Int,
-    val opis: String,
-    val lokacija: String,
-    val idZlocin:Int
-)
-
-@Serializable
-data class ForenzickiDokaz(
-    val idForenzickiDokaz:Int,
-    val opis: String,
-    val tip: String,
-    val idZlocin:Int
 )
 
 @Serializable
@@ -66,8 +32,6 @@ data class ScoreKorisnik(
 data class MessageResponse(
     val message: String
 )
-
-
 
 @Serializable
 data class ZlocinRequest(
@@ -114,7 +78,7 @@ data class ZrtvaData(
     val detalji: String,
     val statusZrtva: String,
     val zlocinId:Int,
-    var osobaId:OsobaData
+    var osobaId: OsobaData
 )
 
 @Serializable
@@ -131,7 +95,7 @@ data class OsumnjicenData(
     var motiv: MotivData,
     var zlocinId: Int,
     val kriv: Int,
-    val osobaId:OsobaData
+    val osobaId: OsobaData
 )
 
 @Serializable

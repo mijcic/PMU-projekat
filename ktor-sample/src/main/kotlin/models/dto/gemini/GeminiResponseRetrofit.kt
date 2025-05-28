@@ -1,6 +1,6 @@
 package com.example.models.dto.gemini
 
-import com.example.*
+import com.example.models.dto.*
 import com.example.models.interfaces.GeminiResponseRetrofitCommon
 import kotlinx.serialization.Serializable
 
