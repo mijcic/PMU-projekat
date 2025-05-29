@@ -131,7 +131,7 @@ data class AlibiData(
 data class ObdukcijaData(
     var idObdukcija:Int,
     val izvestaj:String,
-    val datum: Long,
+    var datum: Long,
     val uzrokSmrti:String,
     var zrtvaId: Int,
     val informacije: String,

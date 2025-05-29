@@ -145,15 +145,16 @@ fun Application.configureRouting() {
 
         post("/signUp"){
             try {
-                val repo = RepositoryInsert()
+                val conn = getDatabaseConnection()
+                val repo = conn?.let { RepositoryInsert(it) }
                 val korisnik = call.receive<KorisnikRequest>()
-                val exists = repo.checkKorisnik(korisnik)
+                val exists = repo?.checkKorisnik(korisnik)
 
-                if (exists) {
+                if (exists == true) {
                     println("User already exists")
                     call.respond(MessageResponse("Korisnik already exists."))
                 } else {
-                    repo.signUpKorisnik(korisnik)
+                    repo?.signUpKorisnik(korisnik)
                     println("User inserted successfully")
                     call.respond(MessageResponse("Korisnik inserted successfully"))
                 }
@@ -165,12 +166,12 @@ fun Application.configureRouting() {
 
         post("/logIn"){
             try{
-
-                val repo = RepositoryInsert()
+                val conn = getDatabaseConnection()
+                val repo = conn?.let { RepositoryInsert(it) }
                 println("logIn")
                 val korisnik = call.receive<KorisnikRequest>()
-                val result = repo.logIn(korisnik)
-                if (result) {
+                val result = repo?.logIn(korisnik)
+                if (result == true) {
                     call.respond(MessageResponse("TRUE"))
                 }
                 else {
@@ -199,7 +200,7 @@ fun getDatabaseConnection(): Connection? {
 fun closeResources(conn: Connection?, statement: PreparedStatement?, resultSet: ResultSet?) {
     resultSet?.close()
     statement?.close()
-    conn?.close()
+    //conn?.close()
 }
 
 fun <T> executeQuery(query: String, rowMapper: (ResultSet) -> T): List<T> {

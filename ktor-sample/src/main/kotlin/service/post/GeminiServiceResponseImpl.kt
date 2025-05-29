@@ -21,7 +21,8 @@ class GeminiServiceResponseImpl(
     private val geminiResponse: GeminiResponse
 ) : GeminiServiceResponse {
     override suspend fun getDataGeminiResponse(geminiResponse: GeminiResponse): GeminiResponseRetrofit {
-        val repo = RepositoryInsert()
+
+
         val json2 = Json {
             ignoreUnknownKeys = true
         }
@@ -70,6 +71,12 @@ class GeminiServiceResponseImpl(
             telefonZadaciRetrofit = null,
             forenzickiDokazZadaciRetrofit = null
         )
+
+        val conn = getDatabaseConnection()
+        if(conn == null){
+            return geminiResponseRetrofit
+        }
+        val repo = RepositoryInsert(conn)
 
         if (geminiResponse2 != null) {
             val datumString = geminiResponse2.zlocinR.datum
@@ -150,6 +157,7 @@ class GeminiServiceResponseImpl(
                 }
             }
         }
+        conn?.close()
         return geminiResponseRetrofit
     }
 

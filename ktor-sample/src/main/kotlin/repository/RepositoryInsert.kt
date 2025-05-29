@@ -9,20 +9,22 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.sql.Timestamp
 
-class RepositoryInsert(){
+class RepositoryInsert(private val conn: Connection){
+
     // insert into Zlocin Table in mySql
     fun insertZlocinData(zlocin: ZlocinData) {
         val query = """
         INSERT INTO zlocin (tipZlocinaId, naziv, datum, mesto, opis, statusS)
         VALUES (?, ?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1,zlocin.tipZlocinaId)
@@ -46,21 +48,19 @@ class RepositoryInsert(){
         }
     }
 
-//insertOsobaData
-
-
+    //insertOsobaData
     fun insertOsobaData(osobaData: OsobaData, zlocin: ZlocinData){
         val query = """
         INSERT INTO Osoba (ime, kontakt, datum, zanimanje, pol,zlocinId)
         VALUES (?, ?, ?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, osobaData.ime)
@@ -84,18 +84,17 @@ class RepositoryInsert(){
         }
     }
 
-
     fun insertZrtva(zrtvaData: ZrtvaData, zlocin: ZlocinData, osoba: OsobaData){
         val query = """
         INSERT INTO Zrtva (tipZrtve, detalji, statusZrtva, zlocinId, osobaId)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, zrtvaData.tipZrtve)
@@ -125,12 +124,12 @@ class RepositoryInsert(){
         VALUES (?)
     """
 
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, motiv.opis)
@@ -154,12 +153,12 @@ class RepositoryInsert(){
         INSERT INTO osumnjicen (statusS, tipOsumnjicen, motiv, zlocinId, kriv, osobaId)
         VALUES (?, ?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, osumnjicen.status)
@@ -224,12 +223,12 @@ class RepositoryInsert(){
         INSERT INTO dokaz (tipDokaza, opis, statusS, zlocinId, zrtvaId)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             if (dokaz.tipDokaza != "digitalni" && dokaz.tipDokaza != "fizicki") dokaz.tipDokaza = "fizicki"
@@ -266,12 +265,12 @@ class RepositoryInsert(){
         INSERT INTO svedok (izjava, statusSvedok, statusIspitan, zlocinId, osobaId)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+       // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, svedok.izjava)
@@ -318,7 +317,7 @@ class RepositoryInsert(){
         }
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, alibi.osumnjicen.idOsumnjicen)
@@ -350,16 +349,16 @@ class RepositoryInsert(){
         VALUES (?, ?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, obdukcija.izvestaj)
-            statement?.setDate(2, Date(obdukcija.datum))
+            statement?.setTimestamp(2, Timestamp(obdukcija.datum))
             statement?.setString(3,  obdukcija.uzrokSmrti)
             statement?.setInt(4,  zrtva.idZrtva)
             statement?.setString(5, obdukcija.informacije)
@@ -382,12 +381,12 @@ class RepositoryInsert(){
         INSERT INTO forenzickiDokaz (tipForenzickiDokaz, opis, statusS, zrtvaId,veza)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            // conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, forenzickiDokaz.tipForenzickiDokaz)
@@ -420,7 +419,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, telefon.model)
@@ -454,7 +453,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, zlocin.idZlocin)
@@ -487,7 +486,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, kontakt.ime)
@@ -522,7 +521,7 @@ class RepositoryInsert(){
 
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, poruke.tipPoruke)
@@ -558,7 +557,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, pozivi.tip)
@@ -594,7 +593,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, galerija.tip)
@@ -628,7 +627,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, aplikacija.naziv)
@@ -663,7 +662,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, forenzickiDokaz.idForenzickiDokaz)
@@ -695,7 +694,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, dokaz.idDokaz)
@@ -729,7 +728,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, korisnik.korisnickoIme)
@@ -765,7 +764,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()  // Assuming this method returns a valid DB connection
+            //conn = getDatabaseConnection()  // Assuming this method returns a valid DB connection
             statement = conn?.prepareStatement(query)
 
             // Set the parameters for both username and email
@@ -800,7 +799,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query)
 
             statement?.setString(1, korisnik.korisnickoIme)
@@ -833,7 +832,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, zlocin.idZlocin)
@@ -866,7 +865,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, zlocin.idZlocin)
@@ -898,7 +897,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, zlocin.idZlocin)
@@ -936,7 +935,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, kontaktKoSalje.idWhatsAppKontakt)
@@ -970,7 +969,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, oneCallData.kontakt)
@@ -1003,7 +1002,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, zlocin.idZlocin)
@@ -1041,7 +1040,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, kontaktKoSalje.idOneContact)
@@ -1080,7 +1079,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, osumnjicenData.idOsumnjicen)
@@ -1112,7 +1111,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, prijavljeniKorisnikData.korisnickoIme)
@@ -1143,7 +1142,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, zlocin.idZlocin)
@@ -1174,7 +1173,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, pitanje.idPitanje)
@@ -1208,7 +1207,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, pitanjeIspitivanjeOsumnjicenogData.kategorija)
@@ -1243,7 +1242,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, pitanjeIspitivanjeSvedokaData.tekst)
@@ -1277,7 +1276,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, zadatakData.tekst)
@@ -1308,7 +1307,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query)
             resultSet = statement?.executeQuery()
 
@@ -1343,7 +1342,7 @@ class RepositoryInsert(){
         var statement: PreparedStatement? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query)
 
             for (i in 0 until zadatakList.size - 1) {
@@ -1377,7 +1376,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+           // conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, dokazZadatakData.tekst)
@@ -1411,7 +1410,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, osumnjicenData.idOsumnjicen)
@@ -1444,7 +1443,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, svedokData.idSvedok)
@@ -1477,7 +1476,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, telefonData.idTelefon)
@@ -1510,7 +1509,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, forenzickiDokazZadatakData.tekst)
@@ -1582,7 +1581,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, pacijent.simptomi)
@@ -1617,7 +1616,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, medicinskiIzvestaj.rezime)
@@ -1653,7 +1652,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setInt(1, lekarskiTest.pacijentId.idPacijent)
@@ -1683,7 +1682,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, lokacijeIstrage.mesto)
@@ -1715,7 +1714,7 @@ class RepositoryInsert(){
         var resultSet: ResultSet? = null
 
         try {
-            conn = getDatabaseConnection()
+            //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
 
             statement?.setString(1, izjavaZaPacijenta.izjava)
