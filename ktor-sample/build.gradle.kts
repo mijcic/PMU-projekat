@@ -22,6 +22,7 @@ repositories {
 }
 
 val exposedVersion = "0.40.1"  // Postavi na najnoviju dostupnu verziju
+
 dependencies {
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-content-negotiation")
@@ -43,9 +44,8 @@ dependencies {
     implementation("io.ktor:ktor-server-core:2.3.6")
     implementation("io.ktor:ktor-server-netty:2.3.6")
 
-
     testImplementation("io.ktor:ktor-server-test-host")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")  // promenjeno ovde
 
     implementation("io.ktor:ktor-client-core:3.1.1")
     implementation("io.ktor:ktor-client-cio:3.1.1")
@@ -54,4 +54,12 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:3.1.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+    testImplementation("org.testcontainers:testcontainers:1.19.3")
+    testImplementation("org.testcontainers:mysql:1.19.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

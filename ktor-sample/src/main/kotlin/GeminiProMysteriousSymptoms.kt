@@ -307,7 +307,7 @@ suspend fun queryGeminiMysteriousSymptomsStream(prompt: String, tables: String):
 
 
 fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): GeminiResponseRetrofitMysteriousSymptoms {
-    val repo = RepositoryInsert()
+
     val json2 = Json {
         ignoreUnknownKeys = true
     }
@@ -346,6 +346,12 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
         lokacijeIstrageRetrofit = null,
         izjavaZaPacijentaRetrofit = null
     )
+
+    val conn = getDatabaseConnection()
+    if(conn==null){
+        return geminiResponseRetrofit
+    }
+    val repo = RepositoryInsert(conn)
 
     if (geminiResponse2 != null) {
         val datumString = geminiResponse2.zlocinR.datum
