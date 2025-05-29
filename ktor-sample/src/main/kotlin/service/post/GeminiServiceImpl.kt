@@ -1,4 +1,4 @@
-package com.example.service
+package com.example.service.post
 
 import com.example.models.dto.gemini.*
 import com.example.models.dto.gemini.GeminiRequest

@@ -125,3 +125,19 @@ data class ForenzickiDokazZadatakR (val idForenzickiDokazZadatak: Int, val tekst
 
 @Serializable
 data class PorukeZadatakR (var idPorukeZadatak: Int, val porukeId: Int, val zadatakId: Int, val uradjen: Boolean)
+
+
+@Serializable
+data class PacijentR (var idPacijent: Int, val simptomi: String, val statusPacijenta: String, val datumPrijave: String, var prijavio:OsobaR?, var zlocinId: Int, var zrtvaId: ZrtvaR?)
+
+@Serializable
+data class MedicinskiIzvestajR (var idMedicinskiIzvestaj: Int, val rezime: String, val CTnalaz: String, val MRInalaz: String, val krvnaSlika: String, val toksikoloskeAnalize: String, val zakljucak: String, var pacijentId: Int)
+
+@Serializable
+data class LekarskiTestR (var idLekarskiTest: Int, var pacijentId: Int, val izvestaj: String)
+
+@Serializable
+data class LokacijeIstrageR (var idLokacijeIstrage: Int, val mesto: String, val naziv: String, val opis: String,val zlocinId:Int,var geoTackaALatitude:Double, var geoTackaALongitude:Double)
+
+@Serializable
+open class IzjavaZaPacijentaR (var idIzjavaZaPacijenta: Int, var izjava: String, var pacijentId: Int, var osobaId: Int)

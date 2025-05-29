@@ -7,11 +7,12 @@ import com.example.models.dto.MessageResponse
 import com.example.models.dto.ScoreKorisnik
 import com.example.models.dto.ZlocinRequest
 import com.example.parser.DefaultGeminiResponseParser
-import com.example.service.GeminiService
-import com.example.service.GeminiServiceImpl
+import com.example.service.post.GeminiService
+import com.example.service.post.GeminiServiceImpl
 import com.example.repository.Repository
-import com.example.service.GeminiMurderService
-import com.example.service.GeminiMysteriousSymptomsService
+import com.example.repository.RepositoryInsert
+import com.example.service.get.GeminiMurderService
+import com.example.service.get.GeminiMysteriousSymptomsService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -141,55 +142,18 @@ fun Application.configureRouting() {
 
         //post request
 
-        post("/insertData"){
-            try{
-                val zlocin = call.receive<ZlocinRequest>()
-                insertZlocinData(zlocin.zlocin)
-                //insertZrtva(zlocin.zrtva,zlocin.zlocin)
-                //insertObdukcijaData(zlocin.obdukcija, zlocin.zrtva)
-                //insertTelefonData(zlocin.telefon, zlocin.zrtva)
-
-                for (i in zlocin.motivi.indices) {
-                    val motiv = zlocin.motivi[i]
-                    val osumnjicen = zlocin.osumnjicen[i]
-
-                    insertMotivData(motiv)
-                    //insertOsumnjicenData(osumnjicen, zlocin.zlocin, motiv, zlocin.zrtva)
-                }
-                for(dokaz in zlocin.dokazi){
-                    //insertDokazData(dokaz, zlocin.zlocin, zlocin.zrtva, zlocin.osumnjicen)
-                }
-                for(svedok in zlocin.svedok){
-                    insertSvedokData(svedok, zlocin.zlocin)
-                }
-                for(alibi in zlocin.alibi){
-                    insertAlibiData(alibi,zlocin.zlocin,zlocin.osumnjicen,zlocin.svedok)
-                }
-                for(forenzickiDokaz in zlocin.forenzickiDokazi){
-                   // insertForenzickiDokaz(forenzickiDokaz, zlocin.zrtva)
-                }
-                for (misijaPoruka in zlocin.misijaPoruka){
-                    insertMisijaPorukaData(misijaPoruka, zlocin.zlocin)
-                }
-
-                call.respond("Zlocin inserted successfully")
-            }
-            catch (e: Exception){
-                e.printStackTrace()
-                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to insert Zlocin"))
-            }
-        }
 
         post("/signUp"){
             try {
+                val repo = RepositoryInsert()
                 val korisnik = call.receive<KorisnikRequest>()
-                val exists = checkKorisnik(korisnik)
+                val exists = repo.checkKorisnik(korisnik)
 
                 if (exists) {
                     println("User already exists")
                     call.respond(MessageResponse("Korisnik already exists."))
                 } else {
-                    signUpKorisnik(korisnik)
+                    repo.signUpKorisnik(korisnik)
                     println("User inserted successfully")
                     call.respond(MessageResponse("Korisnik inserted successfully"))
                 }
@@ -201,9 +165,11 @@ fun Application.configureRouting() {
 
         post("/logIn"){
             try{
+
+                val repo = RepositoryInsert()
                 println("logIn")
                 val korisnik = call.receive<KorisnikRequest>()
-                val result = logIn(korisnik)
+                val result = repo.logIn(korisnik)
                 if (result) {
                     call.respond(MessageResponse("TRUE"))
                 }
