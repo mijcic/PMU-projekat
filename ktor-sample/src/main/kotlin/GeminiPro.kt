@@ -162,7 +162,8 @@ fun insertGeminiTelefon(geminiResponse2: GeminiResponseCommon2, geminiResponseRe
             model = t.model,
             os = t.os,
             sifra = t.sifra,
-            informacije = t.informacije
+            informacije = t.informacije,
+            zrtvaId = zrtva.idZrtva
         )
 
         repo.insertTelefonData(tel, zrtva)
@@ -282,8 +283,7 @@ fun insertGeminiOsumnjicen(geminiResponse2: GeminiResponse2,geminiResponseRetrof
                 repo.insertOsumnjicenData(
                     osum,
                     zlocin = zl,
-                    motiv = m,
-                    zrtva = ZrtvaData(0,"","","",1,os)
+                    motiv = m
                 )
 
                 val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.osumnjicenId == prev }

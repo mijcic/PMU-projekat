@@ -50,6 +50,13 @@ data class ZlocinRequest(
 )
 
 @Serializable
+data class UsedZlocinData(
+    var idUsedZlocin:Int,
+    var zlocinId: ZlocinData,
+    var used:Boolean,
+)
+
+@Serializable
 data class ZlocinData(
     var idZlocin: Int,
     val tipZlocinaId: Int,
@@ -153,7 +160,8 @@ data class TelefonData(
     val model:String,
     val os: String,
     val sifra: String,
-    val informacije: String
+    val informacije: String,
+    val zrtvaId: Int
 )
 
 @Serializable

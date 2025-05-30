@@ -22,8 +22,8 @@ class GeminiMurderService(private val repository: Repository) {
         val pozivi = zrtva?.let { repository.getPozivi(id, it,kontakti) }
         val galerija = zrtva?.let { repository.getGalerija(id, it) }
         val aplikacija = zrtva?.let { repository.getAplikacije(id, it) }
-        val tragovi = zrtva?.let { repository.getTragovi(id, it,forenzickiDokazi,osumnjiceni) }
-        val dokazOsumnjiceni = zrtva?.let { repository.getDokaziOsumnjiceni(id, it,dokazi,osumnjiceni) }
+        val tragovi = zrtva?.let { repository.getTragovi(forenzickiDokazi,osumnjiceni) }
+        val dokazOsumnjiceni = zrtva?.let { repository.getDokaziOsumnjiceni(dokazi,osumnjiceni) }
         val beleske = zrtva?.let { repository.getBeleske(id, it) }
         val whatsAppKontakti = zrtva?.let { repository.getWhatsAppKontakt(id, it) }
         val whatsAppPoruke = id?.let { repository.getWhatsAppPoruka(it,whatsAppKontakti) }

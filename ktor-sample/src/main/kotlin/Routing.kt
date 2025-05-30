@@ -23,7 +23,9 @@ import java.sql.*
 
 fun Application.configureRouting() {
     routing {
-        val repository: Repository = Repository()
+        val connection = getDatabaseConnection()
+            ?: error("Database connection failed — cannot start routing.")
+        val repository: Repository = Repository(connection)
         val geminiService: GeminiService = GeminiServiceImpl(geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
 
         //gemini
@@ -192,8 +194,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        //"1234"
-        "mia123"
+        "1234"
+        //"mia123"
     )
 }
 
