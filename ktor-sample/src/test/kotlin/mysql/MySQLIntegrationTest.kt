@@ -165,6 +165,30 @@ class MySQLIntegrationTest {
                 );
             """.trimIndent())
 
+            stmt.execute("""
+                CREATE TABLE whatsappkontakt (
+                    idWhatsAppKontakt INT AUTO_INCREMENT PRIMARY KEY,
+                    zlocinId INT NOT NULL,
+                    ime VARCHAR(100) NOT NULL,
+                    broj VARCHAR(100) NOT NULL,
+                    slika INT,
+                    FOREIGN KEY (zlocinId) REFERENCES zlocin(idZlocin)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE whatsappporuka (
+                	idWhatsAppPoruka INT AUTO_INCREMENT PRIMARY KEY,
+                    kontaktKoSalje INT NOT NULL,
+                    kontaktKomeSalje INT NOT NULL,
+                    tekst VARCHAR(1000) NOT NULL,
+                    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    procitana TINYINT(0),
+                    FOREIGN KEY (kontaktKoSalje) REFERENCES whatsappkontakt(idWhatsAppKontakt),
+                    FOREIGN KEY (kontaktKomeSalje) REFERENCES whatsappkontakt(idWhatsAppKontakt)
+                );
+            """.trimIndent())
+
             println("Tables created successfully.")
         }
 
@@ -658,5 +682,105 @@ class MySQLIntegrationTest {
         assertEquals("DNK tragovi pronađeni na pištolju.", rs.getString("opis"))
         assertEquals(0, rs.getInt("statusS"))
         assertEquals("DNK tragovi na pištolju se poklapaju sa DNK Olivije Reed.", rs.getString("veza"))
+    }
+
+    @Test
+    fun testInsertWhatsAppKontaktData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val whatsappKontakt = WhatsAppKontaktData(
+            idWhatsAppKontakt = 1,
+            zlocinId = zlocin.idZlocin,
+            ime = "Carlos Martinez",
+            broj = "+34612345678",
+            slika = 1
+        )
+        repo.insertWhatsAppKontaktData(whatsappKontakt, zlocin)
+
+        val stmt = connection.prepareStatement("SELECT * FROM whatsappkontakt WHERE zlocinId=?")
+        stmt.setInt(1, zlocin.idZlocin)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji whatsappkontakt sa prosledjenim id-jem zlocina")
+        assertEquals(whatsappKontakt.idWhatsAppKontakt, rs.getInt("idWhatsAppKontakt"))
+        assertEquals(whatsappKontakt.zlocinId, rs.getInt("zlocinId"))
+        assertEquals(whatsappKontakt.ime, rs.getString("ime"))
+        assertEquals(whatsappKontakt.broj, rs.getString("broj"))
+        assertEquals(whatsappKontakt.slika, rs.getInt("slika"))
+    }
+
+    @Test
+    fun testInsertWhatsAppPorukaData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val kontaktKoSalje = WhatsAppKontaktData(
+            idWhatsAppKontakt = 1,
+            zlocinId = zlocin.idZlocin,
+            ime = "Alessandro Moretti",
+            broj = "+393312223344",
+            slika = 1
+        )
+        repo.insertWhatsAppKontaktData(kontaktKoSalje, zlocin)
+
+        val kontaktKomeSalje = WhatsAppKontaktData(
+            idWhatsAppKontakt = 2,
+            zlocinId = zlocin.idZlocin,
+            ime = "Giulia Romano",
+            broj = "+393316665555",
+            slika = 2
+        )
+        repo.insertWhatsAppKontaktData(kontaktKomeSalje, zlocin)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val whatsAppPoruka = WhatsAppPorukaData(
+            idWhatsAppPoruka = 1,
+            kontaktKoSalje = kontaktKoSalje.idWhatsAppKontakt,
+            kontaktKomeSalje = kontaktKomeSalje.idWhatsAppKontakt,
+            tekst = "Upoznao sam je u baru. Delovala je cudno, ali idem do njene sobe. Javljam se kasnije.",
+            datum = timestamp2,
+            procitana = false
+        )
+        repo.insertWhatsAppPorukaData(whatsAppPoruka, kontaktKoSalje, kontaktKomeSalje)
+
+        val stmt = connection.prepareStatement("SELECT * FROM whatsappporuka WHERE idWhatsAppPoruka=?")
+        stmt.setInt(1, 1)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji whatsappporuka sa prosledjenim id-jem")
+        assertEquals(whatsAppPoruka.idWhatsAppPoruka, rs.getInt("idWhatsAppPoruka"))
+        assertEquals(whatsAppPoruka.kontaktKoSalje, rs.getInt("kontaktKoSalje"))
+        assertEquals(whatsAppPoruka.kontaktKomeSalje, rs.getInt("kontaktKomeSalje"))
+        assertEquals(whatsAppPoruka.tekst, rs.getString("tekst"))
+        val storedTimestamp = rs.getTimestamp("datum").time
+        assertTrue(abs(storedTimestamp - whatsAppPoruka.datum) < 1000)
+        assertEquals(whatsAppPoruka.procitana, rs.getBoolean("procitana"))
     }
 }

@@ -892,7 +892,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO whatsappkontakt (zlocinId, ime, broj, slika)
         VALUES (?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -930,7 +930,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO whatsappporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
