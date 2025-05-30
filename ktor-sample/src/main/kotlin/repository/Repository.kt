@@ -2,12 +2,13 @@ package com.example.repository
 
 import com.example.*
 import com.example.models.dto.*
+import java.sql.Connection
 
-class Repository() {
+class Repository(private val connection: Connection) {
     fun getUsedZlocinMurder(): Int? {
         val query =
             "SELECT MIN(uz.zlocinId) AS zlocinId FROM UsedZlocin uz JOIN Zlocin z ON uz.zlocinId = z.idZlocin JOIN TipZlocina tz ON z.tipZlocinaId = tz.idTipZlocina WHERE uz.used = false AND tz.naziv = 'murder'"
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val statement = connection?.createStatement()
         val resultSet = statement?.executeQuery(query)
 
@@ -24,7 +25,7 @@ class Repository() {
     fun getUsedZlocinMysteriousSymptoms(): Int? {
         val query =
             "SELECT MIN(uz.zlocinId) AS zlocinId FROM UsedZlocin uz JOIN Zlocin z ON uz.zlocinId = z.idZlocin JOIN TipZlocina tz ON z.tipZlocinaId = tz.idTipZlocina WHERE uz.used = false AND tz.naziv = 'MysteriousSymptoms'"
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val statement = connection?.createStatement()
         val resultSet = statement?.executeQuery(query)
 
@@ -40,7 +41,7 @@ class Repository() {
 
     fun getZlocin(zlocinId:Int): ZlocinData? {
         val query = "SELECT * from zlocin WHERE idZlocin=$zlocinId"
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val statement = connection?.createStatement()
         val resultSet = statement?.executeQuery(query)
 
@@ -50,7 +51,7 @@ class Repository() {
                 val tipZlocinaId = resultSet.getInt("tipZlocinaId")
 
                 val naziv = resultSet.getString("naziv")
-                val datum = resultSet.getDate("datum")
+                val datum = resultSet.getTimestamp("datum")
                 val mesto = resultSet.getString("mesto")
                 val opis = resultSet.getString("opis")
                 val status = resultSet.getString("statusS")
@@ -95,8 +96,8 @@ class Repository() {
 
     fun getZrtva(id:Int): ZrtvaData? {
         //idZrtva, tipZrtve, detalji, statusZrtva, zlocinId, osobaId
-        val query = "SELECT * from zrtva WHERE zlocinId=$id"
-        val connection = getDatabaseConnection()
+        val query = "SELECT * from Zrtva WHERE zlocinId=$id"
+        //val connection = getDatabaseConnection()
         val statement = connection?.createStatement()
         val resultSet = statement?.executeQuery(query)
 
@@ -109,7 +110,7 @@ class Repository() {
                 val zlocinId = resultSet.getInt("zlocinId")
                 val osobaId = resultSet.getInt("osobaId")
 
-                val query2 = "SELECT * from osoba WHERE idOsoba=$osobaId"
+                val query2 = "SELECT * from Osoba WHERE idOsoba=$osobaId"
                 val resultSet2 = statement?.executeQuery(query2)
                 var os: OsobaData? = null
 
@@ -119,7 +120,7 @@ class Repository() {
                         val idOsoba = resultSet2.getInt("idOsoba")
                         val ime = resultSet2.getString("ime")
                         val kontakt = resultSet2.getString("kontakt")
-                        val datum = resultSet2.getDate("datum")
+                        val datum = resultSet2.getTimestamp("datum")
                         val zanimanje = resultSet2.getString("zanimanje")
                         val pol = resultSet2.getString("pol")
                         val zlocinId = resultSet2.getInt("zlocinId")
@@ -155,7 +156,7 @@ class Repository() {
     }
 
     fun getOsumnjiceni(id: Int): List<OsumnjicenData> {
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM osumnjicen WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -173,7 +174,7 @@ class Repository() {
             val osobaId = resultSet.getInt("osobaId")
 
             // Novi statement za osobu
-            val osobaQuery = "SELECT * FROM osoba WHERE idOsoba = ?"
+            val osobaQuery = "SELECT * FROM Osoba WHERE idOsoba = ?"
             val osobaStatement = connection.prepareStatement(osobaQuery)
             osobaStatement.setInt(1, osobaId)
             val osobaResult = osobaStatement.executeQuery()
@@ -184,7 +185,7 @@ class Repository() {
                     idOsoba = osobaResult.getInt("idOsoba"),
                     ime = osobaResult.getString("ime"),
                     kontakt = osobaResult.getString("kontakt"),
-                    datum = osobaResult.getDate("datum").time,
+                    datum = osobaResult.getTimestamp("datum").time,
                     zanimanje = osobaResult.getString("zanimanje"),
                     pol = osobaResult.getString("pol"),
                     zlocinId = osobaResult.getInt("zlocinId")
@@ -194,7 +195,7 @@ class Repository() {
             osobaStatement.close()
 
             // Novi statement za motiv
-            val motivQuery = "SELECT * FROM motiv WHERE idMotiv = ?"
+            val motivQuery = "SELECT * FROM Motiv WHERE idMotiv = ?"
             val motivStatement = connection.prepareStatement(motivQuery)
             motivStatement.setInt(1, motivId)
             val motivResult = motivStatement.executeQuery()
@@ -226,13 +227,13 @@ class Repository() {
         // Zatvori sve na kraju
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaOsumnjicenih
     }
 
     fun getDokazi(id: Int,zr: ZrtvaData): List<DokazData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM dokaz WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -263,13 +264,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+       // connection?.close()
 
         return listaDokaza
     }
 
     fun getTelefon(id: Int): List<TelefonData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM telefon WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -293,21 +294,22 @@ class Repository() {
                 model = model,
                 os = os,
                 sifra = sifra,
-                informacije = informacije
+                informacije = informacije,
+                zrtvaId = zrtvaId
             )
             listaTelefon.add(tel)
         }
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaTelefon
     }
 
     fun getForenzickiDokazi(id: Int): List<ForenzickiDokazData>?{
-        val connection = getDatabaseConnection()
-        val mainQuery = "SELECT * FROM forenzickidokaz WHERE zrtvaId=?"
+        //val connection = getDatabaseConnection()
+        val mainQuery = "SELECT * FROM forenzickiDokaz WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
@@ -337,13 +339,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaDokaza
     }
 
     fun getObdukcija(id: Int): ObdukcijaData?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM obdukcija WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -354,7 +356,7 @@ class Repository() {
 
             val idObdukcija = resultSet.getInt("idObdukcija")
             val izvestaj = resultSet.getString("izvestaj")
-            val datum = resultSet.getDate("datum")
+            val datum = resultSet.getTimestamp("datum")
             val uzrokSmrti = resultSet.getString("uzrokSmrti")
             val zrtvaId = resultSet.getInt("zrtvaId")
             val informacije = resultSet.getString("informacije")
@@ -373,13 +375,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return null
     }
 
     fun getSvedoci(id: Int): List<SvedokData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM svedok WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -398,7 +400,7 @@ class Repository() {
             val osobaId = resultSet.getInt("osobaId")
 
             // Novi statement za osobu
-            val osobaQuery = "SELECT * FROM osoba WHERE idOsoba = ?"
+            val osobaQuery = "SELECT * FROM Osoba WHERE idOsoba = ?"
             val osobaStatement = connection.prepareStatement(osobaQuery)
             osobaStatement.setInt(1, osobaId)
             val osobaResult = osobaStatement.executeQuery()
@@ -409,7 +411,7 @@ class Repository() {
                     idOsoba = osobaResult.getInt("idOsoba"),
                     ime = osobaResult.getString("ime"),
                     kontakt = osobaResult.getString("kontakt"),
-                    datum = osobaResult.getDate("datum").time,
+                    datum = osobaResult.getTimestamp("datum").time,
                     zanimanje = osobaResult.getString("zanimanje"),
                     pol = osobaResult.getString("pol"),
                     zlocinId = osobaResult.getInt("zlocinId")
@@ -435,14 +437,14 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaSvedoka
     }
 
     fun getOneContact(id: Int): List<OneContactData>?{
-        val connection = getDatabaseConnection()
-        val mainQuery = "SELECT * FROM onecontact WHERE zlocinId=?"
+        //val connection = getDatabaseConnection()
+        val mainQuery = "SELECT * FROM oneContact WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
@@ -471,13 +473,14 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaOneContact
     }
 
     fun getKontakti(id: Int,zr: ZrtvaData): List<KontaktData>?{
-        val connection = getDatabaseConnection()
+        connection.autoCommit = true
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM kontakt WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -506,13 +509,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaKontakt
     }
 
     fun getPoruke(id: Int, zr: ZrtvaData, kontakti: List<KontaktData>?): List<PorukeData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM poruke WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -526,7 +529,7 @@ class Repository() {
             val idPoruke = resultSet.getInt("idPoruke")
             val tipPoruke = resultSet.getString("tipPoruke")
             val sadrzaj = resultSet.getString("sadrzaj")
-            val datumVreme = resultSet.getDate("datumVreme")
+            val datumVreme = resultSet.getTimestamp("datumVreme")
             val zrtvaId = resultSet.getInt("zrtvaId")
             val posiljalacId = resultSet.getInt("posiljalacId")
             val statusPoruke = resultSet.getString("statusPoruke")
@@ -553,13 +556,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaKontakt
     }
 
     fun getPozivi(id: Int, zr: ZrtvaData, kontakti: List<KontaktData>?): List<PoziviData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM pozivi WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -573,7 +576,7 @@ class Repository() {
             val idPoziv = resultSet.getInt("idPoziv")
             val tip = resultSet.getInt("tip")
             val broj = resultSet.getString("broj")
-            val datumVreme = resultSet.getDate("datumVreme")
+            val datumVreme = resultSet.getTimestamp("datumVreme")
             val zrtvaId = resultSet.getInt("zrtvaId")
             val kontaktId = resultSet.getInt("kontaktId")
             val statusS = resultSet.getInt("statusS")
@@ -598,14 +601,14 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaKontakt
     }
 
 
     fun getGalerija(id: Int,zr: ZrtvaData): List<GalerijaData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM galerija WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -619,7 +622,7 @@ class Repository() {
             val idGalerija = resultSet.getInt("idGalerija")
             val tip = resultSet.getInt("tip")
             val putanja = resultSet.getString("putanja")
-            val datumVreme = resultSet.getDate("datumVreme")
+            val datumVreme = resultSet.getTimestamp("datumVreme")
             val lokacija = resultSet.getString("lokacija")
             val zrtvaId = resultSet.getInt("zrtvaId")
 
@@ -636,13 +639,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaGalerija
     }
 
     fun getAplikacije(id: Int,zr: ZrtvaData): List<AplikacijaData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM aplikacija WHERE zrtvaId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -673,13 +676,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaAplikacija
     }
 
-    fun getTragovi(id: Int, zr: ZrtvaData, forenzickiDokazi: List<ForenzickiDokazData>?, osumnjiceni: List<OsumnjicenData>?): List<TragData>?{
-        val connection = getDatabaseConnection()
+    fun getTragovi(forenzickiDokazi: List<ForenzickiDokazData>?, osumnjiceni: List<OsumnjicenData>?): List<TragData>?{
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM trag"
         val mainStatement = connection?.prepareStatement(mainQuery)
         //mainStatement?.setInt(1, id)
@@ -709,14 +712,14 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaTrag
     }
 
-    fun getDokaziOsumnjiceni(id: Int, zr: ZrtvaData, dokazi: List<DokazData>?, osumnjiceni: List<OsumnjicenData>?): List<DokazOsumnjicenData>?{
-        val connection = getDatabaseConnection()
-        val mainQuery = "SELECT * FROM dokazosumnjicen"
+    fun getDokaziOsumnjiceni(dokazi: List<DokazData>?, osumnjiceni: List<OsumnjicenData>?): List<DokazOsumnjicenData>?{
+        //val connection = getDatabaseConnection()
+        val mainQuery = "SELECT * FROM dokazOsumnjicen"
         val mainStatement = connection?.prepareStatement(mainQuery)
         // mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
@@ -745,13 +748,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaDokazOsumnjicen
     }
 
     fun getBeleske(id: Int,zr: ZrtvaData): List<BeleskaData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM beleska WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -765,7 +768,7 @@ class Repository() {
             val idBeleska = resultSet.getInt("idBeleska")
             val zlocinId = resultSet.getInt("zlocinId")
             val tekst = resultSet.getString("tekst")
-            val datum = resultSet.getDate("datum")
+            val datum = resultSet.getTimestamp("datum")
 
             val b= BeleskaData(
                 idBeleska = idBeleska,
@@ -778,13 +781,13 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaBeleske
     }
 
     fun getWhatsAppKontakt(id: Int,zr: ZrtvaData): List<WhatsAppKontaktData>?{
-        val connection = getDatabaseConnection()
+        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM whatsappkontakt WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
@@ -813,7 +816,7 @@ class Repository() {
 
         resultSet?.close()
         mainStatement?.close()
-        connection?.close()
+        //connection?.close()
 
         return listaWhatsAppKontakt
     }

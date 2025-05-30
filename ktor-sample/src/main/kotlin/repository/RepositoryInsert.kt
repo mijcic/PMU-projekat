@@ -13,6 +13,35 @@ import java.sql.Timestamp
 
 class RepositoryInsert(private val conn: Connection){
 
+    //insert into UsedZlocin Table in mysql
+    fun insertUsedZlocinData(usedZlocin:UsedZlocinData) {
+        val query = """
+            INSERT INTO usedzlocin (zlocinId, used)
+            VALUES (?, ?)
+        """
+        var statement: PreparedStatement? = null
+        var resultSet: ResultSet? = null
+
+        try {
+            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+
+            statement?.setInt(1,usedZlocin.zlocinId.idZlocin)
+            statement?.setBoolean(2, usedZlocin.used)
+
+            statement?.executeUpdate()
+
+            resultSet = statement?.generatedKeys
+            if (resultSet?.next() == true) {
+                // Vraca generisani ID
+                usedZlocin.idUsedZlocin=resultSet.getInt(1)
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            closeResources(conn, statement, null)
+        }
+    }
+
     // insert into Zlocin Table in mySql
     fun insertZlocinData(zlocin: ZlocinData) {
         val query = """
@@ -148,7 +177,7 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-    fun insertOsumnjicenData(osumnjicen: OsumnjicenData, zlocin: ZlocinData, motiv: MotivData, zrtva: ZrtvaData) {
+    fun insertOsumnjicenData(osumnjicen: OsumnjicenData, zlocin: ZlocinData, motiv: MotivData) {
         val query = """
         INSERT INTO osumnjicen (statusS, tipOsumnjicen, motiv, zlocinId, kriv, osobaId)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -414,7 +443,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO telefon (model, os, zrtvaId, sifra, informacije)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -476,12 +505,12 @@ class RepositoryInsert(private val conn: Connection){
     }
 
     fun insertKontaktData(kontakt: KontaktData, zrtva: ZrtvaData){
-
+        conn.autoCommit = true
         val query = """
         INSERT INTO kontakt (ime, broj, statusS, zrtvaId)
         VALUES (?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -515,7 +544,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO poruke (tipPoruke, sadrzaj, datumVreme, zrtvaId,posiljalacId,statusPoruke,sifrovana)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -552,7 +581,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO pozivi (tip, broj, datumVreme, zrtvaId,statusS,kontaktId)
         VALUES (?, ?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -588,7 +617,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO galerija (tip, putanja, zrtvaId,datumVreme,lokacija)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -622,7 +651,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO aplikacija (naziv, tip, zrtvaId,aktivna,informacije)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -657,7 +686,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO trag (forenzickiDokazId, osumnjicenId)
         VALUES (?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -689,7 +718,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO dokazOsumnjicen (dokazId, osumnjicenId)
         VALUES (?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -827,7 +856,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO oneContact (zlocinId, ime, broj, slika)
         VALUES (?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -860,7 +889,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO beleska (zlocinId, tekst, datum)
         VALUES (?, ?, ?)
     """
-        var conn: Connection? = null
+        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
