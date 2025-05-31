@@ -623,5 +623,7 @@ CREATE TABLE LokacijeIstrage (
     naziv varchar(100) NOT NULL,
     opis varchar(100) NOT NULL,
     zlocinId INT NOT NULL,
+    geoTackaALatitude DOUBLE NOT NULL,
+    geoTackaALongitude DOUBLE NOT NULL,
     FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
 );

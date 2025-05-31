@@ -1,6 +1,7 @@
 package com.example.mysql
 
 import com.example.models.dto.*
+import com.example.repository.Repository
 import com.example.repository.RepositoryInsert
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -312,17 +313,6 @@ class MySQLIntegrationTest {
             """.trimIndent())
 
             stmt.execute("""
-                CREATE TABLE whatsappkontakt (
-                    idWhatsAppKontakt INT AUTO_INCREMENT PRIMARY KEY,
-                    zlocinId INT NOT NULL,
-                    ime VARCHAR(100) NOT NULL,
-                    broj VARCHAR(100) NOT NULL,
-                    slika INT,
-                    FOREIGN KEY (zlocinId) REFERENCES zlocin(idZlocin)
-                );
-            """.trimIndent())
-
-            stmt.execute("""
                 CREATE TABLE usedzlocin(
                     idUsedZlocin INT AUTO_INCREMENT PRIMARY KEY,
                     zlocinId INT NOT NULL,
@@ -331,6 +321,232 @@ class MySQLIntegrationTest {
                 );
             """.trimIndent())
 
+            stmt.execute("""
+                CREATE TABLE onecall (
+                    idOneCall INT AUTO_INCREMENT PRIMARY KEY,
+                    kontakt INT NOT NULL,
+                    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    propusten TINYINT(0),
+                    dolazni TINYINT(0),
+                    FOREIGN KEY (kontakt) REFERENCES oneContact(idOneContact)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE gallery (
+                    idPhoto INT AUTO_INCREMENT PRIMARY KEY,
+                    zlocinId INT NOT NULL,
+                    slika INT,
+                    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    mesto VARCHAR(100) NOT NULL,
+                    FOREIGN KEY (zlocinId) REFERENCES zlocin(idZlocin)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE obicnaporuka (
+                    idObicnaPoruka INT AUTO_INCREMENT PRIMARY KEY,
+                    kontaktKoSalje INT NOT NULL,
+                    kontaktKomeSalje INT NOT NULL,
+                    tekst VARCHAR(1000) NOT NULL,
+                    datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    procitana TINYINT(0),
+                    FOREIGN KEY (kontaktKoSalje) REFERENCES oneContact(idOneContact),
+                    FOREIGN KEY (kontaktKomeSalje) REFERENCES oneContact(idOneContact)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE odnososumnjicenzrtva (
+                    idOdnos INT AUTO_INCREMENT PRIMARY KEY,
+                    osumnjicenId INT NOT NULL,
+                    zrtvaId INT NOT NULL,
+                    tipOdnosa ENUM('poslovni', 'licni','porodicni','rivalski','slucajni','ljubavni') NOT NULL, 
+                    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva),
+                    FOREIGN KEY (osumnjicenId) REFERENCES osumnjicen(idOsumnjicen)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE prijavljenikorisnik (
+                    idKorisnik INT AUTO_INCREMENT PRIMARY KEY,
+                    korisnickoIme VARCHAR(100) NOT NULL,
+                    sifra VARCHAR(100) NOT NULL
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE pitanje (
+                    idPitanje INT AUTO_INCREMENT PRIMARY KEY,
+                    zlocinId INT,
+                    tekst VARCHAR(1000) NOT NULL
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE odgovor (
+                    idOdogovor INT AUTO_INCREMENT PRIMARY KEY,
+                    pitanjeId INT,
+                    tekstOdgovora VARCHAR(1000) NOT NULL,
+                    tacan TINYINT(0),
+                    bodovi INT NOT NULL,
+                    FOREIGN KEY (pitanjeId) REFERENCES pitanje(idPitanje)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE pitanjeispitivanjeosumnjicenog (
+                    idPitanjeIspitivanjeOsumnjicenog INT AUTO_INCREMENT PRIMARY KEY,
+                    kategorija ENUM('opsta', 'alibi', 'dokaz', 'kontradikcija') NOT NULL,
+                    tekst VARCHAR(1000) NOT NULL,
+                    odgovor VARCHAR(1000) NOT NULL,
+                    komentar VARCHAR(1000) NOT NULL,
+                    osumnjicenId INT NOT NULL,
+                    FOREIGN KEY (osumnjicenId) REFERENCES osumnjicen(idOsumnjicen)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE pitanjeispitivanjesvedoka (
+                    idPitanjeIspitivanjeSvedoka INT AUTO_INCREMENT PRIMARY KEY,
+                    tekst VARCHAR(1000) NOT NULL,
+                    odgovor VARCHAR(1000) NOT NULL,
+                    svedokId INT NOT NULL,
+                    nextPitanje INT NOT NULL,
+                    FOREIGN KEY (svedokId) REFERENCES svedok(idSvedok)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE zadatak (
+                    idZadatak INT AUTO_INCREMENT PRIMARY KEY,
+                    tekst VARCHAR(1000) NOT NULL,
+                    korak VARCHAR(1000) NOT NULL,
+                    uradjen TINYINT(0),
+                    nextZadatak INT,
+                    zlocinId INT NOT NULL,
+                    FOREIGN KEY (nextZadatak) REFERENCES zadatak(idZadatak)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE dokazzadatak (
+                    idDokazZadatak INT AUTO_INCREMENT PRIMARY KEY,
+                    tekst VARCHAR(1000) NOT NULL,
+                    dokazId INT NOT NULL,
+                    uradjen TINYINT(0),
+                    zadatakId INT NOT NULL,
+                    FOREIGN KEY (dokazId) REFERENCES dokaz(idDokaz),
+                    FOREIGN KEY (zadatakId) REFERENCES zadatak(idZadatak)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE ispitivanjeosumnjicenogzadatak (
+                    idIspitivanjeOsumnjicenogZadatak INT AUTO_INCREMENT PRIMARY KEY,
+                    osumnjicenId INT NOT NULL,
+                    zadatakId INT NOT NULL,
+                    uradjen TINYINT(0),
+                    FOREIGN KEY (osumnjicenId) REFERENCES osumnjicen(idOsumnjicen),
+                    FOREIGN KEY (zadatakId) REFERENCES zadatak(idZadatak)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE ispitivanjesvedokazadatak (
+                    idIspitivanjeSvedokaZadatak INT AUTO_INCREMENT PRIMARY KEY,
+                    svedokId INT NOT NULL,
+                    zadatakId INT NOT NULL,
+                    uradjen TINYINT(0),
+                    FOREIGN KEY (svedokId) REFERENCES svedok(idSvedok),
+                    FOREIGN KEY (zadatakId) REFERENCES zadatak(idZadatak)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE telefonzadatak (
+                    idTelefonZadatak INT AUTO_INCREMENT PRIMARY KEY,
+                    telefonId INT NOT NULL,
+                    zadatakId INT NOT NULL,
+                    uradjen TINYINT(0),
+                    FOREIGN KEY (telefonId) REFERENCES telefon(idTelefon),
+                    FOREIGN KEY (zadatakId) REFERENCES zadatak(idZadatak)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE forenzickidokazzadatak (
+                    idForenzickiDokazZadatak INT AUTO_INCREMENT PRIMARY KEY,
+                    tekst VARCHAR(1000) NOT NULL,
+                    forenzickiDokazId INT NOT NULL,
+                    uradjen TINYINT(0),
+                    zadatakId INT NOT NULL,
+                    FOREIGN KEY (forenzickiDokazId) REFERENCES forenzickiDokaz(idForenzickiDokaz),
+                    FOREIGN KEY (zadatakId) REFERENCES zadatak(idZadatak)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE pacijent (
+                    idPacijent INT AUTO_INCREMENT PRIMARY KEY,
+                    simptomi varchar(255) NOT NULL,
+                    statusPacijenta ENUM('ziva', 'mrtva') NOT NULL,
+                    datumPrijave DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    prijavio INT NOT NULL,
+                    zlocinId INT NOT NULL,
+                    zrtvaId INT NOT NULL,
+                    FOREIGN KEY (prijavio) REFERENCES Osoba(idOsoba),
+                    FOREIGN KEY (zlocinId) REFERENCES zlocin(idZlocin),
+                    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE medicinskiizvestaj (
+                    idMedicinskiIzvestaj INT AUTO_INCREMENT PRIMARY KEY,
+                    rezime varchar(255) NOT NULL,
+                    CTnalaz varchar(255) NOT NULL,
+                    MRInalaz varchar(255) NOT NULL,
+                    krvnaSlika varchar(255) NOT NULL,
+                    toksikoloskeAnalize varchar(255) NOT NULL,
+                    zakljucak varchar(255) NOT NULL,
+                    pacijentId INT NOT NULL,
+                    FOREIGN KEY (pacijentId) REFERENCES pacijent(idPacijent)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE lekarskitest (
+                    idLekarskiTest INT AUTO_INCREMENT PRIMARY KEY,
+                    pacijentId INT NOT NULL,
+                    izjava varchar(255) NOT NULL,
+                    FOREIGN KEY (pacijentId) REFERENCES pacijent(idPacijent)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE lokacijeistrage (
+                    idLokacijeIstrage INT AUTO_INCREMENT PRIMARY KEY,
+                    mesto varchar(100) NOT NULL,
+                    naziv varchar(100) NOT NULL,
+                    opis varchar(100) NOT NULL,
+                    zlocinId INT NOT NULL,
+                    geoTackaALatitude DOUBLE NOT NULL,
+                    geoTackaALongitude DOUBLE NOT NULL,
+                    FOREIGN KEY (zlocinId) REFERENCES zlocin(idZlocin)
+                );
+            """.trimIndent())
+
+            stmt.execute("""
+                CREATE TABLE izjavazapacijenta (
+                    idIzjavaZaPacijenta INT AUTO_INCREMENT PRIMARY KEY,
+                    izjava varchar(255) NOT NULL,
+                    pacijentId INT NOT NULL,
+                    osobaId INT NOT NULL,
+                    FOREIGN KEY (pacijentId) REFERENCES pacijent(idPacijent),
+                    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
+                );
+            """.trimIndent())
 
             println("Tables created successfully.")
         }
@@ -3008,7 +3224,6 @@ class MySQLIntegrationTest {
         }
     }
 
-
     @Test
     fun testGetWhatsAppKontakt(){
         println("getWhatsAppKontaktTest")
@@ -3083,43 +3298,6 @@ class MySQLIntegrationTest {
     }
 
     @Test
-    fun testInsertWhatsAppKontaktData(){
-        val repo = RepositoryInsert(connection)
-        val d = System.currentTimeMillis()
-
-        val zlocin = ZlocinData(
-            tipZlocinaId = 1,
-            naziv = "Ubistvo u hotelskoj sobi",
-            datum = d,
-            mesto = "Amsterdam",
-            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
-            status = "u_istrazi",
-            idZlocin = 1
-        )
-        repo.insertZlocinData(zlocin)
-
-        val whatsappKontakt = WhatsAppKontaktData(
-            idWhatsAppKontakt = 1,
-            zlocinId = zlocin.idZlocin,
-            ime = "Carlos Martinez",
-            broj = "+34612345678",
-            slika = 1
-        )
-        repo.insertWhatsAppKontaktData(whatsappKontakt, zlocin)
-
-        val stmt = connection.prepareStatement("SELECT * FROM whatsappkontakt WHERE zlocinId=?")
-        stmt.setInt(1, zlocin.idZlocin)
-        val rs = stmt.executeQuery()
-
-        assertTrue(rs.next(), "Treba da postoji whatsappkontakt sa prosledjenim id-jem zlocina")
-        assertEquals(whatsappKontakt.idWhatsAppKontakt, rs.getInt("idWhatsAppKontakt"))
-        assertEquals(whatsappKontakt.zlocinId, rs.getInt("zlocinId"))
-        assertEquals(whatsappKontakt.ime, rs.getString("ime"))
-        assertEquals(whatsappKontakt.broj, rs.getString("broj"))
-        assertEquals(whatsappKontakt.slika, rs.getInt("slika"))
-    }
-
-    @Test
     fun testInsertWhatsAppPorukaData(){
         val repo = RepositoryInsert(connection)
         val d = System.currentTimeMillis()
@@ -3147,7 +3325,7 @@ class MySQLIntegrationTest {
         val kontaktKomeSalje = WhatsAppKontaktData(
             idWhatsAppKontakt = 2,
             zlocinId = zlocin.idZlocin,
-            ime = "Giulia Romano",
+            ime = "Giulio Romano",
             broj = "+393316665555",
             slika = 2
         )
@@ -3180,5 +3358,1362 @@ class MySQLIntegrationTest {
         val storedTimestamp = rs.getTimestamp("datum").time
         assertTrue(abs(storedTimestamp - whatsAppPoruka.datum) < 1000)
         assertEquals(whatsAppPoruka.procitana, rs.getBoolean("procitana"))
+    }
+
+    @Test
+    fun testInsertOneCallData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val oneContact = OneContactData(
+            idOneContact = 1,
+            zlocinId = zlocin.idZlocin,
+            ime = "Alessandro Moretti",
+            broj = "+393312223344",
+            slika = 1
+        )
+        repo.insertOneContactData(oneContact, zlocin)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val oneCall = OneCallData(
+            idOneCall = 1,
+            kontakt = oneContact.idOneContact,
+            datum = timestamp2,
+            propusten = false,
+            dolazni = true
+        )
+        repo.insertOneCallData(oneCall, oneContact)
+
+        val stmt = connection.prepareStatement("SELECT * FROM onecall WHERE idOneCall=?")
+        stmt.setInt(1, 1)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji oneCall sa prosledjenim id-jem")
+        assertEquals(oneCall.idOneCall, rs.getInt("idOneCall"))
+        assertEquals(oneCall.kontakt, rs.getInt("kontakt"))
+        val storedTimestamp = rs.getTimestamp("datum").time
+        assertTrue(abs(storedTimestamp - oneCall.datum) < 1000)
+        assertEquals(oneCall.propusten, rs.getBoolean("propusten"))
+        assertEquals(oneCall.dolazni, rs.getBoolean("dolazni"))
+    }
+
+    @Test
+    fun testInsertGalleryData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val gallery = GalleryData(
+            idPhoto = 1,
+            zlocinId = zlocin.idZlocin,
+            slika = 1,
+            datum = timestamp2,
+            mesto = "Amsterdam"
+        )
+        repo.insertGalleryData(gallery, zlocin)
+
+        val stmt = connection.prepareStatement("SELECT * FROM gallery WHERE zlocinId=?")
+        stmt.setInt(1, zlocin.idZlocin)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji gallery sa prosledjenim id-jem zlocina")
+        assertEquals(gallery.idPhoto, rs.getInt("idPhoto"))
+        assertEquals(gallery.zlocinId, rs.getInt("zlocinId"))
+        assertEquals(gallery.slika, rs.getInt("slika"))
+        val storedTimestamp = rs.getTimestamp("datum").time
+        assertTrue(abs(storedTimestamp - gallery.datum) < 1000)
+        assertEquals(gallery.mesto, rs.getString("mesto"))
+    }
+
+    @Test
+    fun testInsertObicnaPorukaData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val kontaktKoSalje = OneContactData(
+            idOneContact = 1,
+            zlocinId = zlocin.idZlocin,
+            ime = "Alessandro Moretti",
+            broj = "+393312223344",
+            slika = 1
+        )
+        repo.insertOneContactData(kontaktKoSalje, zlocin)
+
+        val kontaktKomeSalje = OneContactData(
+            idOneContact = 2,
+            zlocinId = zlocin.idZlocin,
+            ime = "Giulio Romano",
+            broj = "+393316665555",
+            slika = 2
+        )
+        repo.insertOneContactData(kontaktKomeSalje, zlocin)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val obicnaPoruka = ObicnaPorukaData(
+            idObicnaPoruka = 1,
+            kontaktKoSalje = kontaktKoSalje.idOneContact,
+            kontaktKomeSalje = kontaktKomeSalje.idOneContact,
+            tekst = "Upoznao sam je u baru. Delovala je cudno, ali idem do njene sobe. Javljam se kasnije.",
+            datum = timestamp2,
+            procitana = false
+        )
+        repo.insertObicnaPorukaData(obicnaPoruka, kontaktKoSalje, kontaktKomeSalje)
+
+        val stmt = connection.prepareStatement("SELECT * FROM obicnaporuka WHERE idObicnaPoruka=?")
+        stmt.setInt(1, 1)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji obicnaporuka sa prosledjenim id-jem")
+        assertEquals(obicnaPoruka.idObicnaPoruka, rs.getInt("idObicnaPoruka"))
+        assertEquals(obicnaPoruka.kontaktKoSalje, rs.getInt("kontaktKoSalje"))
+        assertEquals(obicnaPoruka.kontaktKomeSalje, rs.getInt("kontaktKomeSalje"))
+        assertEquals(obicnaPoruka.tekst, rs.getString("tekst"))
+        val storedTimestamp = rs.getTimestamp("datum").time
+        assertTrue(abs(storedTimestamp - obicnaPoruka.datum) < 1000)
+        assertEquals(obicnaPoruka.procitana, rs.getBoolean("procitana"))
+    }
+
+    @Test
+    fun testInsertOdnosOsumnjicenZrtvaData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val motiv = MotivData(
+            idMotiv = 1,
+            opis = "Rivalstvo"
+        )
+        repo.insertMotivData(motiv)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val osumnjicen = OsumnjicenData(
+            idOsumnjicen = 1,
+            status = 0,
+            tipOsumnjicen = "pojedinac",
+            motiv = motiv,
+            zlocinId = zlocin.idZlocin,
+            kriv = 0,
+            osobaId = osoba
+        )
+        repo.insertOsumnjicenData(osumnjicen, zlocin, motiv)
+
+        val osoba1 = OsobaData(
+            idOsoba = 2,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba1, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba1
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba1)
+        
+        val odnosOsumnjicenZrtva = OdnosOsumnjicenZrtvaData(
+            idOdnos = 1,
+            osumnjicenId = osumnjicen.idOsumnjicen,
+            zrtvaId = zrtva.idZrtva,
+            tipOdnosa = "rivalski"
+        )
+        repo.insertOdnosOsumnjicenZrtvaData(odnosOsumnjicenZrtva, osumnjicen, zrtva)
+
+        val stmt = connection.prepareStatement("SELECT * FROM odnososumnjicenzrtva WHERE osumnjicenId=? AND zrtvaId=?")
+        stmt.setInt(1, osumnjicen.idOsumnjicen)
+        stmt.setInt(2, zrtva.idZrtva)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji odnososumnjicenzrtva sa prosledjenim id-jem osumnjicenog i zrtve")
+        assertEquals(odnosOsumnjicenZrtva.idOdnos, rs.getInt("idOdnos"))
+        assertEquals(odnosOsumnjicenZrtva.osumnjicenId, rs.getInt("osumnjicenId"))
+        assertEquals(odnosOsumnjicenZrtva.zrtvaId, rs.getInt("zrtvaId"))
+        assertEquals(odnosOsumnjicenZrtva.tipOdnosa, rs.getString("tipOdnosa"))
+    }
+
+    @Test
+    fun testInsertPrijavljeniKorisnikData(){
+        val repo = RepositoryInsert(connection)
+
+        val prijavljeniKorisnik = PrijavljeniKorisnikData(
+            idKorisnik = 1,
+            korisnickoIme = "korisnickoIme",
+            sifra = "sifra"
+        )
+        repo.insertPrijavljeniKorisnikData(prijavljeniKorisnik)
+
+        val stmt = connection.prepareStatement("SELECT * FROM prijavljenikorisnik WHERE idKorisnik=?")
+        stmt.setInt(1, prijavljeniKorisnik.idKorisnik)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji prijavljenikorisnik sa prosledjenim id-jem")
+        assertEquals(prijavljeniKorisnik.idKorisnik, rs.getInt("idKorisnik"))
+        assertEquals(prijavljeniKorisnik.korisnickoIme, rs.getString("korisnickoIme"))
+        assertEquals(prijavljeniKorisnik.sifra, rs.getString("sifra"))
+    }
+
+    @Test
+    fun testInsertPitanjeData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val pitanje = PitanjeData(
+            idPitanje = 1,
+            zlocinId = zlocin.idZlocin,
+            tekst = "Da li si otisao do njene sobe?"
+        )
+        repo.insertPitanjeData(pitanje, zlocin)
+
+        val stmt = connection.prepareStatement("SELECT * FROM pitanje WHERE zlocinId=?")
+        stmt.setInt(1, zlocin.idZlocin)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji pitanje sa prosledjenim id-jem zlocina")
+        assertEquals(pitanje.idPitanje, rs.getInt("idPitanje"))
+        assertEquals(pitanje.zlocinId, rs.getInt("zlocinId"))
+        assertEquals(pitanje.tekst, rs.getString("tekst"))
+    }
+
+    @Test
+    fun testInsertOdgovorData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val pitanje = PitanjeData(
+            idPitanje = 1,
+            zlocinId = zlocin.idZlocin,
+            tekst = "Da li si stvarno otisao do njene sobe?"
+        )
+        repo.insertPitanjeData(pitanje, zlocin)
+
+        val odgovor = OdgovorData(
+            idOdogovor = 1,
+            pitanjeId = pitanje.idPitanje,
+            tekstOdgovora = "Jesam, kaze da nije umesana.",
+            tacan = false,
+            bodovi = 10
+        )
+        repo.insertOdgovorData(odgovor, pitanje)
+
+        val stmt = connection.prepareStatement("SELECT * FROM odgovor WHERE idOdogovor=?")
+        stmt.setInt(1, odgovor.idOdogovor)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji odgovor sa prosledjenim id-jem")
+        assertEquals(odgovor.idOdogovor, rs.getInt("idOdogovor"))
+        assertEquals(odgovor.pitanjeId, rs.getInt("pitanjeId"))
+        assertEquals(odgovor.tekstOdgovora, rs.getString("tekstOdgovora"))
+        assertEquals(odgovor.tacan, rs.getBoolean("tacan"))
+        assertEquals(odgovor.bodovi, rs.getInt("bodovi"))
+    }
+
+    @Test
+    fun testInsertPitanjeIspitivanjeOsumnjicenogData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val motiv = MotivData(
+            idMotiv = 1,
+            opis = "Rivalstvo"
+        )
+        repo.insertMotivData(motiv)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val osumnjicen = OsumnjicenData(
+            idOsumnjicen = 1,
+            status = 0,
+            tipOsumnjicen = "pojedinac",
+            motiv = motiv,
+            zlocinId = zlocin.idZlocin,
+            kriv = 0,
+            osobaId = osoba
+        )
+        repo.insertOsumnjicenData(osumnjicen, zlocin, motiv)
+        
+        val pitanjeIspitivanjeOsumnjicenog = PitanjeIspitivanjeOsumnjicenogData(
+            idPitanjeIspitivanjeOsumnjicenog = 1,
+            kategorija = "alibi",
+            tekst = "Zasto ste bili u sobi zrtve?",
+            odgovor = "Samo sam mu doneo kofer. Otisao sam odmah.",
+            komentar = "Nije pomenuo sadrzaj kofera ni zasto bas on donosi. Moguce da prikriva pravi razlog dolaska.",
+            osumnjicenId = osumnjicen.idOsumnjicen
+        )
+        repo.insertPitanjeIspitivanjeOsumnjicenogData(pitanjeIspitivanjeOsumnjicenog, osumnjicen)
+
+        val stmt = connection.prepareStatement("SELECT * FROM pitanjeispitivanjeosumnjicenog WHERE osumnjicenId=?")
+        stmt.setInt(1, osumnjicen.idOsumnjicen)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji pitanjeispitivanjeosumnjicenog sa prosledjenim id-jem osumnjicenog")
+        assertEquals(pitanjeIspitivanjeOsumnjicenog.idPitanjeIspitivanjeOsumnjicenog, rs.getInt("idPitanjeIspitivanjeOsumnjicenog"))
+        assertEquals(pitanjeIspitivanjeOsumnjicenog.kategorija, rs.getString("kategorija"))
+        assertEquals(pitanjeIspitivanjeOsumnjicenog.tekst, rs.getString("tekst"))
+        assertEquals(pitanjeIspitivanjeOsumnjicenog.odgovor, rs.getString("odgovor"))
+        assertEquals(pitanjeIspitivanjeOsumnjicenog.komentar, rs.getString("komentar"))
+        assertEquals(pitanjeIspitivanjeOsumnjicenog.osumnjicenId, rs.getInt("osumnjicenId"))
+    }
+
+    @Test
+    fun testInsertPitanjeIspitivanjeSvedokaData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val svedok = SvedokData(
+            idSvedok = 1,
+            izjava = "Video sam tog muskarca kako izlazi iz sobe oko pola dva ujutru. Delovao je nervozno i stalno se osvrtao.",
+            statusSvedok = "aktivno",
+            statusIspitan = 0,
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertSvedokData(svedok,zlocin)
+
+        val pitanjeIspitivanjeSvedoka = PitanjeIspitivanjeSvedokaData(
+            idPitanjeIspitivanjeSvedoka = 1,
+            tekst = "Jeste li sigurni da je to bio bas taj muskarac?",
+            odgovor = "Da, prepoznao sam ga – imao je crvenu jaknu i hodao je sepajući.",
+            svedokId = svedok.idSvedok,
+            nextPitanje = 0
+        )
+        repo.insertPitanjeIspitivanjeSvedokaData(pitanjeIspitivanjeSvedoka, svedok)
+
+        val stmt = connection.prepareStatement("SELECT * FROM pitanjeispitivanjesvedoka WHERE svedokId=?")
+        stmt.setInt(1, svedok.idSvedok)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji pitanjeispitivanjesvedoka sa prosledjenim id-jem svedoka")
+        assertEquals(pitanjeIspitivanjeSvedoka.idPitanjeIspitivanjeSvedoka, rs.getInt("idPitanjeIspitivanjeSvedoka"))
+        assertEquals(pitanjeIspitivanjeSvedoka.tekst, rs.getString("tekst"))
+        assertEquals(pitanjeIspitivanjeSvedoka.odgovor, rs.getString("odgovor"))
+        assertEquals(pitanjeIspitivanjeSvedoka.svedokId, rs.getInt("svedokId"))
+        assertEquals(pitanjeIspitivanjeSvedoka.nextPitanje, rs.getInt("nextPitanje"))
+    }
+
+    @Test
+    fun testInsertGetUpdateZadatakData() {
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val zadaci = listOf(
+            ZadatakData(
+                idZadatak = 1,
+                tekst = "Pronadji karticu gosta",
+                korak = "korak_1",
+                uradjen = false,
+                nextZadatak = null,
+                zlocinId = zlocin.idZlocin
+            ),
+            ZadatakData(
+                idZadatak = 2,
+                tekst = "Pregledaj snimke kamera",
+                korak = "korak_2",
+                uradjen = false,
+                nextZadatak = null,
+                zlocinId = zlocin.idZlocin
+            ),
+            ZadatakData(
+                idZadatak = 2,
+                tekst = "Ispitaj osoblje",
+                korak = "korak_3",
+                uradjen = false,
+                nextZadatak = null,
+                zlocinId = zlocin.idZlocin
+            )
+        )
+
+        for (zadatak in zadaci) {
+            repo.insertZadatakData(zadatak, zlocin)
+        }
+
+        // da li su svi zadaci ucitani
+        val ucitaniZadaci = repo.getZadatakListaData().filter { it.zlocinId == zlocin.idZlocin }
+        assertEquals(3, ucitaniZadaci.size)
+
+        // azuriranje nextZadatak polja
+        repo.updateZadatakListData(ucitaniZadaci, zlocin)
+
+        // provera da li je nextZadatak dobro ucitan
+        val updatedZadaci = repo.getZadatakListaData().filter { it.zlocinId == zlocin.idZlocin }
+        assertEquals(updatedZadaci[0].nextZadatak, updatedZadaci[1].idZadatak)
+        assertEquals(updatedZadaci[1].nextZadatak, updatedZadaci[2].idZadatak)
+        assertEquals(updatedZadaci[2].nextZadatak, 0)
+
+        val stmt = connection.prepareStatement("SELECT * FROM zadatak WHERE zlocinId=? ORDER BY idZadatak")
+        stmt.setInt(1, zlocin.idZlocin)
+        val rs = stmt.executeQuery()
+
+        var count = 0
+        while (rs.next()) {
+            count++
+            if (count == 1) {
+                assertEquals(updatedZadaci[0].idZadatak, rs.getInt("idZadatak"))
+                assertEquals(updatedZadaci[0].tekst, rs.getString("tekst"))
+                assertEquals(updatedZadaci[0].korak, rs.getString("korak"))
+                assertEquals(updatedZadaci[0].uradjen, rs.getBoolean("uradjen"))
+                assertEquals(updatedZadaci[1].idZadatak, rs.getInt("nextZadatak"))
+                assertEquals(updatedZadaci[0].zlocinId, rs.getInt("zlocinId"))
+            }
+            if (count == 2) {
+                assertEquals(updatedZadaci[1].idZadatak, rs.getInt("idZadatak"))
+                assertEquals(updatedZadaci[1].tekst, rs.getString("tekst"))
+                assertEquals(updatedZadaci[1].korak, rs.getString("korak"))
+                assertEquals(updatedZadaci[1].uradjen, rs.getBoolean("uradjen"))
+                assertEquals(updatedZadaci[2].idZadatak, rs.getInt("nextZadatak"))
+                assertEquals(updatedZadaci[1].zlocinId, rs.getInt("zlocinId"))
+            }
+            if (count == 3) {
+                assertEquals(updatedZadaci[2].idZadatak, rs.getInt("idZadatak"))
+                assertEquals(updatedZadaci[2].tekst, rs.getString("tekst"))
+                assertEquals(updatedZadaci[2].korak, rs.getString("korak"))
+                assertEquals(updatedZadaci[2].uradjen, rs.getBoolean("uradjen"))
+                assertEquals(0, rs.getInt("nextZadatak"))
+                assertEquals(updatedZadaci[2].zlocinId, rs.getInt("zlocinId"))
+            }
+        }
+        assertEquals(3, count)
+    }
+
+    @Test
+    fun testInsertDokazZadatakData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+
+        val dokaz = DokazData(
+            idDokaz = 1,
+            tipDokaza = "fizicki",
+            opis = "Crna kozna rukavica pronadjena ispod kreveta u hotelskoj sobi. Na unutrasnjem delu pronadjeni tragovi pudera i duga svetla vlas. Ne pripada zrtvi. DNK analiza u toku.",
+            zlocinId = zlocin.idZlocin,
+            zrtvaId = zrtva.idZrtva,
+            status = 0
+        )
+        repo.insertDokazData(dokaz, zlocin, zrtva)
+
+        val zadatak = ZadatakData(
+            idZadatak = 1,
+            tekst = "Posalji koznu rukavicu na forenzicku analizu radi identifikacije DNK i porekla vlasi.",
+            korak = "korak_1",
+            uradjen = false,
+            nextZadatak = 0,
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertZadatakData(zadatak, zlocin)
+
+        val dokazZadatak = DokazZadatakData(
+            idDokazZadatak = 1,
+            tekst = "Posalji dokaz na forenzicku analizu",
+            dokazId = dokaz.idDokaz,
+            uradjen = false,
+            zadatakId = zadatak.idZadatak
+        )
+        repo.insertDokazZadatakData(dokazZadatak, dokaz, zadatak)
+
+        val stmt = connection.prepareStatement("SELECT * FROM dokazzadatak WHERE dokazId=?")
+        stmt.setInt(1, dokaz.idDokaz)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji dokazzadatak sa prosledjenim id-jem dokaza")
+        assertEquals(dokazZadatak.idDokazZadatak, rs.getInt("idDokazZadatak"))
+        assertEquals(dokazZadatak.tekst, rs.getString("tekst"))
+        assertEquals(dokazZadatak.dokazId, rs.getInt("dokazId"))
+        assertEquals(dokazZadatak.uradjen, rs.getBoolean("uradjen"))
+        assertEquals(dokazZadatak.zadatakId, rs.getInt("zadatakId"))
+    }
+
+    @Test
+    fun testInsertIspitivanjeOsumnjicenogZadatakData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val motiv = MotivData(
+            idMotiv = 1,
+            opis = "Rivalstvo"
+        )
+        repo.insertMotivData(motiv)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val osumnjicen = OsumnjicenData(
+            idOsumnjicen = 1,
+            status = 0,
+            tipOsumnjicen = "pojedinac",
+            motiv = motiv,
+            zlocinId = zlocin.idZlocin,
+            kriv = 0,
+            osobaId = osoba
+        )
+        repo.insertOsumnjicenData(osumnjicen, zlocin, motiv)
+
+        val zadatak = ZadatakData(
+            idZadatak = 1,
+            tekst = "Ispitaj osumnjicenog gde je bio za vreme ubistva.",
+            korak = "korak_1",
+            uradjen = false,
+            nextZadatak = 0,
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertZadatakData(zadatak, zlocin)
+
+        val ispitivanjeOsumnjicenogZadatak = IspitivanjeOsumnjicenogZadatakData(
+            idIspitivanjeOsumnjicenogZadatak = 1,
+            osumnjicenId = osumnjicen.idOsumnjicen,
+            zadatakId = zadatak.idZadatak,
+            uradjen = true
+        )
+        repo.insertIspitivanjeOsumnjicenogZadatakData(ispitivanjeOsumnjicenogZadatak, osumnjicen, zadatak)
+
+        val stmt = connection.prepareStatement("SELECT * FROM ispitivanjeosumnjicenogzadatak WHERE osumnjicenId=?")
+        stmt.setInt(1, osumnjicen.idOsumnjicen)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji ispitivanjeosumnjicenogzadatak sa prosledjenim id-jem osumnjicenog")
+        assertEquals(ispitivanjeOsumnjicenogZadatak.idIspitivanjeOsumnjicenogZadatak, rs.getInt("idIspitivanjeOsumnjicenogZadatak"))
+        assertEquals(ispitivanjeOsumnjicenogZadatak.osumnjicenId, rs.getInt("osumnjicenId"))
+        assertEquals(ispitivanjeOsumnjicenogZadatak.zadatakId, rs.getInt("zadatakId"))
+        assertEquals(ispitivanjeOsumnjicenogZadatak.uradjen, rs.getBoolean("uradjen"))
+    }
+
+    @Test
+    fun testInsertIspitivanjeSvedokaZadatakData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-03-04"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val svedok = SvedokData(
+            idSvedok = 1,
+            izjava = "Video sam tog muskarca kako izlazi iz sobe oko pola dva ujutru. Delovao je nervozno i stalno se osvrtao.",
+            statusSvedok = "aktivno",
+            statusIspitan = 0,
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertSvedokData(svedok,zlocin)
+
+        val zadatak = ZadatakData(
+            idZadatak = 1,
+            tekst = "Ispitaj sta kaze svedok.",
+            korak = "korak_1",
+            uradjen = false,
+            nextZadatak = 0,
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertZadatakData(zadatak, zlocin)
+
+        val ispitivanjeSvedokaZadatak = IspitivanjeSvedokaZadatakData(
+            idIspitivanjeSvedokaZadatak = 1,
+            svedokId = svedok.idSvedok,
+            zadatakId = zadatak.idZadatak,
+            uradjen = false
+        )
+        repo.insertIspitivanjeSvedokaZadatakData(ispitivanjeSvedokaZadatak, svedok, zadatak)
+
+        val stmt = connection.prepareStatement("SELECT * FROM ispitivanjesvedokazadatak WHERE svedokId=?")
+        stmt.setInt(1, svedok.idSvedok)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji ispitivanjesvedokazadatak sa prosledjenim id-jem svedoka")
+        assertEquals(ispitivanjeSvedokaZadatak.idIspitivanjeSvedokaZadatak, rs.getInt("idIspitivanjeSvedokaZadatak"))
+        assertEquals(ispitivanjeSvedokaZadatak.svedokId, rs.getInt("svedokId"))
+        assertEquals(ispitivanjeSvedokaZadatak.zadatakId, rs.getInt("zadatakId"))
+        assertEquals(ispitivanjeSvedokaZadatak.uradjen, rs.getBoolean("uradjen"))
+    }
+
+    @Test
+    fun testInsertTelefonZadatakData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+        
+        val telefon = TelefonData(
+            idTelefon = 1,
+            model = "iPhone 13 Pro",
+            os = "IOS",
+            sifra = "1234",
+            informacije = "Telefon je pronadjen na nocnom stociću pored tela. Nije bio zakljucan. Poslednji poziv upućen zeni ciji identitet još nije potvrdjen. Poruka „Stizes li?” poslata u 01:08h, 20 minuta pre procenjenog vremena smrti.",
+            zrtvaId = zrtva.idZrtva
+        )
+        repo.insertTelefonData(telefon, zrtva)
+
+        val zadatak = ZadatakData(
+            idZadatak = 1,
+            tekst = "Otkrij ko je misteriozna zena.",
+            korak = "korak_1",
+            uradjen = false,
+            nextZadatak = 0,
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertZadatakData(zadatak, zlocin)
+
+        val telefonZadatak = TelefonZadatakData(
+            idTelefonZadatak = 1,
+            telefonId = telefon.idTelefon,
+            zadatakId = zadatak.idZadatak,
+            uradjen = true
+        )
+        repo.insertTelefonZadatakData(telefonZadatak, telefon, zadatak)
+
+        val stmt = connection.prepareStatement("SELECT * FROM telefonzadatak WHERE telefonId=?")
+        stmt.setInt(1, telefon.idTelefon)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji telefonzadatak sa prosledjenim id-jem telefona")
+        assertEquals(telefonZadatak.idTelefonZadatak, rs.getInt("idTelefonZadatak"))
+        assertEquals(telefonZadatak.telefonId, rs.getInt("telefonId"))
+        assertEquals(telefonZadatak.zadatakId, rs.getInt("zadatakId"))
+        assertEquals(telefonZadatak.uradjen, rs.getBoolean("uradjen"))
+    }
+
+    @Test
+    fun testInsertForenzickiDokazZadatakData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+        
+        val forenzickiDokaz = ForenzickiDokazData(
+            idForenzickiDokaz = 1,
+            tipForenzickiDokaz = "DNK",
+            opis = "Analiza DNK uzorka sa krvavog noza",
+            statusS = 0,
+            veza = "DNK tragovi na nozu pripadaju zenskoj osobi."
+        )
+        repo.insertForenzickiDokaz(forenzickiDokaz, zrtva)
+
+        val zadatak = ZadatakData(
+            idZadatak = 1,
+            tekst = "Otkrij kojoj zeni pripada DNK.",
+            korak = "korak_1",
+            uradjen = false,
+            nextZadatak = 0,
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertZadatakData(zadatak, zlocin)
+
+        val forenzickiDokazZadatak = ForenzickiDokazZadatakData(
+            idForenzickiDokazZadatak = 1,
+            tekst = "Otkrij kojoj zeni pripada DNK.",
+            forenzickiDokazId = forenzickiDokaz.idForenzickiDokaz,
+            uradjen = true,
+            zadatakId = zadatak.idZadatak
+        )
+        repo.insertForenzickiDokazZadatakData(forenzickiDokazZadatak, forenzickiDokaz, zadatak)
+
+        val stmt = connection.prepareStatement("SELECT * FROM forenzickidokazzadatak WHERE forenzickiDokazId=?")
+        stmt.setInt(1, forenzickiDokaz.idForenzickiDokaz)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji forenzickidokazzadatak sa prosledjenim id-jem forenzickog dokaza")
+        assertEquals(forenzickiDokazZadatak.idForenzickiDokazZadatak, rs.getInt("idForenzickiDokazZadatak"))
+        assertEquals(forenzickiDokazZadatak.tekst, rs.getString("tekst"))
+        assertEquals(forenzickiDokazZadatak.forenzickiDokazId, rs.getInt("forenzickiDokazId"))
+        assertEquals(forenzickiDokazZadatak.zadatakId, rs.getInt("zadatakId"))
+        assertEquals(forenzickiDokazZadatak.uradjen, rs.getBoolean("uradjen"))
+    }
+
+    @Test
+    fun testInsertPacijentData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+
+        val osoba1 = OsobaData(
+            idOsoba = 2,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba1, zlocin)
+        
+        val pacijent = PacijentData(
+            idPacijent = 1,
+            simptomi = "Pacijent se zali na povisenu temperaturu, mucninu i povracanje, uz primetno bledilo i ubrzan puls. Takodje pokazuje znakove mentalne konfuzije i teskoce sa koncentracijom od jutra nakon prijema.",
+            statusPacijenta = "ziva",
+            datumPrijave = timestamp2,
+            prijavio = osoba1,
+            zlocinId = zlocin,
+            zrtvaId = zrtva
+        )
+        repo.insertPacijentData(pacijent)
+
+        val stmt = connection.prepareStatement("SELECT * FROM pacijent WHERE zlocinId=?")
+        stmt.setInt(1, zlocin.idZlocin)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji pacijent sa prosledjenim id-jem zlocina")
+        assertEquals(pacijent.idPacijent, rs.getInt("idPacijent"))
+        assertEquals(pacijent.simptomi, rs.getString("simptomi"))
+        assertEquals(pacijent.statusPacijenta, rs.getString("statusPacijenta"))
+        val storedTimestamp = rs.getTimestamp("datumPrijave").time
+        assertTrue(abs(storedTimestamp - pacijent.datumPrijave) < 1000)
+        assertEquals(pacijent.prijavio.idOsoba, rs.getInt("prijavio"))
+        assertEquals(pacijent.zlocinId.idZlocin, rs.getInt("zlocinId"))
+        assertEquals(pacijent.zrtvaId.idZrtva, rs.getInt("zrtvaId"))
+    }
+
+    @Test
+    fun testInsertMedicinskiIzvestajData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+
+        val osoba1 = OsobaData(
+            idOsoba = 2,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba1, zlocin)
+
+        val pacijent = PacijentData(
+            idPacijent = 1,
+            simptomi = "Pacijent se zali na povisenu temperaturu, mucninu i povracanje, uz primetno bledilo i ubrzan puls. Takodje pokazuje znakove mentalne konfuzije i teskoce sa koncentracijom od jutra nakon prijema.",
+            statusPacijenta = "ziva",
+            datumPrijave = timestamp2,
+            prijavio = osoba1,
+            zlocinId = zlocin,
+            zrtvaId = zrtva
+        )
+        repo.insertPacijentData(pacijent)
+        
+        val medicinskiIzvestaj = MedicinskiIzvestajData(
+            idMedicinskiIzvestaj = 1,
+            rezime = "Pacijent primljen sa visokom temperaturom, mucninom, povracanjem i znacima mentalne konfuzije.",
+            CTnalaz = "Bez znakova intrakranijalnog krvarenja. Blaga cerebralna edematoznost.",
+            MRInalaz = "Ne prikazuje strukturalne abnormalnosti. Promene u hipokampusu moguce uzrokovane toksinima.",
+            krvnaSlika = "Poviseni leukociti, smanjeni eritrociti. Znaci upalnog odgovora organizma.",
+            toksikoloskeAnalize = "Detektovani tragovi pesticida – mogucnost trovanja.",
+            zakljucak = "Simptomi i analize ukazuju na moguce akutno trovanje. Preporucena hospitalizacija i dalja toksikoloska ispitivanja.",
+            pacijentId = pacijent
+        )
+        repo.insertMedicinskiIzvestajData(medicinskiIzvestaj)
+
+        val stmt = connection.prepareStatement("SELECT * FROM medicinskiizvestaj WHERE pacijentId=?")
+        stmt.setInt(1, pacijent.idPacijent)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji medicinskiizvestaj sa prosledjenim id-jem pacijenta")
+        assertEquals(medicinskiIzvestaj.idMedicinskiIzvestaj, rs.getInt("idMedicinskiIzvestaj"))
+        assertEquals(medicinskiIzvestaj.rezime, rs.getString("rezime"))
+        assertEquals(medicinskiIzvestaj.CTnalaz, rs.getString("CTnalaz"))
+        assertEquals(medicinskiIzvestaj.MRInalaz, rs.getString("MRInalaz"))
+        assertEquals(medicinskiIzvestaj.krvnaSlika, rs.getString("krvnaSlika"))
+        assertEquals(medicinskiIzvestaj.toksikoloskeAnalize, rs.getString("toksikoloskeAnalize"))
+        assertEquals(medicinskiIzvestaj.zakljucak, rs.getString("zakljucak"))
+        assertEquals(medicinskiIzvestaj.pacijentId.idPacijent, rs.getInt("pacijentId"))
+    }
+
+    @Test
+    fun testInsertLekarskiTestData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+
+        val osoba1 = OsobaData(
+            idOsoba = 2,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba1, zlocin)
+
+        val pacijent = PacijentData(
+            idPacijent = 1,
+            simptomi = "Pacijent se zali na povisenu temperaturu, mucninu i povracanje, uz primetno bledilo i ubrzan puls. Takodje pokazuje znakove mentalne konfuzije i teskoce sa koncentracijom od jutra nakon prijema.",
+            statusPacijenta = "ziva",
+            datumPrijave = timestamp2,
+            prijavio = osoba1,
+            zlocinId = zlocin,
+            zrtvaId = zrtva
+        )
+        repo.insertPacijentData(pacijent)
+
+        val lekarskiTest = LekarskiTestData(
+            idLekarskiTest = 1,
+            pacijentId = pacijent,
+            izvestaj = "Obavljen je inicijalni neuroloski pregled koji je pokazao usporene reflekse i dezorijentaciju u vremenu. Takodje je uradjen test koordinacije pokreta sa slabim rezultatima."
+        )
+        repo.insertLekarskiTestData(lekarskiTest)
+
+        val stmt = connection.prepareStatement("SELECT * FROM lekarskitest WHERE pacijentId=?")
+        stmt.setInt(1, pacijent.idPacijent)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji lekarskitest sa prosledjenim id-jem pacijenta")
+        assertEquals(lekarskiTest.idLekarskiTest, rs.getInt("idLekarskiTest"))
+        assertEquals(lekarskiTest.pacijentId.idPacijent, rs.getInt("pacijentId"))
+        assertEquals(lekarskiTest.izvestaj, rs.getString("izjava"))
+    }
+
+    @Test
+    fun testInsertLokacijeIstrageData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val lokacijeIstrage = LokacijeIstrageData(
+            idLokacijeIstrage = 1,
+            mesto = "Amsterdam",
+            naziv = "De Wallen",
+            opis = "Potencijalno mesto incidenta zbog svedocenja prolaznika.",
+            zlocinId = zlocin.idZlocin,
+            geoTackaALatitude = 52.3740,
+            geoTackaALongitude = 4.9000
+        )
+        repo.insertLokacijeIstrageData(lokacijeIstrage)
+
+        val stmt = connection.prepareStatement("SELECT * FROM lokacijeistrage WHERE zlocinId=?")
+        stmt.setInt(1, zlocin.idZlocin)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji lokacijeistrage sa prosledjenim id-jem zlocina")
+        assertEquals(lokacijeIstrage.idLokacijeIstrage, rs.getInt("idLokacijeIstrage"))
+        assertEquals(lokacijeIstrage.mesto, rs.getString("mesto"))
+        assertEquals(lokacijeIstrage.naziv, rs.getString("naziv"))
+        assertEquals(lokacijeIstrage.opis, rs.getString("opis"))
+        assertEquals(lokacijeIstrage.zlocinId, rs.getInt("zlocinId"))
+        assertEquals(lokacijeIstrage.geoTackaALatitude, rs.getDouble("geoTackaALatitude"))
+        assertEquals(lokacijeIstrage.geoTackaALongitude, rs.getDouble("geoTackaALongitude"))
+    }
+
+    @Test
+    fun testInsertIzjavaZaPacijentaData(){
+        val repo = RepositoryInsert(connection)
+        val d = System.currentTimeMillis()
+
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u hotelskoj sobi",
+            datum = d,
+            mesto = "Amsterdam",
+            opis = "Telo muskarca iz Italije pronadjeno u hotelskoj sobi. Na telu tragovi gusenja. Nema znakova borbe, ali sigurnosne kamere pokazale su nepoznatu zenu kako ulazi noc ranije.",
+            status = "u_istrazi",
+            idZlocin = 1
+        )
+        repo.insertZlocinData(zlocin)
+
+        val datumStr = "2024-10-10"
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
+        val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        val osoba = OsobaData(
+            idOsoba = 1,
+            ime = "Giulio Romano",
+            kontakt = "+393316665555",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba, zlocin)
+
+        val zrtva = ZrtvaData(
+            idZrtva = 1,
+            tipZrtve = "osoba",
+            detalji = "Na telu tragovi gusenja.",
+            statusZrtva = "mrtav",
+            zlocinId = zlocin.idZlocin,
+            osobaId = osoba
+        )
+        repo.insertZrtva(zrtva, zlocin, osoba)
+
+        val osoba1 = OsobaData(
+            idOsoba = 2,
+            ime = "Alessandro Moretti",
+            kontakt = "+393312223344",
+            datum = timestamp2,
+            zanimanje = "advokat",
+            pol = "muski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba1, zlocin)
+
+        val pacijent = PacijentData(
+            idPacijent = 1,
+            simptomi = "Pacijent se zali na povisenu temperaturu, mucninu i povracanje, uz primetno bledilo i ubrzan puls. Takodje pokazuje znakove mentalne konfuzije i teskoce sa koncentracijom od jutra nakon prijema.",
+            statusPacijenta = "ziva",
+            datumPrijave = timestamp2,
+            prijavio = osoba1,
+            zlocinId = zlocin,
+            zrtvaId = zrtva
+        )
+        repo.insertPacijentData(pacijent)
+
+        val osoba2 = OsobaData(
+            idOsoba = 3,
+            ime = "Sophie van Dijk",
+            kontakt = "+31644556677",
+            datum = timestamp2,
+            zanimanje = "recepcionarka",
+            pol = "zenski",
+            zlocinId = zlocin.idZlocin
+        )
+        repo.insertOsobaData(osoba2, zlocin)
+
+        val izjavaZaPacijenta = IzjavaZaPacijentaData(
+            idIzjavaZaPacijenta = 1,
+            izjava = "Ujutru nakon incidenta, Giulio se ponasao cudno – delovao je dezorijentisano i zbunjeno. Rekao je da se ne seca šta se desilo prethodne noci, ali se zalio na mucninu i vrtoglavicu. Pomenuo je da je popio pice koje mu je donela nepoznata zena.",
+            pacijentId = pacijent,
+            osobaId = osoba2
+        )
+        repo.insertIzjavaZaPacijentaData(izjavaZaPacijenta, pacijent, osoba2)
+
+        val stmt = connection.prepareStatement("SELECT * FROM izjavazapacijenta WHERE pacijentId=?")
+        stmt.setInt(1, pacijent.idPacijent)
+        val rs = stmt.executeQuery()
+
+        assertTrue(rs.next(), "Treba da postoji izjavazapacijenta sa prosledjenim id-jem pacijenta")
+        assertEquals(izjavaZaPacijenta.idIzjavaZaPacijenta, rs.getInt("idIzjavaZaPacijenta"))
+        assertEquals(izjavaZaPacijenta.izjava, rs.getString("izjava"))
+        assertEquals(izjavaZaPacijenta.pacijentId.idPacijent, rs.getInt("pacijentId"))
+        assertEquals(izjavaZaPacijenta.osobaId.idOsoba, rs.getInt("osobaId"))
     }
 }

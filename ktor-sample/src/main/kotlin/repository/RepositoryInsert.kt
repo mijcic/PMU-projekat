@@ -993,7 +993,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO onecall (kontakt, datum, propusten, dolazni)
         VALUES (?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1026,7 +1026,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO gallery (zlocinId, slika, datum, mesto)
         VALUES (?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1064,7 +1064,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO obicnaporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
         VALUES (?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1103,7 +1103,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO odnososumnjicenzrtva (osumnjicenId, zrtvaId, tipOdnosa)
         VALUES (?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1135,7 +1135,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO prijavljenikorisnik (korisnickoIme, sifra)
         VALUES (?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1166,7 +1166,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO pitanje (zlocinId, tekst)
         VALUES (?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1197,7 +1197,7 @@ class RepositoryInsert(private val conn: Connection){
         INSERT INTO odgovor (pitanjeId, tekstOdgovora, tacan, bodovi)
         VALUES (?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1231,7 +1231,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1266,7 +1266,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1300,7 +1300,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1331,7 +1331,7 @@ class RepositoryInsert(private val conn: Connection){
         val query = "SELECT idZadatak, tekst, korak, uradjen, nextZadatak, zlocinId FROM zadatak"
         val zadatakList = mutableListOf<ZadatakData>()
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1367,7 +1367,7 @@ class RepositoryInsert(private val conn: Connection){
         WHERE idZadatak = ? AND zlocinId = ?
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
 
         try {
@@ -1400,7 +1400,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1434,7 +1434,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1467,7 +1467,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1500,7 +1500,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1533,7 +1533,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1605,7 +1605,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?, ?,?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1640,7 +1640,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?, ?, ?, ?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1676,7 +1676,7 @@ class RepositoryInsert(private val conn: Connection){
         VALUES (?,?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1702,11 +1702,11 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
         val query = """
-        INSERT INTO lokacijeistrage (mesto, naziv, opis, zlocinId)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO lokacijeistrage (mesto, naziv, opis, zlocinId, geoTackaALatitude, geoTackaALongitude)
+        VALUES (?, ?, ?, ?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -1718,6 +1718,8 @@ class RepositoryInsert(private val conn: Connection){
             statement?.setString(2, lokacijeIstrage.naziv)
             statement?.setString(3, lokacijeIstrage.opis)
             statement?.setInt(4, lokacijeIstrage.zlocinId)
+            statement?.setDouble(5, lokacijeIstrage.geoTackaALatitude)
+            statement?.setDouble(6, lokacijeIstrage.geoTackaALongitude)
 
             statement?.executeUpdate()
 
@@ -1734,11 +1736,11 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertIzjavaZaPacijentaData(izjavaZaPacijenta: IzjavaZaPacijentaData, pacijentData: PacijentData, osobaData: OsobaData) {
         val query = """
-        INSERT INTO izjavaZaPacijenta (izjava, pacijentId, osobaId)
+        INSERT INTO izjavazapacijenta (izjava, pacijentId, osobaId)
         VALUES (?, ?, ?)
     """
 
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
