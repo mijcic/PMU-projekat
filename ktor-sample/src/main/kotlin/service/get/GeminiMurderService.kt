@@ -1,102 +1,148 @@
 package com.example.service.get
 
+import com.example.models.dto.OsumnjicenData
 import com.example.models.dto.gemini.GeminiResponseRetrofit
+import com.example.models.dto.service.*
+import com.example.repository.RepoInterface
 import com.example.repository.Repository
 
-class GeminiMurderService(private val repository: Repository) {
+class GeminiMurderService(private val repository: RepoInterface) {
     fun getGeminiMurder(): GeminiResponseRetrofit? {
         println("\nGEMINI MURDER\n")
-        val id = repository.getUsedZlocinMurder()
-        val zl = id?.let { repository.getZlocin(it) }
-        val tipZl= zl?.let { repository.getTipZlocina(it.tipZlocinaId) }
-        val zrtva = id?.let { repository.getZrtva(it) }
-        val osumnjiceni = id?.let { repository.getOsumnjiceni(it) }
-        val dokazi = zrtva?.let { repository.getDokazi(id, it) }
-        val telefoni = zrtva?.let { repository.getTelefon(it.idZrtva) }
-        val forenzickiDokazi = zrtva?.let { repository.getForenzickiDokazi(it.idZrtva) }
-        val obdukcija = zrtva?.let { repository.getObdukcija(it.idZrtva) }
-        val svedoci = id?.let { repository.getSvedoci(it) }
-        val oneContact = id?.let { repository.getOneContact(it) }
-        val kontakti = zrtva?.let { repository.getKontakti(id, it) }
-        val poruke = zrtva?.let { repository.getPoruke(id, it,kontakti) }
-        val pozivi = zrtva?.let { repository.getPozivi(id, it,kontakti) }
-        val galerija = zrtva?.let { repository.getGalerija(id, it) }
-        val aplikacija = zrtva?.let { repository.getAplikacije(id, it) }
-        val tragovi = zrtva?.let { repository.getTragovi(forenzickiDokazi,osumnjiceni) }
-        val dokazOsumnjiceni = zrtva?.let { repository.getDokaziOsumnjiceni(dokazi,osumnjiceni) }
-        val beleske = zrtva?.let { repository.getBeleske(id, it) }
-        val whatsAppKontakti = zrtva?.let { repository.getWhatsAppKontakt(id, it) }
-        val whatsAppPoruke = id?.let { repository.getWhatsAppPoruka(it,whatsAppKontakti) }
-        val gallery = id?.let { repository.getGallery(it) }
-        val odnosOsumnjicenZrtva = id?.let { repository.getOdnosOsumnjicenZrtva(it) }
-        val pitanja = id?.let { repository.getPitanja(it) }
-        val odgovori = id?.let { repository.getOdgovor(it) }
-        val pitanjaIspitivanjeOsumnjicenog = id?.let { repository.getPitanjeIspitivanjeOsumnjicenog(it) }
-        val pitanjaIspitivanjeSvedoka = id?.let { repository.getPitanjeIspitivanjeSvedoka(it) }
-        val osobe = id?.let { repository.getOsobe(it) }
-        val zadaci = id?.let { repository.getZadaci(it) }
-        val dokazZadatak = id?.let { repository.getDokaziZadaci(it,zadaci) }
-        val ispitivanjeOsumnjicenogZadatak = id?.let { repository.getIspitivanjeOsumnjicenogZadatak(it,zadaci) }
-        val ispitivanjeSvedokaZadatak = id?.let { repository.getIspitivanjeSvedokaZadatak(it,zadaci) }
-        val telefonZadaci = id?.let { repository.getTelefonZadaci(it, zadaci) }
-        val forenzickiDokazZadaci = id?.let { repository.getForenzickiDokazZadatak(it,zadaci) }
-        val oneCall = id?.let { repository.getOneCall(it,oneContact) }
-        val obicnaPoruka = id?.let { repository.getObicnaPoruka(it,oneContact) }
 
-        val allData = listOf(
-            zl, tipZl, zrtva, osumnjiceni, dokazi, telefoni, forenzickiDokazi, obdukcija,
-            svedoci, oneContact, kontakti, poruke, pozivi, galerija, aplikacija,
-            tragovi, dokazOsumnjiceni, beleske, whatsAppKontakti, whatsAppPoruke,
-            gallery, odnosOsumnjicenZrtva, pitanja, odgovori,
-            pitanjaIspitivanjeOsumnjicenog, pitanjaIspitivanjeSvedoka, osobe,
-            zadaci, dokazZadatak, ispitivanjeOsumnjicenogZadatak,
-            ispitivanjeSvedokaZadatak, telefonZadaci, forenzickiDokazZadaci,
-            oneCall, obicnaPoruka
-        )
-
-        if (allData.any { it == null }) {
+        val id = repository.getUsedZlocinMurder() ?: run {
             println("Neki podaci su null — provera nije prošla.")
             return null
         }
-        else {
-            val geminiResponseRetrofit:GeminiResponseRetrofit=GeminiResponseRetrofit(
-                zlocinRetrofit = zl,
-                zrtvaRetrofit = zrtva,
-                osumnjiceniRetrofit = osumnjiceni,
-                dokaziRetrofit =dokazi,
-                telefoniRetrofit = telefoni,
-                forenzickiDokazRetrofit = forenzickiDokazi,
-                obdukcijaRetrofit = obdukcija,
-                svedociRetrofit =svedoci,
-                oneContactRetrofit = oneContact,
-                kontaktiRetrofit = kontakti,
-                porukeRetrofit = poruke,
-                poziviRetrofit = pozivi,
-                galerijaRetrofit = galerija,
-                aplikacijeRetrofit = aplikacija,
-                tragoviRetrofit = tragovi,
-                dokaziOsumnjiceniRetrofit = dokazOsumnjiceni,
-                beleskeRetrofit = beleske,
-                whatsappKontaktRetrofit = whatsAppKontakti,
-                whatsappPorukaRetrofit = whatsAppPoruke,
-                oneCallRetrofit = oneCall,
-                galleryRetrofit = gallery,
-                obicnePorukeRetrofit = obicnaPoruka,
-                odnosiOsumnjiceniZrtvaRetrofit = odnosOsumnjicenZrtva,
-                pitanjaRetrofit = pitanja,
-                odgovoriRetrofit = odgovori,
-                pitanjeIspitivanjeOsumnjicenogRetrofit = pitanjaIspitivanjeOsumnjicenog,
-                pitanjeIspitivanjeSvedokaRetrofit = pitanjaIspitivanjeSvedoka,
-                osobeRetrofit = osobe,
-                zadaciRetrofit = zadaci,
-                dokaziZadaciRetrofit = dokazZadatak,
-                ispitivanjeOsumnjicenogZadaciRetrofit = ispitivanjeOsumnjicenogZadatak,
-                ispitivanjeSvedokaZadaciRetrofit = ispitivanjeSvedokaZadatak,
-                telefonZadaciRetrofit = telefonZadaci,
-                forenzickiDokazZadaciRetrofit = forenzickiDokazZadaci
-            )
-            println("GEMINI MURDER")
-            return geminiResponseRetrofit
+        val zlocinData = loadZlocinDataGeminiRetrofit(id) ?: run {
+            println("Neki podaci su null — provera nije prošla.")
+            return null
         }
+        val zrtvaData = loadZrtvaDataGeminiRetrofit(id)?: run {
+            println("Neki podaci su null — provera nije prošla.")
+            return null
+        }
+
+        val osumnjiceniData = loadOsumnjiceniDataGeminiRetrofit(id,zrtvaData) ?: run {
+            println("Neki podaci su null — provera nije prošla.")
+            return null
+        }
+        val zadaciData = loadZadaciData(id) ?: run {
+            println("Neki podaci su null — provera nije prošla.")
+            return null
+        }
+
+        val otherData = loadOtherData(id) ?: run {
+            println("Neki podaci su null — provera nije prošla.")
+            return null
+        }
+
+        val geminiResponseRetrofit:GeminiResponseRetrofit=GeminiResponseRetrofit(
+            zlocinRetrofit = zlocinData.zlocin,
+            zrtvaRetrofit = zrtvaData.zrtva,
+            osumnjiceniRetrofit = osumnjiceniData.osumnjiceni,
+            dokaziRetrofit =zrtvaData.dokazi,
+            telefoniRetrofit = zrtvaData.telefoni,
+            forenzickiDokazRetrofit = zrtvaData.forenzika,
+            obdukcijaRetrofit = zrtvaData.obdukcija,
+            svedociRetrofit =zrtvaData.svedoci,
+            oneContactRetrofit = zrtvaData.oneContact,
+            kontaktiRetrofit = zrtvaData.kontakti,
+            porukeRetrofit = zrtvaData.poruke,
+            poziviRetrofit = zrtvaData.pozivi,
+            galerijaRetrofit = zrtvaData.galerija,
+            aplikacijeRetrofit = zrtvaData.aplikacije,
+            tragoviRetrofit = osumnjiceniData.tragovi,
+            dokaziOsumnjiceniRetrofit = osumnjiceniData.dokaziOsumnjiceni,
+            beleskeRetrofit = zrtvaData.beleske,
+            whatsappKontaktRetrofit = zrtvaData.whatsappKontakti,
+            whatsappPorukaRetrofit = zrtvaData.whatsappPoruke,
+            oneCallRetrofit = zrtvaData.oneCall,
+            galleryRetrofit = otherData.gallery,
+            obicnePorukeRetrofit = zrtvaData.obicnaPoruka,
+            odnosiOsumnjiceniZrtvaRetrofit = otherData.odnosi,
+            pitanjaRetrofit = otherData.pitanja,
+            odgovoriRetrofit = otherData.odgovori,
+            pitanjeIspitivanjeOsumnjicenogRetrofit = otherData.pitanjaIspitivanjeOsumnjicenog,
+            pitanjeIspitivanjeSvedokaRetrofit = otherData.pitanjaIspitivanjeSvedoka,
+            osobeRetrofit = otherData.osobe,
+            zadaciRetrofit = zadaciData.zadaci,
+            dokaziZadaciRetrofit = zadaciData.dokaziZadaci,
+            ispitivanjeOsumnjicenogZadaciRetrofit = zadaciData.ispitivanjeOsumnjicenogZadaci,
+            ispitivanjeSvedokaZadaciRetrofit = zadaciData.ispitivanjeSvedokaZadaci,
+            telefonZadaciRetrofit = zadaciData.telefonZadaci,
+            forenzickiDokazZadaciRetrofit = zadaciData.forenzickiDokazZadaci
+        )
+        println("GEMINI MURDER")
+        return geminiResponseRetrofit
+    }
+
+
+    private fun loadZlocinDataGeminiRetrofit(id: Int): ZlocinDataGeminiRetrofit? {
+        val zl = repository.getZlocin(id) ?: return null
+        val tip = repository.getTipZlocina(zl.tipZlocinaId) ?: return null
+        return ZlocinDataGeminiRetrofit(zl, tip)
+    }
+
+    private fun loadZrtvaDataGeminiRetrofit(id: Int): ZrtvaDataGeminiRetrofit? {
+        val zrtva = repository.getZrtva(id) ?: return null
+        val kontakti = repository.getKontakti(id, zrtva) ?: return null
+        val whatsappKontakti = repository.getWhatsAppKontakt(id, zrtva) ?: return null
+        val oneContact =repository.getOneContact(id) ?: return null
+        return ZrtvaDataGeminiRetrofit(
+            zrtva = zrtva,
+            dokazi = repository.getDokazi(id, zrtva) ?: return null,
+            telefoni = repository.getTelefon(zrtva.idZrtva) ?: return null,
+            forenzika = repository.getForenzickiDokazi(zrtva.idZrtva) ?: return null,
+            obdukcija = repository.getObdukcija(zrtva.idZrtva) ?: return null,
+            svedoci = repository.getSvedoci(id) ?: return null,
+            oneContact = oneContact,
+            kontakti = kontakti,
+            poruke = repository.getPoruke(id, zrtva, kontakti) ?: return null,
+            pozivi = repository.getPozivi(id, zrtva, kontakti) ?: return null,
+            galerija = repository.getGalerija(id, zrtva) ?: return null,
+            aplikacije = repository.getAplikacije(id, zrtva) ?: return null,
+            beleske = repository.getBeleske(id, zrtva) ?: return null,
+            whatsappKontakti = whatsappKontakti,
+            whatsappPoruke = repository.getWhatsAppPoruka(id, whatsappKontakti) ?: return null,
+            oneCall = repository.getOneCall(id, oneContact) ?: return null,
+            obicnaPoruka = repository.getObicnaPoruka(id, oneContact) ?: return null
+        )
+    }
+
+    private fun loadOsumnjiceniDataGeminiRetrofit(id: Int,zrtvaData:ZrtvaDataGeminiRetrofit): OsumnjiceniDataGeminiRetrofit? {
+        val osumnjiceni = repository.getOsumnjiceni(id)
+        if (osumnjiceni.isEmpty()) return null
+
+        val forenzika = zrtvaData.forenzika
+        return OsumnjiceniDataGeminiRetrofit(
+            osumnjiceni = osumnjiceni,
+            tragovi = repository.getTragovi(forenzika, osumnjiceni) ?: return null,
+            dokaziOsumnjiceni = repository.getDokaziOsumnjiceni(zrtvaData.dokazi, osumnjiceni) ?: return null
+        )
+    }
+
+    private fun loadZadaciData(id: Int): ZadaciDataGeminiRetrofit? {
+        val zadaci = repository.getZadaci(id) ?: return null
+        return ZadaciDataGeminiRetrofit(
+            zadaci = zadaci,
+            dokaziZadaci = repository.getDokaziZadaci(id, zadaci) ?: return null,
+            ispitivanjeOsumnjicenogZadaci = repository.getIspitivanjeOsumnjicenogZadatak(id, zadaci) ?: return null,
+            ispitivanjeSvedokaZadaci = repository.getIspitivanjeSvedokaZadatak(id, zadaci) ?: return null,
+            telefonZadaci = repository.getTelefonZadaci(id, zadaci) ?: return null,
+            forenzickiDokazZadaci = repository.getForenzickiDokazZadatak(id, zadaci) ?: return null
+        )
+    }
+
+    private fun loadOtherData(id: Int): OtherDataGeminiRetrofit? {
+        return OtherDataGeminiRetrofit(
+            gallery = repository.getGallery(id)?: return null,
+            odnosi = repository.getOdnosOsumnjicenZrtva(id)?: return null,
+            pitanja = repository.getPitanja(id)?: return null,
+            odgovori = repository.getOdgovor(id)?: return null,
+            pitanjaIspitivanjeOsumnjicenog = repository.getPitanjeIspitivanjeOsumnjicenog(id)?: return null,
+            pitanjaIspitivanjeSvedoka = repository.getPitanjeIspitivanjeSvedoka(id)?: return null,
+            osobe = repository.getOsobe(id)?: return null
+        )
     }
 }
