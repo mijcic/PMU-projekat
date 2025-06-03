@@ -13,7 +13,7 @@ interface RepoInterface {
 
     fun getZrtva(id:Int): ZrtvaData?
 
-    fun getOsumnjiceni(id: Int): List<OsumnjicenData>
+    fun getOsumnjiceni(id: Int): List<OsumnjicenData>?
 
     fun getDokazi(id: Int,zr: ZrtvaData): List<DokazData>?
 

@@ -1967,23 +1967,25 @@ class MySQLIntegrationTest {
         assertTrue(osumnjicenGet!= emptyList<OsumnjicenData>(), "Treba da postoji osumnjicen sa prosledjenim id-om zlocina")
         assertTrue(osumnjicenNePostoji==emptyList<OsumnjicenData>(), "Treba da ne postoji osumnjicen sa prosledjenim id-om zlocina")
 
-        for(o in osumnjicenGet){
-            if(o.idOsumnjicen == osumnjicen.idOsumnjicen){
-                assertEquals(o.idOsumnjicen, osumnjicen.idOsumnjicen)
-                assertEquals(o.status, osumnjicen.status)
-                assertEquals(o.zlocinId, osumnjicen.zlocinId)
-                assertEquals(o.osobaId.idOsoba, osumnjicen.osobaId.idOsoba)
-                assertEquals(o.osobaId.ime, osumnjicen.osobaId.ime)
-                assertEquals(o.osobaId.zlocinId, osumnjicen.osobaId.zlocinId)
-                assertEquals(o.osobaId.kontakt, osumnjicen.osobaId.kontakt)
-                assertEquals(o.osobaId.pol, osumnjicen.osobaId.pol)
-                assertEquals(o.osobaId.zanimanje, osumnjicen.osobaId.zanimanje)
-                assertTrue(abs(o.osobaId.datum-osumnjicen.osobaId.datum)<1000)
-                assertEquals(o.tipOsumnjicen, osumnjicen.tipOsumnjicen)
-                assertEquals(o.kriv, osumnjicen.kriv)
-                assertEquals(o.motiv, osumnjicen.motiv)
-            }
+        if (osumnjicenGet != null) {
+            for(o in osumnjicenGet){
+                if(o.idOsumnjicen == osumnjicen.idOsumnjicen){
+                    assertEquals(o.idOsumnjicen, osumnjicen.idOsumnjicen)
+                    assertEquals(o.status, osumnjicen.status)
+                    assertEquals(o.zlocinId, osumnjicen.zlocinId)
+                    assertEquals(o.osobaId.idOsoba, osumnjicen.osobaId.idOsoba)
+                    assertEquals(o.osobaId.ime, osumnjicen.osobaId.ime)
+                    assertEquals(o.osobaId.zlocinId, osumnjicen.osobaId.zlocinId)
+                    assertEquals(o.osobaId.kontakt, osumnjicen.osobaId.kontakt)
+                    assertEquals(o.osobaId.pol, osumnjicen.osobaId.pol)
+                    assertEquals(o.osobaId.zanimanje, osumnjicen.osobaId.zanimanje)
+                    assertTrue(abs(o.osobaId.datum-osumnjicen.osobaId.datum)<1000)
+                    assertEquals(o.tipOsumnjicen, osumnjicen.tipOsumnjicen)
+                    assertEquals(o.kriv, osumnjicen.kriv)
+                    assertEquals(o.motiv, osumnjicen.motiv)
+                }
 
+            }
         }
     }
 

@@ -155,7 +155,7 @@ class Repository(private val connection: Connection):RepoInterface {
         return null
     }
 
-    override fun getOsumnjiceni(id: Int): List<OsumnjicenData> {
+    override fun getOsumnjiceni(id: Int): List<OsumnjicenData>? {
         //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM osumnjicen WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)

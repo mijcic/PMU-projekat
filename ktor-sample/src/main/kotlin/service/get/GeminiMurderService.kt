@@ -111,12 +111,12 @@ class GeminiMurderService(private val repository: RepoInterface) {
     }
 
     private fun loadOsumnjiceniDataGeminiRetrofit(id: Int,zrtvaData:ZrtvaDataGeminiRetrofit): OsumnjiceniDataGeminiRetrofit? {
-        val osumnjiceni = repository.getOsumnjiceni(id)
-        if (osumnjiceni.isEmpty()) return null
+        val osumnjiceni = repository.getOsumnjiceni(id) ?: return null
+        //if (osumnjiceni.isEmpty()) return null
 
         val forenzika = zrtvaData.forenzika
         return OsumnjiceniDataGeminiRetrofit(
-            osumnjiceni = osumnjiceni,
+            osumnjiceni = osumnjiceni ?:return null,
             tragovi = repository.getTragovi(forenzika, osumnjiceni) ?: return null,
             dokaziOsumnjiceni = repository.getDokaziOsumnjiceni(zrtvaData.dokazi, osumnjiceni) ?: return null
         )
