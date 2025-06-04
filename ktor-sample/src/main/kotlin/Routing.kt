@@ -16,7 +16,9 @@ import com.example.service.get.GeminiMysteriousSymptomsService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
+import io.ktor.server.request.ContentTransformationException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.sql.*
@@ -97,7 +99,7 @@ fun Application.configureRouting() {
                 //call.respond(mapOf("response" to geminiResponseText))
                 call.respond(geminiResponseText as Any)
 
-            } catch (e: ContentTransformationException) {
+            } catch (e: BadRequestException) {
                 call.respond(HttpStatusCode.BadRequest,
                     mapOf("error" to "Invalid request format. A JSON object with the keys 'prompt' and 'tables' is expected."))
             } catch (e: Exception) {

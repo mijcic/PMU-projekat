@@ -61,7 +61,7 @@ dependencies {
     testImplementation("org.testcontainers:mysql:1.19.3")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 
-    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("io.mockk:mockk:1.13.10")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
 

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.symbol.processing)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.realm.kotlin)
+    kotlin("kapt")
 }
 
 android {
@@ -19,6 +20,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+     //   testInstrumentationRunner = "dagger.hilt.android.testing.HiltTestRunner"
     }
 
     buildTypes {
@@ -40,6 +42,18 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -60,9 +74,11 @@ dependencies {
     implementation(libs.androidx.animation.android)
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.storage)
+    implementation(libs.androidx.ui.test.junit4.android)
+    implementation(libs.androidx.runner)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    //androidTestImplementation(libs.androidx.junit)
+    //androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
@@ -93,4 +109,16 @@ dependencies {
     // swipe-abilnost
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
+
+
+
+    // Compose test
+    // Hilt za testiranje (ako koristiš Hilt)
+    kaptAndroidTest("com.google.dagger:hilt-compiler:2.52")
+
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.8.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.8.2")
+
+    //testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.13")
 }
