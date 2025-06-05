@@ -342,7 +342,9 @@ CREATE TABLE OneCall (
     datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     propusten TINYINT(0),
     dolazni TINYINT(0),
-    FOREIGN KEY (kontakt) REFERENCES OneContact(idOneContact)
+    zrtvaId INT NOT NULL,
+    FOREIGN KEY (kontakt) REFERENCES OneContact(idOneContact),
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
 );
 
 CREATE TABLE Gallery (

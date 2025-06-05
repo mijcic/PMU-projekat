@@ -152,6 +152,7 @@ data class ForenzickiDokazData (
     val opis: String,
     val statusS:Int,
     val veza: String,
+    val zrtvaId:Int,
 )
 
 @Serializable
@@ -244,7 +245,8 @@ data class OneCallData (
     val kontakt: Int,
     val datum: Long,
     val propusten: Boolean,
-    val dolazni: Boolean
+    val dolazni: Boolean,
+    val zrtvaId: Int
 )
 
 @Serializable
