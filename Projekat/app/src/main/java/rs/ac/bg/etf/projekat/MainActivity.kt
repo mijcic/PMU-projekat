@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.realmClasses
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.HospitalPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.LekarskiTestPage
@@ -40,8 +40,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

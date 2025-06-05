@@ -46,7 +46,7 @@ import androidx.navigation.NavController
 import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.destinationLekarskiTestPage
 import rs.ac.bg.etf.projekat.destinationMedicalReportPage
 import rs.ac.bg.etf.projekat.destinationMedicalStatementPage
@@ -56,7 +56,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel,myViewModel: MyViewModel) {
+fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, myViewModel: MyViewModel) {
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {

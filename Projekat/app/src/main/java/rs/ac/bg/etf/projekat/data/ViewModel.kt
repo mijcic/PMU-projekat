@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.data
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,13 +39,33 @@ import rs.ac.bg.etf.projekat.data.realm.WhatsAppKontaktR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectAllOsumnjiceni
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectAllSvedoci
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectEvidences
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectEvidencesTasks
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectForensicEvidences
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectForensicEvidencesTasks
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectIzjavaZaPacijenta
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectLekarskiTest
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectLokacijeIstrageR
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectMedicinskiIzvestaj
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectPacijent
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectPitanjaByOsumnjicenAndCategory
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectPitanjaBySvedok
+import rs.ac.bg.etf.projekat.data.realmViewModel.selectTasks
+import rs.ac.bg.etf.projekat.data.realmViewModel.updateDokazZadatakAndZadatak
+import rs.ac.bg.etf.projekat.data.realmViewModel.updateForenzickiDokazZadatakAndZadatak
+import rs.ac.bg.etf.projekat.data.realmViewModel.updateIspitivanjeOsumnjicenogZadatak
+import rs.ac.bg.etf.projekat.data.realmViewModel.updateIspitivanjeSvedokaZadatak
+import rs.ac.bg.etf.projekat.data.realmViewModel.updatePorukeZadatak
+import rs.ac.bg.etf.projekat.data.realmViewModel.updateTelefonZadatak
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
-import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 import java.time.Instant
 import javax.inject.Inject
 
@@ -55,19 +76,6 @@ class MyViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(UiStateZlocin())
     val uiState: StateFlow<UiStateZlocin> = _uiState
-
-    private val _uiStatePostZlocin = MutableStateFlow(UiStatePostZlocin())
-    val uiStatePostZlocin: StateFlow<UiStatePostZlocin> = _uiStatePostZlocin
-
-    fun insertDataZlocin(zlocin: ZlocinRequest) = viewModelScope.launch {
-        try {
-            val response = MyRepository.insertData(zlocin)
-            _uiStatePostZlocin.value = UiStatePostZlocin(message = response)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            _uiStatePostZlocin.value = UiStatePostZlocin(message = null)
-        }
-    }
 
     private val _uiStateSignUp = MutableStateFlow(UiStateSignUp())
     val uiStateSignUp: StateFlow<UiStateSignUp> = _uiStateSignUp
@@ -295,7 +303,10 @@ class MyViewModel @Inject constructor(
     val uiStateGeminiData: StateFlow<UiStateGeminiData> = _uiStateGeminiData
 
     fun getGeminiData(realmViewModel: RealmViewModel, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
-
+        //val context = LocalContext.current
+        //val inputStream = context.assets.open("murder_json.json")
+        //val jsonString = inputStream.bufferedReader().use { it.readText() }
+        //JSONObject(jsonString)
         val jsonString = """
 {
   "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele. Tip osumnjicenog moze biti samo pojedinac ili organizacija. Tip dokaza moze biti fizicki, digitalni ili svedok. statusSvedok moze biti 'aktivno', 'zasticen', 'nesaradnja'.  tipForenzickiDokaz moze biti 'otisak', 'DNK', 'dokument'.  os moze biti 'IOS' ili 'Android'. Mora da postoji samo jedan zlocinR, nemoj da mi pravis listu. Koristi sledeće tabele za popunjavanje podataka. Popuni mi sve tabele koje ti prosledim kao primer. Popuni mi i primere za tabelu zadatakR sa njenim poljima idZadatak, tekst, korak koji je tipa String, uradjen, next, zlocinId. Popuni mi i tabelu telefonZadatakR i obicnaPorukaR. Obavezno dodaj i jedan whatsAppKontaktR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa whatsAppKontaktR. Obavezno dodaj i jedan oneContactR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa oneContactR. Zelim da mi dodas vise od jednog objekta tipa whatsAppKontaktR. Popuni mi i tabelu whatsAppPorukaR. OBAVEZNO mi popuni i tabelu obicnaPorukaR. OBAVEZNO mi popuni i tabelu oneCallR. Nemoj da vracas null vrednosti za polja. Zlocin tabela  je jedna nije lista. Popuni tabele DokazZadatak sa odgovarajucim dokazom i zadatkom. Sve tabele mi popuni sa podacima, bas sve! Pitanja za ispitivanje svedoka i osumnjicenih ne smeju biti prazna! Tabele dokazR treaba da ima vise od 5 objekata, svedokR vise od 2, forenzickiDokazR vise od 2, pitanjeR vise od 5, odgovorR vise od 5, pitanjeIspitivanjeOsumnjicenogR vise od 5, pitanjeIspitivanjeSvedokaR vise od 5, zadatakR vise od 5, ispitivanjeSvedokaZadatakR vise od 5...  Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",

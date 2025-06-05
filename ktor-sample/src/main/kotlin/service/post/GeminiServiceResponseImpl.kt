@@ -24,7 +24,6 @@ class GeminiServiceResponseImpl(
 ) : GeminiServiceResponse {
     override suspend fun getDataGeminiResponse(geminiResponse: GeminiResponse): GeminiResponseRetrofit {
 
-
         val json2 = Json {
             ignoreUnknownKeys = true
         }
@@ -185,5 +184,4 @@ class GeminiServiceResponseImpl(
         conn?.close()
         return geminiResponseRetrofit
     }
-
 }
