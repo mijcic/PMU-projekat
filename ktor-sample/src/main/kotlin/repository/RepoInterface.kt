@@ -79,9 +79,9 @@ interface RepoInterface {
 
     fun getPacijent(id: Int, zl: ZlocinData, zr: ZrtvaData, osobe: List<OsobaData>): PacijentData?
 
-    fun getMedicinskiIzvetaj(id: Int,pacijent: PacijentData?): MedicinskiIzvestajData?
+    fun getMedicinskiIzvetaj(pacijent: PacijentData?): MedicinskiIzvestajData?
 
-    fun getLekarskiTest(id: Int,pacijent: PacijentData?): LekarskiTestData?
+    fun getLekarskiTest(pacijent: PacijentData?): LekarskiTestData?
 
     fun getLokacijeIstrage(id: Int): List<LokacijeIstrageData>?
 

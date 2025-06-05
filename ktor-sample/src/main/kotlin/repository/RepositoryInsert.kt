@@ -465,39 +465,6 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-
-    fun insertMisijaPorukaData(misijaPoruka: MisijaPorukaData, zlocin: ZlocinData){
-        val query = """
-        INSERT INTO misijaPoruka (zlocinId, naziv, statusS, posiljalac, poruka)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        var conn: Connection? = null
-        var statement: PreparedStatement? = null
-        var resultSet: ResultSet? = null
-
-        try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-
-            statement?.setInt(1, zlocin.idZlocin)
-            statement?.setString(2, misijaPoruka.naziv)
-            statement?.setInt(3,  misijaPoruka.statusS)
-            statement?.setString(4,  misijaPoruka.posiljalac)
-            statement?.setString(5, misijaPoruka.poruka)
-
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
-            if (resultSet?.next() == true) {
-                misijaPoruka.id = resultSet.getInt(1)
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        } finally {
-            closeResources(conn, statement, null)
-        }
-    }
-
     fun insertKontaktData(kontakt: KontaktData, zrtva: ZrtvaData){
         conn.autoCommit = true
         val query = """

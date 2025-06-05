@@ -5,7 +5,6 @@ import com.example.data.remote.geminiClient
 import com.example.models.dto.KorisnikRequest
 import com.example.models.dto.MessageResponse
 import com.example.models.dto.ScoreKorisnik
-import com.example.models.dto.ZlocinRequest
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.service.post.GeminiService
 import com.example.service.post.GeminiServiceImpl

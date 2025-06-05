@@ -823,8 +823,6 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getWhatsAppPoruka(id: Int, whatsAppKontakti : List<WhatsAppKontaktData>?): List<WhatsAppPorukaData>?{
-        val connection = getDatabaseConnection()
-    fun getWhatsAppPoruka(id: Int, whatsAppKontakti : List<WhatsAppKontaktData>?): List<WhatsAppPorukaData>?{
         if (whatsAppKontakti == null) return null
         val relevantniKontakti = whatsAppKontakti.filter { it.zlocinId == id }.map { it.idWhatsAppKontakt }.toSet()
 
@@ -866,10 +864,7 @@ class Repository(private val connection: Connection):RepoInterface {
         return listaWhatsAppPoruka
     }
 
-
     override fun getGallery(id: Int): List<GalleryData>?{
-        val connection = getDatabaseConnection()
-    fun getGallery(id: Int): List<GalleryData>?{
         // val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM gallery WHERE zlocinId=?"
         val mainStatement = connection?.prepareStatement(mainQuery)
