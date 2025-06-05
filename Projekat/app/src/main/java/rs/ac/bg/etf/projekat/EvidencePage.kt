@@ -15,13 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -63,7 +61,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.RealmViewModel
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.UiStateCntEvidence
 import rs.ac.bg.etf.projekat.data.UiStateCntForensicEvidence
 import rs.ac.bg.etf.projekat.data.UiStateEvidences
@@ -72,8 +70,6 @@ import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
-import rs.ac.bg.etf.projekat.data.realm.ZlocinR
-import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

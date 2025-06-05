@@ -8,19 +8,11 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysterio
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
-import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
-import rs.ac.bg.etf.projekat.data.retrofit.models.ZlocinRequest
 import javax.inject.Inject
 
 class Repository @Inject constructor(
     private val Api: Api,
 ) {
-    suspend fun getZlocin():List<Zlocin> = Api.getZlocin()
-
-    suspend fun postZlocin(@Body request: Zlocin): MessageResponse = Api.postZlocin(request)
-
-    suspend fun insertData(@Body request: ZlocinRequest): MessageResponse = Api.insertData(request)
-
     suspend fun signUp(@Body request: KorisnikRequest): MessageResponse = Api.signUp(request)
 
     suspend fun logIn(@Body request: KorisnikRequest): MessageResponse = Api.logIn(request)

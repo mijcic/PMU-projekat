@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.realm.kotlin)
     kotlin("kapt")
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
 android {
@@ -121,4 +122,8 @@ dependencies {
 
     //testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.13")
+
+
+    testImplementation("io.mockk:mockk:1.13.10")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }

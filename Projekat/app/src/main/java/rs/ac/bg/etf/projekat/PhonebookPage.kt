@@ -38,10 +38,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import rs.ac.bg.etf.projekat.data.RealmViewModel
-import rs.ac.bg.etf.projekat.data.realm.OneCallR
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.OneContactR
-import java.time.Instant
 
 @Composable
 fun PhonebookPage(navController: NavController) {
