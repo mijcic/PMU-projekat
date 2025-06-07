@@ -165,7 +165,8 @@ class GeminiMurderServiceTest {
             tipForenzickiDokaz = "DNK",
             opis = "DNK tragovi pronađeni na pištolju.",
             statusS = 0,
-            veza = "DNK tragovi na pištolju se poklapaju sa DNK Olivije Reed."
+            veza = "DNK tragovi na pištolju se poklapaju sa DNK Olivije Reed.",
+            zrtvaId = returnZrtvaData().idZrtva
         ))
     }
 
@@ -301,7 +302,8 @@ class GeminiMurderServiceTest {
             kontakt = returnOneContact().first().idOneContact,
             datum = returnTimeStamp(),
             propusten = false,
-            dolazni = true
+            dolazni = true,
+            zrtvaId = returnZrtvaData().idZrtva
         ))
     }
 

@@ -1,14 +1,9 @@
 package com.example.repository
 
 import com.example.closeResources
+import com.example.getDatabaseConnection
 import com.example.models.dto.*
-import java.sql.Connection
-import java.sql.Date
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
-import java.sql.Statement
-import java.sql.Timestamp
+import java.sql.*
 
 class RepositoryInsert(private val conn: Connection){
 
@@ -526,7 +521,7 @@ class RepositoryInsert(private val conn: Connection){
 
             statement?.setString(1, poruke.tipPoruke)
             statement?.setString(2, poruke.sadrzaj)
-            statement?.setTimestamp(3, java.sql.Timestamp(poruke.datumVreme))
+            statement?.setTimestamp(3, Timestamp(poruke.datumVreme))
             statement?.setInt(4,  zrtva.idZrtva)
             statement?.setInt(5,  kontakt.idKontakt)
             statement?.setString(6,  poruke.statusPoruke)
@@ -562,7 +557,7 @@ class RepositoryInsert(private val conn: Connection){
 
             statement?.setInt(1, pozivi.tip)
             statement?.setString(2, pozivi.broj)
-            statement?.setTimestamp(3, java.sql.Timestamp(pozivi.datumVreme))
+            statement?.setTimestamp(3, Timestamp(pozivi.datumVreme))
             statement?.setInt(4,  zrtva.idZrtva)
             statement?.setInt(5,  pozivi.status)
             statement?.setInt(6,  kontakt.idKontakt)
@@ -599,7 +594,7 @@ class RepositoryInsert(private val conn: Connection){
             statement?.setInt(1, galerija.tip)
             statement?.setString(2, galerija.putanja)
             statement?.setInt(3,  zrtva.idZrtva)
-            statement?.setTimestamp(4, java.sql.Timestamp(galerija.datumVreme))
+            statement?.setTimestamp(4, Timestamp(galerija.datumVreme))
             statement?.setString(5,  galerija.lokacija)
 
             statement?.executeUpdate()
@@ -873,7 +868,7 @@ class RepositoryInsert(private val conn: Connection){
 
             statement.setInt(1, zlocin.idZlocin)
             statement.setString(2, beleskaData.tekst)
-            statement.setTimestamp(3, java.sql.Timestamp(beleskaData.datum))
+            statement.setTimestamp(3, Timestamp(beleskaData.datum))
             statement.executeUpdate()
 
             resultSet = statement.generatedKeys
@@ -911,7 +906,7 @@ class RepositoryInsert(private val conn: Connection){
                 statement.setInt(4, whatsAppKontaktDataData.slika)
             }
             else {
-                statement.setNull(4, java.sql.Types.INTEGER)  // Correctly set null for slika
+                statement.setNull(4, Types.INTEGER)  // Correctly set null for slika
             }
             statement.executeUpdate()
 
@@ -963,10 +958,10 @@ class RepositoryInsert(private val conn: Connection){
 
     // OneCall
 
-    fun insertOneCallData(oneCallData: OneCallData, kontakt: OneContactData) {
+    fun insertOneCallData(oneCallData: OneCallData) {
         val query = """
-            INSERT INTO onecall (kontakt, datum, propusten, dolazni)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO onecall (kontakt, datum, propusten, dolazni, zrtvaId)
+            VALUES (?, ?, ?, ?, ?)
         """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
@@ -979,11 +974,12 @@ class RepositoryInsert(private val conn: Connection){
             }
 
             statement.setInt(1, oneCallData.kontakt)
-            statement.setTimestamp(2, java.sql.Timestamp(oneCallData.datum))
+            statement.setTimestamp(2, Timestamp(oneCallData.datum))
             statement.setBoolean(3, oneCallData.propusten)
             statement.setBoolean(4, oneCallData.dolazni)
-            statement.executeUpdate()
+            statement.setInt(5, oneCallData.zrtvaId)
 
+            statement.executeUpdate()
             resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 oneCallData.idOneCall = resultSet.getInt(1)
@@ -1017,10 +1013,11 @@ class RepositoryInsert(private val conn: Connection){
                 statement.setInt(2, galleryData.slika)
             }
             else {
-                statement.setNull(2, java.sql.Types.INTEGER)  // Correctly set null for slika
+                statement.setNull(2, Types.INTEGER)  // Correctly set null for slika
             }
-            statement.setTimestamp(3, java.sql.Timestamp(galleryData.datum))
+            statement.setTimestamp(3, Timestamp(galleryData.datum))
             statement.setString(4, galleryData.mesto)
+
             statement.executeUpdate()
 
             resultSet = statement.generatedKeys
@@ -1054,7 +1051,7 @@ class RepositoryInsert(private val conn: Connection){
             statement.setInt(1, kontaktKoSalje.idOneContact)
             statement.setInt(2, kontaktKomeSalje.idOneContact)
             statement.setString(3, obicnaPorukaData.tekst)
-            statement.setTimestamp(4, java.sql.Timestamp(obicnaPorukaData.datum))
+            statement.setTimestamp(4, Timestamp(obicnaPorukaData.datum))
             statement.setBoolean(5, obicnaPorukaData.procitana)
             statement.executeUpdate()
 
@@ -1268,6 +1265,71 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
+    fun getPitanjeIspitivanjeSvedokaListData(): List<PitanjeIspitivanjeSvedokaData> {
+        val query = "SELECT * FROM pitanjeispitivanjesvedoka"
+        val list = mutableListOf<PitanjeIspitivanjeSvedokaData>()
+
+        // var conn: Connection? = null
+        var statement: PreparedStatement? = null
+        var resultSet: ResultSet? = null
+
+        try {
+            //conn = getDatabaseConnection()
+            statement = conn?.prepareStatement(query)
+            resultSet = statement?.executeQuery()
+
+            while (resultSet?.next() == true) {
+                val ispitivanje = PitanjeIspitivanjeSvedokaData(
+                    idPitanjeIspitivanjeSvedoka = resultSet.getInt("idPitanjeIspitivanjeSvedoka"),
+                    tekst = resultSet.getString("tekst"),
+                    odgovor = resultSet.getString("odgovor"),
+                    svedokId = resultSet.getInt("svedokId"),
+                    nextPitanje = resultSet.getInt("nextPitanje")
+                )
+                list.add(ispitivanje)
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            closeResources(conn, statement, resultSet)
+        }
+
+        return list
+    }
+
+
+    fun updatePitanjeIspitivanjeSvedokaListData(list: List<PitanjeIspitivanjeSvedokaData>, svedok: SvedokData) {
+        val query = """
+        UPDATE pitanjeispitivanjesvedoka
+        SET nextPitanje = ?
+        WHERE idPitanjeIspitivanjeSvedoka = ? AND svedokId = ?
+    """
+
+        // var conn: Connection? = null
+        var statement: PreparedStatement? = null
+
+        try {
+            //conn = getDatabaseConnection()
+            statement = conn?.prepareStatement(query)
+
+            for (i in 0 until list.size - 1) {
+                val currentPitanje = list[i]
+                val nextPitanje = list[i + 1]
+
+                statement?.setInt(1, nextPitanje.idPitanjeIspitivanjeSvedoka)
+                statement?.setInt(2, currentPitanje.idPitanjeIspitivanjeSvedoka)
+                statement?.setInt(3, svedok.idSvedok)
+                statement?.addBatch()
+            }
+
+            statement?.executeBatch()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            closeResources(conn, statement, null)
+        }
+    }
+
     // Zadatak
 
     fun insertZadatakData(zadatakData: ZadatakData, zlocin: ZlocinData) {
@@ -1288,7 +1350,7 @@ class RepositoryInsert(private val conn: Connection){
             statement.setString(1, zadatakData.tekst)
             statement.setString(2, zadatakData.korak)
             statement.setBoolean(3, zadatakData.uradjen)
-            statement.setNull(4,  java.sql.Types.INTEGER)
+            statement.setNull(4,  Types.INTEGER)
             statement.setInt(5, zlocin.idZlocin)
             statement.executeUpdate()
 
@@ -1588,7 +1650,7 @@ class RepositoryInsert(private val conn: Connection){
 
             statement.setString(1, pacijent.simptomi)
             statement.setString(2, pacijent.statusPacijenta)
-            statement.setTimestamp(3, java.sql.Timestamp(pacijent.datumPrijave))
+            statement.setTimestamp(3, Timestamp(pacijent.datumPrijave))
             statement.setInt(4, pacijent.prijavio.idOsoba)
             statement.setInt(5, pacijent.zlocinId.idZlocin)
             statement.setInt(6, pacijent.zrtvaId.idZrtva)
@@ -1642,6 +1704,7 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
+
     fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
         val query = """
            INSERT INTO lekarskitest (pacijentId,izjava)
@@ -1670,6 +1733,7 @@ class RepositoryInsert(private val conn: Connection){
             closeResources(conn, statement, null)
         }
     }
+
 
     fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
         val query = """

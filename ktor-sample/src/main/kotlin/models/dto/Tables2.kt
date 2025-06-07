@@ -34,22 +34,6 @@ data class MessageResponse(
 )
 
 @Serializable
-data class ZlocinRequest(
-    val zlocin: ZlocinData,
-    val zrtva: ZrtvaData,
-    val osumnjicen: List<OsumnjicenData>,
-    val dokazi: List<DokazData>,
-    val svedok: List<SvedokData>,
-    val alibi: List<AlibiData>,
-    val misija: MisijaData,
-    val motivi: List<MotivData>,
-    val obdukcija: ObdukcijaData,
-    val forenzickiDokazi: List<ForenzickiDokazData>,
-    val telefon: TelefonData,
-    val misijaPoruka: List<MisijaPorukaData>
-)
-
-@Serializable
 data class UsedZlocinData(
     var idUsedZlocin:Int,
     var zlocinId: ZlocinData,
@@ -152,6 +136,7 @@ data class ForenzickiDokazData (
     val opis: String,
     val statusS:Int,
     val veza: String,
+    val zrtvaId:Int,
 )
 
 @Serializable
@@ -169,14 +154,6 @@ data class MisijaData(
     val naziv: String,
     val opis: String,
     val status: Int
-)
-@Serializable
-data class MisijaPorukaData(
-    var id: Int,
-    val naziv: String,
-    val statusS: Int,
-    val posiljalac:String,
-    val poruka: String,
 )
 
 @Serializable
@@ -244,7 +221,8 @@ data class OneCallData (
     val kontakt: Int,
     val datum: Long,
     val propusten: Boolean,
-    val dolazni: Boolean
+    val dolazni: Boolean,
+    val zrtvaId: Int
 )
 
 @Serializable

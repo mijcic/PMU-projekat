@@ -123,7 +123,8 @@ class RepositoryInsertTest {
             tipForenzickiDokaz = "DNK",
             opis = "DNK tragovi pronađeni na pištolju.",
             statusS = 0,
-            veza = "DNK tragovi na pištolju se poklapaju sa DNK Olivije Reed."
+            veza = "DNK tragovi na pištolju se poklapaju sa DNK Olivije Reed.",
+            zrtvaId = returnZrtvaData().idZrtva
         )
     }
 
@@ -207,11 +208,12 @@ class RepositoryInsertTest {
 
     private fun returnOneCallData(): OneCallData{
         return OneCallData(
-            idOneCall =0,
+            idOneCall = 0,
             kontakt = returnOneContact().idOneContact,
             datum = returnTimeStamp(),
             propusten = false,
-            dolazni = true
+            dolazni = true,
+            zrtvaId = returnZrtvaData().idZrtva
         )
     }
 
@@ -1481,20 +1483,21 @@ class RepositoryInsertTest {
     @Test
     fun `should handle SQLException during executeUpdate in method insertOneCallData`() {
         val oneCall = returnOneCallData()
-        val kontakt = returnOneContact()
 
         every { connection.prepareStatement(any(), Statement.RETURN_GENERATED_KEYS) } returns preparedStatement
         every { preparedStatement.setInt(1, oneCall.kontakt) } just Runs
         every { preparedStatement.setTimestamp(2, any()) } just Runs
         every { preparedStatement.setBoolean(3, oneCall.propusten) } just Runs
         every { preparedStatement.setBoolean(4, oneCall.dolazni) } just Runs
+        every { preparedStatement.setInt(5, oneCall.zrtvaId) } just Runs
+
         every { preparedStatement.executeUpdate() } throws SQLException("Insert failed")
 
         mockkStatic("com.example.ApplicationKt")
         every { closeResources(connection, preparedStatement, null) } just Runs
 
         val repositoryInsert = RepositoryInsert(connection)
-        repositoryInsert.insertOneCallData(oneCall, kontakt)
+        repositoryInsert.insertOneCallData(oneCall)
 
         assertEquals(0, oneCall.idOneCall)
 
@@ -1504,6 +1507,7 @@ class RepositoryInsertTest {
             preparedStatement.setTimestamp(2, any())
             preparedStatement.setBoolean(3, oneCall.propusten)
             preparedStatement.setBoolean(4, oneCall.dolazni)
+            preparedStatement.setInt(5,oneCall.zrtvaId)
             preparedStatement.executeUpdate()
             closeResources(connection, preparedStatement, null)
         }
@@ -1512,7 +1516,6 @@ class RepositoryInsertTest {
     @Test
     fun `should print message and return if prepareStatement returns null in method insertOneCallData`() {
         val oneCall = returnOneCallData().apply { idOneCall = 0 }
-        val kontakt = returnOneContact()
 
         every { connection.prepareStatement(any(), Statement.RETURN_GENERATED_KEYS) } returns null
 
@@ -1521,7 +1524,7 @@ class RepositoryInsertTest {
         val outputStream = ByteArrayOutputStream()
         System.setOut(PrintStream(outputStream))
 
-        repositoryInsert.insertOneCallData(oneCall, kontakt)
+        repositoryInsert.insertOneCallData(oneCall)
 
         System.setOut(System.out)
         val output = outputStream.toString().trim()

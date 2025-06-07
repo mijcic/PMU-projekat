@@ -1,7 +1,9 @@
 package com.example.service.post
 
 import com.example.*
+import com.example.models.dto.OsobaData
 import com.example.models.dto.ZlocinData
+import com.example.models.dto.ZrtvaData
 import com.example.models.dto.gemini.GeminiResponse
 import com.example.models.dto.gemini.GeminiResponse2
 import com.example.models.dto.gemini.GeminiResponseRetrofit
@@ -14,6 +16,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
@@ -98,6 +101,36 @@ class GeminiServiceResponseImpl(
                     repo.insertZlocinData(zl)
                     geminiResponseRetrofit.zlocinRetrofit=zl
 
+                    val datumStr = geminiResponse2.zrtvaR.osobaId?.datum
+                    val datumLong = datumStr?.let {
+                        LocalDate.parse(it)
+                            .atStartOfDay(ZoneId.systemDefault())
+                            .toInstant()
+                            .toEpochMilli()
+                    } ?: timestamp
+                    val osoba = OsobaData(
+                        idOsoba = geminiResponse2.zrtvaR.osobaId?.idOsoba ?: -1,
+                        ime = geminiResponse2.zrtvaR.osobaId?.ime ?: "Nepoznato",
+                        kontakt = geminiResponse2.zrtvaR.osobaId?.kontakt ?: "Nepoznato",
+                        datum = datumLong ?: timestamp,
+                        zanimanje = geminiResponse2.zrtvaR.osobaId?.zanimanje ?: "Nepoznato",
+                        pol = geminiResponse2.zrtvaR.osobaId?.pol ?: "M",
+                        zlocinId = geminiResponse2.zrtvaR.osobaId?.zlocinId ?: -1
+                    )
+                    repo.insertOsobaData(osoba, zl)
+
+                    val zrtva = ZrtvaData(
+                        idZrtva = geminiResponse2.zrtvaR.idZrtva,
+                        tipZrtve = geminiResponse2.zrtvaR.tipZrtve,
+                        detalji = geminiResponse2.zrtvaR.detalji,
+                        statusZrtva = geminiResponse2.zrtvaR.statusZrtva,
+                        zlocinId = geminiResponse2.zrtvaR.zlocinId,
+                        osobaId = osoba
+                    )
+                    repo.insertZlocinData(zl)
+                    geminiResponseRetrofit.zlocinRetrofit=zl
+
+
                     //zrtva i osoba
                     val sviDokaziZrtva = insertGeminiZrtva(geminiResponse2,geminiResponseRetrofit,timestamp,zl,repo)
 
@@ -119,7 +152,7 @@ class GeminiServiceResponseImpl(
                     val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
                     scope.launch {
-                        suspendInsertKontakti(whatsAppKontaktiLista,geminiResponse2,geminiResponseRetrofit,timestamp,kontaktiLista,zl,repo)
+                        suspendInsertKontakti(whatsAppKontaktiLista,geminiResponse2,geminiResponseRetrofit,timestamp,kontaktiLista,zl,zrtva, repo)
                     }
 
                     // odnos osumnjicen zrtva

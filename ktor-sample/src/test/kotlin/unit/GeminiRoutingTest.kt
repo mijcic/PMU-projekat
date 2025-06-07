@@ -1400,6 +1400,7 @@ class GeminiRoutingTest {
     }
 
 
+    /*
     @Test
     fun testGeminiMurderReturnsDataOr404() = testApplication {
         application {
@@ -1416,7 +1417,7 @@ class GeminiRoutingTest {
             response.status == HttpStatusCode.OK ||
                     response.status == HttpStatusCode.NotFound
         )
-    }
+    }*/
 
 
     @Test

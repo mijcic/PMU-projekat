@@ -190,7 +190,8 @@ fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiRe
             tipForenzickiDokaz = d.tipForenzickiDokaz,
             opis = d.opis,
             statusS = d.statusS,
-            veza = d.veza
+            veza = d.veza,
+            zrtvaId = zrtva.idZrtva
         )
 
         if (zrtva!=null){
@@ -747,7 +748,7 @@ fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponseCommon2, geminiRes
     geminiResponseRetrofit.whatsappPorukaRetrofit = whatsAppPorukaLista
 }
 
-fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<OneContactData>, timestamp: Long,repo: RepositoryInsert) {
+fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtvaData: ZrtvaData, kontaktiLista: MutableList<OneContactData>, timestamp: Long,repo: RepositoryInsert) {
     val pozivi = geminiResponse2.oneCallR
     val poziviLista = mutableListOf<OneCallData>()
 
@@ -769,10 +770,11 @@ fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRe
                 kontakt = kontakt.idOneContact,
                 datum = timestamp2,
                 propusten = p.propusten,
-                dolazni = p.dolazni
+                dolazni = p.dolazni,
+                zrtvaId = zrtvaData.idZrtva
             )
 
-            repo.insertOneCallData(poziv, kontakt)
+            repo.insertOneCallData(poziv)
             poziviLista.add(poziv)
         }
     }
@@ -1198,6 +1200,7 @@ suspend fun suspendInsertKontakti(
     timestamp: Long,
     kontaktiLista: MutableList<OneContactData>,
     zl: ZlocinData,
+    zrtva: ZrtvaData,
     repo: RepositoryInsert
 ) = coroutineScope {
 
@@ -1207,7 +1210,7 @@ suspend fun suspendInsertKontakti(
     }
     // one call
     val oneCallDeferred = async(Dispatchers.IO) {
-        insertGeminiOneCall(geminiResponse2, geminiResponseRetrofit,kontaktiLista, timestamp,repo)
+        insertGeminiOneCall(geminiResponse2, geminiResponseRetrofit, zrtva, kontaktiLista, timestamp, repo)
     }
     // gallery
     val galleryDeferred = async(Dispatchers.IO) {

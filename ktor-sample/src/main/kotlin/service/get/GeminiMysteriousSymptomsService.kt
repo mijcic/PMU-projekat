@@ -33,8 +33,8 @@ class GeminiMysteriousSymptomsService(private val repository: Repository) {
         if (zrtva != null && osobe != null && zl!=null) {
             pacijent= repository.getPacijent(id, zl,zrtva,osobe)
         }
-        val medicinskiIzvestaj = id?.let { repository.getMedicinskiIzvetaj(it,pacijent) }
-        val lekarskiTest = id?.let { repository.getLekarskiTest(it,pacijent) }
+        val medicinskiIzvestaj = id?.let { repository.getMedicinskiIzvetaj(pacijent) }
+        val lekarskiTest = id?.let { repository.getLekarskiTest(pacijent) }
         val lokacijeIstrage = id?.let { repository.getLokacijeIstrage(it) }
         val izjavaZaPacijenta = pacijent?.let { repository.getIzjavaZaPacijenta(it,osobe) }
 

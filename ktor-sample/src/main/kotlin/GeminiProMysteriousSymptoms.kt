@@ -373,6 +373,28 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
                 )
                 repo.insertZlocinData(zl)
                 geminiResponseRetrofit.zlocinRetrofit=zl
+                
+                val osoba = OsobaData(
+                    idOsoba = geminiResponse2.pacijentR.zrtvaId?.osobaId?.idOsoba ?: -1,
+                    ime = geminiResponse2.pacijentR.zrtvaId?.osobaId?.ime ?: "Nepoznato",
+                    kontakt = geminiResponse2.pacijentR.zrtvaId?.osobaId?.kontakt ?: "Nepoznato",
+                    datum = geminiResponse2.pacijentR.zrtvaId?.osobaId?.datum?.toLong() ?: timestamp,
+                    zanimanje = geminiResponse2.pacijentR.zrtvaId?.osobaId?.zanimanje ?: "Nepoznato",
+                    pol = geminiResponse2.pacijentR.zrtvaId?.osobaId?.pol ?: "M",
+                    zlocinId = geminiResponse2.pacijentR.zrtvaId?.osobaId?.zlocinId ?: -1
+                )
+                repo.insertOsobaData(osoba, zl)
+
+                val zrtva = ZrtvaData(
+                    idZrtva = geminiResponse2.pacijentR.zrtvaId?.idZrtva ?: -1,
+                    tipZrtve = geminiResponse2.pacijentR.zrtvaId?.tipZrtve ?: "osoba",
+                    detalji = geminiResponse2.pacijentR.zrtvaId?.detalji ?: "",
+                    statusZrtva = geminiResponse2.pacijentR.zrtvaId?.statusZrtva ?: "ziva",
+                    zlocinId = geminiResponse2.pacijentR.zrtvaId?.zlocinId ?: -1,
+                    osobaId = osoba
+                )
+                repo.insertZlocinData(zl)
+                geminiResponseRetrofit.zlocinRetrofit=zl
 
                 var pacijent=insertGeminiPacijent(geminiResponse2,geminiResponseRetrofit,zl,repo)
 
@@ -416,7 +438,7 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
                 val kontaktiLista = insertGeminiOneContact(geminiResponse2, geminiResponseRetrofit, zl, repo)
 
                 // one call
-                insertGeminiOneCall(geminiResponse2, geminiResponseRetrofit,kontaktiLista, timestamp, repo)
+                insertGeminiOneCall(geminiResponse2, geminiResponseRetrofit, zrtva, kontaktiLista, timestamp, repo)
 
                 // gallery
                 insertGeminiGallery(geminiResponse2, geminiResponseRetrofit,zl, timestamp, repo)
