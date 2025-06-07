@@ -8,8 +8,8 @@ class Repository(private val connection: Connection):RepoInterface {
     override fun getUsedZlocinMurder(): Int? {
         val query =
             "SELECT MIN(uz.zlocinId) AS zlocinId FROM UsedZlocin uz JOIN Zlocin z ON uz.zlocinId = z.idZlocin JOIN TipZlocina tz ON z.tipZlocinaId = tz.idTipZlocina WHERE uz.used = false AND tz.naziv = 'murder'"
-        //val connection = getDatabaseConnection()
-        val statement = connection?.createStatement()
+
+        val statement = connection.createStatement()
         val resultSet = statement?.executeQuery(query)
 
         if (resultSet != null) {
@@ -25,8 +25,8 @@ class Repository(private val connection: Connection):RepoInterface {
     override fun getUsedZlocinMysteriousSymptoms(): Int? {
         val query =
             "SELECT MIN(uz.zlocinId) AS zlocinId FROM UsedZlocin uz JOIN Zlocin z ON uz.zlocinId = z.idZlocin JOIN TipZlocina tz ON z.tipZlocinaId = tz.idTipZlocina WHERE uz.used = false AND tz.naziv = 'MysteriousSymptoms'"
-        //val connection = getDatabaseConnection()
-        val statement = connection?.createStatement()
+
+        val statement = connection.createStatement()
         val resultSet = statement?.executeQuery(query)
 
         if (resultSet != null) {
@@ -41,8 +41,8 @@ class Repository(private val connection: Connection):RepoInterface {
 
     override fun getZlocin(zlocinId:Int): ZlocinData? {
         val query = "SELECT * from zlocin WHERE idZlocin=$zlocinId"
-        //val connection = getDatabaseConnection()
-        val statement = connection?.createStatement()
+
+        val statement = connection.createStatement()
         val resultSet = statement?.executeQuery(query)
 
         if (resultSet != null) {
@@ -97,8 +97,8 @@ class Repository(private val connection: Connection):RepoInterface {
     override fun getZrtva(id:Int): ZrtvaData? {
         //idZrtva, tipZrtve, detalji, statusZrtva, zlocinId, osobaId
         val query = "SELECT * from Zrtva WHERE zlocinId=$id"
-        //val connection = getDatabaseConnection()
-        val statement = connection?.createStatement()
+
+        val statement = connection.createStatement()
         val resultSet = statement?.executeQuery(query)
 
         if (resultSet != null) {
@@ -156,9 +156,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getOsumnjiceni(id: Int): List<OsumnjicenData>? {
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM osumnjicen WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -233,9 +232,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getDokazi(id: Int,zr: ZrtvaData): List<DokazData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM dokaz WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -270,9 +268,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getTelefon(id: Int): List<TelefonData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM telefon WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -308,9 +305,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getForenzickiDokazi(id: Int): List<ForenzickiDokazData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM forenzickiDokaz WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -345,9 +341,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getObdukcija(id: Int): ObdukcijaData?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM obdukcija WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -381,9 +376,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getSvedoci(id: Int): List<SvedokData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM svedok WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -443,9 +437,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getOneContact(id: Int): List<OneContactData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM oneContact WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -480,9 +473,8 @@ class Repository(private val connection: Connection):RepoInterface {
 
     override fun getKontakti(id: Int,zr: ZrtvaData): List<KontaktData>?{
         connection.autoCommit = true
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM kontakt WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -515,9 +507,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getPoruke(id: Int, zr: ZrtvaData, kontakti: List<KontaktData>?): List<PorukeData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM poruke WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -562,9 +553,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getPozivi(id: Int, zr: ZrtvaData, kontakti: List<KontaktData>?): List<PoziviData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM pozivi WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -608,9 +598,8 @@ class Repository(private val connection: Connection):RepoInterface {
 
 
     override fun getGalerija(id: Int,zr: ZrtvaData): List<GalerijaData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM galerija WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -645,9 +634,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getAplikacije(id: Int,zr: ZrtvaData): List<AplikacijaData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM aplikacija WHERE zrtvaId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -682,9 +670,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getTragovi(forenzickiDokazi: List<ForenzickiDokazData>?, osumnjiceni: List<OsumnjicenData>?): List<TragData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM trag"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         //mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -718,9 +705,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getDokaziOsumnjiceni(dokazi: List<DokazData>?, osumnjiceni: List<OsumnjicenData>?): List<DokazOsumnjicenData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM dokazOsumnjicen"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         // mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -754,9 +740,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getBeleske(id: Int,zr: ZrtvaData): List<BeleskaData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM beleska WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -787,9 +772,8 @@ class Repository(private val connection: Connection):RepoInterface {
     }
 
     override fun getWhatsAppKontakt(id: Int,zr: ZrtvaData): List<WhatsAppKontaktData>?{
-        //val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM whatsappkontakt WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 
@@ -860,9 +844,8 @@ class Repository(private val connection: Connection):RepoInterface {
 
 
     override fun getGallery(id: Int): List<GalleryData>?{
-        val connection = getDatabaseConnection()
         val mainQuery = "SELECT * FROM gallery WHERE zlocinId=?"
-        val mainStatement = connection?.prepareStatement(mainQuery)
+        val mainStatement = connection.prepareStatement(mainQuery)
         mainStatement?.setInt(1, id)
         val resultSet = mainStatement?.executeQuery()
 

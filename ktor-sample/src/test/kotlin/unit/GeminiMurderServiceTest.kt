@@ -447,6 +447,7 @@ class GeminiMurderServiceTest {
         assertNull(result)
     }
 
+
     @Test
     fun `should return null when getZlocin returns null`() {
         every { repository.getUsedZlocinMurder() } returns 1

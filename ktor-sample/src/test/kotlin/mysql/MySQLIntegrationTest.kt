@@ -826,7 +826,7 @@ class MySQLIntegrationTest {
 
         val dokaz = DokazData(
             idDokaz = 1,
-            tipDokaza = "fizicki",
+            tipDokaza = "digitalni",
             opis = "Pistolj pronadjen na mestu zlocina.",
             zlocinId = zlocin.idZlocin,
             zrtvaId = zr.idZrtva,
@@ -834,14 +834,33 @@ class MySQLIntegrationTest {
         )
 
         repo.insertDokazData(dokaz,zlocin,zr)
+
+        val dokaz2 = DokazData(
+            idDokaz = 1,
+            tipDokaza = "noviTio",
+            opis = "Noz pronadjen na mestu zlocina.",
+            zlocinId = zlocin.idZlocin,
+            zrtvaId = zr.idZrtva,
+            status = 0
+        )
+
+        repo.insertDokazData(dokaz2,zlocin,zr)
         val stmt = connection.prepareStatement("SELECT * FROM dokaz WHERE zlocinId=?")
         stmt.setInt(1, zlocin.idZlocin)
         val rs = stmt.executeQuery()
 
         assertTrue(rs.next(), "Treba da postoji dokaz sa prosledjenim zlocinId-om")
         assertEquals(dokaz.idDokaz, rs.getInt("idDokaz"))
-        assertEquals("fizicki", rs.getString("tipDokaza"))
+        assertEquals("digitalni", rs.getString("tipDokaza"))
         assertEquals("Pistolj pronadjen na mestu zlocina.", rs.getString("opis"))
+        assertEquals(zr.idZrtva, rs.getInt("zrtvaId"))
+        assertEquals(zlocin.idZlocin, rs.getInt("zlocinId"))
+        assertEquals(0, rs.getInt("statusS"))
+
+        assertTrue(rs.next(), "Treba da postoji jos jedan dokaz sa prosledjenim zlocinId-om")
+        assertEquals(dokaz2.idDokaz, rs.getInt("idDokaz"))
+        assertEquals("fizicki", rs.getString("tipDokaza"))
+        assertEquals("Noz pronadjen na mestu zlocina.", rs.getString("opis"))
         assertEquals(zr.idZrtva, rs.getInt("zrtvaId"))
         assertEquals(zlocin.idZlocin, rs.getInt("zlocinId"))
         assertEquals(0, rs.getInt("statusS"))
@@ -4718,4 +4737,6 @@ class MySQLIntegrationTest {
         assertEquals(izjavaZaPacijenta.pacijentId.idPacijent, rs.getInt("pacijentId"))
         assertEquals(izjavaZaPacijenta.osobaId.idOsoba, rs.getInt("osobaId"))
     }
+
+
 }
