@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
@@ -373,12 +374,19 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
                 )
                 repo.insertZlocinData(zl)
                 geminiResponseRetrofit.zlocinRetrofit=zl
-                
+
+                val datumStr = geminiResponse2.pacijentR.zrtvaId?.osobaId?.datum
+                val datumLong = datumStr?.let {
+                    LocalDate.parse(it)
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli()
+                } ?: timestamp
                 val osoba = OsobaData(
                     idOsoba = geminiResponse2.pacijentR.zrtvaId?.osobaId?.idOsoba ?: -1,
                     ime = geminiResponse2.pacijentR.zrtvaId?.osobaId?.ime ?: "Nepoznato",
                     kontakt = geminiResponse2.pacijentR.zrtvaId?.osobaId?.kontakt ?: "Nepoznato",
-                    datum = geminiResponse2.pacijentR.zrtvaId?.osobaId?.datum?.toLong() ?: timestamp,
+                    datum = datumLong ?: timestamp,
                     zanimanje = geminiResponse2.pacijentR.zrtvaId?.osobaId?.zanimanje ?: "Nepoznato",
                     pol = geminiResponse2.pacijentR.zrtvaId?.osobaId?.pol ?: "M",
                     zlocinId = geminiResponse2.pacijentR.zrtvaId?.osobaId?.zlocinId ?: -1
