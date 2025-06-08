@@ -7,6 +7,7 @@ plugins {
     id("io.ktor.plugin") version "3.1.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
+    id("org.jetbrains.dokka") version "1.9.0"
 }
 
 group = "com.example"
@@ -71,4 +72,8 @@ tasks.test {
 
 kover {
 
+}
+
+tasks.dokkaHtml.configure {
+    outputDirectory.set(buildDir.resolve("dokka"))
 }
