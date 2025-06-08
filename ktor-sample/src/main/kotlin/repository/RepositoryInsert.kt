@@ -1,7 +1,6 @@
 package com.example.repository
 
 import com.example.closeResources
-import com.example.getDatabaseConnection
 import com.example.models.dto.*
 import java.sql.*
 

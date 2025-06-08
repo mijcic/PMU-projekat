@@ -439,6 +439,7 @@ class GeminiMurderServiceTest {
         ))
     }
 
+
     @Test
     fun `should return null when getUsedZlocinMurder returns null`() {
         every { repository.getUsedZlocinMurder() } returns null
@@ -449,11 +450,11 @@ class GeminiMurderServiceTest {
         assertNull(result)
     }
 
-
     @Test
     fun `should return null when getZlocin returns null`() {
         every { repository.getUsedZlocinMurder() } returns 1
         //mockujemo sve prethodne zavisnosti koje vode do metode koju zelimo da testiramo
+        every { repository.getTipZlocina(1) } returns returnTipZlocinaData()
         every { repository.getZlocin(1) } returns null
 
         val result = service.getGeminiMurder()
@@ -465,7 +466,7 @@ class GeminiMurderServiceTest {
     fun `should return null when getTipZlocina returns null`() {
         every { repository.getUsedZlocinMurder() } returns 1
         every { repository.getZlocin(1) } returns returnZlocinData()
-        every { repository.getTipZlocina(1) } returns null
+        every { repository.getTipZlocina(returnZlocinData().tipZlocinaId) } returns null
 
         val result = service.getGeminiMurder()
 

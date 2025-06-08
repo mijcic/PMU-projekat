@@ -42,14 +42,14 @@ class MySQLIntegrationTest {
 
             // Kreiranje tabele TipZlocina
             stmt.execute("""
-                CREATE TABLE TipZlocina (
+                CREATE TABLE tipzlocina (
                     idTipZlocina INT AUTO_INCREMENT PRIMARY KEY,
                     naziv VARCHAR(255) NOT NULL
                 );
             """.trimIndent())
 
             stmt.execute("""
-                INSERT INTO TipZlocina (naziv) VALUES
+                INSERT INTO tipzlocina (naziv) VALUES
                 ('murder'), ('disappearance'), ('robbery'), ('kidnappingAndBlackmail'),
                 ('FamilySecrets'), ('Abuse'), ('GangConflicts'), ('Corruption'),
                 ('MysteriousSymptoms'), ('MafiaCrimesOfPassion'), ('FalseIdentities'), ('CultsAndSecrets');
@@ -65,7 +65,7 @@ class MySQLIntegrationTest {
                     mesto VARCHAR(255) NOT NULL,
                     opis TEXT NOT NULL,
                     statusS ENUM('u_istrazi', 'resen') NOT NULL,
-                    FOREIGN KEY (tipZlocinaId) REFERENCES TipZlocina(idTipZlocina)
+                    FOREIGN KEY (tipZlocinaId) REFERENCES tipzlocina(idTipZlocina)
                 );
             """.trimIndent())
 
@@ -1837,6 +1837,63 @@ class MySQLIntegrationTest {
         assertEquals(usedZlocin.idUsedZlocin, rs.getInt("idUsedZlocin"))
         assertEquals(zlocin.idZlocin, rs.getInt("zlocinId"))
         assertEquals(usedZlocin.used, rs.getBoolean("used"))
+    }
+
+
+    @Test
+    fun testGetUsedZlocin(){
+        println("getUsedZlocinTest")
+        val repo = RepositoryInsert(connection)
+        var repoGet = Repository(connection)
+        val d = System.currentTimeMillis()
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u staroj porodicnoj kuci",
+            datum = d,
+            mesto = "Pariz",
+            opis = "Ubistvo mladog coveka",
+            status = "u_istrazi",
+            idZlocin = 0
+        )
+        repo.insertZlocinData(zlocin)
+        val usedZlocin= UsedZlocinData(
+            idUsedZlocin = 1,
+            zlocinId = zlocin,
+            used = false
+        )
+
+        repo.insertUsedZlocinData(usedZlocin)
+
+        val usedZlocinGet =repoGet.getUsedZlocinMurder()
+
+        assertTrue(usedZlocinGet!=null, "Treba da postoji usedZlocin")
+        assertNotNull(usedZlocin)
+    }
+
+    @Test
+    fun testGetTipZlocina(){
+        println("getTipZlocinaTest")
+        val repo = RepositoryInsert(connection)
+        var repoGet = Repository(connection)
+        val d = System.currentTimeMillis()
+        val zlocin = ZlocinData(
+            tipZlocinaId = 1,
+            naziv = "Ubistvo u staroj porodicnoj kuci",
+            datum = d,
+            mesto = "Pariz",
+            opis = "Ubistvo mladog coveka",
+            status = "u_istrazi",
+            idZlocin = 0
+        )
+        repo.insertZlocinData(zlocin)
+
+        val tipZlocinaGet =repoGet.getTipZlocina(zlocin.tipZlocinaId)
+        val tipZlocinaNePostoji =repoGet.getZlocin(zlocin.tipZlocinaId+111)
+
+        assertTrue(tipZlocinaGet!=null, "Treba da postoji zlocin sa prosledjenim id-om")
+        assertTrue(tipZlocinaNePostoji==null, "Treba da ne postoji zlocin sa prosledjenim id-om")
+        assertEquals(tipZlocinaGet.id, zlocin.tipZlocinaId)
+        assertEquals(tipZlocinaGet.naziv, "murder")
     }
 
     @Test
