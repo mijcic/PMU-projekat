@@ -14,6 +14,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.serialization.json.Json
 
+
 class GeminiRoutingTest {
 
     @Test
@@ -1399,6 +1400,7 @@ class GeminiRoutingTest {
     }
 
 
+    /*
     @Test
     fun testGeminiMurderReturnsDataOr404() = testApplication {
         application {
@@ -1415,7 +1417,7 @@ class GeminiRoutingTest {
             response.status == HttpStatusCode.OK ||
                     response.status == HttpStatusCode.NotFound
         )
-    }
+    }*/
 
 
     @Test

@@ -1,7 +1,6 @@
 package com.example.repository
 
 import com.example.closeResources
-import com.example.getDatabaseConnection
 import com.example.models.dto.*
 import java.sql.*
 
@@ -17,14 +16,17 @@ class RepositoryInsert(private val conn: Connection){
         var resultSet: ResultSet? = null
 
         try {
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1,usedZlocin.zlocinId.idZlocin)
-            statement?.setBoolean(2, usedZlocin.used)
+            statement.setInt(1,usedZlocin.zlocinId.idZlocin)
+            statement.setBoolean(2, usedZlocin.used)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 // Vraca generisani ID
                 usedZlocin.idUsedZlocin=resultSet.getInt(1)
@@ -39,27 +41,29 @@ class RepositoryInsert(private val conn: Connection){
     // insert into Zlocin Table in mySql
     fun insertZlocinData(zlocin: ZlocinData) {
         val query = """
-        INSERT INTO zlocin (tipZlocinaId, naziv, datum, mesto, opis, statusS)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO zlocin (tipZlocinaId, naziv, datum, mesto, opis, statusS)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
+
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1,zlocin.tipZlocinaId)
-            statement?.setString(2, zlocin.naziv)
-            statement?.setTimestamp(3, Timestamp(zlocin.datum))
-            statement?.setString(4, zlocin.mesto)
-            statement?.setString(5, zlocin.opis)
-            statement?.setString(6, zlocin.status)
+            statement.setInt(1,zlocin.tipZlocinaId)
+            statement.setString(2, zlocin.naziv)
+            statement.setTimestamp(3, java.sql.Timestamp(zlocin.datum))
+            statement.setString(4, zlocin.mesto)
+            statement.setString(5, zlocin.opis)
+            statement.setString(6, zlocin.status)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 // Vraca generisani ID
                 zlocin.idZlocin=resultSet.getInt(1)
@@ -74,28 +78,29 @@ class RepositoryInsert(private val conn: Connection){
     //insertOsobaData
     fun insertOsobaData(osobaData: OsobaData, zlocin: ZlocinData){
         val query = """
-        INSERT INTO Osoba (ime, kontakt, datum, zanimanje, pol,zlocinId)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
+            INSERT INTO Osoba (ime, kontakt, datum, zanimanje, pol,zlocinId)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
 
-        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, osobaData.ime)
-            statement?.setString(2, osobaData.kontakt)
-            statement?.setTimestamp(3, Timestamp(osobaData.datum))
-            statement?.setString(4, osobaData.zanimanje)
-            statement?.setString(5, osobaData.pol)
-            statement?.setInt(6, zlocin.idZlocin)
+            statement.setString(1, osobaData.ime)
+            statement.setString(2, osobaData.kontakt)
+            statement.setTimestamp(3, java.sql.Timestamp(osobaData.datum))
+            statement.setString(4, osobaData.zanimanje)
+            statement.setString(5, osobaData.pol)
+            statement.setInt(6, zlocin.idZlocin)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 // Vraca generisani ID
                 osobaData.idOsoba=resultSet.getInt(1)
@@ -109,26 +114,27 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertZrtva(zrtvaData: ZrtvaData, zlocin: ZlocinData, osoba: OsobaData){
         val query = """
-        INSERT INTO Zrtva (tipZrtve, detalji, statusZrtva, zlocinId, osobaId)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO Zrtva (tipZrtve, detalji, statusZrtva, zlocinId, osobaId)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, zrtvaData.tipZrtve)
-            statement?.setString(2, zrtvaData.detalji)
-            statement?.setString(3, zrtvaData.statusZrtva)
-            statement?.setInt(4, zrtvaData.zlocinId)
-            statement?.setInt(5, osoba.idOsoba)
+            statement.setString(1, zrtvaData.tipZrtve)
+            statement.setString(2, zrtvaData.detalji)
+            statement.setString(3, zrtvaData.statusZrtva)
+            statement.setInt(4, zrtvaData.zlocinId)
+            statement.setInt(5, osoba.idOsoba)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 // Vraca generisani ID
                 zrtvaData.idZrtva=resultSet.getInt(1)
@@ -143,22 +149,23 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertMotivData(motiv: MotivData){
         val query = """
-        INSERT INTO Motiv (opis) 
-        VALUES (?)
-    """
+            INSERT INTO Motiv (opis) 
+            VALUES (?)
+        """
 
-        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, motiv.opis)
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            statement.setString(1, motiv.opis)
+            statement.executeUpdate()
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 // Vraca generisani ID
                 motiv.idMotiv=resultSet.getInt(1)
@@ -173,27 +180,28 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertOsumnjicenData(osumnjicen: OsumnjicenData, zlocin: ZlocinData, motiv: MotivData) {
         val query = """
-        INSERT INTO osumnjicen (statusS, tipOsumnjicen, motiv, zlocinId, kriv, osobaId)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO osumnjicen (statusS, tipOsumnjicen, motiv, zlocinId, kriv, osobaId)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, osumnjicen.status)
-            statement?.setString(2, osumnjicen.tipOsumnjicen)
-            statement?.setInt(3, motiv.idMotiv)
-            statement?.setInt(4, zlocin.idZlocin)
-            statement?.setInt(5, osumnjicen.kriv)
-            statement?.setInt(6, osumnjicen.osobaId.idOsoba)
+            statement.setInt(1, osumnjicen.status)
+            statement.setString(2, osumnjicen.tipOsumnjicen)
+            statement.setInt(3, motiv.idMotiv)
+            statement.setInt(4, zlocin.idZlocin)
+            statement.setInt(5, osumnjicen.kriv)
+            statement.setInt(6, osumnjicen.osobaId.idOsoba)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 // Vraca generisani ID
                 osumnjicen.idOsumnjicen=resultSet.getInt(1)
@@ -241,40 +249,33 @@ class RepositoryInsert(private val conn: Connection){
 //}
 
     fun insertDokazData(dokaz: DokazData, zlocin: ZlocinData, zrtva: ZrtvaData){
-        //, osumnjiceni: List<OsumnjicenData>){
         val query = """
-        INSERT INTO dokaz (tipDokaza, opis, statusS, zlocinId, zrtvaId)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO dokaz (tipDokaza, opis, statusS, zlocinId, zrtvaId)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
             if (dokaz.tipDokaza != "digitalni" && dokaz.tipDokaza != "fizicki") dokaz.tipDokaza = "fizicki"
 
-            statement?.setString(1, dokaz.tipDokaza)
-            statement?.setString(2, dokaz.opis)
-            statement?.setInt(3, dokaz.status)
-            statement?.setInt(4, zlocin.idZlocin)
-            statement?.setInt(5, zrtva.idZrtva)
+            statement.setString(1, dokaz.tipDokaza)
+            statement.setString(2, dokaz.opis)
+            statement.setInt(3, dokaz.status)
+            statement.setInt(4, zlocin.idZlocin)
+            statement.setInt(5, zrtva.idZrtva)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 dokaz.idDokaz=resultSet.getInt(1)
             }
-
-            // val osumnjicen = osumnjiceni.find { it.ime == dokaz.osumnjicen.ime }
-
-            //if (osumnjicen != null) {
-            //  dokaz.osumnjicen = osumnjicen
-            //}
-
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {
@@ -285,26 +286,27 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertSvedokData(svedok: SvedokData, zlocin: ZlocinData){
         val query = """
-        INSERT INTO svedok (izjava, statusSvedok, statusIspitan, zlocinId, osobaId)
-        VALUES (?, ?, ?, ?, ?)
-    """
-       // var conn: Connection? = null
+            INSERT INTO svedok (izjava, statusSvedok, statusIspitan, zlocinId, osobaId)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, svedok.izjava)
-            statement?.setString(2, svedok.statusSvedok)
-            statement?.setInt(3, svedok.statusIspitan)
-            statement?.setInt(4, zlocin.idZlocin)
-            statement?.setInt(5, svedok.osobaId.idOsoba)
+            statement.setString(1, svedok.izjava)
+            statement.setString(2, svedok.statusSvedok)
+            statement.setInt(3, svedok.statusIspitan)
+            statement.setInt(4, zlocin.idZlocin)
+            statement.setInt(5, svedok.osobaId.idOsoba)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 svedok.idSvedok=resultSet.getInt(1)
             }
@@ -348,7 +350,7 @@ class RepositoryInsert(private val conn: Connection){
             if (alibi.svedok != null) {
                 alibi.svedok?.idSvedok?.let { statement?.setInt(2, it) }
             } else {
-                statement?.setNull(2, Types.INTEGER)  // Correctly set null for svedokId
+                statement?.setNull(2, java.sql.Types.INTEGER)  // Correctly set null for svedokId
             }
             statement?.setString(3, alibi.opis)
             statement?.setString(4, alibi.statusAlibija)
@@ -368,27 +370,28 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertObdukcijaData(obdukcija: ObdukcijaData, zrtva: ZrtvaData){
         val query = """
-        INSERT INTO obdukcija (izvestaj, datum, uzrokSmrti, zrtvaId,informacije)
-        VALUES (?, ?, ?, ?, ?)
-    """
+            INSERT INTO obdukcija (izvestaj, datum, uzrokSmrti, zrtvaId,informacije)
+            VALUES (?, ?, ?, ?, ?)
+        """
 
-        //var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, obdukcija.izvestaj)
-            statement?.setTimestamp(2, Timestamp(obdukcija.datum))
-            statement?.setString(3,  obdukcija.uzrokSmrti)
-            statement?.setInt(4,  zrtva.idZrtva)
-            statement?.setString(5, obdukcija.informacije)
+            statement.setString(1, obdukcija.izvestaj)
+            statement.setTimestamp(2, Timestamp(obdukcija.datum))
+            statement.setString(3,  obdukcija.uzrokSmrti)
+            statement.setInt(4,  zrtva.idZrtva)
+            statement.setString(5, obdukcija.informacije)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 obdukcija.idObdukcija = resultSet.getInt(1)
             }
@@ -401,27 +404,27 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertForenzickiDokaz(forenzickiDokaz: ForenzickiDokazData, zrtva: ZrtvaData){
         val query = """
-        INSERT INTO forenzickiDokaz (tipForenzickiDokaz, opis, statusS, zrtvaId,veza)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO forenzickiDokaz (tipForenzickiDokaz, opis, statusS, zrtvaId,veza)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            // conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, forenzickiDokaz.tipForenzickiDokaz)
-            statement?.setString(2, forenzickiDokaz.opis)
-            statement?.setInt(3,  forenzickiDokaz.statusS)
-            statement?.setInt(4,  zrtva.idZrtva)
+            statement.setString(1, forenzickiDokaz.tipForenzickiDokaz)
+            statement.setString(2, forenzickiDokaz.opis)
+            statement.setInt(3,  forenzickiDokaz.statusS)
+            statement.setInt(4,  zrtva.idZrtva)
+            statement.setString(5, forenzickiDokaz.veza)
+            statement.executeUpdate()
 
-            statement?.setString(5, forenzickiDokaz.veza)
-
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 forenzickiDokaz.idForenzickiDokaz = resultSet.getInt(1)
             }
@@ -434,27 +437,27 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertTelefonData(telefon: TelefonData, zrtva: ZrtvaData){
         val query = """
-        INSERT INTO telefon (model, os, zrtvaId, sifra, informacije)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO telefon (model, os, zrtvaId, sifra, informacije)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, telefon.model)
-            statement?.setString(2, telefon.os)
-            statement?.setInt(3,  zrtva.idZrtva)
+            statement.setString(1, telefon.model)
+            statement.setString(2, telefon.os)
+            statement.setInt(3,  zrtva.idZrtva)
+            statement.setString(4,  telefon.sifra)
+            statement.setString(5, telefon.informacije)
+            statement.executeUpdate()
 
-            statement?.setString(4,  telefon.sifra)
-            statement?.setString(5, telefon.informacije)
-
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 telefon.idTelefon = resultSet.getInt(1)
             }
@@ -464,6 +467,7 @@ class RepositoryInsert(private val conn: Connection){
             closeResources(conn, statement, null)
         }
     }
+
 
     fun insertKontaktData(kontakt: KontaktData, zrtva: ZrtvaData){
         conn.autoCommit = true
@@ -607,28 +611,28 @@ class RepositoryInsert(private val conn: Connection){
     }
 
     fun insertAplikacijaData(aplikacija: AplikacijaData, zrtva: ZrtvaData){
-
         val query = """
-        INSERT INTO aplikacija (naziv, tip, zrtvaId,aktivna,informacije)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO aplikacija (naziv, tip, zrtvaId,aktivna,informacije)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, aplikacija.naziv)
-            statement?.setInt(2, aplikacija.tip)
-            statement?.setInt(3,  zrtva.idZrtva)
-            statement?.setBoolean(4, aplikacija.aktivna)
-            statement?.setString(5,  aplikacija.informacije)
+            statement.setString(1, aplikacija.naziv)
+            statement.setInt(2, aplikacija.tip)
+            statement.setInt(3,  zrtva.idZrtva)
+            statement.setBoolean(4, aplikacija.aktivna)
+            statement.setString(5,  aplikacija.informacije)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 aplikacija.idAplikacije = resultSet.getInt(1)
                 aplikacija.zrtvaId=zrtva
@@ -642,25 +646,25 @@ class RepositoryInsert(private val conn: Connection){
 
 
     fun insertTragData(trag: TragData, forenzickiDokaz: ForenzickiDokazData, osumnjicen: OsumnjicenData){
-
         val query = """
-        INSERT INTO trag (forenzickiDokazId, osumnjicenId)
-        VALUES (?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO trag (forenzickiDokazId, osumnjicenId)
+            VALUES (?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, forenzickiDokaz.idForenzickiDokaz)
-            statement?.setInt(2, osumnjicen.idOsumnjicen)
+            statement.setInt(1, forenzickiDokaz.idForenzickiDokaz)
+            statement.setInt(2, osumnjicen.idOsumnjicen)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 trag.idTrag = resultSet.getInt(1)
                 trag.osumnjicenId=osumnjicen
@@ -674,25 +678,25 @@ class RepositoryInsert(private val conn: Connection){
     }
 
     fun insertDokazOsumnjicenData(dokazOsumnjicen: DokazOsumnjicenData, dokaz: DokazData, osumnjicen: OsumnjicenData){
-
         val query = """
-        INSERT INTO dokazOsumnjicen (dokazId, osumnjicenId)
-        VALUES (?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO dokazOsumnjicen (dokazId, osumnjicenId)
+            VALUES (?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, dokaz.idDokaz)
-            statement?.setInt(2, osumnjicen.idOsumnjicen)
+            statement.setInt(1, dokaz.idDokaz)
+            statement.setInt(2, osumnjicen.idOsumnjicen)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 dokazOsumnjicen.idDokazOsumnjicen = resultSet.getInt(1)
                 dokazOsumnjicen.osumnjicenId=osumnjicen
@@ -705,7 +709,7 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// sign up
+    // sign up
 
     fun signUpKorisnik(korisnik: KorisnikRequest) {
 
@@ -778,7 +782,7 @@ class RepositoryInsert(private val conn: Connection){
         return false  // No matching user found
     }
 
-// log in
+    // log in
 
     fun logIn(korisnik: KorisnikRequest): Boolean {
         val query = """
@@ -810,29 +814,30 @@ class RepositoryInsert(private val conn: Connection){
         return false
     }
 
-// one contact
+    // one contact
 
     fun insertOneContactData(oneContactData: OneContactData, zlocin: ZlocinData) {
         val query = """
-        INSERT INTO oneContact (zlocinId, ime, broj, slika)
-        VALUES (?, ?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO oneContact (zlocinId, ime, broj, slika)
+            VALUES (?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, zlocin.idZlocin)
-            statement?.setString(2, oneContactData.ime)
-            statement?.setString(3, oneContactData.broj)
-            statement?.setInt(4,  oneContactData.slika)
+            statement.setInt(1, zlocin.idZlocin)
+            statement.setString(2, oneContactData.ime)
+            statement.setString(3, oneContactData.broj)
+            statement.setInt(4,  oneContactData.slika)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 oneContactData.idOneContact = resultSet.getInt(1)
             }
@@ -843,28 +848,29 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// beleska
+    // beleska
 
     fun insertBeleskaData(beleskaData: BeleskaData, zlocin: ZlocinData) {
         val query = """
-        INSERT INTO beleska (zlocinId, tekst, datum)
-        VALUES (?, ?, ?)
-    """
-        //var conn: Connection? = null
+            INSERT INTO beleska (zlocinId, tekst, datum)
+            VALUES (?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, zlocin.idZlocin)
-            statement?.setString(2, beleskaData.tekst)
-            statement?.setTimestamp(3, Timestamp(beleskaData.datum))
+            statement.setInt(1, zlocin.idZlocin)
+            statement.setString(2, beleskaData.tekst)
+            statement.setTimestamp(3, Timestamp(beleskaData.datum))
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 beleskaData.idBeleska = resultSet.getInt(1)
             }
@@ -875,34 +881,35 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// WhatsAppKontakt
+    // WhatsAppKontakt
 
     fun insertWhatsAppKontaktData(whatsAppKontaktDataData: WhatsAppKontaktData, zlocin: ZlocinData) {
         val query = """
-        INSERT INTO whatsappkontakt (zlocinId, ime, broj, slika)
-        VALUES (?, ?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO whatsappkontakt (zlocinId, ime, broj, slika)
+            VALUES (?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, zlocin.idZlocin)
-            statement?.setString(2, whatsAppKontaktDataData.ime)
-            statement?.setString(3, whatsAppKontaktDataData.broj)
+            statement.setInt(1, zlocin.idZlocin)
+            statement.setString(2, whatsAppKontaktDataData.ime)
+            statement.setString(3, whatsAppKontaktDataData.broj)
             if (whatsAppKontaktDataData.slika != null) {
-                statement?.setInt(4, whatsAppKontaktDataData.slika)
+                statement.setInt(4, whatsAppKontaktDataData.slika)
             }
             else {
-                statement?.setNull(4, Types.INTEGER)  // Correctly set null for slika
+                statement.setNull(4, Types.INTEGER)  // Correctly set null for slika
             }
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 whatsAppKontaktDataData.idWhatsAppKontakt = resultSet.getInt(1)
             }
@@ -913,30 +920,31 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// WhatsAppPoruka
+    // WhatsAppPoruka
 
     fun insertWhatsAppPorukaData(whatsAppPorukaData: WhatsAppPorukaData, kontaktKoSalje: WhatsAppKontaktData, kontaktKomeSalje: WhatsAppKontaktData) {
         val query = """
-        INSERT INTO whatsappporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO whatsappporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, kontaktKoSalje.idWhatsAppKontakt)
-            statement?.setInt(2, kontaktKomeSalje.idWhatsAppKontakt)
-            statement?.setString(3, whatsAppPorukaData.tekst)
-            statement?.setTimestamp(4, Timestamp(whatsAppPorukaData.datum))
-            statement?.setBoolean(5, whatsAppPorukaData.procitana)
+            statement.setInt(1, kontaktKoSalje.idWhatsAppKontakt)
+            statement.setInt(2, kontaktKomeSalje.idWhatsAppKontakt)
+            statement.setString(3, whatsAppPorukaData.tekst)
+            statement.setTimestamp(4, java.sql.Timestamp(whatsAppPorukaData.datum))
+            statement.setBoolean(5, whatsAppPorukaData.procitana)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 whatsAppPorukaData.idWhatsAppPoruka = resultSet.getInt(1)
             }
@@ -947,30 +955,31 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// OneCall
+    // OneCall
 
     fun insertOneCallData(oneCallData: OneCallData) {
         val query = """
-        INSERT INTO onecall (kontakt, datum, propusten, dolazni, zrtvaId)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO onecall (kontakt, datum, propusten, dolazni, zrtvaId)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, oneCallData.kontakt)
-            statement?.setTimestamp(2, Timestamp(oneCallData.datum))
-            statement?.setBoolean(3, oneCallData.propusten)
-            statement?.setBoolean(4, oneCallData.dolazni)
-            statement?.setInt(5, oneCallData.zrtvaId)
+            statement.setInt(1, oneCallData.kontakt)
+            statement.setTimestamp(2, Timestamp(oneCallData.datum))
+            statement.setBoolean(3, oneCallData.propusten)
+            statement.setBoolean(4, oneCallData.dolazni)
+            statement.setInt(5, oneCallData.zrtvaId)
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            statement.executeUpdate()
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 oneCallData.idOneCall = resultSet.getInt(1)
             }
@@ -981,34 +990,36 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// Gallery
+    // Gallery
 
     fun insertGalleryData(galleryData: GalleryData, zlocin: ZlocinData) {
         val query = """
-        INSERT INTO gallery (zlocinId, slika, datum, mesto)
-        VALUES (?, ?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO gallery (zlocinId, slika, datum, mesto)
+            VALUES (?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, zlocin.idZlocin)
+            statement.setInt(1, zlocin.idZlocin)
             if (galleryData.slika != null) {
-                statement?.setInt(2, galleryData.slika)
+                statement.setInt(2, galleryData.slika)
             }
             else {
-                statement?.setNull(2, Types.INTEGER)  // Correctly set null for slika
+                statement.setNull(2, Types.INTEGER)  // Correctly set null for slika
             }
-            statement?.setTimestamp(3, Timestamp(galleryData.datum))
-            statement?.setString(4, galleryData.mesto)
+            statement.setTimestamp(3, Timestamp(galleryData.datum))
+            statement.setString(4, galleryData.mesto)
 
-            statement?.executeUpdate()
+            statement.executeUpdate()
 
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 galleryData.idPhoto = resultSet.getInt(1)
             }
@@ -1019,35 +1030,31 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// ObicnaPoruka
+    // ObicnaPoruka
 
     fun insertObicnaPorukaData(obicnaPorukaData: ObicnaPorukaData, kontaktKoSalje: OneContactData, kontaktKomeSalje: OneContactData) {
         val query = """
-        INSERT INTO obicnaporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
-        VALUES (?, ?, ?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO obicnaporuka (kontaktKoSalje, kontaktKomeSalje, tekst, datum, procitana)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-
-            statement?.setInt(1, kontaktKoSalje.idOneContact)
-            statement?.setInt(2, kontaktKomeSalje.idOneContact)
-            statement?.setString(3, obicnaPorukaData.tekst)
-            statement?.setTimestamp(4, Timestamp(obicnaPorukaData.datum))
-
-            if (obicnaPorukaData.procitana != null) {
-                statement?.setBoolean(5, obicnaPorukaData.procitana)
-            } else {
-                statement?.setNull(5, Types.BOOLEAN)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
             }
 
-            statement?.executeUpdate()
+            statement.setInt(1, kontaktKoSalje.idOneContact)
+            statement.setInt(2, kontaktKomeSalje.idOneContact)
+            statement.setString(3, obicnaPorukaData.tekst)
+            statement.setTimestamp(4, Timestamp(obicnaPorukaData.datum))
+            statement.setBoolean(5, obicnaPorukaData.procitana)
+            statement.executeUpdate()
 
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 obicnaPorukaData.idObicnaPoruka = resultSet.getInt(1)
             }
@@ -1058,28 +1065,29 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// OdnosOsumnjicenZrtva
+    // OdnosOsumnjicenZrtva
 
     fun insertOdnosOsumnjicenZrtvaData(odnosOsumnjicenZrtvaData: OdnosOsumnjicenZrtvaData, osumnjicenData: OsumnjicenData, zrtvaData: ZrtvaData) {
         val query = """
-        INSERT INTO odnososumnjicenzrtva (osumnjicenId, zrtvaId, tipOdnosa)
-        VALUES (?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO odnososumnjicenzrtva (osumnjicenId, zrtvaId, tipOdnosa)
+            VALUES (?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, osumnjicenData.idOsumnjicen)
-            statement?.setInt(2, zrtvaData.idZrtva)
-            statement?.setString(3, odnosOsumnjicenZrtvaData.tipOdnosa)
+            statement.setInt(1, osumnjicenData.idOsumnjicen)
+            statement.setInt(2, zrtvaData.idZrtva)
+            statement.setString(3, odnosOsumnjicenZrtvaData.tipOdnosa)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 odnosOsumnjicenZrtvaData.idOdnos = resultSet.getInt(1)
             }
@@ -1090,27 +1098,28 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// PrijavljeniKorisnik
+    // PrijavljeniKorisnik
 
     fun insertPrijavljeniKorisnikData(prijavljeniKorisnikData: PrijavljeniKorisnikData) {
         val query = """
-        INSERT INTO prijavljenikorisnik (korisnickoIme, sifra)
-        VALUES (?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO prijavljenikorisnik (korisnickoIme, sifra)
+            VALUES (?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, prijavljeniKorisnikData.korisnickoIme)
-            statement?.setString(2, prijavljeniKorisnikData.sifra)
+            statement.setString(1, prijavljeniKorisnikData.korisnickoIme)
+            statement.setString(2, prijavljeniKorisnikData.sifra)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 prijavljeniKorisnikData.idKorisnik = resultSet.getInt(1)
             }
@@ -1121,27 +1130,28 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// Pitanje
+    // Pitanje
 
     fun insertPitanjeData(pitanjeData: PitanjeData, zlocin: ZlocinData) {
         val query = """
-        INSERT INTO pitanje (zlocinId, tekst)
-        VALUES (?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO pitanje (zlocinId, tekst)
+            VALUES (?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, zlocin.idZlocin)
-            statement?.setString(2, pitanjeData.tekst)
+            statement.setInt(1, zlocin.idZlocin)
+            statement.setString(2, pitanjeData.tekst)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 pitanjeData.idPitanje = resultSet.getInt(1)
             }
@@ -1152,29 +1162,30 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// Odgovor
+    // Odgovor
 
     fun insertOdgovorData(odgovorData: OdgovorData, pitanje: PitanjeData) {
         val query = """
-        INSERT INTO odgovor (pitanjeId, tekstOdgovora, tacan, bodovi)
-        VALUES (?, ?, ?, ?)
-    """
-        // var conn: Connection? = null
+            INSERT INTO odgovor (pitanjeId, tekstOdgovora, tacan, bodovi)
+            VALUES (?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, pitanje.idPitanje)
-            statement?.setString(2, odgovorData.tekstOdgovora)
-            statement?.setBoolean(3, odgovorData.tacan)
-            statement?.setInt(4, odgovorData.bodovi)
+            statement.setInt(1, pitanje.idPitanje)
+            statement.setString(2, odgovorData.tekstOdgovora)
+            statement.setBoolean(3, odgovorData.tacan)
+            statement.setInt(4, odgovorData.bodovi)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 odgovorData.idOdogovor = resultSet.getInt(1)
             }
@@ -1185,31 +1196,31 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// PitanjeIspitivanjeOsumnjicenog
+    // PitanjeIspitivanjeOsumnjicenog
 
     fun insertPitanjeIspitivanjeOsumnjicenogData(pitanjeIspitivanjeOsumnjicenogData: PitanjeIspitivanjeOsumnjicenogData, osumnjicen: OsumnjicenData) {
         val query = """
-        INSERT INTO pitanjeispitivanjeosumnjicenog (kategorija, tekst, odgovor, komentar, osumnjicenId)
-        VALUES (?, ?, ?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO pitanjeispitivanjeosumnjicenog (kategorija, tekst, odgovor, komentar, osumnjicenId)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, pitanjeIspitivanjeOsumnjicenogData.kategorija)
-            statement?.setString(2, pitanjeIspitivanjeOsumnjicenogData.tekst)
-            statement?.setString(3, pitanjeIspitivanjeOsumnjicenogData.odgovor)
-            statement?.setString(4, pitanjeIspitivanjeOsumnjicenogData.komentar)
-            statement?.setInt(5, osumnjicen.idOsumnjicen)
+            statement.setString(1, pitanjeIspitivanjeOsumnjicenogData.kategorija)
+            statement.setString(2, pitanjeIspitivanjeOsumnjicenogData.tekst)
+            statement.setString(3, pitanjeIspitivanjeOsumnjicenogData.odgovor)
+            statement.setString(4, pitanjeIspitivanjeOsumnjicenogData.komentar)
+            statement.setInt(5, osumnjicen.idOsumnjicen)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 pitanjeIspitivanjeOsumnjicenogData.idPitanjeIspitivanjeOsumnjicenog = resultSet.getInt(1)
             }
@@ -1220,30 +1231,29 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// PitanjeIspitivanjeSvedoka
+    // PitanjeIspitivanjeSvedoka
 
     fun insertPitanjeIspitivanjeSvedokaData(pitanjeIspitivanjeSvedokaData: PitanjeIspitivanjeSvedokaData, svedok: SvedokData) {
         val query = """
-        INSERT INTO pitanjeispitivanjesvedoka (tekst, odgovor, svedokId, nextPitanje)
-        VALUES (?, ?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO pitanjeispitivanjesvedoka (tekst, odgovor, svedokId, nextPitanje)
+            VALUES (?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
+            statement.setString(1, pitanjeIspitivanjeSvedokaData.tekst)
+            statement.setString(2, pitanjeIspitivanjeSvedokaData.odgovor)
+            statement.setInt(3, svedok.idSvedok)
+            statement.setInt(4, pitanjeIspitivanjeSvedokaData.nextPitanje)
+            statement.executeUpdate()
 
-            statement?.setString(1, pitanjeIspitivanjeSvedokaData.tekst)
-            statement?.setString(2, pitanjeIspitivanjeSvedokaData.odgovor)
-            statement?.setInt(3, svedok.idSvedok)
-            statement?.setInt(4, pitanjeIspitivanjeSvedokaData.nextPitanje)
-
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 pitanjeIspitivanjeSvedokaData.idPitanjeIspitivanjeSvedoka = resultSet.getInt(1)
             }
@@ -1286,6 +1296,7 @@ class RepositoryInsert(private val conn: Connection){
         return list
     }
 
+
     fun updatePitanjeIspitivanjeSvedokaListData(list: List<PitanjeIspitivanjeSvedokaData>, svedok: SvedokData) {
         val query = """
         UPDATE pitanjeispitivanjesvedoka
@@ -1318,31 +1329,31 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// Zadatak
+    // Zadatak
 
     fun insertZadatakData(zadatakData: ZadatakData, zlocin: ZlocinData) {
         val query = """
-        INSERT INTO zadatak (tekst, korak, uradjen, nextZadatak, zlocinId)
-        VALUES (?, ?, ?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO zadatak (tekst, korak, uradjen, nextZadatak, zlocinId)
+            VALUES (?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, zadatakData.tekst)
-            statement?.setString(2, zadatakData.korak)
-            statement?.setBoolean(3, zadatakData.uradjen)
-            statement?.setNull(4,  Types.INTEGER)
-            statement?.setInt(5, zlocin.idZlocin)
+            statement.setString(1, zadatakData.tekst)
+            statement.setString(2, zadatakData.korak)
+            statement.setBoolean(3, zadatakData.uradjen)
+            statement.setNull(4,  Types.INTEGER)
+            statement.setInt(5, zlocin.idZlocin)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 zadatakData.idZadatak = resultSet.getInt(1)
             }
@@ -1357,13 +1368,11 @@ class RepositoryInsert(private val conn: Connection){
         val query = "SELECT idZadatak, tekst, korak, uradjen, nextZadatak, zlocinId FROM zadatak"
         val zadatakList = mutableListOf<ZadatakData>()
 
-        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query)
+            statement = conn.prepareStatement(query)
             resultSet = statement?.executeQuery()
 
             while (resultSet?.next() == true) {
@@ -1388,17 +1397,14 @@ class RepositoryInsert(private val conn: Connection){
 
     fun updateZadatakListData(zadatakList: List<ZadatakData>, zlocin: ZlocinData) {
         val query = """
-        UPDATE zadatak
-        SET nextZadatak = ?
-        WHERE idZadatak = ? AND zlocinId = ?
-    """
-
-        // var conn: Connection? = null
+            UPDATE zadatak
+            SET nextZadatak = ?
+            WHERE idZadatak = ? AND zlocinId = ?
+        """
         var statement: PreparedStatement? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query)
+            statement = conn.prepareStatement(query)
 
             for (i in 0 until zadatakList.size - 1) {
                 val currentZadatak = zadatakList[i]
@@ -1418,30 +1424,32 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// DokazZadatak
+    // DokazZadatak
 
     fun insertDokazZadatakData(dokazZadatakData: DokazZadatakData, dokazData: DokazData, zadatakData: ZadatakData) {
         val query = """
-        INSERT INTO dokazzadatak (tekst, dokazId, uradjen, zadatakId)
-        VALUES (?, ?, ?, ?)
-    """
+            INSERT INTO dokazzadatak (tekst, dokazId, uradjen, zadatakId)
+            VALUES (?, ?, ?, ?)
+        """
 
-        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-           // conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, dokazZadatakData.tekst)
-            statement?.setInt(2, dokazData.idDokaz)
-            statement?.setBoolean(3, dokazZadatakData.uradjen)
-            statement?.setInt(4, zadatakData.idZadatak)
+            statement.setString(1, dokazZadatakData.tekst)
+            statement.setInt(2, dokazData.idDokaz)
+            statement.setBoolean(3, dokazZadatakData.uradjen)
+            statement.setInt(4, zadatakData.idZadatak)
 
-            statement?.executeUpdate()
+            statement.executeUpdate()
 
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 dokazZadatakData.idDokazZadatak = resultSet.getInt(1)
             }
@@ -1452,29 +1460,28 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// IspitivanjeOsumnjicenogZadatak
+    // IspitivanjeOsumnjicenogZadatak
 
     fun insertIspitivanjeOsumnjicenogZadatakData(ispitivanjeOsumnjicenogZadatakData: IspitivanjeOsumnjicenogZadatakData, osumnjicenData: OsumnjicenData, zadatakData: ZadatakData) {
         val query = """
-        INSERT INTO ispitivanjeosumnjicenogzadatak (osumnjicenId, zadatakId, uradjen)
-        VALUES (?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO ispitivanjeosumnjicenogzadatak (osumnjicenId, zadatakId, uradjen)
+            VALUES (?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
+            statement.setInt(1, osumnjicenData.idOsumnjicen)
+            statement.setInt(2, zadatakData.idZadatak)
+            statement.setBoolean(3, ispitivanjeOsumnjicenogZadatakData.uradjen)
+            statement.executeUpdate()
 
-            statement?.setInt(1, osumnjicenData.idOsumnjicen)
-            statement?.setInt(2, zadatakData.idZadatak)
-            statement?.setBoolean(3, ispitivanjeOsumnjicenogZadatakData.uradjen)
-
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 ispitivanjeOsumnjicenogZadatakData.idIspitivanjeOsumnjicenogZadatak = resultSet.getInt(1)
             }
@@ -1485,29 +1492,29 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// IspitivanjeSvedokaZadatak
+    // IspitivanjeSvedokaZadatak
 
     fun insertIspitivanjeSvedokaZadatakData(ispitivanjeSvedokaZadatakData: IspitivanjeSvedokaZadatakData, svedokData: SvedokData, zadatakData: ZadatakData) {
         val query = """
-        INSERT INTO ispitivanjesvedokazadatak (svedokId, zadatakId, uradjen)
-        VALUES (?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO ispitivanjesvedokazadatak (svedokId, zadatakId, uradjen)
+            VALUES (?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, svedokData.idSvedok)
-            statement?.setInt(2, zadatakData.idZadatak)
-            statement?.setBoolean(3, ispitivanjeSvedokaZadatakData.uradjen)
+            statement.setInt(1, svedokData.idSvedok)
+            statement.setInt(2, zadatakData.idZadatak)
+            statement.setBoolean(3, ispitivanjeSvedokaZadatakData.uradjen)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 ispitivanjeSvedokaZadatakData.idIspitivanjeSvedokaZadatak = resultSet.getInt(1)
             }
@@ -1518,29 +1525,29 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// TelefonZadatak
+    // TelefonZadatak
 
     fun insertTelefonZadatakData(telefonZadatakData: TelefonZadatakData, telefonData: TelefonData, zadatakData: ZadatakData) {
         val query = """
-        INSERT INTO telefonzadatak (telefonId, zadatakId, uradjen)
-        VALUES (?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO telefonzadatak (telefonId, zadatakId, uradjen)
+            VALUES (?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, telefonData.idTelefon)
-            statement?.setInt(2, zadatakData.idZadatak)
-            statement?.setBoolean(3, telefonZadatakData.uradjen)
+            statement.setInt(1, telefonData.idTelefon)
+            statement.setInt(2, zadatakData.idZadatak)
+            statement.setBoolean(3, telefonZadatakData.uradjen)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 telefonZadatakData.idTelefonZadatak = resultSet.getInt(1)
             }
@@ -1551,30 +1558,30 @@ class RepositoryInsert(private val conn: Connection){
         }
     }
 
-// ForenzickiDokazZadatak
+    // ForenzickiDokazZadatak
 
     fun insertForenzickiDokazZadatakData(forenzickiDokazZadatakData: ForenzickiDokazZadatakData, forenzickiDokazData: ForenzickiDokazData, zadatakData: ZadatakData) {
         val query = """
-        INSERT INTO forenzickidokazzadatak (tekst, forenzickiDokazId, uradjen, zadatakId)
-        VALUES (?, ?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO forenzickidokazzadatak (tekst, forenzickiDokazId, uradjen, zadatakId)
+            VALUES (?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, forenzickiDokazZadatakData.tekst)
-            statement?.setInt(2, forenzickiDokazData.idForenzickiDokaz)
-            statement?.setBoolean(3, forenzickiDokazZadatakData.uradjen)
-            statement?.setInt(4, zadatakData.idZadatak)
+            statement.setString(1, forenzickiDokazZadatakData.tekst)
+            statement.setInt(2, forenzickiDokazData.idForenzickiDokaz)
+            statement.setBoolean(3, forenzickiDokazZadatakData.uradjen)
+            statement.setInt(4, zadatakData.idZadatak)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 forenzickiDokazZadatakData.idForenzickiDokazZadatak = resultSet.getInt(1)
             }
@@ -1620,35 +1627,36 @@ class RepositoryInsert(private val conn: Connection){
 
 
 
-//mysterious symptoms
+    //mysterious symptoms
 
     fun insertPacijentData(pacijent: PacijentData) {
         if (pacijent.statusPacijenta!="ziva" || pacijent.statusPacijenta!="mrtva"){
             pacijent.statusPacijenta="ziva"
         }
         val query = """
-        INSERT INTO pacijent (simptomi, statusPacijenta, datumPrijave, prijavio, zlocinId,zrtvaId)
-        VALUES (?, ?, ?, ?, ?,?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO pacijent (simptomi, statusPacijenta, datumPrijave, prijavio, zlocinId,zrtvaId)
+            VALUES (?, ?, ?, ?, ?,?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, pacijent.simptomi)
-            statement?.setString(2, pacijent.statusPacijenta)
-            statement?.setTimestamp(3, Timestamp(pacijent.datumPrijave))
-            statement?.setInt(4, pacijent.prijavio.idOsoba)
-            statement?.setInt(5, pacijent.zlocinId.idZlocin)
-            statement?.setInt(6, pacijent.zrtvaId.idZrtva)
+            statement.setString(1, pacijent.simptomi)
+            statement.setString(2, pacijent.statusPacijenta)
+            statement.setTimestamp(3, Timestamp(pacijent.datumPrijave))
+            statement.setInt(4, pacijent.prijavio.idOsoba)
+            statement.setInt(5, pacijent.zlocinId.idZlocin)
+            statement.setInt(6, pacijent.zrtvaId.idZrtva)
 
-            statement?.executeUpdate()
+            statement.executeUpdate()
 
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 pacijent.idPacijent = resultSet.getInt(1)
             }
@@ -1662,29 +1670,29 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertMedicinskiIzvestajData(medicinskiIzvestaj: MedicinskiIzvestajData) {
         val query = """
-        INSERT INTO medicinskiizvestaj (rezime, CTnalaz, MRInalaz, krvnaSlika, toksikoloskeAnalize, zakljucak,pacijentId )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO medicinskiizvestaj (rezime, CTnalaz, MRInalaz, krvnaSlika, toksikoloskeAnalize, zakljucak,pacijentId )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, medicinskiIzvestaj.rezime)
-            statement?.setString(2, medicinskiIzvestaj.CTnalaz)
-            statement?.setString(3, medicinskiIzvestaj.MRInalaz)
-            statement?.setString(4, medicinskiIzvestaj.krvnaSlika)
-            statement?.setString(5, medicinskiIzvestaj.toksikoloskeAnalize)
-            statement?.setString(6, medicinskiIzvestaj.zakljucak)
-            statement?.setInt(7, medicinskiIzvestaj.pacijentId.idPacijent)
+            statement.setString(1, medicinskiIzvestaj.rezime)
+            statement.setString(2, medicinskiIzvestaj.CTnalaz)
+            statement.setString(3, medicinskiIzvestaj.MRInalaz)
+            statement.setString(4, medicinskiIzvestaj.krvnaSlika)
+            statement.setString(5, medicinskiIzvestaj.toksikoloskeAnalize)
+            statement.setString(6, medicinskiIzvestaj.zakljucak)
+            statement.setInt(7, medicinskiIzvestaj.pacijentId.idPacijent)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 medicinskiIzvestaj.idMedicinskiIzvestaj = resultSet.getInt(1)
             }
@@ -1698,23 +1706,23 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertLekarskiTestData(lekarskiTest: LekarskiTestData) {
         val query = """
-        INSERT INTO lekarskitest (pacijentId,izjava)
-        VALUES (?,?)
-    """
-
-        // var conn: Connection? = null
+           INSERT INTO lekarskitest (pacijentId,izjava)
+           VALUES (?,?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setInt(1, lekarskiTest.pacijentId.idPacijent)
-            statement?.setString(2, lekarskiTest.izvestaj)
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            statement.setInt(1, lekarskiTest.pacijentId.idPacijent)
+            statement.setString(2, lekarskiTest.izvestaj)
+            statement.executeUpdate()
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 lekarskiTest.idLekarskiTest = resultSet.getInt(1)
             }
@@ -1728,28 +1736,28 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertLokacijeIstrageData(lokacijeIstrage: LokacijeIstrageData) {
         val query = """
-        INSERT INTO lokacijeistrage (mesto, naziv, opis, zlocinId, geoTackaALatitude, geoTackaALongitude)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO lokacijeistrage (mesto, naziv, opis, zlocinId, geoTackaALatitude, geoTackaALongitude)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, lokacijeIstrage.mesto)
-            statement?.setString(2, lokacijeIstrage.naziv)
-            statement?.setString(3, lokacijeIstrage.opis)
-            statement?.setInt(4, lokacijeIstrage.zlocinId)
-            statement?.setDouble(5, lokacijeIstrage.geoTackaALatitude)
-            statement?.setDouble(6, lokacijeIstrage.geoTackaALongitude)
+            statement.setString(1, lokacijeIstrage.mesto)
+            statement.setString(2, lokacijeIstrage.naziv)
+            statement.setString(3, lokacijeIstrage.opis)
+            statement.setInt(4, lokacijeIstrage.zlocinId)
+            statement.setDouble(5, lokacijeIstrage.geoTackaALatitude)
+            statement.setDouble(6, lokacijeIstrage.geoTackaALongitude)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 lokacijeIstrage.idLokacijeIstrage = resultSet.getInt(1)
             }
@@ -1762,25 +1770,25 @@ class RepositoryInsert(private val conn: Connection){
 
     fun insertIzjavaZaPacijentaData(izjavaZaPacijenta: IzjavaZaPacijentaData, pacijentData: PacijentData, osobaData: OsobaData) {
         val query = """
-        INSERT INTO izjavazapacijenta (izjava, pacijentId, osobaId)
-        VALUES (?, ?, ?)
-    """
-
-        // var conn: Connection? = null
+            INSERT INTO izjavazapacijenta (izjava, pacijentId, osobaId)
+            VALUES (?, ?, ?)
+        """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
         try {
-            //conn = getDatabaseConnection()
-            statement = conn?.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return
+            }
 
-            statement?.setString(1, izjavaZaPacijenta.izjava)
-            statement?.setInt(2, pacijentData.idPacijent)
-            statement?.setInt(3, osobaData.idOsoba)
+            statement.setString(1, izjavaZaPacijenta.izjava)
+            statement.setInt(2, pacijentData.idPacijent)
+            statement.setInt(3, osobaData.idOsoba)
+            statement.executeUpdate()
 
-            statement?.executeUpdate()
-
-            resultSet = statement?.generatedKeys
+            resultSet = statement.generatedKeys
             if (resultSet?.next() == true) {
                 izjavaZaPacijenta.idIzjavaZaPacijenta = resultSet.getInt(1)
             }
