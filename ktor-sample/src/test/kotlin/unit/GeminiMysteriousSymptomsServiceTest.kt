@@ -457,6 +457,19 @@ class GeminiMysteriousSymptomsServiceTest {
     }
 
     @Test
+    fun `should return null when getGalerija returns null`() {
+        every { repository.getUsedZlocinMysteriousSymptoms() } returns 1
+        val zrtva= returnZrtvaData()
+        every { repository.getZlocin(1) } returns returnZlocinData()
+        every { repository.getZrtva(1) } returns zrtva
+        every { repository.getGalerija(1,zrtva) } returns null
+
+        val result = service.getGeminiMysteriousSymtoms()
+
+        assertNull(result)
+    }
+
+    @Test
     fun `should return null when getAplikacije returns null`() {
         every { repository.getUsedZlocinMysteriousSymptoms() } returns 1
         val zrtva = returnZrtvaData()
@@ -634,34 +647,11 @@ class GeminiMysteriousSymptomsServiceTest {
         every { repository.getZlocin(1) } returns zlocin
         every { repository.getZadaci(zlocin.idZlocin) } returns zadaci
 
-        every { repository.getGallery(1) } returns emptyList()
-        every { repository.getPitanja(1) } returns emptyList()
-        every { repository.getOsobe(1) } returns emptyList()
+        every { repository.getGallery(1) } returns returnGalleryData()
+        every { repository.getOsobe(1) } returns returnOsobaData()
+        every { repository.getPitanja(1) } returns returnPitanjaData()
 
         every { repository.getOdgovor(1) } returns null
-
-        every { repository.getTipZlocina(any()) } returns returnTipZlocinaData()
-        every { repository.getZrtva(any()) } returns returnZrtvaData()
-        every { repository.getWhatsAppKontakt(any(), any()) } returns null
-        every { repository.getOneContact(any()) } returns returnOneContact()
-        every { repository.getDokazi(any(), any()) } returns null
-        every { repository.getTelefon(any()) } returns null
-        every { repository.getForenzickiDokazi(any()) } returns null
-        every { repository.getGalerija(any(), any()) } returns null
-        every { repository.getAplikacije(any(), any()) } returns null
-        every { repository.getBeleske(any(), any()) } returns null
-        every { repository.getWhatsAppPoruka(any(), any()) } returns null
-        every { repository.getOneCall(any(), any()) } returns null
-        every { repository.getObicnaPoruka(any(), any()) } returns null
-        every { repository.getPacijent(any(), any(), any(), any()) } returns returnPacijentData()
-        every { repository.getMedicinskiIzvetaj(any()) } returns returnMedicinskiIzvestajData()
-        every { repository.getLekarskiTest(any()) } returns returnLekarskiTest()
-        every { repository.getLokacijeIstrage(any()) } returns null
-        every { repository.getIzjavaZaPacijenta(any(), any()) } returns returnIzjavaZaPacijenta()
-
-        every { repository.getDokaziZadaci(any(), any()) } returns null
-        every { repository.getTelefonZadaci(any(), any()) } returns null
-        every { repository.getForenzickiDokazZadatak(any(), any()) } returns null
 
         val result = service.getGeminiMysteriousSymtoms()
 
@@ -670,7 +660,14 @@ class GeminiMysteriousSymptomsServiceTest {
 
     @Test
     fun `should return null when getOsobe returns null`() {
+        val zlocin = returnZlocinData()
+        val zadaci = returnZadaciData()
         every { repository.getUsedZlocinMysteriousSymptoms() } returns 1
+        every { repository.getZlocin(1) } returns zlocin
+        every { repository.getZadaci(zlocin.idZlocin) } returns zadaci
+        every { repository.getGallery(1) } returns returnGalleryData()
+        every { repository.getPitanja(1) } returns returnPitanjaData()
+        every { repository.getOdgovor(1) } returns returnOdgovorData()
         every { repository.getOsobe(1) } returns null
 
         val result = service.getGeminiMysteriousSymtoms()

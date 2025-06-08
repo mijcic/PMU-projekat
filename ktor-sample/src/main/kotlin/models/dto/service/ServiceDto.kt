@@ -72,7 +72,8 @@ data class PacijentMSDataGeminiRetrofit(
     val medicinskiIzvestaj: MedicinskiIzvestajData?,
     val lekarskiTest: LekarskiTestData?,
     val lokacijeIstrage: List<LokacijeIstrageData>?,
-    val izjavaZaPacijenta: IzjavaZaPacijentaData?
+    val izjavaZaPacijenta: IzjavaZaPacijentaData?,
+    val osobe: List<OsobaData>?
 )
 
 data class ZadaciMSDataGeminiRetrofit(
@@ -86,5 +87,5 @@ data class OtherMSDataGeminiRetrofit(
     val gallery: List<GalleryData>?,
     val pitanja: List<PitanjeData>?,
     val odgovori: List<OdgovorData>?,
-    val osobe: List<OsobaData>?
+    //val osobe: List<OsobaData>?
 )

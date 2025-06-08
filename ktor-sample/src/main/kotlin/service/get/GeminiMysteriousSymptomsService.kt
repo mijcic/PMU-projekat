@@ -1,16 +1,12 @@
 package com.example.service.get
 
 import com.example.*
-import com.example.models.dto.PacijentData
 import com.example.models.dto.gemini.GeminiResponseRetrofitMysteriousSymptoms
 import com.example.models.dto.service.*
 import com.example.repository.RepoInterface
-import com.example.repository.Repository
 
 class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
     fun getGeminiMysteriousSymtoms(): GeminiResponseRetrofitMysteriousSymptoms? {
-        println("\nMYSTERIOUS SYMPTOMS\n")
-
         val id = repository.getUsedZlocinMysteriousSymptoms() ?: run {
             println("Neki podaci su null — provera nije prošla.")
             return null
@@ -26,7 +22,7 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
             return null
         }
 
-        val pacijentData = loadPacijentDataGeminiRetrofit(id)?: run {
+        val pacijentData = loadPacijentDataGeminiRetrofit(id,zlocinData,zrtvaData)?: run {
             println("Neki podaci su null — provera nije prošla.")
             return null
         }
@@ -56,7 +52,7 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
             obicnePorukeRetrofit = zrtvaData.obicnaPoruka,
             pitanjaRetrofit = otherData.pitanja,
             odgovoriRetrofit = otherData.odgovori,
-            osobeRetrofit = otherData.osobe,
+            osobeRetrofit = pacijentData.osobe,
             zadaciRetrofit = zadaciData.zadaci,
             dokaziZadaciRetrofit = zadaciData.dokaziZadaci,
             telefonZadaciRetrofit = zadaciData.telefonZadaci,
@@ -68,7 +64,6 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
             izjavaZaPacijentaRetrofit = pacijentData.izjavaZaPacijenta
         )
 
-        println("\nGEMINI MS\n")
         return geminiResponseRetrofit
     }
 
@@ -100,18 +95,17 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
         )
     }
 
-    private fun loadPacijentDataGeminiRetrofit(id: Int): PacijentMSDataGeminiRetrofit? {
-        val zlocin = repository.getZlocin(id) ?: return null
+    private fun loadPacijentDataGeminiRetrofit(id: Int,zlocin:ZlocinDataGeminiRetrofit,zrtva:ZrtvaMSDataGeminiRetrofit): PacijentMSDataGeminiRetrofit? {
         val osobe = repository.getOsobe(id)?: return null
-        val zrtva = repository.getZrtva(id) ?: return null
-        val pacijent = repository.getPacijent(id, zlocin, zrtva, osobe) ?: return null
+        val pacijent = repository.getPacijent(id, zlocin.zlocin, zrtva.zrtva, osobe) ?: return null
 
         return PacijentMSDataGeminiRetrofit(
             pacijent = pacijent,
             medicinskiIzvestaj = repository.getMedicinskiIzvetaj(pacijent) ?: return null,
             lekarskiTest = repository.getLekarskiTest(pacijent) ?: return null,
             lokacijeIstrage = repository.getLokacijeIstrage(id) ?: return null,
-            izjavaZaPacijenta = repository.getIzjavaZaPacijenta(pacijent, osobe) ?: return null
+            izjavaZaPacijenta = repository.getIzjavaZaPacijenta(pacijent, osobe) ?: return null,
+            osobe = osobe
         )
     }
 
@@ -130,7 +124,6 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
             gallery = repository.getGallery(id)?: return null,
             pitanja = repository.getPitanja(id)?: return null,
             odgovori = repository.getOdgovor(id)?: return null,
-            osobe = repository.getOsobe(id)?: return null
         )
     }
 }
