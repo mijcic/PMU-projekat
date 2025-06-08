@@ -51,3 +51,40 @@ data class OtherDataGeminiRetrofit(
     val pitanjaIspitivanjeSvedoka: List<PitanjeIspitivanjeSvedokaData>?,
     val osobe: List<OsobaData>?
 )
+
+data class ZrtvaMSDataGeminiRetrofit(
+    val zrtva: ZrtvaData,
+    val dokazi: List<DokazData>?,
+    val telefoni: List<TelefonData>?,
+    val forenzika: List<ForenzickiDokazData>?,
+    val oneContact: List<OneContactData>?,
+    val galerija: List<GalerijaData>?,
+    val aplikacije: List<AplikacijaData>?,
+    val beleske: List<BeleskaData>?,
+    val whatsappKontakti: List<WhatsAppKontaktData>?,
+    val whatsappPoruke: List<WhatsAppPorukaData>?,
+    val oneCall: List<OneCallData>?,
+    val obicnaPoruka: List<ObicnaPorukaData>?,
+)
+
+data class PacijentMSDataGeminiRetrofit(
+    val pacijent: PacijentData,
+    val medicinskiIzvestaj: MedicinskiIzvestajData?,
+    val lekarskiTest: LekarskiTestData?,
+    val lokacijeIstrage: List<LokacijeIstrageData>?,
+    val izjavaZaPacijenta: IzjavaZaPacijentaData?
+)
+
+data class ZadaciMSDataGeminiRetrofit(
+    val zadaci: List<ZadatakData>,
+    val dokaziZadaci: List<DokazZadatakData>?,
+    val telefonZadaci: List<TelefonZadatakData>?,
+    val forenzickiDokazZadaci: List<ForenzickiDokazZadatakData>?
+)
+
+data class OtherMSDataGeminiRetrofit(
+    val gallery: List<GalleryData>?,
+    val pitanja: List<PitanjeData>?,
+    val odgovori: List<OdgovorData>?,
+    val osobe: List<OsobaData>?
+)

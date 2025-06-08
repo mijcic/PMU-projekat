@@ -4,7 +4,7 @@ import com.example.*
 import com.example.models.dto.*
 import java.sql.Connection
 
-class Repository(private val connection: Connection):RepoInterface {
+class Repository(private val connection: Connection): RepoInterface {
     override fun getUsedZlocinMurder(): Int? {
         val query =
             "SELECT MIN(uz.zlocinId) AS zlocinId FROM UsedZlocin uz JOIN Zlocin z ON uz.zlocinId = z.idZlocin JOIN TipZlocina tz ON z.tipZlocinaId = tz.idTipZlocina WHERE uz.used = false AND tz.naziv = 'murder'"
