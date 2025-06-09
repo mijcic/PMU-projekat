@@ -17,15 +17,37 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
+import rs.ac.bg.etf.projekat.auth.LoginPage
+import rs.ac.bg.etf.projekat.auth.SignUpPage
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.realmClasses
+import rs.ac.bg.etf.projekat.murder.OfficePage
+import rs.ac.bg.etf.projekat.murder.SuspectDetailsPage
+import rs.ac.bg.etf.projekat.murder.SuspectInterviewPage
+import rs.ac.bg.etf.projekat.murder.SuspectsPage
+import rs.ac.bg.etf.projekat.murder.WitnessDetailsPage
+import rs.ac.bg.etf.projekat.murder.WitnessesInterviewPage
+import rs.ac.bg.etf.projekat.murder.WitnessesPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.HospitalPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.LekarskiTestPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.LocationPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.MedicalReportScreen
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.MedicalStatementPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.PatientScreen
+import rs.ac.bg.etf.projekat.phone.CallsPage
+import rs.ac.bg.etf.projekat.phone.ChatPage
+import rs.ac.bg.etf.projekat.phone.GalleryPage
+import rs.ac.bg.etf.projekat.phone.MessagesPage
+import rs.ac.bg.etf.projekat.phone.NotesPage
+import rs.ac.bg.etf.projekat.phone.OneContactPage
+import rs.ac.bg.etf.projekat.phone.OneNotePage
+import rs.ac.bg.etf.projekat.phone.OnePhotoPage
+import rs.ac.bg.etf.projekat.phone.PhonePage
+import rs.ac.bg.etf.projekat.phone.PhoneSettingsPage
+import rs.ac.bg.etf.projekat.phone.PhonebookPage
+import rs.ac.bg.etf.projekat.phone.WhatsAppChatPage
+import rs.ac.bg.etf.projekat.phone.WhatsAppPage
 import rs.ac.bg.etf.projekat.ui.theme.ProjekatTheme
 
 @AndroidEntryPoint

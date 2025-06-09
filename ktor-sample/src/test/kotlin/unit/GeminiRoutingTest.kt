@@ -1,13 +1,6 @@
 package com.example.unit
 
 import com.example.configureRouting
-import com.example.getDatabaseConnection
-import com.example.models.dto.UsedZlocinData
-import com.example.models.dto.ZlocinData
-import com.example.models.dto.gemini.Content
-import com.example.models.dto.gemini.GeminiRequest
-import com.example.models.dto.gemini.Part
-import com.example.repository.RepositoryInsert
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlin.test.*
@@ -16,14 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.mockk.every
-import io.mockk.mockk
-import junit.framework.TestCase
 import kotlinx.serialization.json.Json
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-import java.sql.Connection
-import java.sql.Statement
 
 
 class GeminiRoutingTest {

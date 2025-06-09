@@ -1,6 +1,6 @@
 package com.example.service.get
 
-import com.example.models.dto.gemini.GeminiResponseRetrofit
+import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
 import com.example.models.dto.service.*
 import com.example.repository.RepoInterface
 
@@ -53,7 +53,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             return null
         }
 
-        val geminiResponseRetrofit:GeminiResponseRetrofit=GeminiResponseRetrofit(
+        val geminiResponseRetrofit: GeminiResponseRetrofit = GeminiResponseRetrofit(
             zlocinRetrofit = zlocinData.zlocin,
             zrtvaRetrofit = zrtvaData.zrtva,
             osumnjiceniRetrofit = osumnjiceniData.osumnjiceni,

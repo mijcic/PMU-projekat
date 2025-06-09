@@ -444,7 +444,8 @@ class MyViewModel @Inject constructor(
       "tipForenzickiDokaz": "DNK",
       "opis": "DNA traces found on the knife match those of Amelia Fontaine.",
       "statusS": 0,
-      "veza": "The evidence strongly links Amelia Fontaine to the murder."
+      "veza": "The evidence strongly links Amelia Fontaine to the murder.",
+      "zrtvaId": 1
     }
   ],
   "telefonR": [
@@ -453,14 +454,16 @@ class MyViewModel @Inject constructor(
       "model": "iPhone 12",
       "os": "IOS",
       "sifra": "123456",
-      "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature."
+      "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature.",
+      "zrtvaId": 1
     },
     {
       "idTelefon": 2,
       "model": "Samsung Galaxy S20",
       "os": "Android",
       "sifra": "654321",
-      "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death."
+      "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death.",
+      "zrtvaId": 1
     }
   ],
   "oneContactR": [
@@ -532,14 +535,16 @@ class MyViewModel @Inject constructor(
       "kontakt": 1,
       "datum": "2025-04-17",
       "propusten": false,
-      "dolazni": true
+      "dolazni": true,
+      "zrtvaId": 1
     },
     {
       "idOneCall": 2,
       "kontakt": 2,
       "datum": "2025-04-17",
       "propusten": true,
-      "dolazni": false
+      "dolazni": false,
+      "zrtvaId": 1
     }
   ],
   "galleryR": [
@@ -1594,14 +1599,16 @@ class MyViewModel @Inject constructor(
           "kontakt": 1,
           "datum": "2025-04-17",
           "propusten": false,
-          "dolazni": true
+          "dolazni": true,
+          "zrtvaR": 1
         },
         {
           "idOneCall": 2,
           "kontakt": 2,
           "datum": "2025-04-17",
           "propusten": true,
-          "dolazni": false
+          "dolazni": false,
+          "zrtvaR": 1
         }
       ],
       "galleryR": [

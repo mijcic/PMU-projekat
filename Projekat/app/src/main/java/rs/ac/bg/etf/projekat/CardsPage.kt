@@ -1,7 +1,6 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,19 +29,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -55,27 +51,185 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 
+data class CaseCard(
+    val imageRes: Int,
+    val title: String,
+    val description: String,
+    val onClick: () -> Unit,
+    val titleMP: String = "",
+    val dateMP: String = "",
+    val placeMP: String = "",
+    val descMP: String = ""
+)
+
+val specialEliteFont = FontFamily(Font(R.font.special_elite))
+
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
-fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp
-        var textWidth by remember { mutableStateOf(0f) }
+fun CardsPage(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    myViewModel: MyViewModel,
+    realmViewModel: RealmViewModel
+){
+    val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
+
+    val cases = listOf(
+        CaseCard(
+            imageRes = R.drawable.murder,
+            title = "Murder \uD83D\uDD2A",
+            description = "Dive into a chilling investigation to solve a brutal murder and uncover the truth behind the crime.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.dissapear,
+            title = "Disappearance \uD83D\uDCCC",
+            description = "A thrilling mission where the detective seeks to uncover the mystery of a missing person, uncovering hidden secrets along the way.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.bank_robbery,
+            title = "Robbery \uD83D\uDCB0",
+            description = "Focuses on solving a robbery case, whether it's a bank heist, " +
+                    "a museum theft, or the stealing of valuable items.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.kidnapping,
+            title = "Kidnapping and Blackmail \uD83E\uDEE5",
+            description = "Investigate the dark world of kidnappings and blackmail, " +
+                    "where innocent lives are held ransom for secrets or money.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.family_secrets,
+            title = "Family Secrets \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66",
+            description = "The detective explores crimes rooted in family dynamics, unraveling " +
+                    "secrets that tie blood relatives to criminal activity.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.abuse,
+            title = "Abuse \uD83D\uDC7A",
+            description = "Investigating cases of abuse, be it physical, emotional, or " +
+                    "psychological, to uncover the perpetrators and bring justice.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.gang,
+            title = "Gang Conflicts \uD83E\uDE78",
+            description = "Delve into a dangerous world of " +
+                    "gang wars and criminal " +
+                    "organizations, solving cases of violence and turf battles.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.corruption,
+            title = "Corruption \uD83C\uDFDB\uFE0F",
+            description = "Uncover the hidden faces of " +
+                    "corruption in politics or corporations, revealing the " +
+                    "extent of fraudulent activities " +
+                    "and their consequences.",
+            onClick = { /*...*/ },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.m_symptoms2,
+            title = "Mysterious Symptoms ⚕\uFE0F ",
+            description = "Investigate strange diseases or unusual deaths, connecting the " +
+                    "dots between mysterious health " +
+                    "conditions and criminal activity.",
+            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.mafia,
+            title = "Mafia ❌",
+            description = "Explore the dangerous world of " +
+                    "mafia organizations, " +
+                    "investigating murders, extortion, drug trafficking, and other " +
+                    "heinous crimes.",
+            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.crime_passion,
+            title = "Crimes of Passion \uD83C\uDFAD",
+            description = "Investigate intense emotional " +
+                    "motives behind crimes of passion, " +
+                    "such as murders driven by jealousy " +
+                    "or violent love affairs.",
+            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.identities,
+            title = " False Identities \uD83E\uDEAA",
+            description = "Solve cases involving the use of fake or stolen identities for illegal activities, " +
+                    "uncovering the culprits behind them.",
+            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        ),
+        CaseCard(
+            imageRes = R.drawable.sects,
+            title = "Cults and Sects \uD83D\uDC80",
+            description = "Uncover the sinister operations of dangerous cults or ideological " +
+                    "sects, revealing manipulation, brainwashing, and murder.",
+            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            titleMP = "",
+            dateMP = "",
+            placeMP = "",
+            descMP = ""
+        )
+    )
+
+    Box(modifier = Modifier.fillMaxSize()) {
         var paddingStart by remember { mutableStateOf(0.dp) }
 
-        val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
-        val scope = rememberCoroutineScope()
-
-        LaunchedEffect(Unit) {
-            //realmViewModel.getTitleDatePlaceDescFromCrime()
-        }
-
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(id = R.drawable.cards_image),
                 contentDescription = "Background Image",
@@ -84,22 +238,16 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
             )
 
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
+                modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.5f))
             )
         }
 
-
-        Column(modifier = Modifier
-            .align(Alignment.TopCenter).padding(top = 22.dp),
+        Column(
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 22.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally)
-
         {
-            Column(
-                modifier = Modifier
-            ) {
+            Column(modifier = Modifier) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -108,12 +256,11 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
             ) {
                 Text(text = "Detective,", color = Color.White,
                     style = TextStyle(
-                    fontFamily = FontFamily(
-                        Font(R.font.special_elite)
-                    ),
+                        fontFamily = specialEliteFont,
                         fontSize = 17.sp,
-                    color = Color.Black
-                ))
+                        color = Color.Black
+                    )
+                )
             }
         Column(
             modifier = Modifier,
@@ -121,179 +268,54 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController, myVie
         ) {
             Text("choose one case from the options provided.", color = Color.White,
                 style = TextStyle(
-                    fontFamily = FontFamily(
-                        Font(R.font.special_elite)
-                    ),
+                    fontFamily = specialEliteFont,
                     color = Color.Black,
-                            fontSize = 17.sp
-                ))
+                    fontSize = 17.sp
+                )
+            )
         }
 
-
-        Column(
-            modifier = Modifier
-        ) {
+        Column(modifier = Modifier) {
             LazyColumn(
                 modifier = Modifier.padding(16.dp)
             ) {
-                item {
-                    CardWithImage(
-                        R.drawable.murder,
-                        "Murder \uD83D\uDD2A",
-                        "Dive into a chilling investigation " +
-                                "to solve a brutal murder and " +
-                                "uncover the truth behind the crime.",
-                        navController,
-                        {
-                            //realmViewModel.insertDataForMurder()
-                            //realmViewModel.callGetTitleDatePlaceDescFromCrime()
-
-                        },
-                        crimeData.value.title.toString(),
-                        crimeData.value.date.toString(),
-                        crimeData.value.place.toString(),
-                        crimeData.value.description.toString(),myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.dissapear,
-                        "Disappearance \uD83D\uDCCC",
-                        "A thrilling mission where the detective seeks to uncover the " +
-                                "mystery of a missing person, uncovering hidden secrets along " +
-                                "the way.",
-                        navController,
-                        {
-                            //myViewModel.getGeminiData(realmViewModel)
-                        },
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-
-                    CardWithImage(
-                        R.drawable.bank_robbery,
-                        " Robbery \uD83D\uDCB0",
-                        "Focuses on solving a robbery case, whether it's a bank heist, " +
-                                "a museum theft, or the stealing of valuable items.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.kidnapping,
-                        "Kidnapping and Blackmail \uD83E\uDEE5",
-                        "Investigate the dark world of kidnappings and blackmail, " +
-                                "where innocent lives are held ransom for secrets or money.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.family_secrets,
-                        "Family Secrets \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66",
-                        "The detective explores crimes rooted in family dynamics, unraveling " +
-                                "secrets that tie blood relatives to criminal activity.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.abuse,
-                        "Abuse \uD83D\uDC7A",
-                        "Investigating cases of abuse, be it physical, emotional, or " +
-                                "psychological, to uncover the perpetrators and bring justice.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-
-                    CardWithImage(
-                        R.drawable.gang,
-                        "Gang Conflicts \uD83E\uDE78",
-                        "Delve into a dangerous world of " +
-                                "gang wars and criminal " +
-                                "organizations, solving cases of violence and turf battles.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.corruption,
-                        "Corruption \uD83C\uDFDB\uFE0F",
-                        "Uncover the hidden faces of " +
-                                "corruption in politics or corporations, revealing the " +
-                                "extent of fraudulent activities " +
-                                "and their consequences.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage2(
-                        R.drawable.m_symptoms2,
-                        "Mysterious Symptoms ⚕\uFE0F ",
-                        "Investigate strange diseases or unusual deaths, connecting the " +
-                                "dots between mysterious health " +
-                                "conditions and criminal activity.",
-                        navController,
-                        {
-                            realmViewModel.insertDataForMysteriousSymptoms()
-                        },
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-                    CardWithImage(
-                        R.drawable.mafia,
-                        "Mafia ❌",
-                        "Explore the dangerous world of " +
-                                "mafia organizations, " +
-                                "investigating murders, extortion, drug trafficking, and other " +
-                                "heinous crimes.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.crime_passion,
-                        "Crimes of Passion \uD83C\uDFAD",
-                        "Investigate intense emotional " +
-                                "motives behind crimes of passion, " +
-                                "such as murders driven by jealousy " +
-                                "or violent love affairs.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-
-                    CardWithImage(
-                        R.drawable.identities,
-                        " False Identities \uD83E\uDEAA",
-                        "Solve cases involving the use of fake or stolen identities for illegal activities, " +
-                                "uncovering the culprits behind them.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-                    CardWithImage(
-                        R.drawable.sects,
-                        "Cults and Sects \uD83D\uDC80",
-                        "Uncover the sinister operations of dangerous cults or ideological " +
-                                "sects, revealing manipulation, brainwashing, and murder.",
-                        navController,
-                        {},
-                        "", "", "", "",myViewModel,realmViewModel
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
+                items(cases.size) { index ->
+                    val case = cases[index]
+                    if(case.imageRes==R.drawable.m_symptoms2){
+                        CardWithImage2(
+                            image = case.imageRes,
+                            title = case.title,
+                            text = case.description,
+                            navController = navController,
+                            insertIntoDatabase = case.onClick,
+                            titleMP = case.titleMP,
+                            dateMP = case.dateMP,
+                            placeMP = case.placeMP,
+                            descMP = case.descMP,
+                            myViewModel = myViewModel,
+                            realmViewModel = realmViewModel
+                        )
+                    }
+                    else{
+                        CardWithImage(
+                            image = case.imageRes,
+                            title = case.title,
+                            text = case.description,
+                            navController = navController,
+                            insertIntoDatabase = case.onClick,
+                            titleMP = case.titleMP,
+                            dateMP = case.dateMP,
+                            placeMP = case.placeMP,
+                            descMP = case.descMP,
+                            myViewModel = myViewModel,
+                            realmViewModel = realmViewModel
+                        )
+                    }
                 }
-
+                item { Spacer(modifier = Modifier.height(32.dp)) }
             }
         }
         }
-
     }
 }
 
@@ -367,7 +389,6 @@ fun CardWithImage(
                                 isLoading = false
                                 showDialog = false
                                 //insertIntoDatabase()
-                                Log.d("G","TITLE "+ titleMP)
                                 navController.navigate(
                                     destinationMissionPage.route + "/" + image + "/" +
                                             "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
@@ -461,17 +482,14 @@ fun CardWithImage(
     }
 }
 
-
 @Composable
 fun CardWithImage2(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
-
     Card(
         modifier = Modifier
             .padding(1.dp)
             .clickable{
                 MainActivity.clearDatabase()
                 myViewModel.getGeminiDataMS(realmViewModel)
-                //realmViewModel.insertDataForMysteriousSymptoms()
 
                 navController.navigate(
                     destinationMissionPage.route + "/" + image + "/" +
@@ -487,9 +505,7 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
         border = BorderStroke(1.dp, Color.White)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
         ) {
             Image(
                 painter = painterResource(id = image),
@@ -503,9 +519,7 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically)
+                modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
             ) {
                 Text(
                     text = title,

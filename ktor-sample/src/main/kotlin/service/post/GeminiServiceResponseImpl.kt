@@ -4,12 +4,10 @@ import com.example.*
 import com.example.models.dto.OsobaData
 import com.example.models.dto.ZlocinData
 import com.example.models.dto.ZrtvaData
-import com.example.models.dto.gemini.GeminiResponse
-import com.example.models.dto.gemini.GeminiResponse2
-import com.example.models.dto.gemini.GeminiResponseRetrofit
-import com.example.parser.GeminiResponseParser
+import com.example.models.dto.gemini.response.GeminiResponse
+import com.example.models.dto.gemini.retrofit.GeminiResponse2
+import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
 import com.example.repository.RepositoryInsert
-import io.ktor.client.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,7 +35,7 @@ class GeminiServiceResponseImpl(
                 )
             }
 
-        val geminiResponseRetrofit:GeminiResponseRetrofit=GeminiResponseRetrofit(
+        val geminiResponseRetrofit: GeminiResponseRetrofit = GeminiResponseRetrofit(
             zlocinRetrofit = null,
             zrtvaRetrofit = null,
             osumnjiceniRetrofit = null,

@@ -1,11 +1,28 @@
 package com.example.service.get
 
-import com.example.*
-import com.example.models.dto.gemini.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
 import com.example.models.dto.service.*
 import com.example.repository.RepoInterface
 
+
+/**
+ * Service responsible for gathering and assembling all necessary data related to mysterious symptoms
+ * for Gemini forensic analysis.
+ *
+ * This class uses the [RepoInterface] to collect information about the crime, victim, patient,
+ * tasks, and other related entities.
+ *
+ * @property repository Repository providing access to data storage.
+ */
 class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
+
+    /**
+     * Retrieves all available data for mysterious symptoms and returns a consolidated response object.
+     *
+     * If any required data is missing (null), logs an error message and returns null.
+     *
+     * @return [GeminiResponseRetrofitMysteriousSymptoms]? consolidated data object or null if incomplete.
+     */
     fun getGeminiMysteriousSymtoms(): GeminiResponseRetrofitMysteriousSymptoms? {
         val id = repository.getUsedZlocinMysteriousSymptoms() ?: run {
             println("Neki podaci su null — provera nije prošla.")
@@ -67,12 +84,25 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
         return geminiResponseRetrofit
     }
 
+    /**
+     * Loads data about the crime and its type based on the provided ID.
+     *
+     * @param id Crime identifier.
+     * @return [ZlocinDataGeminiRetrofit]? crime data or null if not found.
+     */
     private fun loadZlocinDataGeminiRetrofit(id: Int): ZlocinDataGeminiRetrofit? {
         val zl = repository.getZlocin(id) ?: return null
         val tip = repository.getTipZlocina(zl.tipZlocinaId) ?: return null
         return ZlocinDataGeminiRetrofit(zl, tip)
     }
 
+
+    /**
+     * Loads victim-related data including evidence, phones, forensic data, contacts, messages, etc.
+     *
+     * @param id Crime identifier.
+     * @return [ZrtvaMSDataGeminiRetrofit]? victim data or null if missing.
+     */
     private fun loadZrtvaDataGeminiRetrofit(id: Int): ZrtvaMSDataGeminiRetrofit? {
         val zrtva = repository.getZrtva(id) ?: return null
         val whatsappKontakti = repository.getWhatsAppKontakt(id, zrtva) ?: return null
@@ -95,6 +125,14 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
         )
     }
 
+    /**
+     * Loads patient-related data, including medical reports, tests, investigation locations, and statements.
+     *
+     * @param id Crime identifier.
+     * @param zlocin Crime data object.
+     * @param zrtva Victim data object.
+     * @return [PacijentMSDataGeminiRetrofit]? patient data or null if incomplete.
+     */
     private fun loadPacijentDataGeminiRetrofit(id: Int,zlocin:ZlocinDataGeminiRetrofit,zrtva:ZrtvaMSDataGeminiRetrofit): PacijentMSDataGeminiRetrofit? {
         val osobe = repository.getOsobe(id)?: return null
         val pacijent = repository.getPacijent(id, zlocin.zlocin, zrtva.zrtva, osobe) ?: return null
@@ -109,6 +147,12 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
         )
     }
 
+    /**
+     * Loads tasks related to mysterious symptoms.
+     *
+     * @param id Crime identifier.
+     * @return [ZadaciMSDataGeminiRetrofit]? task data or null if missing.
+     */
     private fun loadZadaciMSData(id: Int): ZadaciMSDataGeminiRetrofit? {
         val zadaci = repository.getZadaci(id) ?: return null
         return ZadaciMSDataGeminiRetrofit(
@@ -119,6 +163,12 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
         )
     }
 
+    /**
+     * Loads other supplementary data related to mysterious symptoms case.
+     *
+     * @param id Crime identifier.
+     * @return [OtherMSDataGeminiRetrofit]? additional data or null if missing.
+     */
     private fun loadMSOtherData(id: Int): OtherMSDataGeminiRetrofit? {
         return OtherMSDataGeminiRetrofit(
             gallery = repository.getGallery(id)?: return null,
