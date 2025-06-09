@@ -4,7 +4,6 @@ import io.realm.kotlin.Realm
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.Sort
-import rs.ac.bg.etf.projekat.MainActivity.Companion.realm
 import javax.inject.Inject
 
 class RepositoryImplRealmViewModel @Inject constructor(

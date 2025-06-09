@@ -6,15 +6,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
-import rs.ac.bg.etf.projekat.data.realmViewModel.RepositoryImplRealmViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.RepositoryRealmViewModel
 import rs.ac.bg.etf.projekat.data.retrofit.Api
 import rs.ac.bg.etf.projekat.data.retrofit.BASE_URL
 import java.util.concurrent.TimeUnit

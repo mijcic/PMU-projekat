@@ -60,8 +60,6 @@ import kotlinx.coroutines.delay
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectPorukeZadatak
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectTelefonZadatak
 import rs.ac.bg.etf.projekat.destinationEvidencePage
 import rs.ac.bg.etf.projekat.destinationMapPage
 import rs.ac.bg.etf.projekat.destinationPhonePage
@@ -140,8 +138,8 @@ fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmView
                         modifier = Modifier
                             .offset { IntOffset(x = xOffset, y = yOffset) }
                             .clickable {
-                                selectTelefonZadatak()?.let { myViewModel.updateTelefonTask(it) }
-                            selectPorukeZadatak()?.let { myViewModel.updatePorukeTask(it) }
+                                myViewModel.selectTelefonZadatakViewModel()
+                                myViewModel.selectPorukeZadatakViewModel()
                             navController.navigate(destinationPhonePage.route)
                             }
                     )

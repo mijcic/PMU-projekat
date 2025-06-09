@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectIspitivanjeSvedokaZadatak
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +42,7 @@ fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewMode
         }
         else{
             if(uiPitanjaZaSvedoka.questions.isEmpty()==false){
-                selectIspitivanjeSvedokaZadatak(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
+                myViewModel.selectIspitivanjeSvedokaZadatakViewModel(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
                     myViewModel.updateWitnessTask(
                         it
                     )

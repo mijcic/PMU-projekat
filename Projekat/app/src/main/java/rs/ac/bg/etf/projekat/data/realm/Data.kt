@@ -3,6 +3,7 @@ package rs.ac.bg.etf.projekat.data.realm
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlin.reflect.KClass
 
 // PrijavljeniKorisnik table
 open class PrijavljeniKorisnikR : RealmObject {
@@ -677,3 +678,59 @@ val realmClasses = listOf(
     LekarskiTestR::class,
     LokacijeIstrageR::class
 )
+
+object RealmSchemaProvider {
+    val realmClasses: Set<KClass<out RealmObject>> = setOf(
+        ZlocinR::class,
+        TipZlocinaR::class,
+        NapredakIstrageR::class,
+        MisijaR::class,
+        MisijaPorukaR::class,
+        OsumnjicenR::class,
+        MotivR::class,
+        DokazR::class,
+        SvedokR::class,
+        ZrtvaR::class,
+        ZrtvaZlostavljanjaR::class,
+        BandaR::class,
+        MafijaR::class,
+        KultoviR::class,
+        TelefonR::class,
+        KontaktR::class,
+        PorukeR::class,
+        PoziviR::class,
+        GalerijaR::class,
+        AplikacijaR::class,
+        ObdukcijaR::class,
+        ForenzickiDokazR::class,
+        TragR::class,
+        DokazOsumnjicenR::class,
+        AlibiR::class,
+        OdnosOsumnjicenZrtvaR::class,
+        PrijavljeniKorisnikR::class,
+        PitanjeIspitivanjeOsumnjicenogR::class,
+        PitanjeR::class,
+        OdgovorR::class,
+        PitanjeIspitivanjeSvedokaR::class,
+        OsobaR::class,
+        BeleskaR::class,
+        WhatsAppKontaktR::class,
+        WhatsAppPorukaR::class,
+        OneContactR::class,
+        OneCallR::class,
+        GalleryR::class,
+        ObicnaPorukaR::class,
+        ZadatakR::class,
+        DokazZadatakR::class,
+        IspitivanjeOsumnjicenogZadatakR::class,
+        IspitivanjeSvedokaZadatakR::class,
+        TelefonZadatakR::class,
+        ForenzickiDokazZadatakR::class,
+        PorukeZadatakR::class,
+        PacijentR::class,
+        MedicinskiIzvestajR::class,
+        IzjavaZaPacijentaR::class,
+        LekarskiTestR::class,
+        LokacijeIstrageR::class
+    )
+}

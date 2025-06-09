@@ -382,7 +382,7 @@ fun CardWithImage(
                 Button(
                     onClick = {
                         isLoading = true
-                        MainActivity.clearDatabase()
+                        realmViewModel.clearDatabase()
                         myViewModel.getGeminiData(
                             realmViewModel,
                             onSuccess = {
@@ -488,7 +488,7 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
         modifier = Modifier
             .padding(1.dp)
             .clickable{
-                MainActivity.clearDatabase()
+                realmViewModel.clearDatabase()
                 myViewModel.getGeminiDataMS(realmViewModel)
 
                 navController.navigate(

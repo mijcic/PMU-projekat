@@ -34,7 +34,6 @@ import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.UiStatePitanjaZaOsumnjicenog
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectIspitivanjeOsumnjicenogZadatak
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,7 +203,7 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
                             Button(
                                 onClick = {
                                     Log.d("UPO", uiPitanjaZaOsumnjicenog.generalQuestions.firstOrNull()?.osumnjicenId.toString())
-                                    selectIspitivanjeOsumnjicenogZadatak(uiPitanjaZaOsumnjicenog.generalQuestions.firstOrNull()?.osumnjicenId)?.let {
+                                    myViewModel.selectIspitivanjeOsumnjicenogZadatakViewModel(uiPitanjaZaOsumnjicenog.generalQuestions.firstOrNull()?.osumnjicenId)?.let {
                                         myViewModel.updateSuspectTask(it)
                                     }
                                     selectedCategory = null
