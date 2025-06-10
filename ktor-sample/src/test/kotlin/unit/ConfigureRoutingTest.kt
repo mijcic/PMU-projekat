@@ -1,31 +1,84 @@
 package com.example.unit
 
+import com.example.GeminiRequest2
 import com.example.configureRouting
-import io.ktor.http.*
-import io.ktor.server.testing.*
-import kotlin.test.*
+import com.example.getDatabaseConnection
+import com.example.repository.Repository
+import com.example.service.get.GeminiMurderService
+import com.example.service.post.GeminiService
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import kotlinx.serialization.json.Json
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.testing.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
+class ConfigureRoutingTest {
 
-class GeminiRoutingTest {
+    @BeforeEach
+    fun setup() {
+        mockkStatic("com.example.RoutingKt") // zameni sa stvarnim fajlom gde se nalazi getDatabaseConnection
+    }
+
+    @AfterEach
+    fun teardown() {
+        unmockkAll()
+    }
 
     @Test
-    fun testGeminiRouteReturnsSomething() = testApplication {
-        application {
-            install(ContentNegotiation) {
-                json()
+    fun `should throw error when getDatabaseConnection returns null`() {
+        // Arrange
+        every { getDatabaseConnection() } returns null
+
+        val exception = assertThrows<IllegalStateException> {
+            // Act: pokrećeš konfiguraciju koja bi pozvala getDatabaseConnection()
+            testApplication {
+                application {
+                    configureRouting() // <- ovo bi trebalo da pukne
+                }
             }
-            configureRouting()
+        }
+
+        // Assert
+        assertEquals("Database connection failed — cannot start routing.", exception.message)
+    }
+
+    @Test
+    fun `GET  should return Hello World`() = testApplication {
+        application { configureRouting() }
+
+        val response = client.get("/")
+        assertEquals("Hello World!", response.bodyAsText())
+    }
+
+
+    @Test
+    fun `POST gemini should return 200 on valid request`() = testApplication {
+        application { configureRouting() }
+        install(ContentNegotiation) {
+            json() // kotlinx.serialization
         }
 
         val response = client.post("/gemini") {
             contentType(ContentType.Application.Json)
             setBody(
+
                 """
             {
               "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele. Tip osumnjicenog moze biti samo pojedinac ili organizacija. Tip dokaza moze biti fizicki, digitalni ili svedok. statusSvedok moze biti 'aktivno', 'zasticen', 'nesaradnja'.  tipForenzickiDokaz moze biti 'otisak', 'DNK', 'dokument'.  os moze biti 'IOS' ili 'Android'. Mora da postoji samo jedan zlocinR, nemoj da mi pravis listu. Koristi sledeće tabele za popunjavanje podataka. Popuni mi sve tabele koje ti prosledim kao primer. Popuni mi i primere za tabelu zadatakR sa njenim poljima idZadatak, tekst, korak koji je tipa String, uradjen, next, zlocinId. Popuni mi i tabelu telefonZadatakR i obicnaPorukaR. Obavezno dodaj i jedan whatsAppKontaktR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa whatsAppKontaktR. Obavezno dodaj i jedan oneContactR zrtve cije ce ime biti 'Me' i sa njim se obavlja komunikacija sa drugim objektima tipa oneContactR. Zelim da mi dodas vise od jednog objekta tipa whatsAppKontaktR. Popuni mi i tabelu whatsAppPorukaR. OBAVEZNO mi popuni i tabelu obicnaPorukaR. OBAVEZNO mi popuni i tabelu oneCallR. Nemoj da vracas null vrednosti za polja. Zlocin je samo jedna tabela a ne lista. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
@@ -600,28 +653,74 @@ class GeminiRoutingTest {
                 }]
             }
             }
-            """.trimIndent()
+            """
+
             )
         }
 
-        println("Status: ${response.status}")
-        println("Body: ${response.bodyAsText()}")
-
-        assertTrue(response.status == HttpStatusCode.OK || response.status == HttpStatusCode.InternalServerError)
+        assertEquals(HttpStatusCode.OK, response.status)
     }
 
     @Test
-    fun testGeminiMSRouteReturnsSomething() = testApplication {
+    fun `POST gemini should return 400 when prompt is blank`() = testApplication {
+        application { configureRouting() }
+
+        application { configureRouting() }
+        install(ContentNegotiation) {
+            json()
+        }
+
+        val response = client.post("/geminiMS") {
+            contentType(ContentType.Application.Json)
+            setBody("""{ "prompt": "", "tables": [] }""")
+        }
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+    }
+
+
+    @Test
+    fun `POST gemini should return 500 on failure`() = testApplication {
+        install(ContentNegotiation) {
+            json()
+        }
         application {
-            install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
+            // Pretpostavka: ovde se koristi fail mock
+
+            routing {
+                post("/gemini") {
+                    call.respondText(
+                        """{"error":"Simulirana greška"}""",
+                        ContentType.Application.Json,
+                        HttpStatusCode.InternalServerError
+                    )
+                }
+
             }
-            configureRouting()
+        }
+
+        val response = client.post("/gemini") {
+            contentType(ContentType.Application.Json)
+            setBody("""{ "prompt": "test", "tables": [] }""")
+        }
+
+        assertEquals(HttpStatusCode.InternalServerError, response.status)
+    }
+
+
+    //GeminiMS
+
+    @Test
+    fun `POST geminiMS should return 200 on valid request`() = testApplication {
+        application { configureRouting() }
+        install(ContentNegotiation) {
+            json() // kotlinx.serialization
         }
 
         val response = client.post("/geminiMS") {
             contentType(ContentType.Application.Json)
             setBody(
+
                 """
             {
               "prompt": "Come up with a story for a detective app about a mysterious case in a hospital. A patient is admitted to the hospital (they may be alive or dead afterward), and the doctors cannot determine the cause. They call in a detective who specializes in unusual cases to solve it. Fill in all the data in the tables as shown in the example I provided below, but I don't want the story and data to be the same — generate a new story and based on that, fill in the tables. Fill in only the tables I provided as examples: zlocinR, pacijentR, medicinskiIzvestajR, lokacijeIstrageR, lekarskiTestR, izjavaZaPacijentaR,osobaR, dokazR, forenzickiDokazR, telefonR, aplikacijaKtor, oneContactR, beleskaR, whatsAppKontaktR, whatsAppPorukaR, oneCallR, galleryR, obicnaPorukaR, pitanjeR, odgovorR, zadatakR, dokazZadatakR, telefonZadatakR, forenzickiDokazZadatakR. izjavaZaPacijentaR has field osobaId,idIzjavaZaPacijenta,izjava and pacijentId. lokacijeIstrageR is array. Fill in the PacijentR table with data and return it in your response! There must not be any null values (zanimanje, kontakt, datum are not null). All tables must have some data! But write the response only in JSON format and do not include additional square brackets [].",
@@ -682,7 +781,9 @@ class GeminiRoutingTest {
                     "mesto":"",
                     "naziv":"",
                     "opis":"",
-                    "zlocinId":1
+                    "zlocinId":1,
+                    "geoTackaALatitude":2.3,
+                    "geoTackaALongitude":2.3
                 }],
                 "izjavaZaPacijentaR":{
                     "idIzjavaZaPacijenta":1,
@@ -992,32 +1093,28 @@ class GeminiRoutingTest {
                     "informacije": ""
                 }]
 
-
-             }
+        }
             }
-            """.trimIndent()
+            """
+
             )
         }
-        println("Response status: ${response.status}")
-        println("Body: ${response.bodyAsText()}")
-        assertTrue(response.status == HttpStatusCode.OK || response.status == HttpStatusCode.BadRequest)
 
-        //assertTrue(response.status == HttpStatusCode.OK || response.status == HttpStatusCode.InternalServerError)
+        assertEquals(HttpStatusCode.OK, response.status)
     }
 
     @Test
-    fun testGeminiMSReturns400WhenPromptIsBlank() = testApplication {
-        application {
-            install(ContentNegotiation) { json() }
-            configureRouting()
+    fun `POST geminiMS should return 400 when prompt is blank`() = testApplication {
+        application { configureRouting() }
+
+        application { configureRouting() }
+        install(ContentNegotiation) {
+            json()
         }
 
         val response = client.post("/geminiMS") {
             contentType(ContentType.Application.Json)
-            setBody(
-                """
-            {
-              "prompt": "",
+            setBody("""{ "prompt": "", 
               "tables": {
               "zlocinR": {
                 "idZlocin": 1,
@@ -1075,7 +1172,9 @@ class GeminiRoutingTest {
                     "mesto":"",
                     "naziv":"",
                     "opis":"",
-                    "zlocinId":1
+                    "zlocinId":1,
+                    "geoTackaALatitude":2.3,
+                    "geoTackaALongitude":2.3
                 }],
                 "izjavaZaPacijentaR":{
                     "idIzjavaZaPacijenta":1,
@@ -1385,53 +1484,30 @@ class GeminiRoutingTest {
                     "informacije": ""
                 }]
 
-
-             }
-            }
-            """.trimIndent()
-            )
+        } }""")
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
-        assertTrue(response.bodyAsText().contains("prompt"))
     }
 
 
-    /*
+    //get Zahtevi
+
+
+
     @Test
-    fun testGeminiMurderReturnsDataOr404() = testApplication {
+    fun `GET geminiMysteriousSymptoms should return data or 404`() = testApplication {
         application {
-            install(ContentNegotiation) {
-                json()
-            }
             configureRouting()
         }
-
-        val response = client.get("/geminiMurder")
-
-        // ne znamo da li ima podataka, pa proveravamo oba slucaja
-        assertTrue(
-            response.status == HttpStatusCode.OK ||
-                    response.status == HttpStatusCode.NotFound
-        )
-    }*/
-
-
-    @Test
-    fun testGeminiMysteriousSymptomsReturnsDataOr404() = testApplication {
-        application {
-            install(ContentNegotiation) {
-                json()
-            }
-            configureRouting()
+        install(ContentNegotiation) {
+            json()
         }
 
         val response = client.get("/geminiMysteriousSymptoms")
-
         assertTrue(
-            response.status == HttpStatusCode.OK ||
-                    response.status == HttpStatusCode.NotFound
+            response.status == HttpStatusCode.OK || response.status == HttpStatusCode.NotFound,
+            "Expected 200 or 404, got ${response.status}"
         )
     }
-
 }

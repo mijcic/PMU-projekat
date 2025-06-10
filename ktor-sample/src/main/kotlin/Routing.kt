@@ -42,6 +42,7 @@ fun Application.configureRouting() {
                 }
         }
 
+        /*
         post("/geminiData") {
             try {
                 val requestData = call.receive<GeminiRequest2>()
@@ -71,7 +72,7 @@ fun Application.configureRouting() {
                 e.printStackTrace()
                 call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "An internal server error occurred."))
             }
-        }
+        }*/
 
 
         //gemini mysterious symptoms

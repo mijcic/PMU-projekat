@@ -169,6 +169,7 @@ data class ForenzickiDokazData (
     val opis: String,
     val statusS:Int,
     val veza: String,
+    val zrtvaId:Int,
 )
 
 data class TelefonData(
@@ -176,7 +177,8 @@ data class TelefonData(
     val model:String,
     val os: String,
     val sifra: String,
-    val informacije: String
+    val informacije: String,
+    val zrtvaId: Int
 )
 
 data class MisijaData(
@@ -242,7 +244,8 @@ data class OneCallData (
     val kontakt: Int,
     val datum: Long,
     val propusten: Boolean,
-    val dolazni: Boolean
+    val dolazni: Boolean,
+    val zrtvaId: Int
 )
 
 data class GalleryData (

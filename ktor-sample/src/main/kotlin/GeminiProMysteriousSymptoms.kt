@@ -2,7 +2,12 @@ package com.example
 
 import com.example.data.remote.*
 import com.example.models.dto.*
-import com.example.models.dto.gemini.*
+import com.example.models.dto.gemini.request.GeminiRequest
+import com.example.models.dto.gemini.response.Content
+import com.example.models.dto.gemini.response.GeminiResponse
+import com.example.models.dto.gemini.response.Part
+import com.example.models.dto.gemini.retrofit.GeminiResponse2MysteriousSymptoms
+import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
 import com.example.models.interfaces.*
 import com.example.repository.RepositoryInsert
 import io.ktor.client.call.*
@@ -16,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
@@ -25,7 +31,7 @@ data class GeminiRequest2MysteriousSymptoms(
     val tables: TablesMysteriousSymptoms
 )
 
-fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl: ZlocinData,repo: RepositoryInsert): PacijentData? {
+fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, zl: ZlocinData, repo: RepositoryInsert): PacijentData? {
     val pacijent = geminiResponse2.pacijentR
 
     val datumString = geminiResponse2.pacijentR.datumPrijave
@@ -116,7 +122,7 @@ fun insertGeminiPacijent(geminiResponse2: GeminiResponse2MysteriousSymptoms, gem
     return pac
 }
 
-fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,pacijent: PacijentData,repo: RepositoryInsert) {
+fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData, repo: RepositoryInsert) {
     val medicinskiIzvestaj = geminiResponse2.medicinskiIzvestajR
 
     var medIzv= MedicinskiIzvestajData(
@@ -134,7 +140,7 @@ fun insertGeminiMedicinskiIzvestaj(geminiResponse2: GeminiResponse2MysteriousSym
     geminiResponseRetrofit.medicinskiIzvestajRetrofit=medIzv
 }
 
-fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData, zl: ZlocinData,repo: RepositoryInsert) {
+fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData, zl: ZlocinData, repo: RepositoryInsert) {
     val izjave = geminiResponse2.izjavaZaPacijentaR
 
     val datumString = "2025-11-12"
@@ -174,7 +180,7 @@ fun insertGeminiIzjavaZaPacijenta(geminiResponse2: GeminiResponse2MysteriousSymp
 
 }
 
-fun insertGeminiLekarskiTest(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData,repo: RepositoryInsert) {
+fun insertGeminiLekarskiTest(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, pacijent: PacijentData, repo: RepositoryInsert) {
     val test = geminiResponse2.lekarskiTestR
 
     val lekarskiTest = LekarskiTestData(
@@ -187,7 +193,7 @@ fun insertGeminiLekarskiTest(geminiResponse2: GeminiResponse2MysteriousSymptoms,
     geminiResponseRetrofit.lekarskiTestRetrofit = lekarskiTest
 }
 
-fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms,zl: ZlocinData,repo: RepositoryInsert) {
+fun insertGeminiLokacijeIstrage(geminiResponse2: GeminiResponse2MysteriousSymptoms, geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms, zl: ZlocinData, repo: RepositoryInsert) {
     val lokacijeIstrage = geminiResponse2.lokacijeIstrageR
     var lokacijeLista= mutableListOf<LokacijeIstrageData>()
 
@@ -306,7 +312,7 @@ suspend fun queryGeminiMysteriousSymptomsStream(prompt: String, tables: String):
 
 
 
-fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): GeminiResponseRetrofitMysteriousSymptoms {
+fun getDataGeminiResponseMysteriousSymptoms(geminiResponse: GeminiResponse): GeminiResponseRetrofitMysteriousSymptoms {
 
     val json2 = Json {
         ignoreUnknownKeys = true
@@ -320,7 +326,7 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
             )
         }
 
-    val geminiResponseRetrofit:GeminiResponseRetrofitMysteriousSymptoms= GeminiResponseRetrofitMysteriousSymptoms(
+    val geminiResponseRetrofit: GeminiResponseRetrofitMysteriousSymptoms = GeminiResponseRetrofitMysteriousSymptoms(
         zlocinRetrofit = null,
         dokaziRetrofit = null,
         telefoniRetrofit = null,
@@ -373,12 +379,19 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse:GeminiResponse): Gemi
                 )
                 repo.insertZlocinData(zl)
                 geminiResponseRetrofit.zlocinRetrofit=zl
-                
+
+                val datumStr = geminiResponse2.pacijentR.zrtvaId?.osobaId?.datum
+                val datumLong = datumStr?.let {
+                    LocalDate.parse(it)
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli()
+                } ?: timestamp
                 val osoba = OsobaData(
                     idOsoba = geminiResponse2.pacijentR.zrtvaId?.osobaId?.idOsoba ?: -1,
                     ime = geminiResponse2.pacijentR.zrtvaId?.osobaId?.ime ?: "Nepoznato",
                     kontakt = geminiResponse2.pacijentR.zrtvaId?.osobaId?.kontakt ?: "Nepoznato",
-                    datum = geminiResponse2.pacijentR.zrtvaId?.osobaId?.datum?.toLong() ?: timestamp,
+                    datum = datumLong ?: timestamp,
                     zanimanje = geminiResponse2.pacijentR.zrtvaId?.osobaId?.zanimanje ?: "Nepoznato",
                     pol = geminiResponse2.pacijentR.zrtvaId?.osobaId?.pol ?: "M",
                     zlocinId = geminiResponse2.pacijentR.zrtvaId?.osobaId?.zlocinId ?: -1

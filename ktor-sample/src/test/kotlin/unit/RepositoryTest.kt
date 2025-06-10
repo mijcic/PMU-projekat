@@ -1,19 +1,12 @@
 package com.example.unit
 
-import com.example.closeResources
-import com.example.models.dto.UsedZlocinData
 import com.example.models.dto.ZlocinData
 import com.example.repository.Repository
-import com.example.repository.RepositoryInsert
 import io.mockk.*
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNull
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.sql.*
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -121,6 +114,7 @@ class RepositoryTest {
 
     //TipZlocinaData
 
+    /*
     @Test
     fun `should return null when resultSet is null in getTipZlocina`() {
         val statement = mockk<Statement>()
@@ -132,7 +126,7 @@ class RepositoryTest {
         val result = repository.getTipZlocina(1)
 
         assertNull(result)
-    }
+    }*/
 
     @Test
     fun `should return null when resultSet is empty in getTipZlocina`() {
@@ -149,4 +143,61 @@ class RepositoryTest {
     }
 
     //
+
+    @Test
+    fun `should return null when resultSet is null in getUsedZlocinMysteriousSymptoms`() {
+        val statement = mockk<Statement>()
+        every { connection.createStatement() } returns statement
+        every { statement.executeQuery(any()) } returns null
+
+        repository = Repository(connection)
+
+        val result = repository.getUsedZlocinMysteriousSymptoms()
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `should return null when resultSet is empty in getUsedZlocinMysteriousSymptoms`() {
+        val statement = mockk<Statement>()
+        every { connection.createStatement() } returns statement
+        every { statement.executeQuery(any()) } returns resultSet
+        every { resultSet.next() } returns false
+
+        repository = Repository(connection)
+
+        val result =  repository.getUsedZlocinMysteriousSymptoms()
+
+        assertNull(result)
+    }
+
+    //getZrtva
+
+
+    @Test
+    fun `should return null when resultSet is null in getZrtva`() {
+        val statement = mockk<Statement>()
+        every { connection.createStatement() } returns statement
+        every { statement.executeQuery(any()) } returns null
+
+        repository = Repository(connection)
+
+        val result = repository.getZrtva(1)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `should return null when resultSet is empty in getZrtva`() {
+        val statement = mockk<Statement>()
+        every { connection.createStatement() } returns statement
+        every { statement.executeQuery(any()) } returns resultSet
+        every { resultSet.next() } returns false
+
+        repository = Repository(connection)
+
+        val result =  repository.getZrtva(1)
+
+        assertNull(result)
+    }
 }

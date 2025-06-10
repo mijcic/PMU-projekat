@@ -40,26 +40,6 @@ import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectAllOsumnjiceni
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectAllSvedoci
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectEvidences
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectEvidencesTasks
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectForensicEvidences
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectForensicEvidencesTasks
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectIzjavaZaPacijenta
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectLekarskiTest
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectLokacijeIstrageR
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectMedicinskiIzvestaj
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectPacijent
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectPitanjaByOsumnjicenAndCategory
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectPitanjaBySvedok
-import rs.ac.bg.etf.projekat.data.realmViewModel.selectTasks
-import rs.ac.bg.etf.projekat.data.realmViewModel.updateDokazZadatakAndZadatak
-import rs.ac.bg.etf.projekat.data.realmViewModel.updateForenzickiDokazZadatakAndZadatak
-import rs.ac.bg.etf.projekat.data.realmViewModel.updateIspitivanjeOsumnjicenogZadatak
-import rs.ac.bg.etf.projekat.data.realmViewModel.updateIspitivanjeSvedokaZadatak
-import rs.ac.bg.etf.projekat.data.realmViewModel.updatePorukeZadatak
-import rs.ac.bg.etf.projekat.data.realmViewModel.updateTelefonZadatak
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
@@ -71,7 +51,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    private val MyRepository: Repository
+    private val MyRepository: Repository,
+    private val commonRepository: CommonRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateZlocin())
@@ -129,8 +110,8 @@ class MyViewModel @Inject constructor(
 
     fun getAllDataZlocin() = viewModelScope.launch {
         try {
-            val response = selectAllOsumnjiceni()
-            val response2 = selectAllSvedoci()
+            val response = commonRepository.selectAllOsumnjiceni()
+            val response2 = commonRepository.selectAllSvedoci()
             _uiStateZlocinData.value = UiStateDataZlocin(suspects = response, witnesses = response2)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -145,10 +126,10 @@ class MyViewModel @Inject constructor(
 
     fun getPitanjaZaOsumnjicenog(osumnjicen: String) = viewModelScope.launch {
         try {
-            val response1 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "opsta")
-            val response2 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "alibi")
-            val response3 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "dokaz")
-            val response4 = selectPitanjaByOsumnjicenAndCategory(osumnjicen, "kontradikcija")
+            val response1 = commonRepository.selectPitanjaByOsumnjicenAndCategory(osumnjicen, "opsta")
+            val response2 = commonRepository.selectPitanjaByOsumnjicenAndCategory(osumnjicen, "alibi")
+            val response3 = commonRepository.selectPitanjaByOsumnjicenAndCategory(osumnjicen, "dokaz")
+            val response4 = commonRepository.selectPitanjaByOsumnjicenAndCategory(osumnjicen, "kontradikcija")
             _uiStatePitanjaZaOsumnjicenog.value =
                 UiStatePitanjaZaOsumnjicenog(response1, response2, response3, response4)
         } catch (e: Exception) {
@@ -163,7 +144,7 @@ class MyViewModel @Inject constructor(
 
     fun getPitanjaZaSvedoka(svedok: String) = viewModelScope.launch {
         try {
-            val response = selectPitanjaBySvedok(svedok)
+            val response = commonRepository.selectPitanjaBySvedok(svedok)
             _uiStatePitanjaZaSvedoka.value = UiStatePitanjaZaSvedoka(response)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -176,7 +157,7 @@ class MyViewModel @Inject constructor(
 
     fun getTasks() = viewModelScope.launch {
         try {
-            val response = selectTasks()
+            val response = commonRepository.selectTasks()
             _uiStateTasks.value = UiStateTasks(response)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -189,8 +170,8 @@ class MyViewModel @Inject constructor(
 
     fun getEvidences() = viewModelScope.launch {
         try {
-            val response = selectEvidences()
-            val response2 = selectEvidencesTasks(response)
+            val response = commonRepository.selectEvidences()
+            val response2 = commonRepository.selectEvidencesTasks(response)
             _uiStateEvidence.value = UiStateEvidences(response, response2)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -228,8 +209,8 @@ class MyViewModel @Inject constructor(
 
     fun getForensicEvidences() = viewModelScope.launch {
         try {
-            val response = selectForensicEvidences()
-            val response2 = selectForensicEvidencesTasks(response)
+            val response = commonRepository.selectForensicEvidences()
+            val response2 = commonRepository.selectForensicEvidencesTasks(response)
             _uiStateForensicEvidence.value = UiStateForensicEvidences(response, response2)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -239,7 +220,7 @@ class MyViewModel @Inject constructor(
 
     fun updateEvidenceAndEvidenceTask(zadatakDokaz: DokazZadatakR) = viewModelScope.launch {
         zadatakDokaz.zadatakId?.idZadatak?.let {
-            updateDokazZadatakAndZadatak(
+            commonRepository.updateDokazZadatakAndZadatak(
                 it,
                 zadatakDokaz.idDokazZadatak
             )
@@ -249,7 +230,7 @@ class MyViewModel @Inject constructor(
     fun updateForensicEvidenceAndForensicEvidenceTask(zadatakDokaz: ForenzickiDokazZadatakR) =
         viewModelScope.launch {
             zadatakDokaz.zadatakId?.idZadatak?.let {
-                updateForenzickiDokazZadatakAndZadatak(
+                commonRepository.updateForenzickiDokazZadatakAndZadatak(
                     it,
                     zadatakDokaz.idForenzickiDokazZadatak
                 )
@@ -258,7 +239,7 @@ class MyViewModel @Inject constructor(
 
     fun updateSuspectTask(zadatak: IspitivanjeOsumnjicenogZadatakR) = viewModelScope.launch {
         zadatak.zadatakId?.idZadatak?.let {
-            updateIspitivanjeOsumnjicenogZadatak(
+            commonRepository.updateIspitivanjeOsumnjicenogZadatak(
                 zadatak.idIspitivanjeOsumnjicenogZadatak,
                 it
             )
@@ -267,7 +248,7 @@ class MyViewModel @Inject constructor(
 
     fun updateWitnessTask(zadatak: IspitivanjeSvedokaZadatakR) = viewModelScope.launch {
         zadatak.zadatakId?.idZadatak?.let {
-            updateIspitivanjeSvedokaZadatak(
+            commonRepository.updateIspitivanjeSvedokaZadatak(
                 zadatak.idIspitivanjeSvedokaZadatak,
                 it
             )
@@ -275,11 +256,11 @@ class MyViewModel @Inject constructor(
     }
 
     fun updateTelefonTask(telefon: TelefonZadatakR) = viewModelScope.launch {
-        telefon.zadatakId?.idZadatak?.let { updateTelefonZadatak(telefon.idTelefonZadatak, it) }
+        telefon.zadatakId?.idZadatak?.let { commonRepository.updateTelefonZadatak(telefon.idTelefonZadatak, it) }
     }
 
     fun updatePorukeTask(poruke: PorukeZadatakR) = viewModelScope.launch {
-        poruke.zadatakId?.idZadatak?.let { updatePorukeZadatak(poruke.idPorukeZadatak, it) }
+        poruke.zadatakId?.idZadatak?.let { commonRepository.updatePorukeZadatak(poruke.idPorukeZadatak, it) }
     }
 
     private val _uiSteteSelectedAnswers = MutableStateFlow(UiSteteSelectedAnswers())
@@ -444,7 +425,8 @@ class MyViewModel @Inject constructor(
       "tipForenzickiDokaz": "DNK",
       "opis": "DNA traces found on the knife match those of Amelia Fontaine.",
       "statusS": 0,
-      "veza": "The evidence strongly links Amelia Fontaine to the murder."
+      "veza": "The evidence strongly links Amelia Fontaine to the murder.",
+      "zrtvaId": 1
     }
   ],
   "telefonR": [
@@ -453,14 +435,16 @@ class MyViewModel @Inject constructor(
       "model": "iPhone 12",
       "os": "IOS",
       "sifra": "123456",
-      "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature."
+      "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature.",
+      "zrtvaId": 1
     },
     {
       "idTelefon": 2,
       "model": "Samsung Galaxy S20",
       "os": "Android",
       "sifra": "654321",
-      "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death."
+      "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death.",
+      "zrtvaId": 1
     }
   ],
   "oneContactR": [
@@ -532,14 +516,16 @@ class MyViewModel @Inject constructor(
       "kontakt": 1,
       "datum": "2025-04-17",
       "propusten": false,
-      "dolazni": true
+      "dolazni": true,
+      "zrtvaId": 1
     },
     {
       "idOneCall": 2,
       "kontakt": 2,
       "datum": "2025-04-17",
       "propusten": true,
-      "dolazni": false
+      "dolazni": false,
+      "zrtvaId": 1
     }
   ],
   "galleryR": [
@@ -1594,14 +1580,16 @@ class MyViewModel @Inject constructor(
           "kontakt": 1,
           "datum": "2025-04-17",
           "propusten": false,
-          "dolazni": true
+          "dolazni": true,
+          "zrtvaR": 1
         },
         {
           "idOneCall": 2,
           "kontakt": 2,
           "datum": "2025-04-17",
           "propusten": true,
-          "dolazni": false
+          "dolazni": false,
+          "zrtvaR": 1
         }
       ],
       "galleryR": [
@@ -2231,11 +2219,11 @@ class MyViewModel @Inject constructor(
 
     fun getAllDataMysteriousSymptoms() = viewModelScope.launch {
         try {
-            val response = selectPacijent()
-            val responseMed = selectMedicinskiIzvestaj()
-            val responseIzjava = selectIzjavaZaPacijenta()
-            val responseLekarskiTest= selectLekarskiTest()
-            val responseLokacije = selectLokacijeIstrageR()
+            val response = commonRepository.selectPacijent()
+            val responseMed = commonRepository.selectMedicinskiIzvestaj()
+            val responseIzjava = commonRepository.selectIzjavaZaPacijenta()
+            val responseLekarskiTest= commonRepository.selectLekarskiTest()
+            val responseLokacije = commonRepository.selectLokacijeIstrageR()
             Log.d("GEMINI GET LOKACIJE",responseLokacije.toString())
             _uiStateMysteriousSymptomsData.value =
                 UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = responseLekarskiTest, locations = responseLokacije)
@@ -2245,6 +2233,25 @@ class MyViewModel @Inject constructor(
                 UiStateDataMysteriousSymptoms(patient = null,medicalReport = null, statement = null, tests = null, locations = emptyList())
         }
     }
+
+
+    fun selectTelefonZadatakViewModel(): TelefonZadatakR? {
+        return commonRepository.selectTelefonZadatak()
+    }
+
+    fun selectPorukeZadatakViewModel(): PorukeZadatakR? {
+        return commonRepository.selectPorukeZadatak()
+    }
+
+    fun selectIspitivanjeOsumnjicenogZadatakViewModel(osumnjicenZ: OsumnjicenR?): IspitivanjeOsumnjicenogZadatakR? {
+        return commonRepository.selectIspitivanjeOsumnjicenogZadatak(osumnjicenZ)
+    }
+
+    fun selectIspitivanjeSvedokaZadatakViewModel(svedokZ:SvedokR?): IspitivanjeSvedokaZadatakR? {
+        return commonRepository.selectIspitivanjeSvedokaZadatak(svedokZ)
+    }
+
+
 }
 
 data class UiStateZlocin(
