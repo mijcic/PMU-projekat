@@ -1,6 +1,5 @@
 package com.example.unit
 
-
 import com.example.getDatabaseConnection
 import com.example.models.dto.gemini.*
 import com.example.repository.RepositoryInsert
@@ -626,7 +625,7 @@ class GeminiServiceResponseImplTest {
             )
         )
 
-        val service = GeminiServiceResponseImpl(geminiResponse)
+         val service = GeminiServiceResponseImpl(geminiResponse)
 
         val result = service.getDataGeminiResponse(geminiResponse)
 

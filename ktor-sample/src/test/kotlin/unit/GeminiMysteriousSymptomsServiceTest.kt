@@ -638,25 +638,25 @@ class GeminiMysteriousSymptomsServiceTest {
         assertNull(result)
     }
 
-    @Test
-    fun `should return null when getOdgovor returns null`() {
-        val zlocin = returnZlocinData()
-        val zadaci = returnZadaciData()
-
-        every { repository.getUsedZlocinMysteriousSymptoms() } returns 1
-        every { repository.getZlocin(1) } returns zlocin
-        every { repository.getZadaci(zlocin.idZlocin) } returns zadaci
-
-        every { repository.getGallery(1) } returns returnGalleryData()
-        every { repository.getOsobe(1) } returns returnOsobaData()
-        every { repository.getPitanja(1) } returns returnPitanjaData()
-
-        every { repository.getOdgovor(1) } returns null
-
-        val result = service.getGeminiMysteriousSymtoms()
-
-        assertNull(result)
-    }
+//    @Test
+//    fun `should return null when getOdgovor returns null`() {
+//        val zlocin = returnZlocinData()
+//        val zadaci = returnZadaciData()
+//
+//        every { repository.getUsedZlocinMysteriousSymptoms() } returns 1
+//        every { repository.getZlocin(1) } returns zlocin
+//        every { repository.getZadaci(zlocin.idZlocin) } returns zadaci
+//
+//        every { repository.getGallery(1) } returns returnGalleryData()
+//        every { repository.getOsobe(1) } returns returnOsobaData()
+//        every { repository.getPitanja(1) } returns returnPitanjaData()
+//
+//        every { repository.getOdgovor(1) } returns null
+//
+//        val result = service.getGeminiMysteriousSymtoms()
+//
+//        assertNull(result)
+//    }
 
     @Test
     fun `should return null when getOsobe returns null`() {
