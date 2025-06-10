@@ -16,13 +16,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
 import rs.ac.bg.etf.projekat.auth.LoginPage
 import rs.ac.bg.etf.projekat.auth.SignUpPage
-import rs.ac.bg.etf.projekat.data.CommonRepository
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.data.realm.realmClasses
 import rs.ac.bg.etf.projekat.murder.OfficePage
 import rs.ac.bg.etf.projekat.murder.SuspectDetailsPage
 import rs.ac.bg.etf.projekat.murder.SuspectInterviewPage
@@ -50,32 +47,16 @@ import rs.ac.bg.etf.projekat.phone.PhonebookPage
 import rs.ac.bg.etf.projekat.phone.WhatsAppChatPage
 import rs.ac.bg.etf.projekat.phone.WhatsAppPage
 import rs.ac.bg.etf.projekat.ui.theme.ProjekatTheme
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    //@Inject
-    //lateinit var realm: Realm
-
     companion object {
         lateinit var realmInstance: Realm
-
-        /*
-        fun clearDatabase() {
-            realmInstance.writeBlocking {
-                deleteAll()
-            }
-        }*/
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Inicijalizuj statičku promenljivu
-       // realmInstance = realm
-
-
 
         enableEdgeToEdge()
         setContent {
@@ -85,12 +66,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
 }
 
 @SuppressLint("NewApi")
