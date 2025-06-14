@@ -51,26 +51,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
+import rs.ac.bg.etf.projekat.navigation.questionsPage
 
 @Composable
 fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
-    LaunchedEffect(Unit) {
-        // Add any initial setup if needed
-    }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp
-        var textWidth by remember { mutableStateOf(0f) }
+    Box(modifier = Modifier.fillMaxSize()) {
         var paddingStart by remember { mutableStateOf(0.dp) }
         val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
 
-        // Background and overlay
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(id = R.drawable.white_paper),
                 contentDescription = "Background Image",
@@ -85,7 +75,6 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
             )
         }
 
-        // Content
         Column(modifier = Modifier
             .align(Alignment.TopCenter).padding(top = 22.dp),
             verticalArrangement = Arrangement.Center,
@@ -247,7 +236,6 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
             }
         }
 
-        // Back Button (Red X)
         IconButton(
             onClick = { navController.popBackStack() },
             modifier = Modifier

@@ -39,6 +39,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
+import rs.ac.bg.etf.projekat.navigation.destinationHospitalPage
+import rs.ac.bg.etf.projekat.navigation.destinationOfficePage
 
 /*
 
@@ -162,32 +164,21 @@ fun MissionPage(
     navController: NavController,
     realmViewModel: RealmViewModel
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp
-    val viewModel: MyViewModel = hiltViewModel()
-
-    LaunchedEffect(viewModel.uiState.value.zlocin) {
-        InsertData(viewModel)
-    }
-
     val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
-    Log.d("CrimeData2", crimeData.value.toString())
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                if(image==R.drawable.murder) {
-                    navController.navigate(destinationOfficePage.route)
-                }
-                else{
-                    navController.navigate(
-                        destinationHospitalPage.route
-                    )
-                }
+        modifier = Modifier.fillMaxSize()
+        .clickable {
+            if(image==R.drawable.murder) {
+                navController.navigate(destinationOfficePage.route)
             }
+            else{
+                navController.navigate(
+                    destinationHospitalPage.route
+                )
+            }
+        }
     ) {
-        // Background image
         Image(
             painter = painterResource(id = image),
             contentDescription = "Background",
@@ -195,13 +186,6 @@ fun MissionPage(
             modifier = Modifier.fillMaxSize()
         )
 
-        if(image==R.drawable.m_symptoms2){
-            //Box(
-              //  modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f))
-            //)
-        }
-
-        // Super modern card
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

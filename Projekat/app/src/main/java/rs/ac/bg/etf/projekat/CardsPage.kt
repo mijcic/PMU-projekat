@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
+import rs.ac.bg.etf.projekat.navigation.destinationMissionPage
 
 data class CaseCard(
     val imageRes: Int,
@@ -72,8 +73,6 @@ fun CardsPage(
     myViewModel: MyViewModel,
     realmViewModel: RealmViewModel
 ){
-    val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
-
     val cases = listOf(
         CaseCard(
             imageRes = R.drawable.murder,

@@ -2,6 +2,7 @@ package com.example.service.post
 
 import com.example.*
 import com.example.models.dto.OsobaData
+import com.example.models.dto.UsedZlocinData
 import com.example.models.dto.ZlocinData
 import com.example.models.dto.ZrtvaData
 import com.example.models.dto.gemini.response.GeminiResponse
@@ -14,6 +15,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -80,9 +82,21 @@ class GeminiServiceResponseImpl(
 
         if (geminiResponse2 != null) {
             val datumString = geminiResponse2.zlocinR.datum
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val datum = datumString?.let { LocalDate.parse(it, formatter) }
-            val timestamp = datum?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+            var timestamp: Long? = null
+
+            try {
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val datum = datumString?.let { LocalDate.parse(it, formatter) }
+                timestamp = datum?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+            } catch (e: Exception) {
+                try {
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val datum = datumString?.let { LocalDateTime.parse(it, formatter) }
+                    timestamp = datum?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+                } catch (ex: Exception) {
+                    println("Greska pri parsiranju datuma: ${ex.message}")
+                }
+            }
 
             geminiResponse2.zlocinR.datum?.let {
                 if (timestamp != null) {
@@ -125,7 +139,13 @@ class GeminiServiceResponseImpl(
                         zlocinId = geminiResponse2.zrtvaR.zlocinId,
                         osobaId = osoba
                     )
-                    repo.insertZlocinData(zl)
+                    val usedZlocin = UsedZlocinData(
+                        idUsedZlocin = 1,
+                        zlocinId = zl,
+                        used = false
+                    )
+                    //repo.insertZlocinData(zl)
+                    repo.insertUsedZlocinData(usedZlocin)
                     geminiResponseRetrofit.zlocinRetrofit=zl
 
 

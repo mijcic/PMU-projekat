@@ -52,7 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.destinationSuspectsInterviewPage
+import rs.ac.bg.etf.projekat.navigation.destinationSuspectsInterviewPage
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @SuppressLint("StateFlowValueCalledInComposition")
