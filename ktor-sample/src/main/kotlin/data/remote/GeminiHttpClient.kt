@@ -12,7 +12,20 @@ import kotlinx.serialization.json.Json
 const val GEMINI_API_KEY = "AIzaSyD0Fssx_oFXYrO4dSoRuSfxhGpn4ziWPQk"
 
 
-// http klijent za komunikaciju sa gemini api-jem
+/**
+ * HTTP client configured for communication with the Gemini API.
+ *
+ * This client uses the [CIO] engine and installs [ContentNegotiation] with a JSON serializer.
+ * It is configured to:
+ * - Ignore unknown JSON keys during deserialization.
+ * - Allow lenient parsing of malformed JSON.
+ * - Apply a request timeout of 60 seconds.
+ *
+ * @see io.ktor.client.HttpClient
+ * @see io.ktor.client.engine.cio.CIO
+ * @see io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+ * @see kotlinx.serialization.json.Json
+ */
 val geminiClient = HttpClient(CIO) {
     install(ContentNegotiation) {
         json(Json {
@@ -21,6 +34,6 @@ val geminiClient = HttpClient(CIO) {
         })
     }
     engine {
-        requestTimeout = 60_000 // 60 sekundi timeout za API poziv
+        requestTimeout = 60_000 // 60 seconds timeout for API call
     }
 }

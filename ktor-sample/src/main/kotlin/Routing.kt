@@ -24,6 +24,29 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.sql.*
 
+/**
+ * Configures the routing and endpoints for the Ktor application.
+ *
+ * - Establishes a connection to the database.
+ * - Initializes the [Repository] and [GeminiService].
+ * - Populates initial data in the "murder" table if it is empty.
+ * - Sets up REST API endpoints for handling Gemini AI requests, user registration, login, and data retrieval.
+ *
+ * ## Endpoints
+ * - `POST /gemini` — Generates Gemini content based on prompt and tables.
+ * - `POST /geminiMS` — Processes prompts for "Mysterious Symptoms" via Gemini AI.
+ * - `GET /geminiMurder` — Returns AI-generated murder data.
+ * - `GET /geminiMysteriousSymptoms` — Returns AI-generated mysterious symptoms data.
+ * - `GET /scoreKorisnika` — Returns user scores.
+ * - `POST /signUp` — Registers a new user.
+ * - `POST /logIn` — Authenticates an existing user.
+ * - `GET /` — Returns a simple "Hello World!" response.
+ * - `staticResources("/static")` — Serves static files.
+ *
+ * @receiver The Ktor [Application] instance.
+ *
+ * @throws IllegalStateException if the database connection cannot be established.
+ */
 fun Application.configureRouting() {
     val connection = getDatabaseConnection()
         ?: error("Database connection failed — cannot start routing.")

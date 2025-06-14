@@ -12,12 +12,29 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
+/**
+ * Implementation of [GeminiService] that communicates with the Gemini API
+ * to generate structured crime-related content.
+ *
+ * @property client The HTTP client used to send requests.
+ * @property apiKey The API key for authenticating with the Gemini API.
+ * @property dataParser A parser used to convert the raw Gemini API response into a [GeminiResponseRetrofit].
+ */
 class GeminiServiceImpl(
     private val client: HttpClient,
     private val apiKey: String,
     private val dataParser: GeminiResponseParser
 ) : GeminiService {
 
+    /**
+     * Sends a prompt and table data to the Gemini API and parses the response into a [GeminiResponseRetrofit].
+     *
+     * @param prompt The main instruction text to be used as a prompt for content generation.
+     * @param tables A JSON string representing structured data (tables) to provide context to the model.
+     * @return A [Result] containing a [GeminiResponseRetrofit] if the call and parsing are successful, or an exception if an error occurs.
+     *
+     * @throws Exception if the API call fails or the response cannot be parsed correctly.
+     */
     override suspend fun generateContent(prompt: String, tables: String): Result<GeminiResponseRetrofit> {
         val request = GeminiRequest(
             contents = listOf(Content(parts = listOf(Part(text = prompt + tables))))
