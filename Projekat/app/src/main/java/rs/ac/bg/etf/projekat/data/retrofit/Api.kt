@@ -9,6 +9,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysterio
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.Story
 
 //const val BASE_URL = "http://192.168.0.12:8080/"
 const val BASE_URL = "http://10.0.2.2:8080/"
@@ -26,6 +27,9 @@ interface Api {
 
     @POST("gemini")
     suspend fun geminiData(@Body request: RequestBody):GeminiResponseRetrofit
+
+    @POST("geminiMurderStory")
+    suspend fun geminiMurderStory(@Body request: RequestBody):Story
 
     // RETROFIT 2
 

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import rs.ac.bg.etf.projekat.data.realm.DokazR
 import rs.ac.bg.etf.projekat.data.realm.DokazZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazR
@@ -282,6 +283,24 @@ class MyViewModel @Inject constructor(
 
     private val _uiStateGeminiData = MutableStateFlow(UiStateGeminiData())
     val uiStateGeminiData: StateFlow<UiStateGeminiData> = _uiStateGeminiData
+
+    fun postGeminiData( onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
+        //val jsonString = getJsonMurder()
+        val storyJson = JSONObject()
+        storyJson.put("story", "Murder")
+        val requestBody = storyJson.toString().toRequestBody("application/json".toMediaType())
+
+        try {
+            val response = MyRepository.geminiMurderStory(requestBody)
+            Log.d("GEMINI POST", "Uspesan? POST: ${response}")
+
+            onSuccess()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            //_uiStateGeminiData.value = UiStateGeminiData(null)
+            onError()
+        }
+    }
 
     fun getGeminiData(realmViewModel: RealmViewModel, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
         val jsonString = getJsonMurder()

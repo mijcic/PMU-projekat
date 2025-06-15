@@ -8,6 +8,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysterio
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.Story
 import javax.inject.Inject
 
 class Repository @Inject constructor(
@@ -20,6 +21,8 @@ class Repository @Inject constructor(
     suspend fun scoreKorisnika():List<ScorePageKorisnikResponse> = Api.scoreKorisnika()
 
     suspend fun geminiData(@Body request: RequestBody):GeminiResponseRetrofit= Api.geminiData(request)
+
+    suspend fun geminiMurderStory(@Body request: RequestBody):Story = Api.geminiMurderStory(request)
 
     // RETROFIT 2
 

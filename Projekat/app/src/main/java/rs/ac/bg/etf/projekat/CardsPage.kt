@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -382,6 +383,7 @@ fun CardWithImage(
                     onClick = {
                         isLoading = true
                         realmViewModel.clearDatabase()
+
                         myViewModel.getGeminiData(
                             realmViewModel,
                             onSuccess = {
@@ -392,6 +394,11 @@ fun CardWithImage(
                                     destinationMissionPage.route + "/" + image + "/" +
                                             "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
                                 )
+
+                                myViewModel.postGeminiData(
+                                    onSuccess = { Log.d("GEMINI","GENERISANA PRICA")},
+                                    onError = {navController.navigate("destinationErrorPage")}
+                                )
                             },
                             onError = {
                                 isLoading = false
@@ -399,6 +406,8 @@ fun CardWithImage(
                                 navController.navigate("destinationErrorPage")
                             }
                         )
+
+
                     },
                     enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_purple))

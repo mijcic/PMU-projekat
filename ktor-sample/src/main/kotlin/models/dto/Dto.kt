@@ -67,7 +67,7 @@ data class TragKtor(var idTrag: Int, var forenzickiDokazId: Int, var osumnjicenI
 data class DokazOsumnjicenKtor(var idDokazOsumnjicen: Int, var dokazId: Int, var osumnjicenId: Int)
 
 @Serializable
-data class OneContactR(val idOneContact: Int, val zlocinId: Int, val ime: String, val broj: String, val slika: Int)
+data class OneContactR(val idOneContact: Int, val zlocinId: Int, val ime: String, val broj: String, var slika: Int?)
 
 @Serializable
 data class BeleskaR (val idBeleska: Int, val zlocinId: Int, val tekst: String, val datum: String)

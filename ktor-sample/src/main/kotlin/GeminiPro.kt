@@ -29,6 +29,11 @@ data class GeminiRequest2(
     val tables: Tables
 )
 
+@Serializable
+data class Story(
+    val story:String
+)
+
 data class SviDokaziOdZrtve(
     val dokaziLista: MutableList<DokazData>,
     val telefoniLista: MutableList<TelefonData>,
@@ -36,13 +41,23 @@ data class SviDokaziOdZrtve(
     val zrtva: ZrtvaData?
 )
 
-
 fun insertGeminiZrtva(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, timestamp:Long, zl: ZlocinData, repo:RepositoryInsert): SviDokaziOdZrtve {
     val zrtva = geminiResponse2.zrtvaR
     val datumStr = zrtva.osobaId?.datum
-    val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
-    var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+    var timestamp2: Long? = null
+    try {
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+        timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+    } catch (e: Exception) {
+        try {
+            val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val dat = datumStr?.let { LocalDateTime.parse(it, formatter2) }
+            timestamp2 = dat?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+        } catch (ex: Exception) {
+            println("Greska pri parsiranju datuma: ${ex.message}")
+        }
+    }
 
     var dokaziLista: MutableList<DokazData> = mutableListOf()
     var telefoniLista: MutableList<TelefonData> = mutableListOf()
@@ -216,9 +231,22 @@ fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiRe
 fun insertGeminiObdukcija(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zl: ZlocinData, zrtva: ZrtvaData, timestamp: Long, repo: RepositoryInsert){
     val obdukcija =geminiResponse2.obdukcijaR
     val datumStr = obdukcija.datum
-    val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
-    var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+    var timestamp2: Long? = null
+
+    try {
+        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+        timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+    } catch (e: Exception) {
+        try {
+            val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val dat = datumStr?.let { LocalDateTime.parse(it, formatter2) }
+            timestamp2 = dat?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+        } catch (ex: Exception) {
+            println("Greska pri parsiranju datuma: ${ex.message}")
+        }
+    }
 
     if(timestamp2==null){
         timestamp2=timestamp
@@ -247,9 +275,21 @@ fun insertGeminiOsumnjicen(geminiResponse2: GeminiResponse2, geminiResponseRetro
     for(o in osumnjiceni){
         val prev = o.idOsumnjicen
         val datumStr = o.osobaId?.datum
-        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
-        var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+        var timestamp2: Long? = null
+
+        try {
+            val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+            timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+        } catch (e: Exception) {
+            try {
+                val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val dat = datumStr?.let { LocalDateTime.parse(it, formatter2) }
+                timestamp2 = dat?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+            } catch (ex: Exception) {
+                println("Greska pri parsiranju datuma: ${ex.message}")
+            }
+        }
 
         if(timestamp2==null){
             timestamp2=timestamp
@@ -323,9 +363,22 @@ fun insertGeminiSvedok(geminiResponse2: GeminiResponse2, geminiResponseRetrofit:
     for(s in svedoci){
         val prev = s.idSvedok
         val datumStr = s.osobaId?.datum
-        val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
-        var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+
+        var timestamp2: Long? = null
+
+        try {
+            val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+            timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+        } catch (e: Exception) {
+            try {
+                val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val dat = datumStr?.let { LocalDateTime.parse(it, formatter2) }
+                timestamp2 = dat?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+            } catch (ex: Exception) {
+                println("Greska pri parsiranju datuma: ${ex.message}")
+            }
+        }
 
         if(timestamp2==null){
             timestamp2=timestamp
@@ -380,12 +433,16 @@ fun insertGeminiOneContact(geminiResponse2: GeminiResponseCommon2, geminiRespons
     for(k in kontakti){
         val prev = k.idOneContact
 
+        if (k.slika==null){
+            k.slika=0
+        }
+
         val kontakt = OneContactData(
             idOneContact = k.idOneContact,
             zlocinId = k.zlocinId,
             ime = k.ime,
             broj = k.broj,
-            slika = k.slika,
+            slika = k.slika!!,
         )
 
         repo.insertOneContactData(kontakt, zl)
@@ -515,9 +572,30 @@ fun insertGeminiGalerija(geminiResponse2: GeminiResponse2, geminiResponseRetrofi
 
     for(g in galerija){
         val datumStr = g.datumVreme
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mma", Locale.ENGLISH)
-        val dateTime = LocalDateTime.parse(datumStr, formatter)
-        var timestamp2 = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli()
+
+        var timestamp2: Long? = null
+
+        try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val datum = datumStr?.let { LocalDate.parse(it, formatter) }
+            timestamp2 = datum?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+        } catch (e: Exception) {
+            try {
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val datum = datumStr?.let { LocalDateTime.parse(it, formatter) }
+                timestamp2 = datum?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+            } catch (ex: Exception) {
+                try {
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mma", Locale.ENGLISH)
+                    val dateTime = LocalDateTime.parse(datumStr, formatter)
+                    timestamp2 = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli()
+                }catch (exx:Exception){
+                }
+                println("Greska pri parsiranju datuma: ${ex.message}")
+            }
+        }
+
+
         if(timestamp2==null){
             timestamp2=timestamp
         }

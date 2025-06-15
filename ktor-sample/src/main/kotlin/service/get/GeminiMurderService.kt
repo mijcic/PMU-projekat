@@ -28,6 +28,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             return null
         }
 
+
         val zlocinData = loadZlocinDataGeminiRetrofit(id) ?: run {
             println("Neki podaci su null — provera nije prošla.")
             return null
@@ -89,6 +90,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             telefonZadaciRetrofit = zadaciData.telefonZadaci,
             forenzickiDokazZadaciRetrofit = zadaciData.forenzickiDokazZadaci
         )
+        repository.updateUsedZlocinMurder(id)
         return geminiResponseRetrofit
     }
 
