@@ -66,9 +66,8 @@ fun Application.configureRouting() {
     launch {
         initialDataService.insertInitialMurderIfEmpty()
     }
-
-    if (connection != null && databaseService.isMysteriousSymptomsTableEmpty(connection)) {
-        //insertInitialKorisnici(conn)
+    launch {
+        initialDataService.insertInitialMysteriousSymptomsIfEmpty()
     }
 
     routing {
@@ -100,6 +99,22 @@ fun Application.configureRouting() {
                 .onFailure {
                     call.respond(HttpStatusCode.InternalServerError, mapOf("error" to it.message))
                 }
+        }
+        post("/geminiMSStory") {
+            val requestData = call.receive<Story>()
+            val jsonMS = JsonLoader.getJsonMysteriousSymptoms()
+            val json = JSONObject(jsonMS)
+
+            val prompt = json.getString("prompt")
+            val tables = json.getJSONObject("tables").toString()
+
+            try {
+                val result = queryGeminiMysteriousSymptoms(prompt, tables)
+                println("Rezultat: $result")
+                call.respond(Story(story = result.toString())) // ili "OKEJ" ako testiraš
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
         }
 
         //gemini mysterious symptoms

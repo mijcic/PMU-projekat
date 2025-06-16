@@ -31,6 +31,10 @@ interface Api {
     @POST("geminiMurderStory")
     suspend fun geminiMurderStory(@Body request: RequestBody):Story
 
+
+    @POST("geminiMSStory")
+    suspend fun geminiMSStory(@Body request: RequestBody):Story
+
     // RETROFIT 2
 
     @POST("geminiMS")
@@ -38,5 +42,8 @@ interface Api {
 
     @GET("geminiMurder")
     suspend fun geminiMurder(): GeminiResponseRetrofit
+
+    @GET("geminiMysteriousSymptoms")
+    suspend fun geminiMysteriousSymptoms(): GeminiResponseRetrofitMysteriousSymptoms
 
 }

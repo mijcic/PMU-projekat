@@ -1,5 +1,6 @@
 package com.example.service
 
+import com.example.queryGeminiMysteriousSymptoms
 import com.example.service.post.GeminiService
 import com.example.utils.JsonLoader
 import org.json.JSONObject
@@ -41,6 +42,39 @@ class InitialDataService(
         }
         else{
             println("no if")
+        }
+    }
+
+    /**
+     * Inserts initial data related to a "Mysterious Symptoms" investigation case
+     * if the corresponding table in the database is currently empty.
+     *
+     * This method:
+     * - Checks whether the `MysteriousSymptoms` table in the database contains any data.
+     * - If the table is empty:
+     *   - Loads a predefined JSON prompt and related table structure via [JsonLoader.getJsonMysteriousSymptoms].
+     *   - Extracts the prompt and table definitions from the JSON object.
+     *   - Sends the prompt and tables to [queryGeminiMysteriousSymptoms] to generate new structured data.
+     *   - Prints the result to the console (data insertion is not yet implemented).
+     * - If the table is not empty, logs a message indicating no action is taken.
+     *
+     */
+    suspend fun insertInitialMysteriousSymptomsIfEmpty() {
+        if (db.isMysteriousSymptomsTableEmpty(
+                connection = db.getDatabaseConnection()
+            )) {
+            println("yes if MS")
+            val jsonMS = JsonLoader.getJsonMysteriousSymptoms()
+            val json = JSONObject(jsonMS)
+
+            val prompt = json.getString("prompt")
+            val tables = json.getJSONObject("tables").toString()
+
+            val result = queryGeminiMysteriousSymptoms(prompt, tables)
+            println("Rezultat: $result")
+        }
+        else{
+            println("no if MS")
         }
     }
 }

@@ -80,7 +80,7 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
             lokacijeIstrageRetrofit = pacijentData.lokacijeIstrage,
             izjavaZaPacijentaRetrofit = pacijentData.izjavaZaPacijenta
         )
-
+        repository.updateUsedZlocinMurder(id)  //POSLE DODaj
         return geminiResponseRetrofit
     }
 

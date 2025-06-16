@@ -492,17 +492,117 @@ fun CardWithImage(
 
 @Composable
 fun CardWithImage2(image: Int, title:String, text:String, navController: NavController, insertIntoDatabase: () -> Unit, titleMP: String, dateMP: String, placeMP: String, descMP: String,myViewModel: MyViewModel,realmViewModel: RealmViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { if (!isLoading) showDialog = false },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.detective_loupe_magnifying_glass_svgrepo_com),
+                    contentDescription = "Detective Icon",
+                    tint = Color(0xFF4CAF50),
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Start New Game?",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Do you want to start a new investigation\nor continue the previous one?",
+                        style = MaterialTheme.typography.bodyLarge,
+                        lineHeight = 20.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    if (isLoading) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        isLoading = true
+                        realmViewModel.clearDatabase()
+
+                        myViewModel.getGeminiDataMS(
+                            realmViewModel,
+                            onSuccess = {
+                                isLoading = false
+                                showDialog = false
+                                //insertIntoDatabase()
+                                navController.navigate(
+                                    destinationMissionPage.route + "/" + image + "/" +
+                                            "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
+                                )
+
+                                myViewModel.postGeminiMSData(
+                                    onSuccess = { Log.d("GEMINI","MS GENERISANA PRICA")},
+                                    onError = {navController.navigate("destinationErrorPage")}
+                                )
+                            },
+                            onError = {
+                                isLoading = false
+                                showDialog = false
+                                navController.navigate("destinationErrorPage")
+                            }
+                        )
+                    },
+                    enabled = !isLoading,
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_purple))
+                ) {
+                    Text("Start New", color = Color.White)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        if (!isLoading) {
+                            showDialog = false
+                            navController.navigate(
+                                destinationMissionPage.route + "/" + image + "/" +
+                                        titleMP + "/" + dateMP + "/" + placeMP + "/" + descMP
+                            )
+                        }
+                    },
+                    enabled = !isLoading
+                ) {
+                    Text("Continue", color = Color.White)
+                }
+            },
+            containerColor = Color(0xFF1A2B2D),
+            titleContentColor = Color.White,
+            textContentColor = Color.White
+        )
+    }
+
     Card(
         modifier = Modifier
             .padding(1.dp)
             .clickable{
-                realmViewModel.clearDatabase()
-                myViewModel.getGeminiDataMS(realmViewModel)
-
-                navController.navigate(
-                    destinationMissionPage.route + "/" + image + "/" +
-                            "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
-                )
+                showDialog = true
+//                realmViewModel.clearDatabase()
+//                myViewModel.getGeminiDataMS(realmViewModel)
+//
+//                navController.navigate(
+//                    destinationMissionPage.route + "/" + image + "/" +
+//                            "PROBA TITLE" + "/" + "PROBA DATE" + "/" + "PROBA PLACE" + "/" + "PROBA DESCRIPTION"
+//                )
             }
             .padding(bottom = 18.dp)
             .fillMaxWidth(),

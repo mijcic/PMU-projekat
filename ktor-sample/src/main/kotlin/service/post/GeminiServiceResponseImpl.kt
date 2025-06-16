@@ -20,6 +20,26 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
+/**
+ * Parses the Gemini AI JSON response, maps it to internal data structures,
+ * inserts the parsed data into the database, and returns a Retrofit-compatible
+ * response object with the inserted data references.
+ *
+ * The method:
+ * - Extracts and cleans the raw JSON string from the GeminiResponse.
+ * - Parses it into a `GeminiResponse2` data model.
+ * - Parses and converts date strings into timestamps.
+ * - Inserts core entities such as crimes (`Zlocin`), victims (`Zrtva`), suspects (`Osumnjiceni`), and related data into the database.
+ * - Launches background coroutine jobs for inserting related entities like contacts, questions, and tasks.
+ * - Closes the database connection after all operations.
+ *
+ * @param geminiResponse The raw response object from the Gemini AI containing nested JSON data.
+ * @return [GeminiResponseRetrofit] containing references to inserted entities, or empty if parsing or database connection fails.
+ *
+ * @throws Exception If JSON decoding or date parsing fails, it logs the error and continues.
+ * @throws SQLException If database operations fail, they should be handled by the repository layer.
+ *
+ */
 class GeminiServiceResponseImpl(
     private val geminiResponse: GeminiResponse
 ) : GeminiServiceResponse {

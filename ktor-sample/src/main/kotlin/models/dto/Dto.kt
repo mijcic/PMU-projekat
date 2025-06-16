@@ -126,7 +126,6 @@ data class ForenzickiDokazZadatakR (val idForenzickiDokazZadatak: Int, val tekst
 @Serializable
 data class PorukeZadatakR (var idPorukeZadatak: Int, val porukeId: Int, val zadatakId: Int, val uradjen: Boolean)
 
-
 @Serializable
 data class PacijentR (var idPacijent: Int, val simptomi: String, val statusPacijenta: String, val datumPrijave: String, var prijavio:OsobaR?, var zlocinId: Int, var zrtvaId: ZrtvaR?)
 

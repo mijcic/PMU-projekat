@@ -24,9 +24,13 @@ class Repository @Inject constructor(
 
     suspend fun geminiMurderStory(@Body request: RequestBody):Story = Api.geminiMurderStory(request)
 
+    suspend fun geminiMSStory(@Body request: RequestBody):Story = Api.geminiMSStory(request)
+
     // RETROFIT 2
 
     suspend fun geminiDataMS(@Body request: RequestBody): GeminiResponseRetrofitMysteriousSymptoms = Api.geminiDataMS(request)
 
     suspend fun geminiMurder(): GeminiResponseRetrofit = Api.geminiMurder()
+
+    suspend fun geminiMysteriousSymptoms(): GeminiResponseRetrofitMysteriousSymptoms = Api.geminiMysteriousSymptoms()
 }

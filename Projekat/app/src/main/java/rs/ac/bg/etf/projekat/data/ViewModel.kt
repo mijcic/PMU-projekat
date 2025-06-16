@@ -302,6 +302,24 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    fun postGeminiMSData( onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
+        //val jsonString = getJsonMurder()
+        val storyJson = JSONObject()
+        storyJson.put("story", "MysteriousSymptoms")
+        val requestBody = storyJson.toString().toRequestBody("application/json".toMediaType())
+
+        try {
+            val response = MyRepository.geminiMSStory(requestBody)
+            Log.d("GEMINI POST", "Uspesan? POST: ${response}")
+
+            onSuccess()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            //_uiStateGeminiData.value = UiStateGeminiData(null)
+            onError()
+        }
+    }
+
     fun getGeminiData(realmViewModel: RealmViewModel, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
         val jsonString = getJsonMurder()
 
@@ -811,11 +829,11 @@ class MyViewModel @Inject constructor(
     private val _uiStateGeminiDataMS = MutableStateFlow(UiStateGeminiDataMS())
     val uiStateGeminiDataMS: StateFlow<UiStateGeminiDataMS> = _uiStateGeminiDataMS
 
-    fun getGeminiDataMS(realmViewModel: RealmViewModel) = viewModelScope.launch {
+    fun getGeminiDataMS(realmViewModel: RealmViewModel, onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {
         val jsonString = getJsonMysteriousSymptoms()
         val requestBody = jsonString.toRequestBody("application/json".toMediaType())
         try {
-            val response = MyRepository.geminiDataMS(requestBody)
+            val response = MyRepository.geminiMysteriousSymptoms()
             Log.d("GEMINI2", response.toString())
             _uiStateGeminiDataMS.value = UiStateGeminiDataMS(response)
 
@@ -1242,8 +1260,9 @@ class MyViewModel @Inject constructor(
                     )
                 }
             }
-
-            // realmViewModel.callGetTitleDatePlaceDescFromCrime()
+            onSuccess()
+            realmViewModel.callGetTitleDatePlaceDescFromCrime()
+            Log.d("G","SUCCESS")
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateGeminiDataMS.value = UiStateGeminiDataMS(null)

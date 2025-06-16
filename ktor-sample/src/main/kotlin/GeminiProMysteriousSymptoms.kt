@@ -370,7 +370,7 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse: GeminiResponse): Gem
 
                 val zl = ZlocinData(
                     idZlocin = geminiResponse2.zlocinR.idZlocin,
-                    tipZlocinaId = 1,
+                    tipZlocinaId = 9,
                     naziv = geminiResponse2.zlocinR.naziv,
                     datum = timestamp,
                     mesto = geminiResponse2.zlocinR.mesto,
@@ -406,8 +406,14 @@ fun getDataGeminiResponseMysteriousSymptoms(geminiResponse: GeminiResponse): Gem
                     zlocinId = geminiResponse2.pacijentR.zrtvaId?.zlocinId ?: -1,
                     osobaId = osoba
                 )
-                repo.insertZlocinData(zl)
+                //repo.insertZlocinData(zl)
                 geminiResponseRetrofit.zlocinRetrofit=zl
+                val usedZlocin = UsedZlocinData(
+                    idUsedZlocin = 1,
+                    zlocinId = zl,
+                    used = false
+                )
+                repo.insertUsedZlocinData(usedZlocin)
 
                 var pacijent=insertGeminiPacijent(geminiResponse2,geminiResponseRetrofit,zl,repo)
 
