@@ -1,6 +1,5 @@
 package com.example.service
 
-import com.example.queryGeminiMysteriousSymptoms
 import com.example.service.post.GeminiService
 import com.example.utils.JsonLoader
 import org.json.JSONObject
@@ -70,7 +69,7 @@ class InitialDataService(
             val prompt = json.getString("prompt")
             val tables = json.getJSONObject("tables").toString()
 
-            val result = queryGeminiMysteriousSymptoms(prompt, tables)
+            val result = geminiService.queryGeminiMysteriousSymptoms(prompt, tables)
             println("Rezultat: $result")
         }
         else{

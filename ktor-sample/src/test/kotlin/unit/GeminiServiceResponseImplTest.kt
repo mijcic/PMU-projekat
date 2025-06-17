@@ -1,8 +1,5 @@
 package com.example.unit
 
-
-
-import com.example.getDataGeminiResponseMysteriousSymptoms
 import com.example.models.dto.gemini.response.Candidate
 import com.example.models.dto.gemini.response.Content
 import com.example.models.dto.gemini.response.GeminiResponse
@@ -1031,9 +1028,9 @@ class GeminiServiceResponseImplTest {
             )
         )
 
-        //val service = GeminiServiceResponseImpl(geminiResponse)
+        val service = GeminiServiceResponseImpl(geminiResponse)
 
-        val result = getDataGeminiResponseMysteriousSymptoms(geminiResponse)
+        val result = service.getDataGeminiResponseMysteriousSymptoms(geminiResponse)
 
         //assertNotNull(result.zlocinRetrofit)
         //assertEquals("Murder of Isabelle Moreau", result.zlocinRetrofit?.naziv)

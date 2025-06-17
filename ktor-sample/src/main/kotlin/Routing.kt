@@ -4,6 +4,9 @@ import com.example.data.remote.GEMINI_API_KEY
 import com.example.data.remote.geminiClient
 import com.example.models.dto.KorisnikRequest
 import com.example.models.dto.MessageResponse
+import com.example.models.dto.Story
+import com.example.models.dto.gemini.request.GeminiRequest2
+import com.example.models.dto.gemini.request.GeminiRequest2MysteriousSymptoms
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.service.post.GeminiService
 import com.example.service.post.GeminiServiceImpl
@@ -56,8 +59,7 @@ fun Application.configureRouting() {
         user = "root",
         password = "1234"
     )
-    val connection = databaseService.getDatabaseConnection()
-        ?: error("Database connection failed — cannot start routing.")
+    val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
     val geminiService: GeminiService = GeminiServiceImpl(geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
     val initialDataService = InitialDataService(geminiService, databaseService)
@@ -109,7 +111,7 @@ fun Application.configureRouting() {
             val tables = json.getJSONObject("tables").toString()
 
             try {
-                val result = queryGeminiMysteriousSymptoms(prompt, tables)
+                val result = geminiService.queryGeminiMysteriousSymptoms(prompt, tables)
                 println("Rezultat: $result")
                 call.respond(Story(story = result.toString())) // ili "OKEJ" ako testiraš
             } catch (e: Exception) {
@@ -133,7 +135,7 @@ fun Application.configureRouting() {
                     return@post
                 }
 
-                val geminiResponseText = queryGeminiMysteriousSymptoms(prompt, tables.toString())
+                val geminiResponseText = geminiService.queryGeminiMysteriousSymptoms(prompt, tables.toString())
                 println(geminiResponseText)
 
                 call.respond(geminiResponseText as Any)

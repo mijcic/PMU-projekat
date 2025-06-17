@@ -1,5 +1,7 @@
 package com.example.service.post
 
+import com.example.data.remote.GEMINI_API_KEY
+import com.example.data.remote.geminiClient
 import com.example.models.dto.gemini.request.GeminiRequest
 import com.example.models.dto.gemini.response.Content
 import com.example.models.dto.gemini.response.GeminiResponse
@@ -68,6 +70,51 @@ class GeminiServiceImpl(
             println("Exception during Gemini API call: ${e.message}")
             e.printStackTrace()
             Result.failure(e)
+        }
+    }
+
+    override suspend fun queryGeminiMysteriousSymptoms(prompt: String,tables:String): Any {
+        val request = GeminiRequest(
+            contents = listOf(Content(parts = listOf(Part(text = prompt+tables)))),
+        )
+
+        try {
+            val t0 = System.currentTimeMillis()
+            val response: HttpResponse = geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+
+            val t1 = System.currentTimeMillis()
+            println("Gemini API trajanje: ${t1 - t0}ms")
+
+            return if (response.status == HttpStatusCode.OK) {
+                val geminiResponse: GeminiResponse = response.body()
+                val t2 = System.currentTimeMillis()
+                println("Parsiranje trajanje: ${t2 - t1}ms")
+
+
+                //to insert data into mysql database
+                println(geminiResponse)
+                val geminiServiceResponseImpl = GeminiServiceResponseImpl(geminiResponse)
+                val geminiResponseRetrofit = geminiServiceResponseImpl.getDataGeminiResponseMysteriousSymptoms(geminiResponse)
+
+                val t3 = System.currentTimeMillis()
+                println("Insert trajanje: ${t3 - t2}ms")
+
+                geminiResponseRetrofit
+                //geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+                //  ?: "No textual response received from Gemini."
+            } else {
+                val errorBody = response.bodyAsText()
+                println("Error from Gemini: ${response.status} - $errorBody")
+                "Error during communication with the Gemini API: ${response.status}"
+            }
+
+        } catch (e: Exception) {
+            println("Exception during the Gemini API call: ${e.message}")
+            e.printStackTrace()
+            return "Internal error during communication with the AI service."
         }
     }
 }
