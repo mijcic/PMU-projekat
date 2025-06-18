@@ -478,6 +478,11 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             if(timestamp2==null){
                 timestamp2=timestamp
             }
+
+            val validValues = listOf("SMS", "WhatsApp", "email")
+            if (p.tipPoruke !in validValues) {
+                p.tipPoruke = "SMS"
+            }
             kontakt?.let {
                 PorukeData(
                     idPoruke = p.idPoruke,
@@ -728,12 +733,22 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         for(w in whatsAppPoruke){
             val waKontaktKoSalje = kontaktiLista.find { it.idWhatsAppKontakt == w.kontaktKoSalje }
             val waKontaktKomeSalje = kontaktiLista.find { it.idWhatsAppKontakt == w.kontaktKomeSalje }
-
             val datumStr = w.datum
-            val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val dat = datumStr?.let { LocalDate.parse(it.toString(), formatter2) }
-            var timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
 
+            var timestamp2: Long? = null
+            try {
+                val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val dat = datumStr.let { LocalDate.parse(it, formatter2) }
+                timestamp2 = dat.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+            } catch (e: Exception) {
+                try {
+                    val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val dat = datumStr.let { LocalDateTime.parse(it, formatter2) }
+                    timestamp2 = dat?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+                } catch (ex: Exception) {
+                    println("Greska pri parsiranju datuma: ${ex.message}")
+                }
+            }
             if(timestamp2==null){
                 timestamp2=timestamp
             }

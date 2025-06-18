@@ -1,7 +1,7 @@
 package com.example.service.post
 
 import com.example.data.remote.GEMINI_API_KEY
-import com.example.data.remote.geminiClient
+import com.example.data.remote.GeminiClient
 import com.example.models.dto.gemini.request.GeminiRequest
 import com.example.models.dto.gemini.response.Content
 import com.example.models.dto.gemini.response.GeminiResponse
@@ -80,7 +80,7 @@ class GeminiServiceImpl(
 
         try {
             val t0 = System.currentTimeMillis()
-            val response: HttpResponse = geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY") {
+            val response: HttpResponse = GeminiClient.geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }

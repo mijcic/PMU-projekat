@@ -1,7 +1,7 @@
 package com.example
 
 import com.example.data.remote.GEMINI_API_KEY
-import com.example.data.remote.geminiClient
+import com.example.data.remote.GeminiClient
 import com.example.models.dto.KorisnikRequest
 import com.example.models.dto.MessageResponse
 import com.example.models.dto.Story
@@ -61,7 +61,7 @@ fun Application.configureRouting() {
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
-    val geminiService: GeminiService = GeminiServiceImpl(geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
+    val geminiService: GeminiService = GeminiServiceImpl(GeminiClient.geminiClient, GEMINI_API_KEY, DefaultGeminiResponseParser())
     val initialDataService = InitialDataService(geminiService, databaseService)
     val korisnikService = KorisnikService(databaseService)
 

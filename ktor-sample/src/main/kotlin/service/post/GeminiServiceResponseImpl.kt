@@ -229,7 +229,7 @@ class GeminiServiceResponseImpl(
                 }
             }
         }
-        conn?.close()
+        //conn?.close()
         return geminiResponseRetrofit
     }
 

@@ -26,14 +26,16 @@ const val GEMINI_API_KEY = "AIzaSyD0Fssx_oFXYrO4dSoRuSfxhGpn4ziWPQk"
  * @see io.ktor.client.plugins.contentnegotiation.ContentNegotiation
  * @see kotlinx.serialization.json.Json
  */
-val geminiClient = HttpClient(CIO) {
-    install(ContentNegotiation) {
-        json(Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-        })
-    }
-    engine {
-        requestTimeout = 60_000 // 60 seconds timeout for API call
+object GeminiClient {
+    val geminiClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            })
+        }
+        engine {
+            requestTimeout = 60_000
+        }
     }
 }

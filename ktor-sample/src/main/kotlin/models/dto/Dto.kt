@@ -49,7 +49,7 @@ data class AlibiR (var idAlibi: Int, var osumnjicenId: Int, var svedokId: Int?, 
 data class KontaktKtor(var idKontakt:Int, val ime: String, val broj: String, val status: Int, var zrtvaId: Int)
 
 @Serializable
-data class PorukeKtor(var idPoruke: Int, val tipPoruke: String, val sadrzaj: String, val datumVreme: String, var zrtvaId: Int, var posiljalacId: Int, val statusPoruke: String, val sirovana: Boolean)
+data class PorukeKtor(var idPoruke: Int, var tipPoruke: String, val sadrzaj: String, val datumVreme: String, var zrtvaId: Int, var posiljalacId: Int, val statusPoruke: String, val sirovana: Boolean)
 
 @Serializable
 data class PoziviKtor (var idPoziv: Int, val tip: Int, val broj: String, val datumVreme: String, val zrtvaId: Int, val status: Int, var kontaktId: Int)
