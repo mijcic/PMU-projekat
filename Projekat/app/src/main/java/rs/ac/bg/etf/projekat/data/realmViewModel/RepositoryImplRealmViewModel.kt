@@ -566,7 +566,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
         return odnos
     }
 
-    override suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String) {
+    override suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String): PrijavljeniKorisnikR? {
         var prijavljeniKorisnik: PrijavljeniKorisnikR? = null
         realm.write {
             prijavljeniKorisnik = query<PrijavljeniKorisnikR>("korisnickoIme == $0 AND sifra == $1", korisnickoImePK, sifraPK).find().firstOrNull()
@@ -577,6 +577,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
                 }
             copyToRealm(prijavljeniKorisnik!!)
         }
+        return prijavljeniKorisnik
     }
 
     override suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {
@@ -994,7 +995,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
     }
 
     override suspend fun insertMedicinskiIzvestaj(idMedicinskiIzvestajM: Int, rezimeM: String, CTnalazM: String, MRInalazM: String, krvnaSlikaM: String, toksikoloskeAnalizeM: String, zakljucakM: String, pacijentIdM: PacijentR): MedicinskiIzvestajR? {
-        var medicinskiIzvestaj: MedicinskiIzvestajR? = null
+            var medicinskiIzvestaj: MedicinskiIzvestajR? = null
         Log.d("GEMINI MED",idMedicinskiIzvestajM.toString())
         realm.write {
             val existingPacijent = query<PacijentR>("idPacijent == $0", pacijentIdM.idPacijent).find().firstOrNull()
@@ -1042,7 +1043,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
         return pitanje
     }
 
-    override suspend fun insertOdogovor(idOdogovorO:Int,pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int) {
+    override suspend fun insertOdogovor(idOdogovorO:Int,pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int): OdgovorR? {
         var odgovor: OdgovorR? = null
         realm.write {
             // Ako pitanje nije uneto u bazu, unesite ga
@@ -1062,6 +1063,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
                 }
             copyToRealm(odgovor!!)
         }
+        return odgovor
     }
 
     override suspend fun getAllOdgovorForPitanje(pitanjeO: PitanjeR?): List<OdgovorR>? {

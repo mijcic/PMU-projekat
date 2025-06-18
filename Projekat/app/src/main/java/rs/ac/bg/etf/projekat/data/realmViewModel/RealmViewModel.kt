@@ -177,8 +177,8 @@ class RealmViewModel @Inject constructor(
         _uiState.value = UiStateUserData(userExists)
     }
 
-    suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String) {
-        repo.insertPrijavljeniKorisnik(korisnickoImePK, sifraPK)
+    suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String): PrijavljeniKorisnikR? {
+        return repo.insertPrijavljeniKorisnik(korisnickoImePK, sifraPK)
     }
 
     suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {
@@ -300,8 +300,8 @@ class RealmViewModel @Inject constructor(
         return repo.insertPitanje(idPitanjeP,zlocinIdP, tekstP)
     }
 
-    suspend fun insertOdogovor(idOdogovorO:Int,pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int) {
-        repo.insertOdogovor(idOdogovorO,pitanjeIdO, tekstOdgovoraO, tacanO, bodoviO)
+    suspend fun insertOdogovor(idOdogovorO:Int,pitanjeIdO: PitanjeR?, tekstOdgovoraO: String, tacanO: Boolean, bodoviO: Int): OdgovorR? {
+        return repo.insertOdogovor(idOdogovorO,pitanjeIdO, tekstOdgovoraO, tacanO, bodoviO)
     }
 
     suspend fun getAllPitanje(): List<PitanjeR>? {

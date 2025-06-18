@@ -214,7 +214,7 @@ fun <T> executeQuery(query: String, rowMapper: (ResultSet) -> T): List<T> {
     var resultSet: ResultSet? = null
 
     try {
-        conn = getDatabaseConnection()
+        val conn = getDatabaseConnection()
         statement = conn?.prepareStatement(query)
         resultSet = statement?.executeQuery()
 
