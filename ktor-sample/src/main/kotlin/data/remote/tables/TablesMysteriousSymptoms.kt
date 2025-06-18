@@ -1,5 +1,6 @@
-package com.example.models.dto
+package com.example.data.remote.tables
 
+import com.example.data.remote.generic.*
 import kotlinx.serialization.Serializable
 
 /**

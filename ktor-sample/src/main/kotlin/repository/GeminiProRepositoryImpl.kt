@@ -1,10 +1,11 @@
 package com.example.repository
 
-import com.example.models.dto.*
-import com.example.models.dto.gemini.retrofit.GeminiResponse2
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
-import com.example.models.interfaces.GeminiResponseCommon2
-import com.example.models.interfaces.GeminiResponseRetrofitCommon
+import com.example.data.remote.gemini.retrofit.GeminiResponse2
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.tables.*
+import com.example.interfaces.GeminiResponseCommon2
+import com.example.interfaces.GeminiResponseRetrofitCommon
+import com.example.models.domain.SviDokaziOdZrtve
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -111,7 +112,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return SviDokaziOdZrtve(dokaziLista, telefoniLista, forenzickiDokaziLista, zr)
     }
 
-    override fun insertGeminiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, zrtva: ZrtvaData,repo:RepositoryInsert): MutableList<DokazData> {
+    override fun insertGeminiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, zrtva: ZrtvaData, repo:RepositoryInsert): MutableList<DokazData> {
         val dokazi = geminiResponse2.dokazR
         var dokaziLista = mutableListOf<DokazData>()
 
@@ -145,7 +146,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return dokaziLista
     }
 
-    override fun insertGeminiTelefon(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData,repo: RepositoryInsert): MutableList<TelefonData> {
+    override fun insertGeminiTelefon(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData, repo: RepositoryInsert): MutableList<TelefonData> {
         val telefoni = geminiResponse2.telefonR
         var telefoniLista = mutableListOf<TelefonData>()
 
@@ -173,7 +174,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return telefoniLista
     }
 
-    override fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData,repo: RepositoryInsert): MutableList<ForenzickiDokazData> {
+    override fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData, repo: RepositoryInsert): MutableList<ForenzickiDokazData> {
         val dokazi = geminiResponse2.forenzickiDokazR
         val dokaziLista = mutableListOf<ForenzickiDokazData>()
 
@@ -400,7 +401,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return svedociLista
     }
 
-    override fun insertGeminiOneContact(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData,repo: RepositoryInsert): MutableList<OneContactData> {
+    override fun insertGeminiOneContact(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, repo: RepositoryInsert): MutableList<OneContactData> {
         val kontakti = geminiResponse2.oneContactR
         val kontaktiLista = mutableListOf<OneContactData>()
 
@@ -596,7 +597,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.galerijaRetrofit = galerijaLista
     }
 
-    override fun insertGeminiAplikacija(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon,zrtva: ZrtvaData, repo: RepositoryInsert){
+    override fun insertGeminiAplikacija(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData, repo: RepositoryInsert){
         val aplikacija =geminiResponse2.aplikacijaKtor
         val aplikacijaLista = mutableListOf<AplikacijaData>()
 
@@ -696,7 +697,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.beleskeRetrofit = beleskaLista
     }
 
-    override fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zl: ZlocinData, repo: RepositoryInsert): MutableList<WhatsAppKontaktData> {
+    override fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, repo: RepositoryInsert): MutableList<WhatsAppKontaktData> {
         val whatsAppKontakti = geminiResponse2.whatsAppKontaktR
         val whatsAppLista = mutableListOf<WhatsAppKontaktData>()
 
@@ -725,7 +726,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return whatsAppLista
     }
 
-    override fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<WhatsAppKontaktData>, timestamp: Long,repo: RepositoryInsert) {
+    override fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<WhatsAppKontaktData>, timestamp: Long, repo: RepositoryInsert) {
         val whatsAppPoruke = geminiResponse2.whatsAppPorukaR
         val whatsAppPorukaLista = mutableListOf<WhatsAppPorukaData>()
 
@@ -770,7 +771,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.whatsappPorukaRetrofit = whatsAppPorukaLista
     }
 
-    override fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtvaData: ZrtvaData, kontaktiLista: MutableList<OneContactData>, timestamp: Long,repo: RepositoryInsert) {
+    override fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtvaData: ZrtvaData, kontaktiLista: MutableList<OneContactData>, timestamp: Long, repo: RepositoryInsert) {
         val pozivi = geminiResponse2.oneCallR
         val poziviLista = mutableListOf<OneCallData>()
 
@@ -803,7 +804,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.oneCallRetrofit = poziviLista
     }
 
-    override fun insertGeminiGallery(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, timestamp: Long,repo: RepositoryInsert) {
+    override fun insertGeminiGallery(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, timestamp: Long, repo: RepositoryInsert) {
         val galerija = geminiResponse2.galleryR
         val galleryLista = mutableListOf<GalleryData>()
 
@@ -831,7 +832,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.galleryRetrofit= galleryLista
     }
 
-    override fun insertGeminiObicnaPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<OneContactData>, timestamp: Long,repo: RepositoryInsert) {
+    override fun insertGeminiObicnaPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<OneContactData>, timestamp: Long, repo: RepositoryInsert) {
         val obicnePoruke = geminiResponse2.obicnaPorukaR
         val obicnePorukeLista = mutableListOf<ObicnaPorukaData>()
 
@@ -905,7 +906,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         }
     }
 
-    override fun insertGeminiPitanje(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData,repo: RepositoryInsert): MutableList<PitanjeData> {
+    override fun insertGeminiPitanje(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, repo: RepositoryInsert): MutableList<PitanjeData> {
         val pitanja = geminiResponse2.pitanjeR
         val pitanjeList = mutableListOf<PitanjeData>()
 
@@ -928,7 +929,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return pitanjeList
     }
 
-    override fun insertGeminiOdgovor(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon, pitanjeLista: MutableList<PitanjeData>,repo: RepositoryInsert) {
+    override fun insertGeminiOdgovor(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, pitanjeLista: MutableList<PitanjeData>, repo: RepositoryInsert) {
         val odgovori = geminiResponse2.odgovorR
         val odgovoriLista = mutableListOf<OdgovorData>()
 
@@ -1002,7 +1003,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.pitanjeIspitivanjeSvedokaRetrofit = pitanjeIspitivanjeSvedokaLista
     }
 
-    override fun insertGeminiOsoba(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zlocin: ZlocinData, timestamp: Long,repo: RepositoryInsert) {
+    override fun insertGeminiOsoba(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zlocin: ZlocinData, timestamp: Long, repo: RepositoryInsert) {
         val osobe = geminiResponse2.osobaR
         val osobeLista = mutableListOf<OsobaData>()
 
@@ -1078,7 +1079,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         //geminiResponseRetrofit.zadaciRetrofit =lista
     }
 
-    override fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>,repo: RepositoryInsert) {
+    override fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>, repo: RepositoryInsert) {
         val dokazi = geminiResponse2.dokazZadatakR
         val dokaziLista = mutableListOf<DokazZadatakData>()
 
@@ -1148,7 +1149,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.ispitivanjeSvedokaZadaciRetrofit = ispitivanjeSvedokaZadatakLista
     }
 
-    override fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, telefonList: MutableList<TelefonData>, zadatakList: MutableList<ZadatakData>,repo: RepositoryInsert) {
+    override fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, telefonList: MutableList<TelefonData>, zadatakList: MutableList<ZadatakData>, repo: RepositoryInsert) {
         val zadaci = geminiResponse2.telefonZadatakR
         val telefonZadatakLista = mutableListOf<TelefonZadatakData>()
 
@@ -1171,7 +1172,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit.telefonZadaciRetrofit = telefonZadatakLista
     }
 
-    override fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, forenzickiDokazList: MutableList<ForenzickiDokazData>, zadatakList: MutableList<ZadatakData>,repo: RepositoryInsert) {
+    override fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, forenzickiDokazList: MutableList<ForenzickiDokazData>, zadatakList: MutableList<ZadatakData>, repo: RepositoryInsert) {
         val zadaci = geminiResponse2.forenzickiDokazZadatakR
         val forenzickiDokazZadaciLista = mutableListOf<ForenzickiDokazZadatakData>()
 
@@ -1271,7 +1272,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         geminiResponseRetrofit: GeminiResponseRetrofit,
         osumnjiceniLista: MutableList<OsumnjicenData>,
         svedociLista: MutableList<SvedokData>,
-        sviDokaziZrtva:SviDokaziOdZrtve,
+        sviDokaziZrtva: SviDokaziOdZrtve,
         repo: RepositoryInsert
     ) = coroutineScope {
 

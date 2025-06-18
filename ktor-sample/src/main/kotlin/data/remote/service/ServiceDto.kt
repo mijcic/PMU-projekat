@@ -1,6 +1,6 @@
-package com.example.models.dto.service
+package com.example.data.remote.service
 
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 
 /**
  * Contains crime data along with its classified crime type.

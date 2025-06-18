@@ -1,5 +1,6 @@
 package com.example.repository
 
+import com.example.data.remote.tables.*
 import com.example.models.dto.*
 
 /**

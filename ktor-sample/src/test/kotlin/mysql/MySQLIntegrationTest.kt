@@ -1,6 +1,6 @@
 package com.example.mysql
 
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import com.example.repository.Repository
 import com.example.repository.RepositoryInsert
 import org.junit.jupiter.api.BeforeAll
@@ -1695,7 +1695,7 @@ class MySQLIntegrationTest {
         val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
         val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
 
-        val oneContact =OneContactData(
+        val oneContact = OneContactData(
             idOneContact = 1,
             zlocinId = zlocin.idZlocin,
             ime = "John",
@@ -1779,7 +1779,7 @@ class MySQLIntegrationTest {
         val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
         val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
 
-        val whatsAppKontakt =WhatsAppKontaktData(
+        val whatsAppKontakt = WhatsAppKontaktData(
             idWhatsAppKontakt = 1,
             zlocinId = zlocin.idZlocin,
             ime = "Tom",
@@ -2458,7 +2458,7 @@ class MySQLIntegrationTest {
         val dat = datumStr.let { LocalDate.parse(it.toString(), formatter2) }
         val timestamp2 = dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
 
-        val oneContact =OneContactData(
+        val oneContact = OneContactData(
             idOneContact = 1,
             zlocinId = zlocin.idZlocin,
             ime = "John",
@@ -2543,7 +2543,9 @@ class MySQLIntegrationTest {
         repo.insertKontaktData(kontakt,zr)
 
         val kontaktGet = repoGet.getKontakti(zr.idZrtva,zr)
-        val kontaktNePostoji =repoGet.getKontakti(zr.idZrtva+11,ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba))
+        val kontaktNePostoji =repoGet.getKontakti(zr.idZrtva+11,
+            ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba)
+        )
 
         println(kontaktGet)
         assertTrue(kontaktGet!= emptyList<KontaktData>(), "Treba da postoje kontakti sa prosledjenim id-om zlocina")
@@ -2628,7 +2630,7 @@ class MySQLIntegrationTest {
         repo.insertPorukeData(poruka,zr,kontakt)
 
         val porukeGet = repoGet.getPoruke(zr.idZrtva,zr, listOf(kontakt))
-        val porukeNePostoji =repoGet.getPoruke(zr.idZrtva+11,ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),
+        val porukeNePostoji =repoGet.getPoruke(zr.idZrtva+11, ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),
             listOf(kontakt)
         )
 
@@ -2747,7 +2749,7 @@ class MySQLIntegrationTest {
         repo.insertPoziviData(poziv, zr,kontakt)
 
         val poziviGet = repoGet.getPozivi(zr.idZrtva,zr, listOf(kontakt))
-        val poziviNePostoji =repoGet.getPozivi(zr.idZrtva+11,ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),
+        val poziviNePostoji =repoGet.getPozivi(zr.idZrtva+11, ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),
             listOf(kontakt)
         )
 
@@ -2857,7 +2859,8 @@ class MySQLIntegrationTest {
         repo.insertGalerijaData(galerija,zr)
 
         val galerijaGet = repoGet.getGalerija(zr.idZrtva,zr)
-        val galerijaNePostoji =repoGet.getGalerija(zr.idZrtva+11,ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),)
+        val galerijaNePostoji =repoGet.getGalerija(zr.idZrtva+11,
+            ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),)
 
         assertTrue(galerijaGet!= emptyList<GalerijaData>(), "Treba da postoje galerija sa prosledjenim id-om zlocina")
         assertTrue(galerijaNePostoji==emptyList<GalerijaData>(), "Treba da ne postoje galerija sa prosledjenim id-om zlocina")
@@ -2948,7 +2951,8 @@ class MySQLIntegrationTest {
         repo.insertAplikacijaData(aplikacija,zr)
 
         val aplikacijaGet = repoGet.getAplikacije(zr.idZrtva,zr)
-        val aplikacijaNePostoji =repoGet.getAplikacije(zr.idZrtva+11,ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),)
+        val aplikacijaNePostoji =repoGet.getAplikacije(zr.idZrtva+11,
+            ZrtvaData(zr.idZrtva+11,"","","",zlocin.idZlocin,osoba),)
 
         assertTrue(aplikacijaGet!= emptyList<AplikacijaData>(), "Treba da postoje aplikacije sa prosledjenim id-om zlocina")
         assertTrue(aplikacijaNePostoji==emptyList<AplikacijaData>(), "Treba da ne postoje aplikacije sa prosledjenim id-om zlocina")
@@ -3354,7 +3358,7 @@ class MySQLIntegrationTest {
         )
         repo.insertZrtva(zr,zlocin, osoba)
 
-        val whatsAppKontakt =WhatsAppKontaktData(
+        val whatsAppKontakt = WhatsAppKontaktData(
             idWhatsAppKontakt = 1,
             zlocinId = zlocin.idZlocin,
             ime = "Tom",

@@ -1,4 +1,4 @@
-package com.example.models.dto.gemini.response
+package com.example.data.remote.gemini.response
 
 import kotlinx.serialization.Serializable
 

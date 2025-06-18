@@ -1,6 +1,6 @@
-package com.example.models.dto.gemini.request
+package com.example.data.remote.gemini.request
 
-import com.example.models.dto.TablesMysteriousSymptoms
+import com.example.data.remote.tables.TablesMysteriousSymptoms
 import kotlinx.serialization.Serializable
 
 @Serializable

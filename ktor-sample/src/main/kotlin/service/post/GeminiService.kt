@@ -1,6 +1,6 @@
 package com.example.service.post
 
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 
 /**
  * Service interface responsible for generating structured crime-related content

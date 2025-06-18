@@ -1,6 +1,6 @@
 package com.example.unit
 
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import com.example.repository.RepoInterface
 import com.example.service.get.GeminiMurderService
 import io.mockk.*
@@ -32,7 +32,7 @@ class GeminiMurderServiceTest {
     }
 
 
-    private fun returnZlocinData():ZlocinData{
+    private fun returnZlocinData(): ZlocinData {
         return ZlocinData(
             tipZlocinaId = 1,
             naziv = "Ubistvo u tramvaju",
@@ -44,11 +44,11 @@ class GeminiMurderServiceTest {
         )
     }
 
-    private fun returnTipZlocinaData():TipZlocinaDC{
+    private fun returnTipZlocinaData(): TipZlocinaDC {
         return TipZlocinaDC(1,"murder")
     }
 
-    private fun returnZrtvaData():ZrtvaData{
+    private fun returnZrtvaData(): ZrtvaData {
         return ZrtvaData(
             idZrtva = 1,
             tipZrtve = "zena",
@@ -59,7 +59,7 @@ class GeminiMurderServiceTest {
         )
     }
 
-    private fun returnObdukcijaData():ObdukcijaData{
+    private fun returnObdukcijaData(): ObdukcijaData {
         return ObdukcijaData(
             idObdukcija = 1,
             izvestaj = "Zrtva je preminula od rane od metka u grudima. Nema znakova borbe.",
@@ -83,7 +83,8 @@ class GeminiMurderServiceTest {
             opis = "Ljubomora"
         )
 
-        return listOf(OsumnjicenData(
+        return listOf(
+            OsumnjicenData(
             idOsumnjicen = 1,
             status = 0,
             tipOsumnjicen = "pojedinac",
@@ -91,7 +92,8 @@ class GeminiMurderServiceTest {
             zlocinId = returnZlocinData().idZlocin,
             kriv = 0,
             osobaId = returnOsobaData().first()
-        ))
+        )
+        )
     }
 
     private fun returnZadaciData(): List<ZadatakData>{
@@ -126,7 +128,8 @@ class GeminiMurderServiceTest {
     }
 
     private fun returnOsobaData(): List<OsobaData>{
-        return listOf(OsobaData(
+        return listOf(
+            OsobaData(
             idOsoba = 2,
             ime = "Tomas Black",
             kontakt = "+4433337888999",
@@ -134,51 +137,60 @@ class GeminiMurderServiceTest {
             zanimanje = "advokat",
             pol = "muski",
             zlocinId = returnZlocinData().idZlocin
-        ))
+        )
+        )
     }
 
     private fun returnDokaziData():List<DokazData>{
-        return listOf(DokazData(
+        return listOf(
+            DokazData(
             idDokaz = 1,
             tipDokaza = "fizicki",
             opis = "Pistolj pronadjen na mestu zlocina.",
             zlocinId = returnZlocinData().idZlocin,
             zrtvaId = returnZrtvaData().idZrtva,
             status = 0
-        ))
+        )
+        )
     }
 
     private fun returnTelefonData():List<TelefonData>{
-        return listOf(TelefonData(
+        return listOf(
+            TelefonData(
             idTelefon = 1,
             model = "Samsung Galaxy S22",
             os = "Android",
             sifra = "1234",
             informacije = "Pronađene su poruke sa pretnjama.",
             zrtvaId = returnZrtvaData().idZrtva
-        ))
+        )
+        )
     }
 
     private fun returnForenzickiDokaziData():List<ForenzickiDokazData>{
-        return listOf(ForenzickiDokazData(
+        return listOf(
+            ForenzickiDokazData(
             idForenzickiDokaz = 1,
             tipForenzickiDokaz = "DNK",
             opis = "DNK tragovi pronađeni na pištolju.",
             statusS = 0,
             veza = "DNK tragovi na pištolju se poklapaju sa DNK Olivije Reed.",
             zrtvaId = returnZrtvaData().idZrtva
-        ))
+        )
+        )
     }
 
     private fun returnSvedociData(): List<SvedokData>{
-        return listOf(SvedokData(
+        return listOf(
+            SvedokData(
             idSvedok = 1,
             izjava = "Cula sam pucanj i videla zenu kako bezi.",
             statusSvedok = "aktivno",
             statusIspitan = 0,
             zlocinId = returnZlocinData().idZlocin,
             osobaId = returnOsobaData().first()
-        ))
+        )
+        )
     }
 
     private fun returnOneContact(): List<OneContactData>{
@@ -201,17 +213,20 @@ class GeminiMurderServiceTest {
     }
 
     private fun returnKontaktiData(): List<KontaktData>{
-        return listOf(KontaktData(
+        return listOf(
+            KontaktData(
                 idKontakt = 1,
                 ime = "Elenora",
                 broj = "+442123412312",
                 status = 1,
                 zrtvaId = returnZrtvaData()
-        ))
+        )
+        )
     }
 
     private fun returnPorukeData(): List<PorukeData>{
-        return listOf(PorukeData(
+        return listOf(
+            PorukeData(
             idPoruke = 1,
             tipPoruke = "SMS",
             sadrzaj = ":(",
@@ -220,11 +235,13 @@ class GeminiMurderServiceTest {
             posiljalacId = returnKontaktiData().first(),
             statusPoruke = "sent",
             sifrovana = false
-        ))
+        )
+        )
     }
 
     private fun returnPoziviData(): List<PoziviData>{
-        return listOf(PoziviData(
+        return listOf(
+            PoziviData(
             idPoziv = 1,
             tip = 0,
             broj = "+432635647547",
@@ -232,38 +249,45 @@ class GeminiMurderServiceTest {
             zrtvaId = returnZrtvaData(),
             status = 0,
             kontaktId = returnKontaktiData().first()
-        ))
+        )
+        )
     }
 
     private fun returnGalerijaData(): List<GalerijaData>{
-        return listOf(GalerijaData(
+        return listOf(
+            GalerijaData(
             idGalerija = 11,
             tip = 0,
             putanja = "/mojeSlike2",
             zrtvaId = returnZrtvaData(),
             datumVreme = returnTimeStamp(),
             lokacija = "hotel"
-        ))
+        )
+        )
     }
 
     private fun returnAplikacijeData(): List<AplikacijaData>{
-        return listOf(AplikacijaData(
+        return listOf(
+            AplikacijaData(
             idAplikacije = 1,
             naziv = "Instagram",
             tip = 0,
             zrtvaId = returnZrtvaData(),
             aktivna = true,
             informacije = "Poslednja aktivnost na Instagram profilu žrtve."
-        ))
+        )
+        )
     }
 
     private fun returnBeleskeData(): List<BeleskaData>{
-        return listOf(BeleskaData(
+        return listOf(
+            BeleskaData(
             idBeleska = 1,
             zlocinId = returnZlocinData().idZlocin,
             tekst = "Moram da stignem pre njega",
             datum = returnTimeStamp()
-        ))
+        )
+        )
     }
 
     private fun returnWhatsAppKontaktiData(): List<WhatsAppKontaktData>{
@@ -286,157 +310,189 @@ class GeminiMurderServiceTest {
     }
 
     private fun returnWhatsAppPorukeData(): List<WhatsAppPorukaData>{
-        return listOf(WhatsAppPorukaData(
+        return listOf(
+            WhatsAppPorukaData(
             idWhatsAppPoruka = 1,
             kontaktKoSalje = returnWhatsAppKontaktiData().first().idWhatsAppKontakt,
             kontaktKomeSalje = returnWhatsAppKontaktiData()[1].idWhatsAppKontakt,
             tekst = "Upoznao sam je u baru. Delovala je cudno, ali idem do njene sobe. Javljam se kasnije.",
             datum = returnTimeStamp(),
             procitana = false
-        ))
+        )
+        )
     }
 
     private fun returnOneCallData(): List<OneCallData>{
-        return listOf(OneCallData(
+        return listOf(
+            OneCallData(
             idOneCall = 1,
             kontakt = returnOneContact().first().idOneContact,
             datum = returnTimeStamp(),
             propusten = false,
             dolazni = true,
             zrtvaId = returnZrtvaData().idZrtva
-        ))
+        )
+        )
     }
 
     private fun returnObicnaPorukaData(): List<ObicnaPorukaData>{
-        return listOf(ObicnaPorukaData(
+        return listOf(
+            ObicnaPorukaData(
             idObicnaPoruka = 1,
             kontaktKoSalje = returnOneContact().first().idOneContact,
             kontaktKomeSalje = returnOneContact()[1].idOneContact,
             tekst = "Upoznao sam je u baru. Delovala je cudno, ali idem do njene sobe. Javljam se kasnije.",
             datum = returnTimeStamp(),
             procitana = false
-        ))
+        )
+        )
     }
 
     private fun returnTragoviData(): List<TragData>{
-        return listOf(TragData(
+        return listOf(
+            TragData(
             idTrag = 1,
             forenzickiDokazId = returnForenzickiDokaziData().first(),
             osumnjicenId = returnOsumnjiceniData().first()
-        ))
+        )
+        )
     }
 
     private fun returnDokaziOsumnjiceniData(): List<DokazOsumnjicenData>{
-        return listOf(DokazOsumnjicenData(
+        return listOf(
+            DokazOsumnjicenData(
             idDokazOsumnjicen = 1,
             dokazId = returnDokaziData().first(),
             osumnjicenId = returnOsumnjiceniData().first()
-        ))
+        )
+        )
     }
 
     private fun returnDokaziZadaciData(): List<DokazZadatakData>{
-        return listOf(DokazZadatakData(
+        return listOf(
+            DokazZadatakData(
             idDokazZadatak = 1,
             tekst = "Posalji dokaz na forenzicku analizu",
             dokazId = returnDokaziData().first().idDokaz,
             uradjen = false,
             zadatakId = returnZadaciData().first().idZadatak
-        ))
+        )
+        )
     }
 
     private fun returnIspitivanjeOsumnjicenogZadatakData(): List<IspitivanjeOsumnjicenogZadatakData>{
-        return listOf(IspitivanjeOsumnjicenogZadatakData(
+        return listOf(
+            IspitivanjeOsumnjicenogZadatakData(
             idIspitivanjeOsumnjicenogZadatak = 1,
             osumnjicenId = returnOsumnjiceniData().first().idOsumnjicen,
             zadatakId = returnZadaciData().first().idZadatak,
             uradjen = true
-        ))
+        )
+        )
     }
 
     private fun returnIspitivanjeSvedokaZadatakData(): List<IspitivanjeSvedokaZadatakData>{
-        return listOf(IspitivanjeSvedokaZadatakData(
+        return listOf(
+            IspitivanjeSvedokaZadatakData(
             idIspitivanjeSvedokaZadatak = 1,
             svedokId = returnSvedociData().first().idSvedok,
             zadatakId = returnZadaciData().first().idZadatak,
             uradjen = false
-        ))
+        )
+        )
     }
 
     private fun returnTelefonZadaciData(): List<TelefonZadatakData>{
-        return listOf(TelefonZadatakData(
+        return listOf(
+            TelefonZadatakData(
             idTelefonZadatak = 1,
             telefonId = returnTelefonData().first().idTelefon,
             zadatakId = returnZadaciData().first().idZadatak,
             uradjen = true
-        ))
+        )
+        )
     }
 
     private fun returnForenzickiDokazZadatakData(): List<ForenzickiDokazZadatakData>{
-        return listOf(ForenzickiDokazZadatakData(
+        return listOf(
+            ForenzickiDokazZadatakData(
             idForenzickiDokazZadatak = 1,
             tekst = "Otkrij kojoj zeni pripada DNK.",
             forenzickiDokazId = returnForenzickiDokaziData().first().idForenzickiDokaz,
             uradjen = true,
             zadatakId = returnZadaciData().first().idZadatak
-        ))
+        )
+        )
     }
 
     private fun returnGalleryData(): List<GalleryData>{
-        return listOf(GalleryData(
+        return listOf(
+            GalleryData(
             idPhoto = 1,
             zlocinId = returnZlocinData().idZlocin,
             slika = 1,
             datum = returnTimeStamp(),
             mesto = "Amsterdam"
-        ))
+        )
+        )
     }
 
     private fun returnOdnosOsumnjicenZrtvaData(): List<OdnosOsumnjicenZrtvaData>{
-        return listOf(OdnosOsumnjicenZrtvaData(
+        return listOf(
+            OdnosOsumnjicenZrtvaData(
             idOdnos = 1,
             osumnjicenId = returnOsumnjiceniData().first().idOsumnjicen,
             zrtvaId = returnZrtvaData().idZrtva,
             tipOdnosa = "rivalski"
-        ))
+        )
+        )
     }
 
     private fun returnPitanjaData(): List<PitanjeData>{
-        return listOf(PitanjeData(
+        return listOf(
+            PitanjeData(
             idPitanje = 1,
             zlocinId = returnZlocinData().idZlocin,
             tekst = "Da li si otisao do njene sobe?"
-        ))
+        )
+        )
     }
 
     private fun returnOdgovorData(): List<OdgovorData>{
-        return listOf(OdgovorData(
+        return listOf(
+            OdgovorData(
             idOdogovor = 1,
             pitanjeId = returnPitanjaData().first().idPitanje,
             tekstOdgovora = "Jesam, kaze da nije umesana.",
             tacan = false,
             bodovi = 10
-        ))
+        )
+        )
     }
 
     private fun returnPitanjeIspitivanjeOsumnjicenogData(): List<PitanjeIspitivanjeOsumnjicenogData>{
-        return listOf(PitanjeIspitivanjeOsumnjicenogData(
+        return listOf(
+            PitanjeIspitivanjeOsumnjicenogData(
             idPitanjeIspitivanjeOsumnjicenog = 1,
             kategorija = "alibi",
             tekst = "Zasto ste bili u sobi zrtve?",
             odgovor = "Samo sam mu doneo kofer. Otisao sam odmah.",
             komentar = "Nije pomenuo sadrzaj kofera ni zasto bas on donosi. Moguce da prikriva pravi razlog dolaska.",
             osumnjicenId = returnOsumnjiceniData().first().idOsumnjicen
-        ))
+        )
+        )
     }
 
     private fun returnPitanjeIspitivanjeSvedokaData(): List<PitanjeIspitivanjeSvedokaData>{
-        return listOf(PitanjeIspitivanjeSvedokaData(
+        return listOf(
+            PitanjeIspitivanjeSvedokaData(
             idPitanjeIspitivanjeSvedoka = 1,
             tekst = "Jeste li sigurni da je to bio bas taj muskarac?",
             odgovor = "Da, prepoznao sam ga – imao je crvenu jaknu i hodao je sepajući.",
             svedokId = returnSvedociData().first().idSvedok,
             nextPitanje = 0
-        ))
+        )
+        )
     }
 
 

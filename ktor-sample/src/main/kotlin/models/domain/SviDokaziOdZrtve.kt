@@ -1,4 +1,9 @@
-package com.example.models.dto
+package com.example.models.domain
+
+import com.example.data.remote.tables.DokazData
+import com.example.data.remote.tables.ForenzickiDokazData
+import com.example.data.remote.tables.TelefonData
+import com.example.data.remote.tables.ZrtvaData
 
 /**
  * Holds all types of evidence associated with a specific victim.

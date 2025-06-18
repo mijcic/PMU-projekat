@@ -1,10 +1,11 @@
 package com.example.repository
 
-import com.example.models.dto.*
-import com.example.models.dto.gemini.retrofit.GeminiResponse2
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
-import com.example.models.interfaces.GeminiResponseCommon2
-import com.example.models.interfaces.GeminiResponseRetrofitCommon
+import com.example.data.remote.gemini.retrofit.GeminiResponse2
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.tables.*
+import com.example.interfaces.GeminiResponseCommon2
+import com.example.interfaces.GeminiResponseRetrofitCommon
+import com.example.models.domain.SviDokaziOdZrtve
 
 /**
  * Interface for inserting and processing data obtained from Gemini AI responses
@@ -45,7 +46,7 @@ interface GeminiProRepository{
      * @param repo Repository for storing phone data.
      * @return A list of inserted phone records.
      */
-    fun insertGeminiTelefon(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData,repo: RepositoryInsert): MutableList<TelefonData>
+    fun insertGeminiTelefon(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData, repo: RepositoryInsert): MutableList<TelefonData>
 
     /**
      * Inserts forensic evidence related to a victim.
@@ -56,7 +57,7 @@ interface GeminiProRepository{
      * @param repo Repository for storing forensic evidence.
      * @return A list of forensic evidence inserted.
      */
-    fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData,repo: RepositoryInsert): MutableList<ForenzickiDokazData>
+    fun insertGeminiForenzickiDokaz(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData, repo: RepositoryInsert): MutableList<ForenzickiDokazData>
 
     /**
      * Inserts autopsy report and details.
@@ -103,7 +104,7 @@ interface GeminiProRepository{
      * @param repo Repository to persist the contact information.
      * @return List of inserted basic contacts.
      */
-    fun insertGeminiOneContact(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData,repo: RepositoryInsert): MutableList<OneContactData>
+    fun insertGeminiOneContact(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, repo: RepositoryInsert): MutableList<OneContactData>
 
     /**
      * Inserts victim's contact list.
@@ -159,7 +160,7 @@ interface GeminiProRepository{
      * @param zrtva Victim whose application data is saved.
      * @param repo Repository for storing the data.
      */
-    fun insertGeminiAplikacija(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon,zrtva: ZrtvaData, repo: RepositoryInsert)
+    fun insertGeminiAplikacija(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtva: ZrtvaData, repo: RepositoryInsert)
 
     /**
      * Links forensic traces to specific suspects.
@@ -203,7 +204,7 @@ interface GeminiProRepository{
      * @param repo Repository for WhatsApp contact data.
      * @return List of inserted WhatsApp contacts.
      */
-    fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zl: ZlocinData, repo: RepositoryInsert): MutableList<WhatsAppKontaktData>
+    fun insertGeminiWhatsAppKontakt(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, repo: RepositoryInsert): MutableList<WhatsAppKontaktData>
 
     /**
      * Inserts WhatsApp message data.
@@ -214,7 +215,7 @@ interface GeminiProRepository{
      * @param timestamp Time of operation.
      * @param repo Repository for storing messages.
      */
-    fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<WhatsAppKontaktData>, timestamp: Long,repo: RepositoryInsert)
+    fun insertGeminiWhatsAppPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<WhatsAppKontaktData>, timestamp: Long, repo: RepositoryInsert)
 
     /**
      * Inserts a record of a phone call linked to a basic contact.
@@ -226,7 +227,7 @@ interface GeminiProRepository{
      * @param timestamp Processing timestamp.
      * @param repo Repository to save the call.
      */
-    fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtvaData: ZrtvaData, kontaktiLista: MutableList<OneContactData>, timestamp: Long,repo: RepositoryInsert)
+    fun insertGeminiOneCall(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zrtvaData: ZrtvaData, kontaktiLista: MutableList<OneContactData>, timestamp: Long, repo: RepositoryInsert)
 
     /**
      * Inserts general gallery or media data.
@@ -237,7 +238,7 @@ interface GeminiProRepository{
      * @param timestamp Timestamp of insertion.
      * @param repo Repository interface for saving data.
      */
-    fun insertGeminiGallery(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, timestamp: Long,repo: RepositoryInsert)
+    fun insertGeminiGallery(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, timestamp: Long, repo: RepositoryInsert)
 
     /**
      * Inserts standard text message (non-WhatsApp).
@@ -248,7 +249,7 @@ interface GeminiProRepository{
      * @param timestamp Processing timestamp.
      * @param repo Repository handler.
      */
-    fun insertGeminiObicnaPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<OneContactData>, timestamp: Long,repo: RepositoryInsert)
+    fun insertGeminiObicnaPoruka(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, kontaktiLista: MutableList<OneContactData>, timestamp: Long, repo: RepositoryInsert)
 
     /**
      * Links suspects with victims based on Gemini data.
@@ -278,7 +279,7 @@ interface GeminiProRepository{
      * @param repo Repository for saving questions.
      * @return List of inserted questions.
      */
-    fun insertGeminiPitanje(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData,repo: RepositoryInsert): MutableList<PitanjeData>
+    fun insertGeminiPitanje(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zl: ZlocinData, repo: RepositoryInsert): MutableList<PitanjeData>
 
     /**
      * Inserts answers to previously added questions.
@@ -288,7 +289,7 @@ interface GeminiProRepository{
      * @param pitanjeLista List of questions answered.
      * @param repo Repository for storing the answers.
      */
-    fun insertGeminiOdgovor(geminiResponse2: GeminiResponseCommon2,geminiResponseRetrofit: GeminiResponseRetrofitCommon, pitanjeLista: MutableList<PitanjeData>,repo: RepositoryInsert)
+    fun insertGeminiOdgovor(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, pitanjeLista: MutableList<PitanjeData>, repo: RepositoryInsert)
 
     /**
      * Inserts interrogation questions targeting suspects.
@@ -319,7 +320,7 @@ interface GeminiProRepository{
      * @param timestamp Time of insertion.
      * @param repo Repository interface.
      */
-    fun insertGeminiOsoba(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zlocin: ZlocinData, timestamp: Long,repo: RepositoryInsert)
+    fun insertGeminiOsoba(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zlocin: ZlocinData, timestamp: Long, repo: RepositoryInsert)
 
     /**
      * Inserts tasks related to the investigation.
@@ -350,7 +351,7 @@ interface GeminiProRepository{
      * @param zadatakList Related tasks.
      * @param repo Repository for saving links.
      */
-    fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>,repo: RepositoryInsert)
+    fun insertGeminiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, dokazList: MutableList<DokazData>, zadatakList: MutableList<ZadatakData>, repo: RepositoryInsert)
 
     /**
      * Links suspect interrogations to specific tasks.
@@ -383,7 +384,7 @@ interface GeminiProRepository{
      * @param zadatakList Tasks to associate with.
      * @param repo Repository.
      */
-    fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, telefonList: MutableList<TelefonData>, zadatakList: MutableList<ZadatakData>,repo: RepositoryInsert)
+    fun insertGeminiTelefonZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, telefonList: MutableList<TelefonData>, zadatakList: MutableList<ZadatakData>, repo: RepositoryInsert)
 
     /**
      * Links forensic evidence to tasks.
@@ -394,7 +395,7 @@ interface GeminiProRepository{
      * @param zadatakList Tasks to associate with.
      * @param repo Repository.
      */
-    fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, forenzickiDokazList: MutableList<ForenzickiDokazData>, zadatakList: MutableList<ZadatakData>,repo: RepositoryInsert)
+    fun insertGeminiForenzickiDokazZadatak(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, forenzickiDokazList: MutableList<ForenzickiDokazData>, zadatakList: MutableList<ZadatakData>, repo: RepositoryInsert)
 
     //fun insertGeminiPorukeZadatak(geminiResponse2: GeminiResponse2, porukeList: MutableList<PorukeData>, zadatakList: MutableList<ZadatakData>)
 
@@ -464,7 +465,7 @@ interface GeminiProRepository{
         geminiResponseRetrofit: GeminiResponseRetrofit,
         osumnjiceniLista: MutableList<OsumnjicenData>,
         svedociLista: MutableList<SvedokData>,
-        sviDokaziZrtva:SviDokaziOdZrtve,
+        sviDokaziZrtva: SviDokaziOdZrtve,
         repo: RepositoryInsert
     )
 }

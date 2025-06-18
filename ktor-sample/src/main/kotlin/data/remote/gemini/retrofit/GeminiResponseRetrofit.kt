@@ -1,7 +1,7 @@
-package com.example.models.dto.gemini.retrofit
+package com.example.data.remote.gemini.retrofit
 
-import com.example.models.dto.*
-import com.example.models.interfaces.GeminiResponseRetrofitCommon
+import com.example.data.remote.tables.*
+import com.example.interfaces.GeminiResponseRetrofitCommon
 import kotlinx.serialization.Serializable
 
 /**

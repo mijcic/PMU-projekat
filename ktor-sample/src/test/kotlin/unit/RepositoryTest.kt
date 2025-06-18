@@ -1,6 +1,6 @@
 package com.example.unit
 
-import com.example.models.dto.ZlocinData
+import com.example.data.remote.tables.ZlocinData
 import com.example.repository.Repository
 import io.mockk.*
 import org.junit.jupiter.api.AfterEach

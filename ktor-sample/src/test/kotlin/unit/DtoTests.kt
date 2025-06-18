@@ -1,6 +1,9 @@
 package com.example.unit
 
-import com.example.models.dto.*
+import com.example.data.remote.generic.AlibiR
+import com.example.data.remote.generic.BeleskaR
+import com.example.data.remote.generic.DokazOsumnjicenR
+import com.example.data.remote.generic.TelefonR
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals

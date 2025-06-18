@@ -1,12 +1,12 @@
 package com.example.service.post
 
-import com.example.data.remote.GEMINI_API_KEY
-import com.example.data.remote.GeminiClient
-import com.example.models.dto.gemini.request.GeminiRequest
-import com.example.models.dto.gemini.response.Content
-import com.example.models.dto.gemini.response.GeminiResponse
-import com.example.models.dto.gemini.response.Part
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.client.GEMINI_API_KEY
+import com.example.data.remote.client.GeminiClient
+import com.example.data.remote.gemini.request.GeminiRequest
+import com.example.data.remote.gemini.response.Content
+import com.example.data.remote.gemini.response.GeminiResponse
+import com.example.data.remote.gemini.response.Part
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 import com.example.parser.GeminiResponseParser
 import io.ktor.client.*
 import io.ktor.client.call.*

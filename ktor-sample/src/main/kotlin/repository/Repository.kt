@@ -1,6 +1,6 @@
 package com.example.repository
 
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import java.sql.Connection
 
 class Repository(private val connection: Connection): RepoInterface {

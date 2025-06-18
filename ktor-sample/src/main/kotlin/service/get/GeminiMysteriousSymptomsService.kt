@@ -1,6 +1,7 @@
 package com.example.service.get
 
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.data.remote.service.*
 import com.example.models.dto.service.*
 import com.example.repository.RepoInterface
 
@@ -133,7 +134,7 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
      * @param zrtva Victim data object.
      * @return [PacijentMSDataGeminiRetrofit]? patient data or null if incomplete.
      */
-    private fun loadPacijentDataGeminiRetrofit(id: Int,zlocin:ZlocinDataGeminiRetrofit,zrtva:ZrtvaMSDataGeminiRetrofit): PacijentMSDataGeminiRetrofit? {
+    private fun loadPacijentDataGeminiRetrofit(id: Int, zlocin: ZlocinDataGeminiRetrofit, zrtva: ZrtvaMSDataGeminiRetrofit): PacijentMSDataGeminiRetrofit? {
         val osobe = repository.getOsobe(id)?: return null
         val pacijent = repository.getPacijent(id, zlocin.zlocin, zrtva.zrtva, osobe) ?: return null
 

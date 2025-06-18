@@ -1,4 +1,4 @@
-package com.example.data.remote
+package com.example.data.remote.client
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*

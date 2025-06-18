@@ -1,4 +1,4 @@
-package com.example.models.dto
+package com.example.data.remote.generic
 
 import kotlinx.serialization.Serializable
 
@@ -13,7 +13,7 @@ data class ZlocinR(val idZlocin: Int, val tipZlocinaId: Int, val naziv: String, 
 data class OsobaR(val idOsoba: Int, val ime: String, val kontakt: String?, val datum: String?, val zanimanje: String,val pol:String,val zlocinId: Int)
 
 @Serializable
-data class OsumnjicenR(val idOsumnjicen: Int, val status: Int, val motiv: MotivR?,val tipOsumnjicen:String, val zlocinId:Int,val kriv:Int, val osobaId:OsobaR?)
+data class OsumnjicenR(val idOsumnjicen: Int, val status: Int, val motiv: MotivR?, val tipOsumnjicen:String, val zlocinId:Int, val kriv:Int, val osobaId: OsobaR?)
 
 @Serializable
 data class MotivR(val idMotiv:Int, val opis: String)
@@ -127,7 +127,7 @@ data class ForenzickiDokazZadatakR (val idForenzickiDokazZadatak: Int, val tekst
 data class PorukeZadatakR (var idPorukeZadatak: Int, val porukeId: Int, val zadatakId: Int, val uradjen: Boolean)
 
 @Serializable
-data class PacijentR (var idPacijent: Int, val simptomi: String, val statusPacijenta: String, val datumPrijave: String, var prijavio:OsobaR?, var zlocinId: Int, var zrtvaId: ZrtvaR?)
+data class PacijentR (var idPacijent: Int, val simptomi: String, val statusPacijenta: String, val datumPrijave: String, var prijavio: OsobaR?, var zlocinId: Int, var zrtvaId: ZrtvaR?)
 
 @Serializable
 data class MedicinskiIzvestajR (var idMedicinskiIzvestaj: Int, val rezime: String, val CTnalaz: String, val MRInalaz: String, val krvnaSlika: String, val toksikoloskeAnalize: String, val zakljucak: String, var pacijentId: Int)

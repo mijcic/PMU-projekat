@@ -1,6 +1,6 @@
-package com.example.models.interfaces
+package com.example.interfaces
 
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 
 /**
  * Common interface defining shared data structure fields used in Gemini response parsing.

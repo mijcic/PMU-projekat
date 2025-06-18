@@ -1,7 +1,7 @@
 package com.example.parser
 
-import com.example.models.dto.gemini.response.GeminiResponse
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.gemini.response.GeminiResponse
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 import com.example.service.post.GeminiServiceResponseImpl
 
 /**

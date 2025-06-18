@@ -1,6 +1,6 @@
 package com.example.service
 
-import com.example.models.dto.ScoreKorisnik
+import com.example.data.remote.tables.ScoreKorisnik
 
 /**
  * Service responsible for handling logic related to users (korisnici).

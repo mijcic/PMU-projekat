@@ -1,12 +1,12 @@
 package com.example
 
-import com.example.data.remote.GEMINI_API_KEY
-import com.example.data.remote.GeminiClient
-import com.example.models.dto.KorisnikRequest
-import com.example.models.dto.MessageResponse
-import com.example.models.dto.Story
-import com.example.models.dto.gemini.request.GeminiRequest2
-import com.example.models.dto.gemini.request.GeminiRequest2MysteriousSymptoms
+import com.example.data.remote.client.GEMINI_API_KEY
+import com.example.data.remote.client.GeminiClient
+import com.example.data.remote.tables.KorisnikRequest
+import com.example.data.remote.tables.MessageResponse
+import com.example.models.domain.Story
+import com.example.data.remote.gemini.request.GeminiRequest2
+import com.example.data.remote.gemini.request.GeminiRequest2MysteriousSymptoms
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.service.post.GeminiService
 import com.example.service.post.GeminiServiceImpl

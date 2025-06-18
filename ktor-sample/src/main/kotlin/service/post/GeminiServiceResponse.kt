@@ -1,8 +1,8 @@
 package com.example.service.post
 
-import com.example.models.dto.gemini.response.GeminiResponse
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.data.remote.gemini.response.GeminiResponse
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
 
 /**
  * Interface for parsing and transforming raw Gemini API responses into structured application data.

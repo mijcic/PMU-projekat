@@ -1,4 +1,4 @@
-package com.example.models.dto
+package com.example.data.remote.tables
 
 import kotlinx.serialization.Serializable
 

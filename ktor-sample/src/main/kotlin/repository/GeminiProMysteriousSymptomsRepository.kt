@@ -1,12 +1,12 @@
 package com.example.repository
 
-import com.example.models.dto.PacijentData
-import com.example.models.dto.ZadatakData
-import com.example.models.dto.ZlocinData
-import com.example.models.dto.gemini.retrofit.GeminiResponse2MysteriousSymptoms
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
-import com.example.models.interfaces.GeminiResponseCommon2
-import com.example.models.interfaces.GeminiResponseRetrofitCommon
+import com.example.data.remote.tables.PacijentData
+import com.example.data.remote.tables.ZadatakData
+import com.example.data.remote.tables.ZlocinData
+import com.example.data.remote.gemini.retrofit.GeminiResponse2MysteriousSymptoms
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.interfaces.GeminiResponseCommon2
+import com.example.interfaces.GeminiResponseRetrofitCommon
 
 /**
  * Repository interface for handling data insertion related to mysterious symptoms in the GeminiPro system.

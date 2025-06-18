@@ -1,10 +1,10 @@
 package com.example.repository
 
-import com.example.models.dto.*
-import com.example.models.dto.gemini.retrofit.GeminiResponse2MysteriousSymptoms
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
-import com.example.models.interfaces.GeminiResponseCommon2
-import com.example.models.interfaces.GeminiResponseRetrofitCommon
+import com.example.data.remote.gemini.retrofit.GeminiResponse2MysteriousSymptoms
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.data.remote.tables.*
+import com.example.interfaces.GeminiResponseCommon2
+import com.example.interfaces.GeminiResponseRetrofitCommon
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -195,7 +195,7 @@ class GeminiProMysteriousSymptomsRepositoryImpl : GeminiProMysteriousSymptomsRep
         geminiResponseRetrofit.lokacijeIstrageRetrofit=lokacijeLista
     }
 
-    override fun insertGeminiZadatakPacijent(geminiResponse2: GeminiResponseCommon2, zlocin: ZlocinData,repo: RepositoryInsert): MutableList<ZadatakData> {
+    override fun insertGeminiZadatakPacijent(geminiResponse2: GeminiResponseCommon2, zlocin: ZlocinData, repo: RepositoryInsert): MutableList<ZadatakData> {
         val zadaci = geminiResponse2.zadatakR
         var zadaciLista = mutableListOf<ZadatakData>()
 
@@ -228,7 +228,7 @@ class GeminiProMysteriousSymptomsRepositoryImpl : GeminiProMysteriousSymptomsRep
         return zadaciLista
     }
 
-    override fun updateGeminiZadatakListPacijent(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon,zlocin: ZlocinData,repo:RepositoryInsert) {
+    override fun updateGeminiZadatakListPacijent(geminiResponse2: GeminiResponseCommon2, geminiResponseRetrofit: GeminiResponseRetrofitCommon, zlocin: ZlocinData, repo:RepositoryInsert) {
         val zadaci = geminiResponse2.zadatakR
         var lista: List<ZadatakData> = emptyList()
         lista = repo.getZadatakListaData()

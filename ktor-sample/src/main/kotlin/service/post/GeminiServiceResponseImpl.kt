@@ -2,11 +2,12 @@ package com.example.service.post
 
 import com.example.*
 import com.example.models.dto.*
-import com.example.models.dto.gemini.response.GeminiResponse
-import com.example.models.dto.gemini.retrofit.GeminiResponse2
-import com.example.models.dto.gemini.retrofit.GeminiResponse2MysteriousSymptoms
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.data.remote.gemini.response.GeminiResponse
+import com.example.data.remote.gemini.retrofit.GeminiResponse2
+import com.example.data.remote.gemini.retrofit.GeminiResponse2MysteriousSymptoms
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
+import com.example.data.remote.tables.*
 import com.example.repository.GeminiProMysteriousSymptomsRepositoryImpl
 import com.example.repository.GeminiProRepositoryImpl
 import com.example.repository.RepositoryInsert

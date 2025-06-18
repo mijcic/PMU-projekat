@@ -1,6 +1,6 @@
-package com.example.models.dto.gemini.request
+package com.example.data.remote.gemini.request
 
-import com.example.models.dto.gemini.response.Content
+import com.example.data.remote.gemini.response.Content
 import kotlinx.serialization.Serializable
 
 /**

@@ -1,6 +1,6 @@
-package com.example.models.interfaces
+package com.example.interfaces
 
-import com.example.models.dto.*
+import com.example.data.remote.generic.*
 
 /**
  * Interface that defines a common structure for Gemini response data classes.
