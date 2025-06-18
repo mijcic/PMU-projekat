@@ -60,11 +60,11 @@ import kotlinx.coroutines.delay
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.destinationEvidencePage
-import rs.ac.bg.etf.projekat.destinationMapPage
-import rs.ac.bg.etf.projekat.destinationPhonePage
-import rs.ac.bg.etf.projekat.destinationSuspectsPage
-import rs.ac.bg.etf.projekat.destinationWitnessesPage
+import rs.ac.bg.etf.projekat.navigation.destinationEvidencePage
+import rs.ac.bg.etf.projekat.navigation.destinationMapPage
+import rs.ac.bg.etf.projekat.navigation.destinationPhonePage
+import rs.ac.bg.etf.projekat.navigation.destinationSuspectsPage
+import rs.ac.bg.etf.projekat.navigation.destinationWitnessesPage
 
 @Composable
 fun OfficePage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
@@ -294,42 +294,5 @@ fun OfficeButton(label: String, icon: Int, onClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun AnimatedInfoBar() {
-    val messages = listOf(
-        "🕒 Vreme smrti: 03:24 AM",
-        "🧬 DNK analiza u toku",
-        "📱 Šifra telefona: 4862",
-        "🎥 Kamera kazina: Nema snimaka"
-    )
-    var currentIndex by remember { mutableStateOf(0) }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(5000L)
-            currentIndex = (currentIndex + 1) % messages.size
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF1C1C1C))
-            .navigationBarsPadding()  // OVDE JE KLJUČ
-            .padding(vertical = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = messages[currentIndex],
-            color = Color.LightGray,
-            fontSize = 14.sp,
-            style = TextStyle(
-                fontFamily = FontFamily(Font(R.font.special_elite))
-            )
-        )
     }
 }

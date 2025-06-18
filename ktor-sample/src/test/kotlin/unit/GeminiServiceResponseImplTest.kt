@@ -1,11 +1,10 @@
 package com.example.unit
 
+import com.example.data.remote.gemini.response.Candidate
+import com.example.data.remote.gemini.response.Content
+import com.example.data.remote.gemini.response.GeminiResponse
+import com.example.data.remote.gemini.response.Part
 import com.example.getDatabaseConnection
-import com.example.models.dto.gemini.*
-import com.example.models.dto.gemini.response.Candidate
-import com.example.models.dto.gemini.response.Content
-import com.example.models.dto.gemini.response.GeminiResponse
-import com.example.models.dto.gemini.response.Part
 import com.example.repository.RepositoryInsert
 import com.example.service.post.GeminiServiceResponseImpl
 import io.mockk.*

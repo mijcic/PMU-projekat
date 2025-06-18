@@ -1,8 +1,7 @@
 package com.example.unit
 
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import com.example.repository.RepoInterface
-import com.example.service.get.GeminiMurderService
 import com.example.service.get.GeminiMysteriousSymptomsService
 import io.mockk.every
 import io.mockk.mockk

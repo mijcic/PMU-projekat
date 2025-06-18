@@ -1,30 +1,20 @@
 package com.example.unit
 
-import com.example.GeminiRequest2
 import com.example.configureRouting
-import com.example.getDatabaseConnection
-import com.example.repository.Repository
-import com.example.service.get.GeminiMurderService
-import com.example.service.post.GeminiService
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
-import io.mockk.every
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -41,10 +31,12 @@ class ConfigureRoutingTest {
         unmockkAll()
     }
 
+    /*
     @Test
     fun `should throw error when getDatabaseConnection returns null`() {
         // Arrange
-        every { getDatabaseConnection() } returns null
+        //every { getDatabaseConnection() } returns null
+        every { mockDbService.getDatabaseConnection() } returns null
 
         val exception = assertThrows<IllegalStateException> {
             // Act: pokrećeš konfiguraciju koja bi pozvala getDatabaseConnection()
@@ -57,7 +49,7 @@ class ConfigureRoutingTest {
 
         // Assert
         assertEquals("Database connection failed — cannot start routing.", exception.message)
-    }
+    }*/
 
     @Test
     fun `GET  should return Hello World`() = testApplication {

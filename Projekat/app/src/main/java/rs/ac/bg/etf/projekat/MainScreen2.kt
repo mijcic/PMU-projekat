@@ -110,20 +110,7 @@ fun MainScreen2(
 
             Spacer(modifier = Modifier.weight(0.3f))
 
-            Text(
-                text = "Welcome, detective!",
-                fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
-                fontSize = 35.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    shadow = Shadow(
-                        color = Color.Black,
-                        offset = Offset(10f, 10f),
-                        blurRadius = 20f
-                    )
-                )
-            )
+            WelcomeMessage()
 
             Button(
                 onClick = { explanationOn = !explanationOn },
@@ -228,4 +215,18 @@ fun MainScreen2(
             }
         }
     }
+}
+
+@Composable
+fun WelcomeMessage() {
+    Text(
+        text = "Welcome, detective!",
+        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+        fontSize = 35.sp,
+        color = Color.White,
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            shadow = Shadow(Color.Black, Offset(10f, 10f), blurRadius = 20f)
+        )
+    )
 }

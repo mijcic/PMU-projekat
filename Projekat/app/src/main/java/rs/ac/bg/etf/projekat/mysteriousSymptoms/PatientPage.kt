@@ -47,10 +47,10 @@ import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.destinationLekarskiTestPage
-import rs.ac.bg.etf.projekat.destinationMedicalReportPage
-import rs.ac.bg.etf.projekat.destinationMedicalStatementPage
-import rs.ac.bg.etf.projekat.destinationPhonePage
+import rs.ac.bg.etf.projekat.navigation.destinationLekarskiTestPage
+import rs.ac.bg.etf.projekat.navigation.destinationMedicalReportPage
+import rs.ac.bg.etf.projekat.navigation.destinationMedicalStatementPage
+import rs.ac.bg.etf.projekat.navigation.destinationPhonePage
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Locale

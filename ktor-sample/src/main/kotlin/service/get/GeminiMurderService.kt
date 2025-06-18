@@ -1,6 +1,7 @@
 package com.example.service.get
 
-import com.example.models.dto.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.service.*
 import com.example.models.dto.service.*
 import com.example.repository.RepoInterface
 
@@ -27,6 +28,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             println("Neki podaci su null — provera nije prošla.")
             return null
         }
+
 
         val zlocinData = loadZlocinDataGeminiRetrofit(id) ?: run {
             println("Neki podaci su null — provera nije prošla.")
@@ -89,6 +91,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             telefonZadaciRetrofit = zadaciData.telefonZadaci,
             forenzickiDokazZadaciRetrofit = zadaciData.forenzickiDokazZadaci
         )
+        repository.updateUsedZlocinMurder(id)
         return geminiResponseRetrofit
     }
 
@@ -144,7 +147,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
      * @param zrtvaData Victim data, needed to correlate with suspects
      * @return An [OsumnjiceniDataGeminiRetrofit] object with suspect data, or `null` if something is missing
      */
-    private fun loadOsumnjiceniDataGeminiRetrofit(id: Int,zrtvaData:ZrtvaDataGeminiRetrofit): OsumnjiceniDataGeminiRetrofit? {
+    private fun loadOsumnjiceniDataGeminiRetrofit(id: Int,zrtvaData: ZrtvaDataGeminiRetrofit): OsumnjiceniDataGeminiRetrofit? {
         val osumnjiceni = repository.getOsumnjiceni(id) ?: return null
         //if (osumnjiceni.isEmpty()) return null
 

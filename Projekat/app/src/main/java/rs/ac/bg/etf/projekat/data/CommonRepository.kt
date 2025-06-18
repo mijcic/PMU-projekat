@@ -271,7 +271,6 @@ class CommonRepository @Inject constructor(
                 porukeZ.uradjen = true
 
                 val zadaci = query(ZadatakR::class).find()
-
                 val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
 
                 if (zadatak != null) {

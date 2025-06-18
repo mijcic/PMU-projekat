@@ -60,7 +60,7 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
-import rs.ac.bg.etf.projekat.destinationMainScreen2
+import rs.ac.bg.etf.projekat.navigation.destinationMainScreen2
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)

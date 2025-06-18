@@ -53,20 +53,13 @@ fun QuestionsPage(navController: NavController,myViewModel: MyViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-//        val imagePainter = painterResource(id = R.drawable.questions_background)
         val imagePainter = painterResource(id = R.drawable.library)
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp
-        val scope = rememberCoroutineScope()
-
         val realmViewModel: RealmViewModel = hiltViewModel()
 
         var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
         var questionAnswersMap by remember { mutableStateOf<Map<PitanjeR, List<OdgovorR>>>(emptyMap()) }
 
-        // stanje za selektovane odgovore po pitanju
         var selectedAnswers by remember { mutableStateOf<Map<Int, Int?>>(emptyMap()) }
-        // stanje za ukupne bodove
         var totalScore by remember { mutableStateOf(0) }
 
         LaunchedEffect(Unit) {

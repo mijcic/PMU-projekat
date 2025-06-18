@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
-import rs.ac.bg.etf.projekat.destinationWitnessesInterviewPage
+import rs.ac.bg.etf.projekat.navigation.destinationWitnessesInterviewPage
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable

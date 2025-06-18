@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,9 +32,9 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationPage(
     navController: NavController,
@@ -49,76 +48,88 @@ fun LocationPage(
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = {
-                Configuration.getInstance().load(
-                    context,
-                    context.getSharedPreferences("osm_prefs", Context.MODE_PRIVATE)
-                )
-                val mapView = MapView(context).apply {
-                    setTileSource(TileSourceFactory.MAPNIK)
-                    setMultiTouchControls(true)
-                }
-
-                val controller = mapView.controller
-                val locations = uiStateData.locations
-                if (locations.isNotEmpty()) {
-                    val startPoint = GeoPoint(
-                        locations[0].geoTackaALatitude,
-                        locations[0].geoTackaALongitude
-                    )
-                    controller.setZoom(13.0)
-                    controller.setCenter(startPoint)
-
-                    for (loc in locations) {
-                        val marker = Marker(mapView).apply {
-                            position = GeoPoint(loc.geoTackaALatitude, loc.geoTackaALongitude)
-                            title = loc.naziv
-                            subDescription = "${loc.mesto}\n${loc.opis}"
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                        }
-                        mapView.overlays.add(marker)
-                    }
-                }
-
+                val mapView = createMapView(context, uiStateData.locations)
                 mapViewRef.value = mapView
                 mapView
             },
             modifier = Modifier.fillMaxSize()
         )
 
-        // Overlay: Gornji levi ugao
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .background(Color(0xAA000000), shape = RoundedCornerShape(12.dp))
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .align(Alignment.TopStart)
-        ) {
-            Text(
-                text = "Misteriozne Lokacije",
-                color = Color.White,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "${uiStateData.locations.size} pronađenih mesta",
-                color = Color.LightGray,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        LocationOverlayHeader(Modifier.align(Alignment.TopStart),uiStateData.locations.size)
 
-        // Back dugme u gornjem desnom uglu
-        IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-                .background(Color(0xAA000000), shape = CircleShape)
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Nazad",
-                tint = Color.White
-            )
-        }
+        LoacationBackButton(
+            modifier = Modifier.align(Alignment.TopEnd),
+            onBack = { navController.popBackStack() }
+        )
     }
 }
 
+fun createMapView(context: Context, locations: List<LokacijeIstrageR>): MapView {
+    Configuration.getInstance().load(
+        context,
+        context.getSharedPreferences("osm_prefs", Context.MODE_PRIVATE)
+    )
+
+    val mapView = MapView(context).apply {
+        setTileSource(TileSourceFactory.MAPNIK)
+        setMultiTouchControls(true)
+    }
+
+    if (locations.isNotEmpty()) {
+        val controller = mapView.controller
+        val startPoint = GeoPoint(locations[0].geoTackaALatitude, locations[0].geoTackaALongitude)
+        controller.setZoom(13.0)
+        controller.setCenter(startPoint)
+
+        locations.forEach { loc ->
+            val marker = Marker(mapView).apply {
+                position = GeoPoint(loc.geoTackaALatitude, loc.geoTackaALongitude)
+                title = loc.naziv
+                subDescription = "${loc.mesto}\n${loc.opis}"
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            }
+            mapView.overlays.add(marker)
+        }
+    }
+
+    return mapView
+}
+
+
+@Composable
+fun LocationOverlayHeader(modifier: Modifier,locationCount: Int) {
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .background(Color(0xAA000000), shape = RoundedCornerShape(12.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Text(
+            text = "Misteriozne Lokacije",
+            color = Color.White,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = "$locationCount pronađenih mesta",
+            color = Color.LightGray,
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+
+@Composable
+fun LoacationBackButton(modifier: Modifier,onBack: () -> Unit) {
+    IconButton(
+        onClick = onBack,
+        modifier = modifier
+            .padding(16.dp)
+            .background(Color(0xAA000000), shape = CircleShape)
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Nazad",
+            tint = Color.White
+        )
+    }
+}

@@ -42,7 +42,7 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.destinationWitnessDetailsPage
+import rs.ac.bg.etf.projekat.navigation.destinationWitnessDetailsPage
 
 @Composable
 fun WitnessesPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){

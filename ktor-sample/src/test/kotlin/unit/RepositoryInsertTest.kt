@@ -1,7 +1,7 @@
 package com.example.unit
 
 import com.example.closeResources
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import com.example.repository.RepositoryInsert
 import io.mockk.*
 import junit.framework.TestCase.*
@@ -21,7 +21,7 @@ class RepositoryInsertTest {
     private lateinit var resultSet: ResultSet
     private lateinit var repositoryInsert: RepositoryInsert
 
-    private fun returnZlocinData():ZlocinData{
+    private fun returnZlocinData(): ZlocinData {
         return ZlocinData(
             tipZlocinaId = 1,
             naziv = "Ubistvo u tramvaju",
@@ -40,7 +40,7 @@ class RepositoryInsertTest {
         return dat.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
     }
 
-    private fun returnOsobaData(): OsobaData{
+    private fun returnOsobaData(): OsobaData {
         return OsobaData(
             idOsoba = 0,
             ime = "Petar",
@@ -70,7 +70,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnOsumnjiceniData(): OsumnjicenData{
+    private fun returnOsumnjiceniData(): OsumnjicenData {
         val m = returnMotivData()
 
         return OsumnjicenData(
@@ -84,7 +84,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnDokaziData():DokazData{
+    private fun returnDokaziData(): DokazData {
         return DokazData(
             idDokaz = 0,
             tipDokaza = "fizicki",
@@ -95,7 +95,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnSvedokData(): SvedokData{
+    private fun returnSvedokData(): SvedokData {
         return SvedokData(
             idSvedok = 0,
             izjava = "Cula sam pucanj i videla zenu kako bezi.",
@@ -106,7 +106,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnObdukcijaData():ObdukcijaData{
+    private fun returnObdukcijaData(): ObdukcijaData {
         return ObdukcijaData(
             idObdukcija = 0,
             izvestaj = "Zrtva je preminula od rane od metka u grudima. Nema znakova borbe.",
@@ -117,7 +117,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnForenzickiDokazData():ForenzickiDokazData{
+    private fun returnForenzickiDokazData(): ForenzickiDokazData {
         return ForenzickiDokazData(
             idForenzickiDokaz = 0,
             tipForenzickiDokaz = "DNK",
@@ -128,7 +128,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnTelefonData():TelefonData{
+    private fun returnTelefonData(): TelefonData {
         return TelefonData(
             idTelefon = 0,
             model = "Samsung Galaxy S22",
@@ -139,7 +139,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnAplikacijaData(): AplikacijaData{
+    private fun returnAplikacijaData(): AplikacijaData {
         return AplikacijaData(
             idAplikacije = 0,
             naziv = "Instagram",
@@ -150,7 +150,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnTragData(): TragData{
+    private fun returnTragData(): TragData {
         return TragData(
             idTrag = 0,
             forenzickiDokazId = returnForenzickiDokazData(),
@@ -158,7 +158,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnDokaziOsumnjiceniData(): DokazOsumnjicenData{
+    private fun returnDokaziOsumnjiceniData(): DokazOsumnjicenData {
         return DokazOsumnjicenData(
             idDokazOsumnjicen = 0,
             dokazId = returnDokaziData(),
@@ -166,7 +166,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnOneContact(): OneContactData{
+    private fun returnOneContact(): OneContactData {
         return OneContactData(
             idOneContact = 0,
             zlocinId = returnZlocinData().idZlocin,
@@ -176,7 +176,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnBeleskeData(): BeleskaData{
+    private fun returnBeleskeData(): BeleskaData {
         return BeleskaData(
             idBeleska = 0,
             zlocinId = returnZlocinData().idZlocin,
@@ -185,7 +185,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnWhatsAppKontaktiData(): WhatsAppKontaktData{
+    private fun returnWhatsAppKontaktiData(): WhatsAppKontaktData {
         return WhatsAppKontaktData(
             idWhatsAppKontakt = 0,
             zlocinId = returnZlocinData().idZlocin,
@@ -195,7 +195,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnWhatsAppPorukeData(): WhatsAppPorukaData{
+    private fun returnWhatsAppPorukeData(): WhatsAppPorukaData {
         return WhatsAppPorukaData(
             idWhatsAppPoruka = 0,
             kontaktKoSalje = returnWhatsAppKontaktiData().idWhatsAppKontakt,
@@ -206,7 +206,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnOneCallData(): OneCallData{
+    private fun returnOneCallData(): OneCallData {
         return OneCallData(
             idOneCall = 0,
             kontakt = returnOneContact().idOneContact,
@@ -217,7 +217,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnGalleryData(): GalleryData{
+    private fun returnGalleryData(): GalleryData {
         return GalleryData(
             idPhoto = 0,
             zlocinId = returnZlocinData().idZlocin,
@@ -227,7 +227,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnObicnaPorukaData(): ObicnaPorukaData{
+    private fun returnObicnaPorukaData(): ObicnaPorukaData {
         return ObicnaPorukaData(
             idObicnaPoruka = 0,
             kontaktKoSalje = returnOneContact().idOneContact,
@@ -238,7 +238,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnOdnosOsumnjicenZrtvaData(): OdnosOsumnjicenZrtvaData{
+    private fun returnOdnosOsumnjicenZrtvaData(): OdnosOsumnjicenZrtvaData {
         return OdnosOsumnjicenZrtvaData(
             idOdnos = 0,
             osumnjicenId = returnOsumnjiceniData().idOsumnjicen,
@@ -247,7 +247,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnPitanjaData(): PitanjeData{
+    private fun returnPitanjaData(): PitanjeData {
         return PitanjeData(
             idPitanje = 0,
             zlocinId = returnZlocinData().idZlocin,
@@ -255,7 +255,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnOdgovorData(): OdgovorData{
+    private fun returnOdgovorData(): OdgovorData {
         return OdgovorData(
             idOdogovor = 0,
             pitanjeId = returnPitanjaData().idPitanje,
@@ -265,7 +265,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnPitanjeIspitivanjeOsumnjicenogData(): PitanjeIspitivanjeOsumnjicenogData{
+    private fun returnPitanjeIspitivanjeOsumnjicenogData(): PitanjeIspitivanjeOsumnjicenogData {
         return PitanjeIspitivanjeOsumnjicenogData(
             idPitanjeIspitivanjeOsumnjicenog = 0,
             kategorija = "alibi",
@@ -276,7 +276,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnPitanjeIspitivanjeSvedokaData(): PitanjeIspitivanjeSvedokaData{
+    private fun returnPitanjeIspitivanjeSvedokaData(): PitanjeIspitivanjeSvedokaData {
         return PitanjeIspitivanjeSvedokaData(
             idPitanjeIspitivanjeSvedoka = 0,
             tekst = "Jeste li sigurni da je to bio bas taj muskarac?",
@@ -286,7 +286,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnZadatakData(): ZadatakData{
+    private fun returnZadatakData(): ZadatakData {
         return ZadatakData(
             idZadatak = 0,
             tekst = "Pronadji karticu gosta",
@@ -297,7 +297,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnDokazZadatakData(): DokazZadatakData{
+    private fun returnDokazZadatakData(): DokazZadatakData {
         return DokazZadatakData(
             idDokazZadatak = 0,
             tekst = "Posalji dokaz na forenzicku analizu",
@@ -307,7 +307,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnIspitivanjeOsumnjicenogZadatakData(): IspitivanjeOsumnjicenogZadatakData{
+    private fun returnIspitivanjeOsumnjicenogZadatakData(): IspitivanjeOsumnjicenogZadatakData {
         return IspitivanjeOsumnjicenogZadatakData(
             idIspitivanjeOsumnjicenogZadatak = 0,
             osumnjicenId = returnOsumnjiceniData().idOsumnjicen,
@@ -316,7 +316,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnIspitivanjeSvedokaZadatakData(): IspitivanjeSvedokaZadatakData{
+    private fun returnIspitivanjeSvedokaZadatakData(): IspitivanjeSvedokaZadatakData {
         return IspitivanjeSvedokaZadatakData(
             idIspitivanjeSvedokaZadatak = 0,
             svedokId = returnSvedokData().idSvedok,
@@ -325,7 +325,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnTelefonZadatakData(): TelefonZadatakData{
+    private fun returnTelefonZadatakData(): TelefonZadatakData {
         return TelefonZadatakData(
             idTelefonZadatak = 0,
             telefonId = returnTelefonData().idTelefon,
@@ -334,7 +334,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnForenzickiDokazZadatakData(): ForenzickiDokazZadatakData{
+    private fun returnForenzickiDokazZadatakData(): ForenzickiDokazZadatakData {
         return ForenzickiDokazZadatakData(
             idForenzickiDokazZadatak = 0,
             tekst = "Otkrij kojoj zeni pripada DNK.",
@@ -344,7 +344,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnPacijentData(): PacijentData{
+    private fun returnPacijentData(): PacijentData {
         return PacijentData(
             idPacijent = 0,
             simptomi = "Temperatura",
@@ -356,7 +356,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnMedicinskiIzvestajData(): MedicinskiIzvestajData{
+    private fun returnMedicinskiIzvestajData(): MedicinskiIzvestajData {
         return MedicinskiIzvestajData (
             idMedicinskiIzvestaj = 0 ,
             rezime = "u redu",
@@ -369,7 +369,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnLekarskiTestData(): LekarskiTestData{
+    private fun returnLekarskiTestData(): LekarskiTestData {
         return LekarskiTestData (
             idLekarskiTest = 0,
             pacijentId = returnPacijentData(),
@@ -377,7 +377,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnLokacijeIstrageData(): LokacijeIstrageData{
+    private fun returnLokacijeIstrageData(): LokacijeIstrageData {
         return LokacijeIstrageData (
             idLokacijeIstrage = 0,
             mesto = "London",
@@ -389,7 +389,7 @@ class RepositoryInsertTest {
         )
     }
 
-    private fun returnIzjavaZaPacijentaData(): IzjavaZaPacijentaData{
+    private fun returnIzjavaZaPacijentaData(): IzjavaZaPacijentaData {
         return IzjavaZaPacijentaData(
             idIzjavaZaPacijenta = 0,
             izjava = "Pacijent je u losem stanju",

@@ -41,15 +41,10 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.destinationSuspectDetailsPage
+import rs.ac.bg.etf.projekat.navigation.destinationSuspectDetailsPage
 
 @Composable
 fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
-    LaunchedEffect(Unit) {
-        //realmViewModel.insertDataForMurder()
-        //myViewModel.getAllDataZlocin()
-    }
-
     Box(
         modifier = Modifier.fillMaxSize()
     ) {

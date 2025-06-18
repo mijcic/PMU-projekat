@@ -1,10 +1,19 @@
 package com.example.repository
 
-import com.example.*
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import java.sql.Connection
 
 class Repository(private val connection: Connection): RepoInterface {
+
+    override fun updateUsedZlocinMurder(id: Int): Boolean {
+        val query = "UPDATE usedzlocin SET used = 1 WHERE idUsedZlocin = $id"
+        val statement = connection.createStatement()
+
+        val rowsUpdated = statement.executeUpdate(query)
+
+        return rowsUpdated > 0
+    }
+
     override fun getUsedZlocinMurder(): Int? {
         val query =
             "SELECT MIN(uz.zlocinId) AS zlocinId FROM usedzlocin uz JOIN zlocin z ON uz.zlocinId = z.idZlocin JOIN tipzlocina tz ON z.tipZlocinaId = tz.idTipZlocina WHERE uz.used = false AND tz.naziv = 'murder'"

@@ -1,13 +1,13 @@
 package com.example.repository
 
 import com.example.closeResources
-import com.example.models.dto.*
+import com.example.data.remote.tables.*
 import java.sql.*
 
 class RepositoryInsert(private val conn: Connection){
 
     //insert into UsedZlocin Table in mysql
-    fun insertUsedZlocinData(usedZlocin:UsedZlocinData) {
+    fun insertUsedZlocinData(usedZlocin: UsedZlocinData) {
         val query = """
             INSERT INTO usedzlocin (zlocinId, used)
             VALUES (?, ?)

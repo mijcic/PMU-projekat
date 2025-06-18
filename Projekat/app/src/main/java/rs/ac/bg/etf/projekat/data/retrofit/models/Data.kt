@@ -523,3 +523,7 @@ data class GeminiResponseRetrofitMysteriousSymptoms(
     var lokacijeIstrageRetrofit: List<LokacijeIstrageData>?,
     var izjavaZaPacijentaRetrofit: IzjavaZaPacijentaData?
 )
+
+data class Story(
+    val story:String
+)
