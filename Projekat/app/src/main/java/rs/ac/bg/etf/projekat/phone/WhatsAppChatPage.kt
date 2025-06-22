@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,47 +67,10 @@ fun WhatsAppChatPage(id: Int, ime: String, slika: Int, navController: NavControl
             .background(Color.White)
             .padding(top = 24.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).padding(top = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = slika),
-                    contentDescription = "Profile",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(text = ime, fontSize = 17.sp, fontWeight = FontWeight.Bold)
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = 12.dp).padding(top = 5.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.camera_video),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-
-                Spacer(modifier = Modifier.width(20.dp))
-
-                Icon(
-                    painter = painterResource(R.drawable.telephone),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+        WhatsAppContactInfoAndOptions(
+            slika = slika,
+            ime = ime
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
@@ -118,82 +82,157 @@ fun WhatsAppChatPage(id: Int, ime: String, slika: Int, navController: NavControl
                 .fillMaxWidth()
         )
 
+        TextAndOtherInstertation()
+    }
+}
+
+@Composable
+fun VideoAndTelephoneIcon() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(end = 12.dp).padding(top = 5.dp)
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.camera_video),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.telephone),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+@Composable
+fun CameraAndMicrophoneIcon() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 10.dp)
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.camera),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Icon(
+            painter = painterResource(R.drawable.mic),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+fun WhatsAppContactInfoAndOptions(slika: Int, ime: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).padding(top = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 8.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(28.dp)
-                    .padding(end = 8.dp)
-            )
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = Color.LightGray,
-                        shape = RoundedCornerShape(25.dp)
-                    )
-                    .clip(RoundedCornerShape(25.dp))
-                    .background(Color.White),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
-                        .height(40.dp)
-                ) {
-                    BasicTextField(
-                        value = "",
-                        onValueChange = { },
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp),
-                        textStyle = LocalTextStyle.current.copy(
-                            fontSize = 15.sp,
-                            color = Color.Black
-                        ),
-                        singleLine = true
-                    )
-
-                    Icon(
-                        painter = painterResource(R.drawable.sticky),
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
+            val context = LocalContext.current
+            val validPictureResId = remember(slika) {
+                try {
+                    context.resources.getResourceName(slika)
+                    slika
+                } catch (e: Exception) {
+                    R.drawable.no_account
                 }
             }
 
+            Image(
+                painter = painterResource(id = validPictureResId),
+                contentDescription = "Profile",
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+            )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.camera),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
+            Spacer(modifier = Modifier.width(12.dp))
 
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Icon(
-                    painter = painterResource(R.drawable.mic),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+            Text(text = ime, fontSize = 17.sp, fontWeight = FontWeight.Bold)
         }
 
+        VideoAndTelephoneIcon()
+    }
+}
 
+@Composable
+fun WhatsAppTextInsertation() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .border(
+                width = 1.dp,
+                color = Color.LightGray,
+                shape = RoundedCornerShape(25.dp)
+            )
+            .clip(RoundedCornerShape(25.dp))
+            .background(Color.White),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .height(40.dp)
+        ) {
+            BasicTextField(
+                value = "",
+                onValueChange = { },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 15.sp,
+                    color = Color.Black
+                ),
+                singleLine = true
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.sticky),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun TextAndOtherInstertation() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = null,
+            modifier = Modifier
+                .size(28.dp)
+                .padding(end = 8.dp)
+        )
+
+        Box(modifier = Modifier.weight(1f)) {
+            WhatsAppTextInsertation()
+        }
+
+        CameraAndMicrophoneIcon()
     }
 }
 

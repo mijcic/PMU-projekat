@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.phone
 
+import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -64,32 +66,10 @@ fun ChatPage(id: Int, name: String, photo: Int, navController: NavController) {
             .padding(12.dp)
             .padding(top = 30.dp)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = photo),
-                contentDescription = "Profile",
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.height(7.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = name, fontSize = 13.sp)
-                Spacer(modifier = Modifier.width(3.dp))
-                Icon(
-                    painter = painterResource(R.drawable.right_arow),
-                    contentDescription = null,
-                    modifier = Modifier.size(9.dp),
-                    tint = Color.Gray
-                )
-            }
-        }
+        ContactInfo(
+            photo = photo,
+            name = name
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
@@ -101,52 +81,47 @@ fun ChatPage(id: Int, name: String, photo: Int, navController: NavController) {
                 .fillMaxWidth()
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .border(
-                    width = 1.dp,
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(25.dp)
-                )
-                .clip(RoundedCornerShape(25.dp))
-                .background(Color.White)
-                .wrapContentHeight(),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(end = 12.dp)
-            ) {
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    placeholder = { Text("Text Message") },
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(0.dp)
-                )
+        TextInsertation()
+    }
+}
 
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(color = Color(0xFF34C759), shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_up),
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = Color.White
-                    )
-                }
+@Composable
+fun ContactInfo(photo: Int, name: String) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val context = LocalContext.current
+
+        val validPictureResId = remember(photo) {
+            try {
+                context.resources.getResourceName(photo)
+                photo
+            } catch (e: Resources.NotFoundException) {
+                R.drawable.no_account
             }
+        }
+
+        Image(
+            painter = painterResource(id = validPictureResId),
+            contentDescription = "Profile",
+            modifier = Modifier
+                .size(60.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.height(7.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = name, fontSize = 13.sp)
+            Spacer(modifier = Modifier.width(3.dp))
+            Icon(
+                painter = painterResource(R.drawable.right_arow),
+                contentDescription = null,
+                modifier = Modifier.size(9.dp),
+                tint = Color.Gray
+            )
         }
     }
 }
@@ -206,4 +181,53 @@ fun MessageBubble(message: ObicnaPorukaR, spacing: Dp) {
     }
 }
 
-data class MessageInChat(val content: String, val sender: String)
+@Composable
+fun TextInsertation() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .border(
+                width = 1.dp,
+                color = Color.LightGray,
+                shape = RoundedCornerShape(25.dp)
+            )
+            .clip(RoundedCornerShape(25.dp))
+            .background(Color.White)
+            .wrapContentHeight(),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(end = 12.dp)
+        ) {
+            TextField(
+                value = "",
+                onValueChange = { },
+                placeholder = { Text("Text Message") },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(0.dp)
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .background(color = Color(0xFF34C759), shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_up),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}

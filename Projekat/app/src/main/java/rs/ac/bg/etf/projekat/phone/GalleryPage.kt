@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Text
@@ -27,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,29 +84,51 @@ fun GalleryPage(navController: NavController) {
             }
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(8.dp),
-            state = listState,
-            reverseLayout = true
-        ) {
-            items(images.size) { index ->
-                Image(
-                    painter = painterResource(images[index]?.slika ?: R.drawable.no_account),
-                    contentDescription = "Image $index",
-                    modifier = Modifier
-                        .size(imageSize)
-                        .border(0.5.dp, Color.White)
-                        .clickable {
-                            val slika = images[index].slika
-                            val datum = realmInstantForWA(images[index].datum)
-                            val mesto = images[index].mesto
+        PhotosList(
+            listState = listState,
+            images = images,
+            imageSize = imageSize,
+            navController = navController
+        )
+    }
+}
 
-                            navController.navigate("destinationOnePhotoPage/$slika/$datum/$mesto")
-                        }
-                )
+@Composable
+fun PhotosList(listState: LazyGridState, images: List<GalleryR>, imageSize: Dp, navController: NavController) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
+        state = listState,
+        reverseLayout = true
+    ) {
+        items(images.size) { index ->
+            val context = LocalContext.current
+
+            val validPictureResId = remember(images[index]?.slika) {
+                val pictureResId = images[index]?.slika ?: 0
+                try {
+                    context.resources.getResourceName(pictureResId)
+                    pictureResId
+                } catch (e: Exception) {
+                    R.drawable.no_account
+                }
             }
+
+            Image(
+                painter = painterResource(validPictureResId),
+                contentDescription = "Image $index",
+                modifier = Modifier
+                    .size(imageSize)
+                    .border(0.5.dp, Color.White)
+                    .clickable {
+                        val slika = images[index].slika
+                        val datum = realmInstantForWA(images[index].datum)
+                        val mesto = images[index].mesto
+
+                        navController.navigate("destinationOnePhotoPage/$slika/$datum/$mesto")
+                    }
+            )
         }
     }
 }

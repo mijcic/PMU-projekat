@@ -33,13 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.BeleskaR
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,71 +70,52 @@ fun NotesPage(navController: NavController) {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color.White)
-                    .padding(10.dp)
-            ) {
-                LazyColumn {
-                    notes.forEach { note ->
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { navController.navigate("destinationOneNotePage/" + note.tekst + "/" + realmInstantToDateString(note.datum)) }
-                                    .padding(12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        note.tekst,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 18.sp,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Text(realmInstantToDateString(note.datum), color = Color.Gray, fontSize = 14.sp)
-                                }
-                            }
+            NotesList(
+                notes = notes,
+                navController = navController
+            )
+        }
+    }
+}
 
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = Color.Gray.copy(alpha = 0.3f)
+@Composable
+fun NotesList(notes: List<BeleskaR>, navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color.White)
+            .padding(10.dp)
+    ) {
+        LazyColumn {
+            notes.forEach { note ->
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navController.navigate("destinationOneNotePage/" + note.tekst + "/" + realmInstantToDateString(note.datum)) }
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                note.tekst,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
+                            Text(realmInstantToDateString(note.datum), color = Color.Gray, fontSize = 14.sp)
                         }
                     }
+
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.Gray.copy(alpha = 0.3f)
+                    )
                 }
             }
         }
     }
 }
-
-fun realmInstantToDateString(realmInstant: RealmInstant?): String {
-    if (realmInstant == null) return ""
-
-    val instant = Instant.ofEpochSecond(
-        realmInstant.epochSeconds,
-        realmInstant.nanosecondsOfSecond.toLong()
-    )
-
-    val zoneId = ZoneId.systemDefault()
-    val localDate = instant.atZone(zoneId).toLocalDate()
-    val today = LocalDate.now(zoneId)
-    val yesterday = today.minusDays(1)
-
-    return when (localDate) {
-        today -> "Today"
-        yesterday -> "Yesterday"
-        else -> {
-            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            formatter.format(localDate) + "."
-        }
-    }
-}
-
-data class Note(val text: String, val time: String)
-
-

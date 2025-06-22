@@ -36,14 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.WhatsAppPreviewItem
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import rs.ac.bg.etf.projekat.R
 
@@ -72,103 +67,93 @@ fun WhatsAppPage(navController: NavController) {
             )
         )
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(chats) { chat ->
-                val kontakt = chat.kontakt
-                val poruka = chat.lastMessage
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                var ime = kontakt?.ime ?: kontakt?.broj ?: "No Caller ID"
-                                var slika = kontakt?.slika ?: R.drawable.no_account
-                                navController.navigate("destinationWhatsAppChatPage/${kontakt.idWhatsAppKontakt}/$ime/$slika")
-                            }
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                        ) {
-                            Image(
-                                painter = painterResource(id = kontakt.slika ?: R.drawable.no_account),
-                                contentDescription = "Profile picture",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        Column(
-                            modifier = Modifier.weight(1f) // Ograničava širinu teksta
-                        ) {
-                            Text(
-                                text = kontakt.ime,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = poruka?.tekst ?: "",
-                                color = Color.Gray,
-                                fontSize = 14.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        Text(
-                            text = realmInstantForWA(poruka?.datum),
-                            color = Color.Gray,
-                            fontSize = 12.sp,
-                            modifier = Modifier.align(Alignment.Top)
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = Color.Gray.copy(alpha = 0.3f)
-                    )
-                }
-            }
-        }
+        WhatsAppChatsList(
+            chats = chats,
+            navController = navController
+        )
     }
 }
 
-data class Chat(val name: String, val message: String, val time: String, val profilePicture: Int)
+@Composable
+fun WhatsAppChatsList(chats: List<WhatsAppPreviewItem>, navController: NavController) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(chats) { chat ->
+            val kontakt = chat.kontakt
+            val poruka = chat.lastMessage
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            var ime = kontakt?.ime ?: kontakt?.broj ?: "No Caller ID"
+                            var slika = kontakt?.slika ?: R.drawable.no_account
+                            navController.navigate("destinationWhatsAppChatPage/${kontakt.idWhatsAppKontakt}/$ime/$slika")
+                        }
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                    ) {
+                        val context = LocalContext.current
+                        val validPictureResId = remember(kontakt.slika) {
+                            val pictureResId = kontakt.slika ?: 0
+                            try {
+                                context.resources.getResourceName(pictureResId)
+                                pictureResId
+                            } catch (e: Exception) {
+                                R.drawable.no_account
+                            }
+                        }
 
-fun realmInstantForWA(realmInstant: RealmInstant?): String {
-    if (realmInstant == null) return ""
+                        Image(
+                            painter = painterResource(id = validPictureResId),
+                            contentDescription = "Profile picture",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                        )
+                    }
 
-    val instant = Instant.ofEpochSecond(
-        realmInstant.epochSeconds,
-        realmInstant.nanosecondsOfSecond.toLong()
-    )
+                    Spacer(modifier = Modifier.width(10.dp))
 
-    val zoneId = ZoneId.systemDefault()
-    val zonedDateTime = instant.atZone(zoneId)
-    val localDate = zonedDateTime.toLocalDate()
-    val today = LocalDate.now(zoneId)
-    val yesterday = today.minusDays(1)
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = kontakt.ime,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = poruka?.tekst ?: "",
+                            color = Color.Gray,
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
 
-    return when (localDate) {
-        today -> {
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            timeFormatter.format(zonedDateTime.toLocalTime())
-        }
-        yesterday -> "Yesterday"
-        else -> {
-            val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.")
-            dateFormatter.format(localDate)
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    Text(
+                        text = realmInstantForWA(poruka?.datum),
+                        color = Color.Gray,
+                        fontSize = 12.sp,
+                        modifier = Modifier.align(Alignment.Top)
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Gray.copy(alpha = 0.3f)
+                )
+            }
         }
     }
 }
