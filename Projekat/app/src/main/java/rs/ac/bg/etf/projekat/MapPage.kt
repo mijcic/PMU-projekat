@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,12 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -55,60 +54,25 @@ import rs.ac.bg.etf.projekat.navigation.questionsPage
 
 @Composable
 fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
+    var paddingStart by remember { mutableStateOf(0.dp) }
+    val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
+
+    var showDialog by remember { mutableStateOf(false) }
+    val allTasksCompleted = uiStateTasks.tasks.all { it.uradjen }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        var paddingStart by remember { mutableStateOf(0.dp) }
-        val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
+        MapBackground()
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = R.drawable.white_paper),
-                contentDescription = "Background Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-            )
-        }
-
-        Column(modifier = Modifier
-            .align(Alignment.TopCenter).padding(top = 22.dp),
+        Column(
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 22.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Column(modifier = Modifier) {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            TasksHeader(paddingStart)
 
-            Column(modifier = Modifier.padding(start = paddingStart)) {
-                Text(text = "Tasks", color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.special_elite)
-                        ),
-                        fontSize = 26.sp,
-                        color = Color.Black
-                    )
-                )
-            }
+            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                var showDialog by remember { mutableStateOf(false) }
-
-                // State za provere da li su svi zadaci završeni
-                val allTasksCompleted = uiStateTasks.tasks.all { it.uradjen }
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                LazyColumn(modifier = Modifier.fillMaxSize()){
                     var firstFalseFound = false
                     var firstIndex = -1
 
@@ -139,9 +103,7 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                             shape = MaterialTheme.shapes.medium,
                         ) {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -162,9 +124,7 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                                             fontWeight = FontWeight.Bold,
                                             letterSpacing = 0.5.sp
                                         ),
-                                        modifier = Modifier
-                                            .weight(2f)
-                                            .padding(end = 8.dp)
+                                        modifier = Modifier.weight(2f).padding(end = 8.dp)
                                     )
 
                                     Text(
@@ -176,9 +136,7 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                                             fontWeight = FontWeight.Normal,
                                             letterSpacing = 0.5.sp
                                         ),
-                                        modifier = Modifier
-                                            .weight(1.5f)
-                                            .padding(end = 8.dp)
+                                        modifier = Modifier.weight(1.5f).padding(end = 8.dp)
                                     )
                                 }
 
@@ -186,9 +144,7 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                                     Checkbox(
                                         checked = isChecked,
                                         onCheckedChange = { if (!isLocked) { /* Akcija kada se checkbox klikne */ } },
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .padding(start = 8.dp),
+                                        modifier = Modifier.size(24.dp).padding(start = 8.dp),
                                     )
                                 }
                             }
@@ -202,9 +158,7 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                         item {
                             Button(
                                 onClick = { showDialog = true },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
                                 shape = MaterialTheme.shapes.medium
                             ) {
                                 Text(text = "Questions")
@@ -214,41 +168,81 @@ fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewMod
                 }
 
                 if (showDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showDialog = false },
-                        title = { Text(text = "Are you sure?") },
-                        text = { Text(text = "Do you want to finish the case and go to the questions page?") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                showDialog = false
-                                navController.navigate(questionsPage.route)
-                            }) {
-                                Text("Yes")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showDialog = false }) {
-                                Text("No")
-                            }
-                        }
+                    MapQuestionsDialog(
+                        onConfirm ={ showDialog = false
+                            navController.navigate(questionsPage.route) },
+                        onDismiss ={ showDialog = false },
+                        dismissButton ={ showDialog = false }
                     )
                 }
             }
         }
 
-        IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top=40.dp,end=25.dp).size(18.dp)
-                .background(Color(0xFF8B0000), shape = CircleShape)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Back",
-                tint = Color.White,
-                modifier = Modifier.size(18.dp)
+        MapBackButton(
+            onBack = {navController.popBackStack()},
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
+    }
+}
+
+@Composable
+fun MapBackground() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.white_paper),
+            contentDescription = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Box(modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.5f)))
+    }
+}
+
+@Composable
+fun TasksHeader(paddingStart: Dp) {
+    Column(modifier = Modifier) { Spacer(modifier = Modifier.height(16.dp)) }
+    Column(modifier = Modifier.padding(start = paddingStart)) {
+        Text(
+            text = "Tasks",
+            color = Color.White,
+            style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 26.sp,
+                color = Color.Black
             )
+        )
+    }
+}
+
+@Composable
+fun MapQuestionsDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, dismissButton: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Are you sure?") },
+        text = { Text(text = "Do you want to finish the case and go to the questions page?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text("Yes") }
+        },
+        dismissButton = {
+            TextButton(onClick = dismissButton) { Text("No") }
         }
+    )
+}
+
+
+@Composable
+fun MapBackButton(onBack: () -> Unit, modifier: Modifier) {
+    IconButton(
+        onClick = onBack,
+        modifier = modifier
+            .padding(top=40.dp,end=25.dp).size(18.dp)
+            .background(Color(0xFF8B0000), shape = CircleShape)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "Back",
+            tint = Color.White,
+            modifier = Modifier.size(18.dp)
+        )
     }
 }

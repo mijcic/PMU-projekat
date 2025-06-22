@@ -229,18 +229,7 @@ fun CardsPage(
     Box(modifier = Modifier.fillMaxSize()) {
         var paddingStart by remember { mutableStateOf(0.dp) }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = R.drawable.cards_image),
-                contentDescription = "Background Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
-                modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.5f))
-            )
-        }
+        CardsBackground()
 
         Column(
             modifier = Modifier.align(Alignment.TopCenter).padding(top = 22.dp),
@@ -316,6 +305,20 @@ fun CardsPage(
             }
         }
         }
+    }
+}
+
+@Composable
+fun CardsBackground(){
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.cards_image),
+            contentDescription = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.5f)))
     }
 }
 

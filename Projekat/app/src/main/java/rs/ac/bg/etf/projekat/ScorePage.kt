@@ -49,148 +49,35 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
-
     val uiStateScoreKorisnika by myViewModel.uiStateScoreKorisnika.collectAsState()
 
-    LaunchedEffect(uiStateScoreKorisnika.scoreList){
-        myViewModel.scoreKorisnika()
-    }
-
-    LaunchedEffect(Unit){
-        myViewModel.scoreKorisnika()
-    }
+    LaunchedEffect(uiStateScoreKorisnika.scoreList){ myViewModel.scoreKorisnika() }
+    LaunchedEffect(Unit){ myViewModel.scoreKorisnika() }
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        Box {
-            Image(
-                painter = painterResource(id = R.drawable.score_background), // zameni sa tvojom slikom
-                contentDescription = "Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
 
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.75f))
-            )
-        }
+        ScoreBackground()
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier.fillMaxSize()
-                //.background(Color(0xFF2F271A))
-                //.background(Color(0xFF262626))
-                //.background(Color(0xFF1A2B2D))
         ) {
             Spacer(modifier = Modifier.padding((screenHeight/40).dp))
 
-            Icon(
-                painter = painterResource(id = R.drawable.trophy_fill),
-                contentDescription = "Trophy",
-                tint = colorResource(id = R.color.golden_yellow),
-                modifier = Modifier.size(45.dp)
+            ScorePageHeader(
+                screenHeight = screenHeight,
+                navController = navController
             )
 
             Spacer(modifier = Modifier.padding((screenHeight/50).dp))
 
-            Text(
-                text = "If you want to keep track of your score",
-                modifier = Modifier.padding(horizontal = 16.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.special_elite)),
-                    color = Color.White,
-                    fontSize = 18.sp,
-                ),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "Login",
-                modifier = Modifier.padding(horizontal = 16.dp).clickable {
-                    navController.navigate("destinationLoginPage")
-                },
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.special_elite)),
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    textDecoration = TextDecoration.Underline
-                ),
-            )
+            UserScoreCard(screenWidth = screenWidth)
 
-            Spacer(modifier = Modifier.padding((screenHeight/50).dp))
-
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = (screenWidth/4).dp, end =(screenWidth/4).dp )
-                    .shadow(
-                        elevation = 12.dp,
-                        shape = RoundedCornerShape(20.dp),
-                        clip = false
-                    )
-                    .clip(RoundedCornerShape(20.dp))
-                    //.background(Color(0XFFD1D5D8))
-                    .background(colorResource(id = R.color.light_gray))
-                    .padding((screenWidth/16).dp)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Your score: 100",
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            color = Color.White,
-                            fontSize = 18.sp,
-                        ),
-                        textAlign = TextAlign.Center,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.abuse),
-                        contentDescription = "User Avatar",
-                        modifier = Modifier.size(80.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "real_detective_101",
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            color = Color.White,
-                            fontSize = 14.sp,
-                        ),
-                        textAlign = TextAlign.Center,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(15.dp))
-                    Text(
-                        text = "257 XP",
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            color = Color.White,
-                            fontSize = 25.sp,
-                        ),
-                        textAlign = TextAlign.Center,
-                        color = Color.Black
-                    )
-                }
-            }
             Spacer(modifier = Modifier.padding((screenHeight/40).dp))
 
-            Divider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = Color.Gray,
-                thickness = 3.dp
-            )
+            ScorePageDivider()
+
             if (uiStateScoreKorisnika.scoreList!=null){
                 LazyColumn {
                     items(uiStateScoreKorisnika.scoreList!!){ items->
@@ -230,14 +117,138 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
                                 modifier = Modifier.padding(top=15.dp)
                             )
                         }
-                        Divider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            color = Color.Gray,
-                            thickness = 3.dp
-                        )
+
+                        ScorePageDivider()
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+fun ScoreBackground() {
+    Box {
+        Image(
+            painter = painterResource(id = R.drawable.score_background),
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Box(modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.75f)))
+    }
+}
+
+@Composable
+fun ScorePageHeader(screenHeight: Int, navController: NavController) {
+    Icon(
+        painter = painterResource(id = R.drawable.trophy_fill),
+        contentDescription = "Trophy",
+        tint = colorResource(id = R.color.golden_yellow),
+        modifier = Modifier.size(45.dp)
+    )
+
+    Spacer(modifier = Modifier.padding((screenHeight/50).dp))
+
+    Text(
+        text = "If you want to keep track of your score",
+        modifier = Modifier.padding(horizontal = 16.dp),
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            fontFamily = FontFamily(Font(R.font.special_elite)),
+            color = Color.White,
+            fontSize = 18.sp,
+        )
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(
+        text = "Login",
+        modifier = Modifier.padding(horizontal = 16.dp).clickable {
+            navController.navigate("destinationLoginPage")
+        },
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            fontFamily = FontFamily(Font(R.font.special_elite)),
+            color = Color.White,
+            fontSize = 18.sp,
+            textDecoration = TextDecoration.Underline
+        )
+    )
+}
+
+@Composable
+fun UserScoreCard(screenWidth: Int) {
+
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = (screenWidth/4).dp, end =(screenWidth/4).dp )
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(20.dp),
+                clip = false
+            )
+            .clip(RoundedCornerShape(20.dp))
+            //.background(Color(0XFFD1D5D8))
+            .background(colorResource(id = R.color.light_gray))
+            .padding((screenWidth/16).dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Your score: 100",
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                    color = Color.White,
+                    fontSize = 18.sp,
+                ),
+                textAlign = TextAlign.Center,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Image(
+                painter = painterResource(id = R.drawable.abuse),
+                contentDescription = "User Avatar",
+                modifier = Modifier.size(80.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "real_detective_101",
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                    color = Color.White,
+                    fontSize = 14.sp,
+                ),
+                textAlign = TextAlign.Center,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Text(
+                text = "257 XP",
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                    color = Color.White,
+                    fontSize = 25.sp,
+                ),
+                textAlign = TextAlign.Center,
+                color = Color.Black
+            )
+        }
+    }
+}
+
+@Composable
+fun ScorePageDivider(){
+    Divider(
+        modifier = Modifier.padding(vertical = 8.dp),
+        color = Color.Gray,
+        thickness = 3.dp
+    )
 }

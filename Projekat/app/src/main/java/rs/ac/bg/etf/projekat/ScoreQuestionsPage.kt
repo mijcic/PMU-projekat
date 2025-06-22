@@ -46,7 +46,6 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewModel: MyViewModel) {
     Box(modifier = Modifier.fillMaxSize()) {
 //        val imagePainter = painterResource(id = R.drawable.street_score)
-        val imagePainter = painterResource(id = R.drawable.library_books)
         val realmViewModel: RealmViewModel = hiltViewModel()
 
         var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
@@ -58,18 +57,7 @@ fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewM
             questions = realmViewModel.getAllPitanje() ?: emptyList()
         }
 
-        Image(
-            painter = imagePainter,
-            contentDescription = "Background image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.6f))
-        )
+        BackgroundWithOverlay(imagePainter = R.drawable.library_books, alpha = 0.6F)
 
         Column(
             modifier = Modifier
@@ -78,23 +66,8 @@ fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewM
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = "Score Page",
-                fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
-                fontSize = 28.sp,
-                color = Color.White
-            )
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Your Score: $totalScore",
-                fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
-                fontSize = 20.sp,
-                color = colorResource(id = R.color.mission_light_gray),
-                textAlign = TextAlign.Center
-            )
-
+            ScoreHeader(totalScore = totalScore)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -138,8 +111,7 @@ fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewM
                             val tacniOdgovori = questionAnswersMap[question] ?: emptyList()
                             tacniOdgovori.forEach { answer ->
                                 Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth()
                                         .background(
                                             color =  if (selectedAnswers.selectedAnswers?.get(question.idPitanje) == answer.idOdogovor) Color(0xFF388E3C).copy(alpha = 0.8f)
                                             else Color(0xFFB71C1C).copy(alpha = 0.8f),
@@ -164,4 +136,34 @@ fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewM
             }
         }
     }
+}
+
+@Composable
+fun ScoreHeader(totalScore: String) {
+    Text(
+        text = "Score Page",
+        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+        fontSize = 28.sp,
+        color = Color.White
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(
+        text = "Your Score: $totalScore",
+        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+        fontSize = 20.sp,
+        color = colorResource(id = R.color.mission_light_gray),
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun BackgroundWithOverlay(imagePainter:Int, alpha:Float){
+    Image(
+        painter = painterResource(id = imagePainter),
+        contentDescription = "Background image",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = alpha)))
 }

@@ -24,7 +24,7 @@ fun NavigationGraph(navController: NavHostController) {
     val hospitalViewModel:HospitalViewModel = hiltViewModel()
 
     NavHost(navController = navController, //startDestination = "destinationMainScreen1"
-        startDestination = "destinationMainScreen2"
+        startDestination = destinationMainScreen2.route
     ) {
         mainNavigation(navController)
         authNavigation(navController)

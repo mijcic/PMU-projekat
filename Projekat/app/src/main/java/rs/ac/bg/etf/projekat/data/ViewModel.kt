@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.data
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -267,11 +268,11 @@ class MyViewModel @Inject constructor(
     private val _uiSteteSelectedAnswers = MutableStateFlow(UiSteteSelectedAnswers())
     val uiSteteSelectedAnswers: StateFlow<UiSteteSelectedAnswers> = _uiSteteSelectedAnswers
 
-    fun updateSelectedanswes(answers: Map<Int, Int?>) = viewModelScope.launch {
+    fun updateSelectedanswes(answers: MutableState<Map<Int, Int?>>) = viewModelScope.launch {
         Log.d("ANSWERS", answers.toString())
         try {
 
-            _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(answers)
+            _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(answers.value)
         } catch (e: Exception) {
             e.printStackTrace()
             _uiSteteSelectedAnswers.value = UiSteteSelectedAnswers(emptyMap())
