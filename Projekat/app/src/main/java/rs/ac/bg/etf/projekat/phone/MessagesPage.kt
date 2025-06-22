@@ -32,17 +32,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.GenericFontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
-import rs.ac.bg.etf.projekat.data.realmViewModel.OneContactPreviewItem
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 
 @Composable
@@ -62,37 +63,7 @@ fun MessagesPage(navController: NavController) {
             .fillMaxSize()
             .padding(top = 40.dp, bottom = 20.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 30.dp)
-                .padding(horizontal = 20.dp, vertical = 5.dp),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Edit",
-                    fontSize = 17.sp,
-                    fontFamily = font,
-                    color = colorResource(R.color.iphone_blue)
-                )
-
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.size(30.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.pencil_edit),
-                        contentDescription = "Add",
-                        tint = colorResource(R.color.iphone_blue)
-                    )
-                }
-            }
-        }
+        UpperIcons(font = font)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -105,112 +76,166 @@ fun MessagesPage(navController: NavController) {
             fontFamily = font
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 10.dp)
-                .verticalScroll(rememberScrollState())
+        MessagesList(
+            messages = messages,
+            navController = navController,
+            font = font
+        )
+    }
+}
+
+@Composable
+fun UpperIcons(font: GenericFontFamily) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 30.dp)
+            .padding(horizontal = 20.dp, vertical = 5.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            messages.forEach { message ->
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                var id = message.kontakt?.idOneContact
-                                var ime = message.kontakt?.ime ?: message.kontakt?.broj ?: "No Caller ID"
-                                var slika = message.kontakt?.slika ?: R.drawable.no_account
-                                navController.navigate("destinationChatPage/$id/$ime/$slika") },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (message.lastMessage?.procitana == false) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(start = 6.dp, end = 6.dp)
-                                    .size(8.dp)
-                                    .background(colorResource(R.color.iphone_blue), shape = CircleShape)
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.width(20.dp))
-                        }
+            Text(
+                text = "Edit",
+                fontSize = 17.sp,
+                fontFamily = font,
+                color = colorResource(R.color.iphone_blue)
+            )
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 12.dp, horizontal = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Image(
-                                    painter = painterResource(id = message.kontakt?.slika ?: R.drawable.no_account),
-                                    contentDescription = "Profile picture",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(CircleShape)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 8.dp),
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                Text(
-                                    text = message.kontakt.ime,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                    fontFamily = font,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = message.lastMessage?.tekst ?: "",
-                                    color = Color.Gray,
-                                    fontSize = 14.sp,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-
-                            Column(
-                                horizontalAlignment = Alignment.End,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = realmInstantForWA(message.lastMessage?.datum),
-                                    color = Color.Gray,
-                                    fontSize = 14.sp,
-                                    fontFamily = font
-                                )
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Icon(
-                                    painter = painterResource(R.drawable.right_arow),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(14.dp),
-                                    tint = Color.Gray
-                                )
-                            }
-                        }
-                    }
-                }
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = Color.Gray.copy(alpha = 0.3f)
+            IconButton(
+                onClick = { },
+                modifier = Modifier.size(30.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.pencil_edit),
+                    contentDescription = "Add",
+                    tint = colorResource(R.color.iphone_blue)
                 )
             }
         }
     }
 }
 
-data class Message(val name: String, val readOrNot: Int, val time: String, val picture: Int, val lastMessage: String)
+@Composable
+fun MessagesList(messages: List<OneContactPreviewItem>, navController: NavController, font: GenericFontFamily) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 10.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        messages.forEach { message ->
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            var id = message.kontakt?.idOneContact
+                            var ime = message.kontakt?.ime ?: message.kontakt?.broj ?: "No Caller ID"
+                            var slika = message.kontakt?.slika ?: R.drawable.no_account
+                            navController.navigate("destinationChatPage/$id/$ime/$slika") },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (message.lastMessage?.procitana == false) {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 6.dp, end = 6.dp)
+                                .size(8.dp)
+                                .background(colorResource(R.color.iphone_blue), shape = CircleShape)
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.width(20.dp))
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp, horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                        ) {
+                            val context = LocalContext.current
+
+                            val validPictureResId = remember(message.kontakt?.slika) {
+                                val pictureResId = message.kontakt?.slika ?: 0
+                                try {
+                                    context.resources.getResourceName(pictureResId)
+                                    pictureResId
+                                } catch (e: Exception) {
+                                    R.drawable.no_account
+                                }
+                            }
+
+                            Image(
+                                painter = painterResource(id = validPictureResId),
+                                contentDescription = "Profile picture",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = message.kontakt.ime,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                fontFamily = font,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = message.lastMessage?.tekst ?: "",
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = realmInstantForWA(message.lastMessage?.datum),
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                fontFamily = font
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Icon(
+                                painter = painterResource(R.drawable.right_arow),
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp),
+                                tint = Color.Gray
+                            )
+                        }
+                    }
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = Color.Gray.copy(alpha = 0.3f)
+            )
+        }
+    }
+}

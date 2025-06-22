@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,15 +41,14 @@ fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewMode
         if (currentQuestionIndex < allQuestions.size - 1) {
             currentQuestionIndex++
         }
-        else{
-            if(uiPitanjaZaSvedoka.questions.isEmpty()==false){
+        else {
+            if (uiPitanjaZaSvedoka.questions.isEmpty() == false) {
                 myViewModel.selectIspitivanjeSvedokaZadatakViewModel(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
                     myViewModel.updateWitnessTask(
                         it
                     )
                 }
             }
-
 
             navController.popBackStack()
         }
@@ -58,26 +58,7 @@ fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewMode
         topBar = {
             TopAppBar(
                 title = {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            "$title", color = Color.White, style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.special_elite)),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            "Witness Interview", color = Color.White, style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.special_elite)),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
+                    WitnessInfo(title = title)
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF8A6018))
             )
@@ -100,81 +81,144 @@ fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewMode
                 )
                 Spacer(modifier = Modifier.height(40.dp))
 
-                if (allQuestions.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(12.dp))
-                            .padding(16.dp)
-                            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
-                    ) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            // Pitanje
-                            Text(
-                                text = "Question: ${allQuestions[currentQuestionIndex].tekst ?: "No question available"}",
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+                IndexedQuestion(
+                    allQuestions = allQuestions,
+                    currentQuestionIndex = currentQuestionIndex
+                )
 
-                            // Odgovor
-                            Text(
-                                text = "Answer: ${allQuestions[currentQuestionIndex].odgovor ?: "No answer available"}",
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    color = Color.Gray,
-                                    fontStyle = FontStyle.Italic
-                                ),
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
-
-                }
                 Spacer(modifier = Modifier.height(40.dp))
-                Button(
-                    onClick = { nextQuestion() },
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .padding(horizontal = 16.dp)
-                        .height(50.dp)
-                ) {
-                    Text(
-                        text = if (currentQuestionIndex < allQuestions.size - 1) "Next Question" else "Finish Interview",
-                        color = Color.White,
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
 
-                if (currentQuestionIndex == allQuestions.size - 1) {
-                    Button(
-                        onClick = {
-                            currentQuestionIndex = 0
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .padding(horizontal = 16.dp)
-                            .height(50.dp)
-                            .padding(top = 16.dp)
-                    ) {
-                        Text(
-                            text = "Restart Interview",
-                            color = Color.White,
-                            style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.special_elite)),
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-                }
+                NextOrFinishButton(
+                    onClickFunction = { nextQuestion() },
+                    allQuestions = allQuestions,
+                    currentQuestionIndex = currentQuestionIndex
+                )
+
+                RestartButton(
+                    onClickFunction = { currentQuestionIndex = 0 },
+                    allQuestions = allQuestions,
+                    currentQuestionIndex = currentQuestionIndex
+                )
             }
         }
     )
+}
+
+@Composable
+fun WitnessInfo(title: String) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            title, color = Color.White, style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            "Witness Interview", color = Color.White, style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+}
+
+@Composable
+fun IndexedQuestion(
+    allQuestions: List<PitanjeIspitivanjeSvedokaR>,
+    currentQuestionIndex: Int
+) {
+    if (allQuestions.isNotEmpty()) {
+        Box(
+            modifier = Modifier
+                .border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(12.dp))
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Pitanje
+                Text(
+                    text = "Question: ${allQuestions[currentQuestionIndex].tekst ?: "No question available"}",
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                // Odgovor
+                Text(
+                    text = "Answer: ${allQuestions[currentQuestionIndex].odgovor ?: "No answer available"}",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        fontStyle = FontStyle.Italic
+                    ),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+fun NextOrFinishButton(
+    onClickFunction: () -> Unit,
+    allQuestions: List<PitanjeIspitivanjeSvedokaR>,
+    currentQuestionIndex: Int
+) {
+    Button(
+        onClick = { onClickFunction() },
+        modifier = Modifier
+            .fillMaxWidth(0.7f)
+            .padding(horizontal = 16.dp)
+            .height(50.dp)
+    ) {
+        Text(
+            text = if (currentQuestionIndex < allQuestions.size - 1) "Next Question" else "Finish Interview",
+            color = Color.White,
+            style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+}
+
+@Composable
+fun RestartButton(
+    onClickFunction: () -> Unit,
+    allQuestions: List<PitanjeIspitivanjeSvedokaR>,
+    currentQuestionIndex: Int
+) {
+    if (currentQuestionIndex == allQuestions.size - 1) {
+        Button(
+            onClick = {
+                onClickFunction()
+            },
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .padding(horizontal = 16.dp)
+                .height(50.dp)
+                .padding(top = 16.dp)
+        ) {
+            Text(
+                text = "Restart Interview",
+                color = Color.White,
+                style = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.special_elite)),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+    }
 }

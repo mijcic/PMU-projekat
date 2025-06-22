@@ -58,9 +58,6 @@ import rs.ac.bg.etf.projekat.navigation.destinationSuspectsInterviewPage
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: NavController) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
-
     val realmViewModel: RealmViewModel = hiltViewModel()
     var motiveAlibiStatus by remember { mutableStateOf<List<String>>(emptyList()) }
 
@@ -69,7 +66,7 @@ fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: N
     }
 
     val tableData = listOf(
-        listOf("Motive", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+        listOf("Motive", motiveAlibiStatus.getOrNull(0).takeUnless { it.isNullOrBlank() } ?: "?"),
         listOf("Alibi", motiveAlibiStatus.getOrNull(1).takeUnless { it.isNullOrBlank() } ?: "?"),
         listOf("Status", motiveAlibiStatus.getOrNull(2).takeUnless { it.isNullOrBlank() } ?: "?")
     )
@@ -113,84 +110,18 @@ fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: N
                     ) {
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text(
-                            text = "Suspect Info",
-                            color = Color.Black,
-                            style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.special_elite)),
-                                fontSize = 18.sp
-                            )
-                        )
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        Image(
-                            painter = painterResource(id = image),
-                            contentDescription = "Suspect Image",
-                            modifier = Modifier
-                                .size(130.dp)
-                                .clip(CircleShape)
-                                .border(1.5.dp, Color.Black, CircleShape)
-                                .shadow(8.dp, CircleShape)
-                        )
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        Text(
-                            text = title,
-                            color = Color.Black,
-                            style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.special_elite)),
-                                fontSize = 23.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        SuspectInfoFun(
+                            image = image,
+                            title = title,
+                            tableData = tableData
                         )
 
                         Spacer(modifier = Modifier.height(25.dp))
 
-                        if (tableData.isNotEmpty()) {
-                            oneRowAboutSuspect("Motive", tableData.get(0).get(1))
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
-                            Spacer(modifier = Modifier.height(5.dp))
-                            oneRowAboutSuspect("Alibi", tableData.get(1).get(1))
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
-                            Spacer(modifier = Modifier.height(5.dp))
-                            oneRowAboutSuspect("Status", tableData.get(2).get(1))
-                        }
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        Button(
-                            onClick = {
-                                navController.navigate(destinationSuspectsInterviewPage.route + "/" + title)
-                            },
-                            shape = RoundedCornerShape(16.dp),
-//                            colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
-//                            colors = ButtonDefaults.buttonColors(colorResource(R.color.dark_purple)),
-                            colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .padding(horizontal = 16.dp)
-                                .height(50.dp)
-//                                .border(
-//                                    width = 1.dp,
-//                                    color = Color.White,
-//                                    shape = RoundedCornerShape(16.dp)
-//                                )
-                        ) {
-                            Text(
-                                text = "Interrogate the Suspect",
-                                color = Color.White,
-                                style = TextStyle(
-                                    fontFamily = FontFamily(Font(R.font.special_elite)),
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center
-                                )
-                            )
-                        }
+                        InterrogateButton(
+                            title = title,
+                            navController = navController
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -244,5 +175,85 @@ fun oneRowAboutSuspect(tekst1: String, tekst2: String) {
                 )
             )
         }
+    }
+}
+
+@Composable
+fun SuspectInfoFun(
+    image: Int,
+    title: String,
+    tableData: List<List<String>>
+) {
+    Text(
+        text = "Suspect Info",
+        color = Color.Black,
+        style = TextStyle(
+            fontFamily = FontFamily(Font(R.font.special_elite)),
+            fontSize = 18.sp
+        )
+    )
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    Image(
+        painter = painterResource(id = image),
+        contentDescription = "Suspect Image",
+        modifier = Modifier
+            .size(130.dp)
+            .clip(CircleShape)
+            .border(1.5.dp, Color.Black, CircleShape)
+            .shadow(8.dp, CircleShape)
+    )
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    Text(
+        text = title,
+        color = Color.Black,
+        style = TextStyle(
+            fontFamily = FontFamily(Font(R.font.special_elite)),
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
+        )
+    )
+
+    Spacer(modifier = Modifier.height(25.dp))
+
+    if (tableData.isNotEmpty()) {
+        oneRowAboutSuspect("Motive", tableData.get(0).get(1))
+        Spacer(modifier = Modifier.height(5.dp))
+        Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(5.dp))
+        oneRowAboutSuspect("Alibi", tableData.get(1).get(1))
+        Spacer(modifier = Modifier.height(5.dp))
+        Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(5.dp))
+        oneRowAboutSuspect("Status", tableData.get(2).get(1))
+    }
+}
+
+@Composable
+fun InterrogateButton(title: String, navController: NavController) {
+    Button(
+        onClick = {
+            navController.navigate(destinationSuspectsInterviewPage.route + "/" + title)
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
+        modifier = Modifier
+            .fillMaxWidth(0.7f)
+            .padding(horizontal = 16.dp)
+            .height(50.dp)
+    ) {
+        Text(
+            text = "Interrogate the Suspect",
+            color = Color.White,
+            style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        )
     }
 }

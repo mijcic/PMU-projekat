@@ -63,6 +63,8 @@ import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZlocinR
 import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import rs.ac.bg.etf.projekat.data.realm.stZlocinR
+import rs.ac.bg.etf.projekat.phone.OneContactPreviewItem
+import rs.ac.bg.etf.projekat.phone.WhatsAppPreviewItem
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -1173,14 +1175,4 @@ data class UiStateCrimeData (
     val date: String? = null,
     val place: String? = null,
     val description: String? = null
-)
-
-data class WhatsAppPreviewItem(
-    val kontakt: WhatsAppKontaktR,
-    val lastMessage: WhatsAppPorukaR?
-)
-
-data class OneContactPreviewItem(
-    val kontakt: OneContactR,
-    val lastMessage: ObicnaPorukaR?
 )

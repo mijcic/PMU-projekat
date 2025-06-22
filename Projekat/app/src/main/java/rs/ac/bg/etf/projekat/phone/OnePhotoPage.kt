@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.phone
 
+import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,9 +14,11 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +34,37 @@ fun OnePhotoPage(picture: Int, datum: String, mesto: String, navController: NavC
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        PlaceAndDateInfo(
+            mesto = mesto,
+            datum = datum
+        )
+
+        ThreeDotsIconButton()
+
+        val context = LocalContext.current
+
+        val validPictureResId = remember(picture) {
+            try {
+                context.resources.getResourceName(picture)
+                picture
+            } catch (e: Resources.NotFoundException) {
+                R.drawable.no_account
+            }
+        }
+
+        Image(
+            painter = painterResource(validPictureResId),
+            contentDescription = "Picture",
+            modifier = Modifier.align(Alignment.Center)
+        )
+
+        AllIconButtonsForOptions()
+    }
+}
+
+@Composable
+fun PlaceAndDateInfo(mesto: String, datum: String) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -49,7 +83,12 @@ fun OnePhotoPage(picture: Int, datum: String, mesto: String, navController: NavC
                 color = Color.Gray
             )
         }
+    }
+}
 
+@Composable
+fun ThreeDotsIconButton() {
+    Box(modifier = Modifier.fillMaxSize()) {
         IconButton(
             onClick = { },
             modifier = Modifier
@@ -63,13 +102,12 @@ fun OnePhotoPage(picture: Int, datum: String, mesto: String, navController: NavC
                 tint = colorResource(R.color.iphone_blue)
             )
         }
+    }
+}
 
-        Image(
-            painter = painterResource(picture),
-            contentDescription = "Picture",
-            modifier = Modifier.align(Alignment.Center)
-        )
-
+@Composable
+fun AllIconButtonsForOptions() {
+    Box(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

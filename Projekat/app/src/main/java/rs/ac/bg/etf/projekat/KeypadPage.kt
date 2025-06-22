@@ -44,12 +44,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
+import rs.ac.bg.etf.projekat.phone.navDestination
 
-data class navDestination(
-    val route: String,
-    val label: String,
-    val icon: Int
-)
 
 @Composable
 fun KeypadPage(navController: NavController) {

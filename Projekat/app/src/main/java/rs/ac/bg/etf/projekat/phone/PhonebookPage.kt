@@ -42,7 +42,7 @@ import rs.ac.bg.etf.projekat.BottomNavigationBar
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.OneContactR
-import rs.ac.bg.etf.projekat.navDestination
+import java.util.SortedMap
 
 @Composable
 fun PhonebookPage(navController: NavController) {
@@ -59,28 +59,22 @@ fun PhonebookPage(navController: NavController) {
         .groupBy { it.ime[0].toString().uppercase() }
         .toSortedMap()
 
-    val destinationRecentCalls = navDestination(
-        route = "destinationCallsPage",
-        icon = R.drawable.clock_fill,
-        label = "Recents"
-    )
-
-    val destinationContacts = navDestination(
-        route = "destinationPhonebookPage",
-        icon = R.drawable.person_circle,
-        label = "Contacts"
-    )
-
-    val destinationKeypad = navDestination(
-        route = "destinationKeypadPage",
-        icon = R.drawable.grid_3x3_gap,
-        label = "Keypad"
-    )
-
     val destinations = listOf(
-        destinationRecentCalls,
-        destinationContacts,
-        destinationKeypad
+        navDestination(
+            route = "destinationCallsPage",
+            icon = R.drawable.clock_fill,
+            label = "Recents"
+        ),
+        navDestination(
+            route = "destinationPhonebookPage",
+            icon = R.drawable.person_circle,
+            label = "Contacts"
+        ),
+        navDestination(
+            route = "destinationKeypadPage",
+            icon = R.drawable.grid_3x3_gap,
+            label = "Keypad"
+        )
     )
 
     Scaffold(
@@ -95,24 +89,7 @@ fun PhonebookPage(navController: NavController) {
                 .padding(innerPadding)
                 .padding(top = 20.dp, bottom = 20.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 30.dp)
-                    .padding(horizontal = 20.dp).padding(top = 5.dp),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.size(30.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add",
-                        tint = colorResource(R.color.iphone_blue)
-                    )
-                }
-            }
+            AddIconButton()
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -125,46 +102,73 @@ fun PhonebookPage(navController: NavController) {
                 fontFamily = font
             )
 
-            LazyColumn {
-                groupedContacts.forEach { (letter, people) ->
-                    item {
-                        Text(
-                            text = letter,
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(12.dp),
-                            color = Color.Gray,
-                            fontSize = 16.sp
-                        )
-                    }
-
-                    items(people) { person ->
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = Color.Gray.copy(alpha = 0.3f)
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth().clickable {
-                                val name = person.ime ?: "No Caller ID"
-                                val phoneNumber = person.broj ?: ""
-                                val photo = person.slika ?: R.drawable.no_account
-
-                                val encodedName = Uri.encode(name)
-
-                                navController.navigate("destinationOneContactPage/$encodedName/$phoneNumber/$photo")}
-                        ) {
-                            Text(
-                                text = person.ime,
-                                modifier = Modifier.padding(12.dp),
-                                fontSize = 16.sp
-                            )
-                        }
-                    }
-                }
-            }
-
+            ContactsList(
+                groupedContacts = groupedContacts,
+                navController = navController
+            )
         }
     }
 }
 
-data class PhonebookPerson(val name: String, val phoneNumber: String, val picture: Int)
+@Composable
+fun AddIconButton() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 30.dp)
+            .padding(horizontal = 20.dp).padding(top = 5.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        IconButton(
+            onClick = { },
+            modifier = Modifier.size(30.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add",
+                tint = colorResource(R.color.iphone_blue)
+            )
+        }
+    }
+}
+
+@Composable
+fun ContactsList(groupedContacts: SortedMap<String, List<OneContactR>>, navController: NavController) {
+    LazyColumn {
+        groupedContacts.forEach { (letter, people) ->
+            item {
+                Text(
+                    text = letter,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(12.dp),
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
+            }
+
+            items(people) { person ->
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = Color.Gray.copy(alpha = 0.3f)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().clickable {
+                        val name = person.ime ?: "No Caller ID"
+                        val phoneNumber = person.broj ?: ""
+                        val photo = person.slika ?: R.drawable.no_account
+
+                        val encodedName = Uri.encode(name)
+
+                        navController.navigate("destinationOneContactPage/$encodedName/$phoneNumber/$photo")}
+                ) {
+                    Text(
+                        text = person.ime,
+                        modifier = Modifier.padding(12.dp),
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+    }
+}

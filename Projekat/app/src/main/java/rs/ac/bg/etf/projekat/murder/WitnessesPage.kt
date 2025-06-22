@@ -41,23 +41,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.UiStateDataZlocin
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.navigation.destinationWitnessDetailsPage
 
 @Composable
 fun WitnessesPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
-
-    LaunchedEffect(Unit) {
-        //realmViewModel.insertDataForMurder()
-        //myViewModel.getAllDataZlocin()
-    }
-
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp
-        var textWidth by remember { mutableStateOf(0f) }
         var paddingStart by remember { mutableStateOf(0.dp) }
         val uiStateDataZlocin by myViewModel.uiStateZlocinData.collectAsState()
 
@@ -107,27 +99,11 @@ fun WitnessesPage(navController: NavController, myViewModel: MyViewModel, realmV
                 )
             }
 
-
-            Column(
-                modifier = Modifier
-            ) {
-                LazyColumn(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    item {
-                        uiStateDataZlocin.witnesses.forEach { i->
-                            i.osobaId?.let {
-                                WitnessesCardWithImage(
-                                    R.drawable.witness,
-                                    it.ime,
-                                    navController,
-                                    myViewModel
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            WitnessesList(
+                uiStateDataZlocin = uiStateDataZlocin,
+                navController = navController,
+                myViewModel = myViewModel
+            )
         }
     }
 }
@@ -181,6 +157,34 @@ fun WitnessesCardWithImage(image: Int, title: String, navController: NavControll
                 ),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
+        }
+    }
+}
+
+@Composable
+fun WitnessesList(
+    uiStateDataZlocin: UiStateDataZlocin,
+    navController: NavController,
+    myViewModel: MyViewModel
+) {
+    Column(
+        modifier = Modifier
+    ) {
+        LazyColumn(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            item {
+                uiStateDataZlocin.witnesses.forEach { i->
+                    i.osobaId?.let {
+                        WitnessesCardWithImage(
+                            R.drawable.witness,
+                            it.ime,
+                            navController,
+                            myViewModel
+                        )
+                    }
+                }
+            }
         }
     }
 }

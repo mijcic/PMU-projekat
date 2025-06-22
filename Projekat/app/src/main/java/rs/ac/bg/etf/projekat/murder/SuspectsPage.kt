@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.UiStateDataZlocin
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.navigation.destinationSuspectDetailsPage
 
@@ -48,9 +49,6 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp
-        var textWidth by remember { mutableStateOf(0f) }
         var paddingStart by remember { mutableStateOf(0.dp) }
         val uiStateDataZlocin by myViewModel.uiStateZlocinData.collectAsState()
 
@@ -100,28 +98,11 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
                 )
             }
 
-
-            Column(
-                modifier = Modifier
-            ) {
-                LazyColumn(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    item {
-                        uiStateDataZlocin.suspects.forEach { i->
-                            i.osobaId?.let {
-                                SuspectCardWithImage(
-                                    it.idOsoba,
-                                    R.drawable.suspect,
-                                    it.ime,
-                                    navController,
-                                    myViewModel
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            SuspectsList(
+                uiStateDataZlocin = uiStateDataZlocin,
+                navController = navController,
+                myViewModel = myViewModel
+            )
         }
     }
 }
@@ -156,7 +137,6 @@ fun SuspectCardWithImage(osobaId: Int, image: Int, title: String, navController:
             Box(
                 modifier = Modifier
                     .size(100.dp)
-                    //.clip(RoundedCornerShape(8.dp))
             ) {
                 Image(
                     painter = painterResource(id = image),
@@ -178,6 +158,31 @@ fun SuspectCardWithImage(osobaId: Int, image: Int, title: String, navController:
                 ),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
+        }
+    }
+}
+
+@Composable
+fun SuspectsList(uiStateDataZlocin: UiStateDataZlocin, navController: NavController, myViewModel: MyViewModel) {
+    Column(
+        modifier = Modifier
+    ) {
+        LazyColumn(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            item {
+                uiStateDataZlocin.suspects.forEach { i->
+                    i.osobaId?.let {
+                        SuspectCardWithImage(
+                            it.idOsoba,
+                            R.drawable.suspect,
+                            it.ime,
+                            navController,
+                            myViewModel
+                        )
+                    }
+                }
+            }
         }
     }
 }
