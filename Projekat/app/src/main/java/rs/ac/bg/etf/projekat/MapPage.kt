@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,214 +39,252 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.realm.ZadatakR
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.navigation.questionsPage
 
 @Composable
 fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
+    var paddingStart by remember { mutableStateOf(0.dp) }
+    val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        var paddingStart by remember { mutableStateOf(0.dp) }
-        val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
+        MapBackground()
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = R.drawable.white_paper),
-                contentDescription = "Background Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-            )
-        }
-
-        Column(modifier = Modifier
-            .align(Alignment.TopCenter).padding(top = 22.dp),
+        Column(
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 22.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Column(modifier = Modifier) {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            TasksHeader(paddingStart)
 
-            Column(modifier = Modifier.padding(start = paddingStart)) {
-                Text(text = "Tasks", color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.special_elite)
-                        ),
-                        fontSize = 26.sp,
-                        color = Color.Black
-                    )
-                )
-            }
+            MapPageTaskListWithQuestions(
+                tasks = uiStateTasks.tasks,
+                navController = navController
+            )
+        }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                var showDialog by remember { mutableStateOf(false) }
+        MapBackButton(
+            onBack = {navController.popBackStack()},
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
+    }
+}
 
-                // State za provere da li su svi zadaci završeni
-                val allTasksCompleted = uiStateTasks.tasks.all { it.uradjen }
+@Composable
+fun MapBackground() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.white_paper),
+            contentDescription = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Box(modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.5f)))
+    }
+}
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    var firstFalseFound = false
-                    var firstIndex = -1
+@Composable
+fun TasksHeader(paddingStart: Dp) {
+    Column(modifier = Modifier) { Spacer(modifier = Modifier.height(16.dp)) }
+    Column(modifier = Modifier.padding(start = paddingStart)) {
+        Text(
+            text = "Tasks",
+            color = Color.White,
+            style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 26.sp,
+                color = Color.Black
+            )
+        )
+    }
+}
 
-                    itemsIndexed(uiStateTasks.tasks) { index, item ->
-                        var isLocked = !item.uradjen
-                        var isChecked = item.uradjen
+@Composable
+fun MapQuestionsDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, dismissButton: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Are you sure?") },
+        text = { Text(text = "Do you want to finish the case and go to the questions page?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text("Yes") }
+        },
+        dismissButton = {
+            TextButton(onClick = dismissButton) { Text("No") }
+        }
+    )
+}
 
-                        if (item.uradjen == true) {
-                            isLocked = false
-                            isChecked = true
-                        } else {
-                            if (!firstFalseFound || firstIndex == index) {
-                                isLocked = false
-                                isChecked = false
-                                firstFalseFound = true
-                                firstIndex = index
-                            } else {
-                                isLocked = true
-                                isChecked = false
-                            }
-                        }
 
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .clickable { if (!isLocked) { /* Akcija pri kliku na karticu */ } },
-                            shape = MaterialTheme.shapes.medium,
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (isLocked) {
-                                    Icon(
-                                        imageVector = Icons.Default.Lock,
-                                        contentDescription = "Zaključano",
-                                        modifier = Modifier.size(32.dp),
-                                        tint = Color.Gray
-                                    )
-                                } else {
-                                    Text(
-                                        text = item.tekst,
-                                        color = Color.Black,
-                                        style = TextStyle(
-                                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            letterSpacing = 0.5.sp
-                                        ),
-                                        modifier = Modifier
-                                            .weight(2f)
-                                            .padding(end = 8.dp)
-                                    )
+@Composable
+fun MapBackButton(onBack: () -> Unit, modifier: Modifier) {
+    IconButton(
+        onClick = onBack,
+        modifier = modifier.padding(top=40.dp,end=25.dp).size(18.dp)
+            .background(Color(0xFF8B0000), shape = CircleShape)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "Back",
+            tint = Color.White,
+            modifier = Modifier.size(18.dp)
+        )
+    }
+}
 
-                                    Text(
-                                        text = item.korak,
-                                        color = Color.Gray,
-                                        style = TextStyle(
-                                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Normal,
-                                            letterSpacing = 0.5.sp
-                                        ),
-                                        modifier = Modifier
-                                            .weight(1.5f)
-                                            .padding(end = 8.dp)
-                                    )
-                                }
+@Composable
+fun MapPageTaskText(item: ZadatakR, modifier1: Modifier, modifier2: Modifier){
+    Text(
+        text = item.tekst,
+        color = Color.Black,
+        style = TextStyle(
+            fontFamily = FontFamily(Font(R.font.special_elite)),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp
+        ),
+        modifier = modifier1.padding(end = 8.dp)
+    )
 
-                                if (!isLocked) {
-                                    Checkbox(
-                                        checked = isChecked,
-                                        onCheckedChange = { if (!isLocked) { /* Akcija kada se checkbox klikne */ } },
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .padding(start = 8.dp),
-                                    )
-                                }
-                            }
-                        }
-                    }
+    Text(
+        text = item.korak,
+        color = Color.Gray,
+        style = TextStyle(
+            fontFamily = FontFamily(Font(R.font.special_elite)),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+            letterSpacing = 0.5.sp
+        ),
+        modifier = modifier2.padding(end = 8.dp)
+    )
+}
 
-                    if (allTasksCompleted) {
-                        item {
-                            Divider(modifier = Modifier.padding(vertical = 16.dp))
-                        }
-                        item {
-                            Button(
-                                onClick = { showDialog = true },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                Text(text = "Questions")
-                            }
-                        }
+@Composable
+fun IsLockIcon(){
+    Icon(
+        imageVector = Icons.Default.Lock,
+        contentDescription = "Zaključano",
+        modifier = Modifier.size(32.dp),
+        tint = Color.Gray
+    )
+}
+
+@Composable
+fun RowMapPage(isLocked: Boolean, item: ZadatakR, isChecked: Boolean){
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (isLocked) {
+            IsLockIcon()
+        } else {
+            MapPageTaskText(
+                item = item,
+                modifier1 =  Modifier.weight(2f),
+                modifier2 =Modifier.weight(1.5f)
+            )
+        }
+
+        if (!isLocked) {
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = { if (!isLocked) { /* Akcija kada se checkbox klikne */ } },
+                modifier = Modifier.size(24.dp).padding(start = 8.dp),
+            )
+        }
+    }
+}
+
+@Composable
+fun MapPageCard(isLocked: Boolean,item: ZadatakR,isChecked: Boolean){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable { if (!isLocked) { /* Akcija pri kliku na karticu */ } },
+        shape = MaterialTheme.shapes.medium,
+    ) {
+
+        RowMapPage(isLocked = isLocked, item = item, isChecked = isChecked)
+    }
+}
+
+@Composable
+fun MapPageQuestionsSection(onQuestionsClick: () -> Unit) {
+    Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+    Button(
+        onClick = onQuestionsClick,
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Text(text = "Questions")
+    }
+}
+
+@Composable
+fun MapPageTaskListWithQuestions(
+    tasks: List<ZadatakR>,
+    navController: NavController,
+){
+    var showDialog by remember { mutableStateOf(false) }
+    val allTasksCompleted = tasks.all { it.uradjen }
+
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        LazyColumn(modifier = Modifier.fillMaxSize()){
+            var firstFalseFound = false
+            var firstIndex = -1
+
+            itemsIndexed(tasks) { index, item ->
+                var isLocked = !item.uradjen
+                var isChecked = item.uradjen
+
+                if (item.uradjen == true) {
+                    isLocked = false
+                    isChecked = true
+                } else {
+                    if (!firstFalseFound || firstIndex == index) {
+                        isLocked = false
+                        isChecked = false
+                        firstFalseFound = true
+                        firstIndex = index
+                    } else {
+                        isLocked = true
+                        isChecked = false
                     }
                 }
 
-                if (showDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showDialog = false },
-                        title = { Text(text = "Are you sure?") },
-                        text = { Text(text = "Do you want to finish the case and go to the questions page?") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                showDialog = false
-                                navController.navigate(questionsPage.route)
-                            }) {
-                                Text("Yes")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showDialog = false }) {
-                                Text("No")
-                            }
-                        }
-                    )
+                MapPageCard(
+                    isLocked = isLocked,
+                    item = item,
+                    isChecked = isChecked
+                )
+            }
+
+            if (allTasksCompleted) {
+                item {
+                    MapPageQuestionsSection(onQuestionsClick = { showDialog = true })
                 }
             }
         }
 
-        IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top=40.dp,end=25.dp).size(18.dp)
-                .background(Color(0xFF8B0000), shape = CircleShape)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Back",
-                tint = Color.White,
-                modifier = Modifier.size(18.dp)
+        if (showDialog) {
+            MapQuestionsDialog(
+                onConfirm ={ showDialog = false
+                    navController.navigate(questionsPage.route) },
+                onDismiss ={ showDialog = false },
+                dismissButton ={ showDialog = false }
             )
         }
     }

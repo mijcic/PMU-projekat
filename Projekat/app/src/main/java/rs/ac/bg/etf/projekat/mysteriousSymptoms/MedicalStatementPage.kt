@@ -42,61 +42,88 @@ fun MedicalStatementPage(
 ) {
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Background Image
-        Image(
-            painter = painterResource(id = R.drawable.hospital_room2),
-            contentDescription = "Background Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    MedicalStatementScreen(
+        personName = uiStateDataMysteriousSymptoms.statement?.osobaId?.ime,
+        statementText = uiStateDataMysteriousSymptoms.statement?.izjava
+    )
+}
 
-        // Card positioned at the bottom half
-        Box(
+@Composable
+fun MedicalStatementScreen(personName: String?, statementText: String?) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        MedicalStatementBackgroundImage()
+        MedicalStatementCard(
+            personName = personName,
+            statementText = statementText,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.4f)
                 .align(Alignment.BottomCenter)
-                .graphicsLayer {
-                    shadowElevation = 8.dp.toPx()
-                    shape = RoundedCornerShape(24.dp)
-                    clip = true
-                }
-                .background(Color(0xFF1E1E1E))
-                .border(
-                    width = 1.dp,
-                    color = Color.White.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(28.dp)
-                )
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = "Izjava ${uiStateDataMysteriousSymptoms.statement?.osobaId?.ime}",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite))),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+        )
+    }
+}
 
-                Spacer(modifier = Modifier.height(12.dp))
+@Composable
+fun MedicalStatementBackgroundImage() {
+    Image(
+        painter = painterResource(id = R.drawable.hospital_room2),
+        contentDescription = "Background Image",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+}
 
-                Text(
-                    text = uiStateDataMysteriousSymptoms.statement?.izjava ?: "Nema dostupne izjave.",
-                    fontSize = 18.sp,
-                    color = Color.White,
-                    lineHeight = 24.sp,
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite))),
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
+@Composable
+fun MedicalStatementCard(personName: String?, statementText: String?, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                shadowElevation = 8.dp.toPx()
+                shape = RoundedCornerShape(24.dp)
+                clip = true
             }
+            .background(Color(0xFF1E1E1E))
+            .border(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(28.dp)
+            )
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            MedicalStatementCardTitle(personName = personName)
+            
+            MedicalStatementCardContent(statementText = statementText)
         }
     }
+}
+
+@Composable
+fun MedicalStatementCardTitle(personName: String?) {
+    Text(
+        text = "Izjava ${personName ?: "Nepoznata osoba"}",
+        fontSize = 26.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite))),
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+}
+
+@Composable
+fun MedicalStatementCardContent(statementText: String?) {
+    Text(
+        text = statementText ?: "Nema dostupne izjave.",
+        fontSize = 18.sp,
+        color = Color.White,
+        lineHeight = 24.sp,
+        style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite))),
+        modifier = Modifier.padding(horizontal = 4.dp)
+    )
 }

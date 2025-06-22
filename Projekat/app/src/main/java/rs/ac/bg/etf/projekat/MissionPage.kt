@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,18 +51,32 @@ fun MissionPage(
 ) {
     val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-        .clickable {
-            if(image==R.drawable.murder) {
-                navController.navigate(destinationOfficePage.route)
-            }
-            else{
-                navController.navigate(
-                    destinationHospitalPage.route
-                )
+    MissionBackground(
+        image = image,
+        onClick = {
+            when (image) {
+                R.drawable.murder -> navController.navigate(destinationOfficePage.route)
+                else -> navController.navigate(destinationHospitalPage.route)
             }
         }
+    ) {
+        ModernGlassCard(
+            title = crimeData.value.title,
+            date = crimeData.value.date,
+            place = crimeData.value.place,
+            description = crimeData.value.description
+        )
+    }
+}
+
+@Composable
+fun MissionBackground(
+    image: Int,
+    onClick: () -> Unit,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()
+        .clickable { onClick() }
     ) {
         Image(
             painter = painterResource(id = image),
@@ -70,35 +85,86 @@ fun MissionPage(
             modifier = Modifier.fillMaxSize()
         )
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
+        Box(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp)) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun ModernGlassCard(title: String?, date: String?, place: String?, description: String?) {
+    MissionBox {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.fillMaxSize()
         ) {
-            ModernGlassCard(
-                title = crimeData.value.title,
-                date = crimeData.value.date,
-                place = crimeData.value.place,
-                description = crimeData.value.description
+            TitleSection(title = title)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            DatePlaceSection(date = date, place = place)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            DescriptionSection(description)
+        }
+    }
+}
+
+@Composable
+fun TitleSection(title: String?) {
+    title?.let {
+        Text(
+            text = it,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
+        )
+    }
+}
+
+@Composable
+fun DatePlaceSection(date: String?, place: String?) {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        date?.let {
+            Text(
+                text = "📅 $it",
+                fontSize = 14.sp,
+                color = Color.LightGray,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
+            )
+        }
+        place?.let {
+            Text(
+                text = "📍 $it",
+                fontSize = 14.sp,
+                color = Color.White,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
             )
         }
     }
 }
 
 @Composable
-fun ModernGlassCard(
-    title: String?,
-    date: String?,
-    place: String?,
-    description: String?
-) {
+fun DescriptionSection(description: String?) {
+    description?.let {
+        Text(
+            text = it,
+            fontSize = 15.sp,
+            color = Color.White,
+            textAlign = TextAlign.Start,
+            lineHeight = 20.sp,
+            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
+        )
+    }
+}
+
+@Composable
+fun MissionBox(content: @Composable () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
+        modifier = Modifier.fillMaxWidth().height(300.dp)
             .padding(horizontal = 16.dp)
             .graphicsLayer {
-                // Blur je samo vizuelni, ne muti tekst
                 shadowElevation = 8.dp.toPx()
                 shape = RoundedCornerShape(24.dp)
                 clip = true
@@ -118,54 +184,6 @@ fun ModernGlassCard(
             )
             .padding(20.dp)
     ) {
-        Column(
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            title?.let {
-                Text(
-                    text = it,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                date?.let {
-                    Text(
-                        text = "📅 $it",
-                        fontSize = 14.sp,
-                        color = Color.LightGray,
-                        style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
-                    )
-                }
-                place?.let {
-                    Text(
-                        text = "📍 $it",
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            description?.let {
-                Text(
-                    text = it,
-                    fontSize = 15.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Start,
-                    lineHeight = 20.sp,
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
-                )
-            }
-        }
+        content()
     }
 }

@@ -37,9 +37,7 @@ import androidx.compose.ui.unit.sp
 
 @SuppressLint("ResourceAsColor")
 @Composable
-fun MainScreen1(
-    navController: NavController
-) {
+fun MainScreen1(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize().background(colorResource(id = R.color.gray_1)),
         verticalArrangement = Arrangement.Center,

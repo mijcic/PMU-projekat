@@ -34,7 +34,7 @@ data class ZrtvaR(val idZrtva: Int, val tipZrtve: String, val detalji:String, va
 data class ObdukcijaR(val idObdukcija:Int, val izvestaj:String, val datum: String, val uzrokSmrti:String, var zrtvaId: Int, val informacije: String )
 
 @Serializable
-data class ForenzickiDokazR(val idForenzickiDokaz: Int, val tipForenzickiDokaz: String, val opis: String, val statusS:Int, val veza: String)
+data class ForenzickiDokazR(val idForenzickiDokaz: Int, var tipForenzickiDokaz: String, val opis: String, val statusS:Int, val veza: String)
 
 @Serializable
 data class TelefonR(val idTelefon: Int, val model:String, val os: String, val sifra: String, val informacije: String)

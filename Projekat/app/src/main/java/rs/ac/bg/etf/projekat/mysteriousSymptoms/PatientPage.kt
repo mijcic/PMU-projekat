@@ -68,9 +68,7 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, 
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.7f))
         )
 
         Column(

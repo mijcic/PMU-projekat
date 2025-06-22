@@ -17,7 +17,6 @@ fun HospitalScreen(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Reaguj na navigacione događaje iz ViewModel-a
     LaunchedEffect(Unit) {
         viewModel.navigation
             .flowWithLifecycle(lifecycleOwner.lifecycle)

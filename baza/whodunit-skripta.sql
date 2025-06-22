@@ -216,7 +216,7 @@ CREATE TABLE Obdukcija (
 
 CREATE TABLE ForenzickiDokaz (
     idForenzickiDokaz INT AUTO_INCREMENT PRIMARY KEY,
-    tipForenzickiDokaz ENUM('otisak', 'DNK', 'dokument') NOT NULL,
+    tipForenzickiDokaz ENUM('otisak', 'DNK', 'dokument','ostalo') NOT NULL,
     opis TEXT NOT NULL,
 	statusS INT NOT NULL,
     zrtvaId INT NOT NULL,

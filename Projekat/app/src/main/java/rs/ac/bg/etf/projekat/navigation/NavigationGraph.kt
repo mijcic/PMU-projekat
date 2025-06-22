@@ -25,7 +25,6 @@ fun NavigationGraph(navController: NavHostController) {
 
     NavHost(navController = navController, //startDestination = "destinationMainScreen1"
         startDestination = "destinationMainScreen2"
-        // startDestination = "destinationOneContactPage"
     ) {
         mainNavigation(navController)
         authNavigation(navController)
