@@ -35,15 +35,10 @@ fun SettingsPage(navController: NavController) {
     val languages = listOf("ENG", "SRB", "FRA")
     var expanded by remember { mutableStateOf(false) }
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(R.color.dark_purple))
-        .padding(top = 48.dp)) {
+    Surface(modifier = Modifier.fillMaxSize().background(Color(R.color.dark_purple)).padding(top = 48.dp)) {
 
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+            modifier = Modifier.padding(16.dp).fillMaxWidth()
                 //.border(BorderStroke(1.dp, Color.White), shape = RoundedCornerShape(16.dp))
                 .background(Color(R.color.dark_purple), shape = RoundedCornerShape(11.dp))
                 .padding(24.dp),

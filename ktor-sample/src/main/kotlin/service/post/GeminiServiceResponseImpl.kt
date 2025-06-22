@@ -1,7 +1,6 @@
 package com.example.service.post
 
 import com.example.*
-import com.example.models.dto.*
 import com.example.data.remote.gemini.response.GeminiResponse
 import com.example.data.remote.gemini.retrofit.GeminiResponse2
 import com.example.data.remote.gemini.retrofit.GeminiResponse2MysteriousSymptoms

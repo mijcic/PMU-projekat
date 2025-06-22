@@ -182,8 +182,7 @@ fun UserScoreCard(screenWidth: Int) {
 
     Box(
         contentAlignment = Alignment.CenterStart,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .padding(start = (screenWidth/4).dp, end =(screenWidth/4).dp )
             .shadow(
                 elevation = 12.dp,
@@ -191,7 +190,6 @@ fun UserScoreCard(screenWidth: Int) {
                 clip = false
             )
             .clip(RoundedCornerShape(20.dp))
-            //.background(Color(0XFFD1D5D8))
             .background(colorResource(id = R.color.light_gray))
             .padding((screenWidth/16).dp)
     ) {

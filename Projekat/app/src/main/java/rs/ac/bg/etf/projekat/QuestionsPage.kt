@@ -46,17 +46,12 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 
 @Composable
 fun QuestionsPage(navController: NavController,myViewModel: MyViewModel) {
-
     val realmViewModel: RealmViewModel = hiltViewModel()
-
     var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
-    var questionAnswersMap by remember { mutableStateOf<Map<PitanjeR, List<OdgovorR>>>(emptyMap()) }
     var selectedAnswers = remember { mutableStateOf<Map<Int, Int?>>(emptyMap()) }
     var totalScore = remember { mutableStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        questions = realmViewModel.getAllPitanje()!!
-    }
+    LaunchedEffect(Unit) { questions = realmViewModel.getAllPitanje()!! }
 
     Box(modifier = Modifier.fillMaxSize()) {
         BackgroundWithOverlay(imagePainter = R.drawable.library, alpha = 0.5F)
@@ -68,30 +63,14 @@ fun QuestionsPage(navController: NavController,myViewModel: MyViewModel) {
         ) {
             QuestionsHeaderText()
 
-            LazyColumn {
-                items(questions) { question ->
-                    LaunchedEffect(question) {
-                        if (!questionAnswersMap.containsKey(question)) {
-                            val odgovori = realmViewModel.getAllOdgovorForPitanje(question) ?: emptyList()
-                            questionAnswersMap = questionAnswersMap + (question to odgovori)
-                        }
-                    }
-
-                    QuestionCardItem(
-                        question = question,
-                        answers = questionAnswersMap[question] ?: emptyList(),
-                        selectedAnswers = selectedAnswers,
-                        totalScore = totalScore
-                    )
-                }
-
-                item {
-                    QuestionsSubmitButton(onClick = {
-                        myViewModel.updateSelectedanswes(selectedAnswers)
-                        navController.navigate("destinationScoreQuestionsPage/${totalScore.toString()}")
-                    })
-                }
-            }
+            QuestionsPageList(
+                questions = questions,
+                realmViewModel = realmViewModel,
+                totalScore = totalScore,
+                selectedAnswers = selectedAnswers,
+                navController = navController,
+                myViewModel = myViewModel
+            )
         }
     }
 }
@@ -113,6 +92,42 @@ fun QuestionsHeaderText(){
         fontSize = 18.sp,
         color = colorResource(id = R.color.mission_light_gray)
     )
+}
+
+@Composable
+fun QuestionsPageList(
+    questions: List<PitanjeR>,
+    realmViewModel: RealmViewModel,
+    totalScore: MutableState<Int>,
+    selectedAnswers: MutableState<Map<Int, Int?>>,
+    myViewModel: MyViewModel,
+    navController: NavController
+){
+    var questionAnswersMap by remember { mutableStateOf<Map<PitanjeR, List<OdgovorR>>>(emptyMap()) }
+    LazyColumn {
+        items(questions) { question ->
+            LaunchedEffect(question) {
+                if (!questionAnswersMap.containsKey(question)) {
+                    val odgovori = realmViewModel.getAllOdgovorForPitanje(question) ?: emptyList()
+                    questionAnswersMap = questionAnswersMap + (question to odgovori)
+                }
+            }
+
+            QuestionCardItem(
+                question = question,
+                answers = questionAnswersMap[question] ?: emptyList(),
+                selectedAnswers = selectedAnswers,
+                totalScore = totalScore
+            )
+        }
+
+        item {
+            QuestionsSubmitButton(onClick = {
+                myViewModel.updateSelectedanswes(selectedAnswers)
+                navController.navigate("destinationScoreQuestionsPage/${totalScore.value.toString()}")
+            })
+        }
+    }
 }
 
 @Composable
@@ -167,10 +182,7 @@ fun AnswerButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(12.dp))
+        modifier = Modifier.fillMaxWidth(0.8f).padding(vertical = 8.dp).clip(RoundedCornerShape(12.dp))
             .background(
                 if (isSelected) colorResource(id = R.color.dark_purple) else Color(0xFF5E554F)
             ),
