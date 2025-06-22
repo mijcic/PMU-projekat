@@ -1,24 +1,34 @@
 package rs.ac.bg.etf.projekat
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.BorderStroke
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,142 +36,50 @@ import androidx.navigation.NavController
 @SuppressLint("ResourceAsColor")
 @Composable
 fun SettingsPage(navController: NavController) {
-    var musicVolume by rememberSaveable { mutableStateOf(0.5f) }
-    var isNotificationEnabled by rememberSaveable { mutableStateOf(true) }
-    var isSoundEffectsEnabled by rememberSaveable { mutableStateOf(true) }
+    val context = LocalContext.current
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
     var selectedLanguage by rememberSaveable { mutableStateOf("ENG") }
 
-    val languages = listOf("ENG", "SRB", "FRA")
-    var expanded by remember { mutableStateOf(false) }
-
-    Surface(modifier = Modifier.fillMaxSize().background(Color(R.color.dark_purple)).padding(top = 48.dp)) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        SettingsImage()
 
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
-                //.border(BorderStroke(1.dp, Color.White), shape = RoundedCornerShape(16.dp))
-                .background(Color(R.color.dark_purple), shape = RoundedCornerShape(11.dp))
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            SettingsCard {
 
-            Text(
-                text = "SETTINGS",
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.special_elite)),
-                    fontSize = 32.sp,
-                    color = Color.White
-                ),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+                SettingsText()
 
-            SettingRow("🎵 Music") {
-                Slider(
-                    value = musicVolume,
-                    onValueChange = { musicVolume = it },
-                    valueRange = 0f..1f,
-                    steps = 8,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            SettingRow("🔔 Notifications") {
-                Checkbox(
-                    checked = isNotificationEnabled,
-                    onCheckedChange = { isNotificationEnabled = it },
-                    colors = CheckboxDefaults.colors(checkedColor = Color.White)
-                )
-            }
-
-            SettingRow("🔊 Sound FX") {
-                Checkbox(
-                    checked = isSoundEffectsEnabled,
-                    onCheckedChange = { isSoundEffectsEnabled = it },
-                    colors = CheckboxDefaults.colors(checkedColor = Color.White)
-                )
-            }
-
-            SettingRow("🌗 Dark Mode") {
-                Switch(
-                    checked = isDarkMode,
-                    onCheckedChange = { isDarkMode = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = Color.White)
-                )
-            }
-
-            SettingRow("🌍 Language") {
-                Box {
-                    TextButton(onClick = { expanded = true }) {
-                        Text(
-                            text = selectedLanguage,
-                            style = TextStyle(
-                                fontFamily = FontFamily(Font(R.font.special_elite)),
-                                fontSize = 18.sp,
-                                color = Color.White
-                            )
-                        )
+                DarkModeSetting(
+                    isDarkMode = isDarkMode,
+                    onToggle = {
+                        isDarkMode = it
+                        Toast.makeText(context, "Coming soon!", Toast.LENGTH_SHORT).show()
                     }
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        languages.forEach { lang ->
-                            DropdownMenuItem(
-                                text = { Text(lang) },
-                                onClick = {
-                                    selectedLanguage = lang
-                                    expanded = false
-                                }
-                            )
+                )
+
+                LanguageSetting(
+                    selectedLanguage = selectedLanguage,
+                    onLanguageSelected = {
+                        Toast.makeText(context, "Language change coming soon!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                )
+
+                HelpSetting(context = context)
+
+                LogoutSetting(
+                    onLogout = {
+                        Toast.makeText(context, "Logged out!", Toast.LENGTH_SHORT).show()
+                        navController.navigate("destinationLoginPage") {
+                            popUpTo("destinationMainScreen2") { inclusive = true }
                         }
                     }
-                }
-            }
+                )
 
-            val context = LocalContext.current
-
-            SettingRow("❓ Help") {
-                Button(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("support@detectivegame.com"))
-                            putExtra(Intent.EXTRA_SUBJECT, "Help Request - Murder at the Casino")
-                            putExtra(Intent.EXTRA_TEXT, "Hello, I need help with...")
-                        }
-
-                        try {
-                            context.startActivity(intent)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    },
-                    modifier = Modifier.padding(8.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple))
-                ) {
-                    Text(
-                        text = "Send a Message",
-                        color = Color.White,
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.special_elite)),
-                            fontSize = 16.sp
-                        )
-                    )
-                }
-            }
-
-            Divider(color = Color.LightGray)
-
-            Button(
-                onClick = {
-                    musicVolume = 0.5f
-                    isNotificationEnabled = true
-                    isSoundEffectsEnabled = true
-                    isDarkMode = false
-                    selectedLanguage = "ENG"
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple))
-            ) {
-                Text("Reset to Default", color = Color.White)
+                SettingsAppVersion(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
         }
     }
@@ -184,4 +102,155 @@ fun SettingRow(label: String, content: @Composable RowScope.() -> Unit) {
         )
         content()
     }
+}
+
+@Composable
+fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .shadow(10.dp, RoundedCornerShape(20.dp))
+            .background(colorResource(id = R.color.light_gray))
+            .padding(24.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            content = content
+        )
+    }
+}
+
+@Composable
+fun SettingsImage(){
+    val imagePainter = painterResource(id = R.drawable.background_login_signup)
+
+    Image(
+        painter = imagePainter,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize()
+    )
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f)))
+}
+
+@Composable
+fun SettingsText(){
+    Text(
+        text = "Settings",
+        fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
+        fontSize = 32.sp,
+        color = Color.Black,
+        style = TextStyle(
+            shadow = Shadow(
+                color = Color.Black,
+                offset = Offset(1f, 1f),
+                blurRadius = 2f
+            )
+        )
+    )
+}
+
+@Composable
+fun DarkModeSetting(isDarkMode: Boolean, onToggle: (Boolean) -> Unit) {
+    SettingRow("🌗 Dark Mode") {
+        Switch(
+            checked = isDarkMode,
+            onCheckedChange = onToggle,
+            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black)
+        )
+    }
+}
+
+@Composable
+fun LanguageSetting(selectedLanguage: String, onLanguageSelected: (String) -> Unit) {
+    val languages = listOf("ENG", "SRB", "FRA")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedLanguage by rememberSaveable { mutableStateOf("ENG") }
+
+    SettingRow("🌍 Language") {
+        Box {
+            TextButton(onClick = { expanded = true }) {
+                Text(
+                    text = selectedLanguage,
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.special_elite)),
+                        fontSize = 18.sp,
+                        color = Color.Black
+                    )
+                )
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                languages.forEach { lang ->
+                    DropdownMenuItem(
+                        text = { Text(lang) },
+                        onClick = {
+                            selectedLanguage = lang
+                            expanded = false
+
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HelpSetting(context: Context) {
+    SettingRow("❓ Help") {
+        Button(
+            onClick = {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:")
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("support@detectivegame.com"))
+                    putExtra(Intent.EXTRA_SUBJECT, "Help Request - Murder at the Casino")
+                    putExtra(Intent.EXTRA_TEXT, "Hello, I need help with...")
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Email app not found", Toast.LENGTH_SHORT).show()
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_purple)),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "Send a Message",
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 16.sp,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun LogoutSetting(onLogout: () -> Unit) {
+    SettingRow("🚪 Log out") {
+        Button(
+            onClick = onLogout,
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_purple)),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "Log Out",
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                fontSize = 16.sp,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsAppVersion(modifier: Modifier){
+    Divider(color = Color.Gray)
+    Text(
+        text = "App Version: 1.0.0",
+        fontSize = 12.sp,
+        color = Color.DarkGray,
+        modifier = modifier
+    )
 }
