@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.phone
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.Switch
+import androidx.compose.material3.Card
+import androidx.compose.material3.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -34,17 +35,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.compose.material.Divider
+import androidx.compose.material3.Divider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import rs.ac.bg.etf.projekat.R
+import rs.ac.bg.etf.projekat.data.MyViewModel
 
 @Composable
-fun PhoneSettingsPage(navController: NavController) {
+fun PhoneSettingsPage(navController: NavController, myViewModel: MyViewModel) {
     val font = FontFamily.SansSerif
+    val uiStateDataZlocin by myViewModel.uiStateZlocinData.collectAsState()
+
+    LaunchedEffect(uiStateDataZlocin.suspects) {
+        myViewModel.getAllDataZlocin()
+    }
 
     Column(
         modifier = Modifier
@@ -69,12 +80,23 @@ fun PhoneSettingsPage(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 25.dp)
             ) {
-                CircleAvatar("IM")
+                val initials: String = try {
+                    uiStateDataZlocin.victim?.osobaId?.ime
+                        ?.split(" ")
+                        ?.filter { it.isNotBlank() }
+                        ?.map { it.first().uppercaseChar() }
+                        ?.take(2)
+                        ?.joinToString("")
+                        ?: ""
+                } catch (e: Exception) {
+                    ""
+                }
+                CircleAvatar(initials)
 
                 Spacer(Modifier.width(5.dp))
 
                 Column(modifier = Modifier.padding(start = 12.dp)) {
-                    Text("Isabele Moreau", fontWeight = FontWeight.Bold, fontFamily = font)
+                    Text("${uiStateDataZlocin.victim?.osobaId?.ime}", fontWeight = FontWeight.Bold, fontFamily = font)
                     Text("Apple Account, iCloud+ and more", color = Color.Gray, fontFamily = font)
                 }
 
@@ -103,7 +125,7 @@ fun PhoneSettingsPage(navController: NavController) {
             SettingsItem(
                 "Wi-Fi",
                 icon = R.drawable.wifi,
-                value = "MARJANOVIC-5G",
+                value = "${uiStateDataZlocin.victim?.osobaId?.ime}-5G",
                 backgroundColor = colorResource(R.color.iphone_blue)
             )
             Divider()
@@ -271,6 +293,7 @@ fun CircleAvatar(initials: String) {
 
 @Composable
 fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -292,10 +315,15 @@ fun SettingsItem(
     rotationAngle: Float = 0f,
     fillColor: Color = Color.White
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable {
+                Toast
+                    .makeText(context, "This action is not allowed.", Toast.LENGTH_SHORT)
+                    .show()
+            }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

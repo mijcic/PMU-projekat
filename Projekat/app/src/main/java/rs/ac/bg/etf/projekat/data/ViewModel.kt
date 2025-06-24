@@ -114,11 +114,18 @@ class MyViewModel @Inject constructor(
         try {
             val response = commonRepository.selectAllOsumnjiceni()
             val response2 = commonRepository.selectAllSvedoci()
-            _uiStateZlocinData.value = UiStateDataZlocin(suspects = response, witnesses = response2)
+            Log.d("GETALL", "Svedoci iz baze: ${response2}") // ovde mora da ima sadrzaj
+
+            val response3 = commonRepository.selectVictim()
+
+
+            _uiStateZlocinData.value = UiStateDataZlocin(suspects = response, witnesses = response2, victim = response3)
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("GETALL g", "GREDKA") // ovde mora da ima sadrzaj
+
             _uiStateZlocinData.value =
-                UiStateDataZlocin(suspects = emptyList(), witnesses = emptyList())
+                UiStateDataZlocin(suspects = emptyList(), witnesses = emptyList(), victim = null)
         }
     }
 
@@ -1331,6 +1338,7 @@ data class UiStateLogIn(
 data class UiStateDataZlocin(
     val suspects: List<OsumnjicenR> = emptyList(),
     val witnesses: List<SvedokR> = emptyList(),
+    val victim: ZrtvaR? = null
 )
 
 data class UiStatePitanjaZaOsumnjicenog(

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -46,57 +47,26 @@ import rs.ac.bg.etf.projekat.navigation.destinationSuspectDetailsPage
 
 @Composable
 fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        var paddingStart by remember { mutableStateOf(0.dp) }
-        val uiStateDataZlocin by myViewModel.uiStateZlocinData.collectAsState()
+    var paddingStart by remember { mutableStateOf(0.dp) }
+    val uiStateDataZlocin by myViewModel.uiStateZlocinData.collectAsState()
 
-        LaunchedEffect(uiStateDataZlocin.suspects) {
-            myViewModel.getAllDataZlocin()
-        }
+    LaunchedEffect(uiStateDataZlocin.suspects) {
+        myViewModel.getAllDataZlocin()
+    }
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.suspects_background),
-                contentDescription = "Background Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+    Box(modifier = Modifier.fillMaxSize()) {
 
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.3f))
-            )
-        }
+        SuspectBackground()
 
-        Column(modifier = Modifier
-            .align(Alignment.TopCenter).padding(top = 22.dp),
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 22.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally)
 
         {
-            Column(modifier = Modifier) {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            Column(
-                modifier = Modifier.padding(start = paddingStart),
-            ) {
-                Text(text = "Suspects", color = Color.White,
-                    style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.special_elite)
-                        ),
-                        fontSize = 26.sp,
-                        color = Color.Black,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                )
-            }
+            SuspectHeader(paddingStart = paddingStart)
 
             SuspectsList(
                 uiStateDataZlocin = uiStateDataZlocin,
@@ -184,5 +154,44 @@ fun SuspectsList(uiStateDataZlocin: UiStateDataZlocin, navController: NavControl
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SuspectBackground(){
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.suspects_background),
+            contentDescription = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(Color.Black.copy(alpha = 0.3f))
+        )
+    }
+}
+
+@Composable
+fun SuspectHeader(paddingStart: Dp){
+    Column(modifier = Modifier) {
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+    Column(
+        modifier = Modifier.padding(start = paddingStart),
+    ) {
+        Text(text = "Suspects", color = Color.White,
+            style = TextStyle(
+                fontFamily = FontFamily(
+                    Font(R.font.special_elite)
+                ),
+                fontSize = 26.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.ExtraBold
+            )
+        )
     }
 }

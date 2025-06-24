@@ -10,10 +10,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -21,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -85,7 +86,7 @@ fun MissionBackground(
             modifier = Modifier.fillMaxSize()
         )
 
-        Box(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp)) {
+        Box(modifier = Modifier.align(Alignment.Center).padding(bottom = 24.dp)) {
             content()
         }
     }
@@ -95,17 +96,13 @@ fun MissionBackground(
 fun ModernGlassCard(title: String?, date: String?, place: String?, description: String?) {
     MissionBox {
         Column(
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.fillMaxSize()
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize().padding(top = 20.dp)
         ) {
             TitleSection(title = title)
-            Spacer(modifier = Modifier.height(8.dp))
-
             DatePlaceSection(date = date, place = place)
-            Spacer(modifier = Modifier.height(12.dp))
-
-            DescriptionSection(description)
+            DescriptionSection(description = description)
         }
     }
 }
@@ -114,23 +111,31 @@ fun ModernGlassCard(title: String?, date: String?, place: String?, description: 
 fun TitleSection(title: String?) {
     title?.let {
         Text(
-            text = it,
-            fontSize = 22.sp,
+            text = it.uppercase(),
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
+            style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.special_elite)),
+                shadow = Shadow(Color.Black, offset = Offset(1f, 1f), blurRadius = 4f)
+            ),
+            textAlign = TextAlign.Center
         )
     }
 }
 
 @Composable
 fun DatePlaceSection(date: String?, place: String?) {
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
         date?.let {
             Text(
                 text = "📅 $it",
                 fontSize = 14.sp,
-                color = Color.LightGray,
+                color = Color(0xFFCCCCCC),
                 style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
             )
         }
@@ -138,7 +143,7 @@ fun DatePlaceSection(date: String?, place: String?) {
             Text(
                 text = "📍 $it",
                 fontSize = 14.sp,
-                color = Color.White,
+                color = Color(0xFFE0E0E0),
                 style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
             )
         }
@@ -150,10 +155,11 @@ fun DescriptionSection(description: String?) {
     description?.let {
         Text(
             text = it,
-            fontSize = 15.sp,
+            fontSize = 16.sp,
             color = Color.White,
-            textAlign = TextAlign.Start,
-            lineHeight = 20.sp,
+            textAlign = TextAlign.Center,
+            lineHeight = 22.sp,
+            modifier = Modifier.padding(horizontal = 12.dp),
             style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
         )
     }
@@ -162,27 +168,28 @@ fun DescriptionSection(description: String?) {
 @Composable
 fun MissionBox(content: @Composable () -> Unit) {
     Box(
-        modifier = Modifier.fillMaxWidth().height(300.dp)
-            .padding(horizontal = 16.dp)
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .heightIn(min = 300.dp).padding(top = 50.dp)
             .graphicsLayer {
-                shadowElevation = 8.dp.toPx()
+                shadowElevation = 12.dp.toPx()
                 shape = RoundedCornerShape(24.dp)
                 clip = true
             }
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        Color.Black.copy(alpha = 0.45f),
-                        Color.Black.copy(alpha = 0.35f)
+                        Color.White.copy(alpha = 0.15f),
+                        Color.White.copy(alpha = 0.05f)
                     )
                 )
             )
             .border(
                 width = 1.dp,
-                color = Color.White.copy(alpha = 0.1f),
+                color = Color.White.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(24.dp)
             )
-            .padding(20.dp)
+            .padding(24.dp)
     ) {
         content()
     }

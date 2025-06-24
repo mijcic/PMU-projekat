@@ -30,7 +30,7 @@ fun NavigationGraph(navController: NavHostController) {
         mainNavigation(navController)
         authNavigation(navController)
         murderNavigation(navController, viewModel, realmViewModel)
-        phoneNavigation(navController)
+        phoneNavigation(navController, viewModel)
         medicalNavigation(navController, viewModel, realmViewModel,hospitalViewModel)
 
         composable("destinationCultsAndSectsPage"){ CultAndSectsPage() }

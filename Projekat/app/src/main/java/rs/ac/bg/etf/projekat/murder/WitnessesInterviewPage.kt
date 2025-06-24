@@ -1,7 +1,6 @@
 package rs.ac.bg.etf.projekat.murder
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,8 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -24,81 +21,70 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WitnessesInterviewPage(navController: NavController, myViewModel: MyViewModel, title: String) {
+fun WitnessesInterviewPage(
+    navController: NavController,
+    myViewModel: MyViewModel,
+    title: String,
+    realmViewModel: RealmViewModel
+) {
     val uiPitanjaZaSvedoka by myViewModel.uiStatePitanjaZaSvedoka.collectAsState()
-
-    val allQuestions = remember {
-        uiPitanjaZaSvedoka.questions
+    var selectedQuestion by remember { mutableStateOf<QuestionDetail?>(null) }
+    val questions = uiPitanjaZaSvedoka.questions.map {
+        QuestionDetail(it.tekst, it.odgovor, "")
     }
 
-    var currentQuestionIndex by remember { mutableStateOf(0) }
-
-    fun nextQuestion() {
-        if (currentQuestionIndex < allQuestions.size - 1) {
-            currentQuestionIndex++
-        }
-        else {
-            if (uiPitanjaZaSvedoka.questions.isEmpty() == false) {
-                myViewModel.selectIspitivanjeSvedokaZadatakViewModel(uiPitanjaZaSvedoka.questions.first().svedokId)?.let {
-                    myViewModel.updateWitnessTask(
-                        it
-                    )
-                }
-            }
-
-            navController.popBackStack()
-        }
+    LaunchedEffect(Unit) {
+        myViewModel.getPitanjaZaSvedoka(title)
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    WitnessInfo(title = title)
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFF8A6018))
+                title = { SuspectInfo(title = title) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0XFFA99367))
             )
         },
         content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(40.dp))
-                Spacer(modifier = Modifier.height(50.dp))
+            Box(modifier = Modifier.fillMaxSize()) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.witness_int),
-                    contentDescription = "Witness Interview",
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.height(40.dp))
+                InterviewBackground(modifier = Modifier.matchParentSize())
 
-                IndexedQuestion(
-                    allQuestions = allQuestions,
-                    currentQuestionIndex = currentQuestionIndex
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(90.dp))
 
-                Spacer(modifier = Modifier.height(40.dp))
+                    if (questions.isEmpty()) {
+                        Text(
+                            text = "No questions available.",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily(Font(R.font.special_elite))
+                        )
+                    } else {
+                        QuestionList(
+                            questions = questions,
+                            onQuestionSelected = {
+                                selectedQuestion = it
+                            }
+                        )
 
-                NextOrFinishButton(
-                    onClickFunction = { nextQuestion() },
-                    allQuestions = allQuestions,
-                    currentQuestionIndex = currentQuestionIndex
-                )
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                RestartButton(
-                    onClickFunction = { currentQuestionIndex = 0 },
-                    allQuestions = allQuestions,
-                    currentQuestionIndex = currentQuestionIndex
-                )
+                        selectedQuestion?.let {
+                            ResponseSection(
+                                response = it.odgovor,
+                                selectedQuestionDetail = it
+                            )
+                        }
+                    }
+                }
             }
         }
     )

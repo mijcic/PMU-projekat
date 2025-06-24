@@ -56,7 +56,7 @@ fun ChatPage(id: Int, name: String, photo: Int, navController: NavController) {
     var messages by remember { mutableStateOf<List<ObicnaPorukaR>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        messages = realmViewModel.getMessagesWithContact(id)!!
+        messages = realmViewModel.getMessagesWithContact(id)!!.reversed()
     }
 
     Column(
@@ -202,6 +202,7 @@ fun TextInsertation() {
             modifier = Modifier.fillMaxWidth().padding(end = 12.dp)
         ) {
             TextField(
+                enabled = false,
                 value = "",
                 onValueChange = { },
                 placeholder = { Text("Text Message") },

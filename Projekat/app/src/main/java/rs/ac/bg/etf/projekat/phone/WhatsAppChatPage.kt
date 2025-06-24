@@ -58,7 +58,7 @@ fun WhatsAppChatPage(id: Int, ime: String, slika: Int, navController: NavControl
     var messages by remember { mutableStateOf<List<WhatsAppPorukaR>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        messages = realmViewModel.getWhatsappMessagesWithContact(id)!!
+        messages = realmViewModel.getWhatsappMessagesWithContact(id)!!.reversed()
     }
 
     Column(

@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import rs.ac.bg.etf.projekat.KeypadPage
+import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.phone.CallsPage
 import rs.ac.bg.etf.projekat.phone.ChatPage
 import rs.ac.bg.etf.projekat.phone.GalleryPage
@@ -20,7 +21,7 @@ import rs.ac.bg.etf.projekat.phone.PhonebookPage
 import rs.ac.bg.etf.projekat.phone.WhatsAppChatPage
 import rs.ac.bg.etf.projekat.phone.WhatsAppPage
 
-fun NavGraphBuilder.phoneNavigation(navController: NavHostController) {
+fun NavGraphBuilder.phoneNavigation(navController: NavHostController,myViewModel: MyViewModel) {
     composable("destinationPhonePage") {
         PhonePage(navController)
     }
@@ -101,6 +102,6 @@ fun NavGraphBuilder.phoneNavigation(navController: NavHostController) {
         OnePhotoPage(picture, datum, mesto, navController)
     }
     composable("destinationPhoneSettingsPage") {
-        PhoneSettingsPage(navController)
+        PhoneSettingsPage(navController,myViewModel)
     }
 }
