@@ -72,25 +72,13 @@ fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: N
     )
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.suspects_details_background),
-                contentDescription = "Background",
+
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            DetailsBackground()
+
+            Box(
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.6f))
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Box(
@@ -256,4 +244,20 @@ fun InterrogateButton(title: String, navController: NavController) {
             )
         )
     }
+}
+
+@Composable
+fun DetailsBackground(){
+    Image(
+        painter = painterResource(id = R.drawable.suspects_details_background),
+        contentDescription = "Background",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.6f))
+    )
 }

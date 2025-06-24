@@ -61,15 +61,16 @@ fun NavGraphBuilder.murderNavigation(
     ) { navBackStackEntry ->
         val title =navBackStackEntry.arguments?.getString("title") ?:""
 
-        WitnessesInterviewPage(navController,viewModel, title)
+        WitnessesInterviewPage(navController,viewModel, title,realmViewModel)
     }
-    composable(route = "destinationWitnessDetailsPage/{image}/{title}",
-        arguments = listOf(navArgument("image") { type = NavType.IntType },
+    composable(route = "destinationWitnessDetailsPage/{osobaId}/{image}/{title}",
+        arguments = listOf(navArgument("osobaId") { type = NavType.IntType },navArgument("image") { type = NavType.IntType },
             navArgument("title") { type = NavType.StringType }),
     ) { navBackStackEntry ->
+        val idOsoba = navBackStackEntry.arguments?.getInt("osobaId") ?: 0
         val image = navBackStackEntry.arguments?.getInt("image") ?: 0
         val title =navBackStackEntry.arguments?.getString("title") ?:""
-        WitnessDetailsPage(image=image,title=title,navController)
+        WitnessDetailsPage(idOsoba = idOsoba, image=image,title=title,navController,realmViewModel)
     }
     composable("destinationWitnessesPage"){
         WitnessesPage(navController, viewModel,realmViewModel)

@@ -78,22 +78,9 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
             )
         },
         content = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.interview_background),
-                    contentDescription = "Suspect Interview Background",
-                    modifier = Modifier.matchParentSize(),
-                    contentScale = ContentScale.Crop
-                )
+            Box(modifier = Modifier.fillMaxSize()) {
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.7f))
-                )
+                InterviewBackground(modifier = Modifier.matchParentSize())
 
                 Column(
                     modifier = Modifier
@@ -426,4 +413,20 @@ fun ResponseSection(response: String, selectedQuestionDetail: QuestionDetail?) {
             }
         }
     }
+}
+
+@Composable
+fun InterviewBackground(modifier: Modifier){
+    Image(
+        painter = painterResource(id = R.drawable.interview_background),
+        contentDescription = "Suspect Interview Background",
+        modifier = modifier,
+        contentScale = ContentScale.Crop
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.7f))
+    )
 }

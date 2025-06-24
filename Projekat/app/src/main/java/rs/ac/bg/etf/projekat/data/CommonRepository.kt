@@ -21,6 +21,7 @@ import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
+import rs.ac.bg.etf.projekat.data.realm.ZrtvaR
 import javax.inject.Inject
 
 class CommonRepository @Inject constructor(
@@ -38,8 +39,15 @@ class CommonRepository @Inject constructor(
         val svedoci: List<SvedokR>
 
         svedoci = realm.query<SvedokR>().find()
-
         return svedoci
+    }
+
+    suspend fun selectVictim(): ZrtvaR {
+        val zrtva : List<ZrtvaR>
+
+        zrtva = realm.query<ZrtvaR>().find()
+
+        return zrtva.first()
     }
 
     suspend fun selectAllPitanjaIspitivanjeOsumnjicenog(): List<PitanjeIspitivanjeOsumnjicenogR> {

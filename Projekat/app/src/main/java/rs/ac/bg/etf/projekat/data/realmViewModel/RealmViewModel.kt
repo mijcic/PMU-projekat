@@ -478,6 +478,13 @@ class RealmViewModel @Inject constructor(
         return listOf<String>(motiveDescription, alibiDescription, statusDescription)
     }
 
+    suspend fun getDetailsWitnessStatus(osobaId: Int): List<String> {
+        val witness = realm.query<SvedokR>("osobaId.idOsoba == $0", osobaId).first().find()
+        val status = witness?.statusSvedok ?: ""
+        val zanimanje = witness?.osobaId?.zanimanje ?: ""
+        return listOf<String>(zanimanje,status)
+    }
+
     data class LekarskiTestRezultat (
         var ime: String,
         var datum: RealmInstant?,

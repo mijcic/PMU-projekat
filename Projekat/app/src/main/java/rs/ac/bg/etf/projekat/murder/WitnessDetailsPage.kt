@@ -1,9 +1,11 @@
 package rs.ac.bg.etf.projekat.murder
 
-import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,196 +13,162 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
+import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.navigation.destinationWitnessesInterviewPage
 
-@SuppressLint("StateFlowValueCalledInComposition")
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
-fun WitnessDetailsPage(image: Int, title: String, navController: NavController) {
+fun WitnessDetailsPage(idOsoba:Int, image: Int, title: String, navController: NavController,realmViewModel: RealmViewModel) {
+    var motiveAlibiStatus by remember { mutableStateOf<List<String>>(emptyList()) }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF1C1C1C))
-            .padding(top = 22.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFF1C1C1C)),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            WitnessData(
-                title = title,
-                image = image
-            )
+    LaunchedEffect(Unit) {
+        motiveAlibiStatus = realmViewModel.getDetailsWitnessStatus(idOsoba) ?: emptyList()
+    }
 
-            Spacer(modifier = Modifier.height(24.dp))
+    val tableData = listOf(
+        listOf("Zanimanje", motiveAlibiStatus.getOrNull(0).takeUnless { it.isNullOrBlank() } ?: "?"),
+        listOf("Status", motiveAlibiStatus.getOrNull(1).takeUnless { it.isNullOrBlank() } ?: "?")
+    )
 
-            StickyNote()
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
-            Spacer(modifier = Modifier.height(16.dp))
+            DetailsBackground()
 
-            PsychologicalProfile()
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth(0.92f)
+                        .shadow(12.dp, RoundedCornerShape(24.dp), clip = true)
+                        .background(colorResource(id = R.color.light_gray))
+                        .padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.wrapContentHeight().fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+                        WitnessInfoCard(
+                            image = image,
+                            title = title,
+                            tableData = tableData
+                        )
 
-            InterrogateWitnessButton(
-                navController = navController,
-                title = title
-            )
+                        Spacer(modifier = Modifier.height(25.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        InterrogateWitnessButton(title, navController)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun InfoRow(label: String, value: String) {
+fun WitnessInfoCard(image: Int, title: String, tableData: List<List<String>>) {
     Text(
-        text = "$label: $value",
-        color = Color.White,
-        fontSize = 16.sp,
-        fontFamily = FontFamily(Font(R.font.special_elite)),
-        modifier = Modifier.padding(vertical = 4.dp)
-    )
-}
-
-@Composable
-fun WitnessData(
-    title: String,
-    image: Int
-) {
-    Text(
-        text = "CASE FILE",
-        color = Color(0xFFE0C97F),
+        text = "Witness Info",
+        color = Color.Black,
         style = TextStyle(
             fontFamily = FontFamily(Font(R.font.special_elite)),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        ),
+            fontSize = 18.sp
+        )
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(20.dp))
+
+    Image(
+        painter = painterResource(id = image),
+        contentDescription = "Witness Image",
+        modifier = Modifier
+            .size(130.dp)
+            .clip(CircleShape)
+            .border(1.5.dp, Color.Black, CircleShape)
+            .shadow(8.dp, CircleShape)
+    )
+
+    Spacer(modifier = Modifier.height(20.dp))
 
     Text(
         text = title,
-        color = Color.White,
+        color = Color.Black,
         style = TextStyle(
             fontFamily = FontFamily(Font(R.font.special_elite)),
-            fontSize = 20.sp,
+            fontSize = 23.sp,
             fontWeight = FontWeight.Bold
-        ),
+        )
     )
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(25.dp))
 
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = Color(0xFF333333),
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(8.dp, RoundedCornerShape(24.dp))
-            .padding(8.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = image),
-                contentDescription = "Suspect Image",
-                modifier = Modifier.size(180.dp)
-                    .clip(CircleShape)
-                    .border(3.dp, Color.White, CircleShape)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            InfoRow(label = "Motive", value = "?")
-            InfoRow(label = "Alibi", value = "?")
-            InfoRow(label = "Status", value = "?")
-        }
+    if (tableData.isNotEmpty()) {
+        oneRowAboutSuspect("Zanimanje", tableData[0][1])
+        Spacer(modifier = Modifier.height(5.dp))
+        Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(5.dp))
+        oneRowAboutSuspect("Status", tableData[1][1])
+        Spacer(modifier = Modifier.height(5.dp))
     }
 }
 
 @Composable
-fun InterrogateWitnessButton(
-    navController: NavController,
-    title: String
-) {
+fun InterrogateWitnessButton(title: String, navController: NavController) {
     Button(
-        onClick = { navController.navigate(destinationWitnessesInterviewPage.route + "/" + title) },
+        onClick = {
+            navController.navigate(destinationWitnessesInterviewPage.route + "/" + title)
+        },
         shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(Color(0xFFB71C1C)),
+        colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
         modifier = Modifier
-            .fillMaxWidth(0.8f)
+            .fillMaxWidth(0.7f)
+            .padding(horizontal = 16.dp)
             .height(50.dp)
     ) {
         Text(
             text = "Interrogate the Witness",
             color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
-        )
-    }
-}
-
-@Composable
-fun PsychologicalProfile() {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = Color(0xFF424242),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Psychological Profile:", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("- Emotional: Stable", color = Color.White)
-            Text("- Cooperativeness: Low", color = Color.White)
-            Text("- Stress Level: High", color = Color.White)
-        }
-    }
-}
-
-@Composable
-fun StickyNote() {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFFFF9C4),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        Text(
-            text = "\"Izgleda nervozno. Proveri alibi još jednom.\"",
-            modifier = Modifier.padding(16.dp),
             style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.special_elite)),
-                fontSize = 16.sp,
-                color = Color.Black
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
         )
     }

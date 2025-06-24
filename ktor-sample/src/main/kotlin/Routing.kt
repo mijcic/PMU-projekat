@@ -57,8 +57,8 @@ fun Application.configureRouting() {
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
-        // password = "1234"
-        password = "mia123"
+         password = "1234"
+        //password = "mia123"
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
