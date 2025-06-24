@@ -714,10 +714,10 @@ class RepositoryInsert(private val conn: Connection){
     fun signUpKorisnik(korisnik: KorisnikRequest) {
 
         val query = """
-        INSERT INTO korisnik (korisnickoIme, ime, prezime, sifra, email, nacinPrijave, poeni, poslednjaAktivnost)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO korisnik (korisnickoIme, ime, prezime, sifra, email, nacinPrijave, idToken, poeni, poslednjaAktivnost)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -730,9 +730,10 @@ class RepositoryInsert(private val conn: Connection){
             statement?.setString(3, korisnik.prezime)
             statement?.setString(4, korisnik.sifra)
             statement?.setString(5, korisnik.email)
-            statement?.setString(6, "rucno")
-            statement?.setInt(7, 0)
-            statement?.setDate(8, Date(System.currentTimeMillis()))
+            statement?.setString(6, korisnik.nacinPrijave)
+            statement?.setString(7, korisnik.idToken)
+            statement?.setInt(8, 0)
+            statement?.setDate(9, Date(System.currentTimeMillis()))
 
             statement?.executeUpdate()
 
@@ -753,9 +754,11 @@ class RepositoryInsert(private val conn: Connection){
         val query = """
         SELECT COUNT(*) FROM korisnik WHERE korisnickoIme=? OR email=?
     """
-        var conn: Connection? = null
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
+
+        println("Statement pripremljen: ${statement != null}")
 
         try {
             //conn = getDatabaseConnection()  // Assuming this method returns a valid DB connection
@@ -823,6 +826,8 @@ class RepositoryInsert(private val conn: Connection){
         """
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
+
+        println("Statement pripremljen: ${statement != null}")
 
         try {
             statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)

@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.kotlin.symbol.processing) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.realm.kotlin) apply false
+    id("com.google.gms.google-services") version "4.4.2" apply false
 }

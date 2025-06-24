@@ -58,6 +58,8 @@ CREATE TABLE `Korisnik` (
     sifra VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     nacinPrijave VARCHAR(50) NOT NULL,  -- Na primer: 'Google', 'Facebook', 'Email'
+    idToken VARCHAR(2048) NOT NULL,
+    UNIQUE KEY uniq_id_token (idToken(256)),
     poeni INT DEFAULT 0,
     poslednjaAktivnost DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -216,7 +218,7 @@ CREATE TABLE Obdukcija (
 
 CREATE TABLE ForenzickiDokaz (
     idForenzickiDokaz INT AUTO_INCREMENT PRIMARY KEY,
-    tipForenzickiDokaz ENUM('otisak', 'DNK', 'dokument','ostalo') NOT NULL,
+    tipForenzickiDokaz ENUM('otisak', 'DNK', 'dokument') NOT NULL,
     opis TEXT NOT NULL,
 	statusS INT NOT NULL,
     zrtvaId INT NOT NULL,

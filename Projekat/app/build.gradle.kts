@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,9 @@ plugins {
     alias(libs.plugins.realm.kotlin)
     kotlin("kapt")
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
+
+    // firebase-authentication
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -41,6 +46,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        viewBinding = true
         compose = true
     }
 
@@ -126,4 +132,14 @@ dependencies {
 
     testImplementation("io.mockk:mockk:1.13.10")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+
+    // firebase-authentication
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.play.services.auth)
+    implementation(libs.firebase.auth.ktx)
+    implementation (libs.androidx.credentials)
+    implementation (libs.androidx.credentials.play.services.auth)
+    implementation (libs.googleid)
+    implementation(libs.facebook.android.sdk)
 }

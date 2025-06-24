@@ -1,9 +1,13 @@
 package rs.ac.bg.etf.projekat.auth
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,12 +61,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.navigation.destinationMainScreen2
 
-@SuppressLint("StateFlowValueCalledInComposition")
+@SuppressLint("StateFlowValueCalledInComposition", "ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpPage(
@@ -83,6 +94,62 @@ fun SignUpPage(
         var prezime by remember { mutableStateOf("") }
         var context = LocalContext.current
 
+        // signup via gmail
+        var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+
+//        LaunchedEffect(Unit) {
+//            mGoogleSignInClient.signOut().addOnCompleteListener {
+//                firebaseAuth.signOut()
+//                Log.d("SIGNUP", "Signed out from previous Google session")
+//            }
+//        }
+
+        val updateUI: (GoogleSignInAccount) -> Unit = { account ->
+            val credential= GoogleAuthProvider.getCredential(account.idToken,null)
+            firebaseAuth.signInWithCredential(credential).addOnCompleteListener {task->
+                if(task.isSuccessful) {
+                    viewModel.signUp(
+                        KorisnikRequest(
+                            ime = account.givenName ?: "",
+                            prezime = account.familyName ?: "",
+                            korisnickoIme = account.email?.substringBefore("@") ?: "",
+                            sifra = "",
+                            email = account.email ?: "",
+                            nacinPrijave = "Google",
+                            idToken = account.idToken ?: ""
+                        )
+                    )
+
+                    Log.d("SIGNUP", "Google account: ${account.email}, ${account.givenName}, ${account.familyName}, ${account.idToken}")
+
+                    Toast.makeText(context, "Google SignIn success: ${account.email}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Google SignIn success: ${account.idToken}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                handleResult(task, context, updateUI)
+                navController.navigate("destinationMainScreen2")
+            } else {
+                Toast.makeText(context, "Sign in canceled or failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        fun signInWithGoogle() {
+            val signInIntent = mGoogleSignInClient.signInIntent
+            launcher.launch(signInIntent)
+        }
 
         LaunchedEffect(uistateSignUp.message?.message) {
             val toastMessage = uistateSignUp.message?.message
@@ -106,11 +173,15 @@ fun SignUpPage(
         )
 
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f))
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f))
         )
 
         Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -261,7 +332,8 @@ fun SignUpPage(
                                 ime = parts[0] // First name
                                 prezime = parts[1] // Last name
                             }
-                            viewModel.signUp(KorisnikRequest(ime,prezime,username,password,email))
+                            viewModel.signUp(KorisnikRequest(
+                                ime, prezime, username, password, email, nacinPrijave = "registracija", idToken = ""))
                             //navController.navigate("destinationCardsPage")
                         },
                         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
@@ -285,6 +357,7 @@ fun SignUpPage(
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = {
+                            signInWithGoogle()
                             //navController.navigate("destinationCardsPage")
                         },
                         colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
@@ -303,41 +376,6 @@ fun SignUpPage(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Sign up with gmail",
-                                fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
-                                fontSize = 17.sp,
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                                style = TextStyle(
-                                    shadow = Shadow(
-                                        color = Color.Black,
-                                        offset = Offset(1f, 1f),
-                                        blurRadius = 2f
-                                    )
-                                )
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        onClick = {
-                            //navController.navigate("destinationCardsPage")
-                        },
-                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.dark_purple)),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Row (
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.icons8_facebook),
-                                contentDescription = "Facebook Icon",
-                                modifier = Modifier.size(25.dp),
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Sign up with facebook",
                                 fontFamily = FontFamily(Font(R.font.special_elite, FontWeight.ExtraBold)),
                                 fontSize = 17.sp,
                                 color = Color.White,
@@ -389,5 +427,20 @@ fun SignUpPage(
                 }
             }
         }
+    }
+}
+
+private fun handleResult(
+    completedTask: Task<GoogleSignInAccount>,
+    context: Context,
+    updateUI: (GoogleSignInAccount) -> Unit
+) {
+    try {
+        val account = completedTask.getResult(ApiException::class.java)
+        if (account != null) {
+            updateUI(account)
+        }
+    } catch (e: ApiException) {
+        Toast.makeText(context, "Sign in failed: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
     }
 }

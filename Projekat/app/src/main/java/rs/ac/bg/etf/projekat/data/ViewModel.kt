@@ -63,6 +63,7 @@ class MyViewModel @Inject constructor(
     val uiStateSignUp: StateFlow<UiStateSignUp> = _uiStateSignUp
 
     fun signUp(korisnik: KorisnikRequest) = viewModelScope.launch {
+        Log.d("SIGNUP-REQUEST", korisnik.toString())
         try {
             val response = MyRepository.signUp(korisnik)
             _uiStateSignUp.value = UiStateSignUp(message = response, isRefreshing = false)

@@ -188,7 +188,7 @@ fun LoginPage(
                                 Toast.makeText(context, "The data has not been entered!", Toast.LENGTH_SHORT).show()
                             }
                             else {
-                                viewModel.logIn(KorisnikRequest("", "", username, password, ""))
+                                viewModel.logIn(KorisnikRequest("", "", username, password, "", "", ""))
                                 scope.launch {
                                     realViewModel.insertPrijavljeniKorisnik(username, password)
                                 }

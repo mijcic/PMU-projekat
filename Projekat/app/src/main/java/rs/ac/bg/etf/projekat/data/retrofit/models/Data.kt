@@ -78,7 +78,9 @@ data class KorisnikRequest(
     val prezime: String,
     val korisnickoIme: String,
     val sifra: String,
-    val email: String
+    val email: String,
+    val nacinPrijave: String,
+    val idToken: String
 )
 
 // ScorePage korisnici
