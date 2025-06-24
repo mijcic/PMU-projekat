@@ -17,6 +17,7 @@ data class Korisnik(
     val sifra: String,
     val email: String,
     val nacinPrijave: String,
+    val idToken: String,
     val poeni:Int,
     val poslednjaAktivnost:Long
 )
@@ -174,7 +175,9 @@ data class KorisnikRequest(
     val prezime: String,
     val korisnickoIme: String,
     val sifra: String,
-    val email: String
+    val email: String,
+    val nacinPrijave: String,
+    val idToken: String
 )
 
 // telefon zrtve
