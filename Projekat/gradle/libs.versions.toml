@@ -31,6 +31,7 @@ foundationLayoutAndroid = "1.7.2"
 storage = "1.4.2"
 uiTestJunit4Android = "1.8.2"
 runner = "1.6.2"
+androidthings = "1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -74,6 +75,7 @@ androidx-foundation-layout-android = { group = "androidx.compose.foundation", na
 androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+androidthings = { group = "com.google.android.things", name = "androidthings", version.ref = "androidthings" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

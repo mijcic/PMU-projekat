@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.data.realmViewModel
 
 import android.util.Log
+import com.google.android.things.update.UpdatePolicy
 import io.realm.kotlin.Realm
 import rs.ac.bg.etf.projekat.data.realm.TipZlocinaR
 import io.realm.kotlin.ext.query
@@ -56,9 +57,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
     private val realm: Realm
 ): RepositoryRealmViewModel {
 
-    override fun getRealm(): Realm {
-        return realm
-    }
+    override fun getRealm(): Realm { return realm }
 
     override suspend fun insertTipZlocina(nazivTZ: String): TipZlocinaR? {
         var tipZlocina: TipZlocinaR? = null
@@ -114,28 +113,30 @@ class RepositoryImplRealmViewModel @Inject constructor(
                 ?: zlocinZ?.let {
                     copyToRealm(it)
                 }
+            val existingOsoba = query<OsobaR>("idOsoba == $0", idOsobaO).find().firstOrNull()
+            if(existingOsoba==null){
+                osoba = query<OsobaR>("idOsoba ==$0 AND ime == $1 AND kontakt == $2 AND datum == $3 AND zanimanje == $4 AND pol == $5 AND zlocinId == $6",
+                    idOsobaO,imeZ, kontaktZ, datumZ, zanimanjeZ,polZ, existingZlocin).find().firstOrNull()
+                    ?: OsobaR().apply {
+                        idOsoba= idOsobaO
+                        ime = imeZ
+                        kontakt = kontaktZ
+                        datum = datumZ
+                        zanimanje = zanimanjeZ
+                        pol = polZ
+                        zlocinId = existingZlocin
+                    }
+                copyToRealm(osoba!!)
+            }
 
-
-            osoba = query<OsobaR>("idOsoba ==$0 AND ime == $1 AND kontakt == $2 AND datum == $3 AND zanimanje == $4 AND pol == $5 AND zlocinId == $6",
-                idOsobaO,imeZ, kontaktZ, datumZ, zanimanjeZ,polZ, existingZlocin).find().firstOrNull()
-                ?: OsobaR().apply {
-                    idOsoba= idOsobaO
-                    ime = imeZ
-                    kontakt = kontaktZ
-                    datum = datumZ
-                    zanimanje = zanimanjeZ
-                    pol = polZ
-                    zlocinId = existingZlocin
-                }
-            copyToRealm(osoba!!)
         }
         return osoba
     }
 
-    override suspend fun insertZrtva(idZrtvaZ:Int,
-                                     tipZ: String, imeZ: String, detaljiZ: String, statusZ: String,
-                                     zlocinZ: ZlocinR?, kontaktZ: String, datumZ: RealmInstant,
-                                     zanimanjeZ: String, polZ: String
+    override suspend fun insertZrtva(
+        idZrtvaZ:Int, tipZ: String, imeZ: String, detaljiZ: String, statusZ: String,
+        zlocinZ: ZlocinR?, kontaktZ: String, datumZ: RealmInstant,
+        zanimanjeZ: String, polZ: String
     ): ZrtvaR? {
         var zrtva: ZrtvaR?=null
         // Unesi osobu i proveri da li je već u bazi

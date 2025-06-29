@@ -1,7 +1,6 @@
 package com.example.repository
 
 import com.example.data.remote.tables.*
-import com.example.models.dto.*
 
 /**
  * Repository interface for accessing structured forensic and criminal case data from the database.

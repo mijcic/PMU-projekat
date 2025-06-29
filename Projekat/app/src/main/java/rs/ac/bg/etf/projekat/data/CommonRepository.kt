@@ -311,27 +311,28 @@ class CommonRepository @Inject constructor(
 
 //Mysterious Symptoms
 
-    suspend fun selectPacijent(): PacijentR {
-        val pacijent: PacijentR
-        pacijent = realm.query<PacijentR>().find().first()
+    suspend fun selectPacijent(): PacijentR? {
+        val pacijent: PacijentR?
+        pacijent = realm.query<PacijentR>().find().firstOrNull()
+
         return pacijent
     }
 
-    suspend fun selectMedicinskiIzvestaj(): MedicinskiIzvestajR {
-        val med: MedicinskiIzvestajR
-        med = realm.query<MedicinskiIzvestajR>().find().first()
+    suspend fun selectMedicinskiIzvestaj(): MedicinskiIzvestajR? {
+        val med: MedicinskiIzvestajR?
+        med = realm.query<MedicinskiIzvestajR>().find().firstOrNull()
         return med
     }
 
-    suspend fun selectLekarskiTest(): LekarskiTestR {
-        val lek: LekarskiTestR
-        lek = realm.query<LekarskiTestR>().find().first()
+    suspend fun selectLekarskiTest(): LekarskiTestR? {
+        val lek: LekarskiTestR?
+        lek = realm.query<LekarskiTestR>().find().firstOrNull()
         return lek
     }
 
-    suspend fun selectIzjavaZaPacijenta(): IzjavaZaPacijentaR {
-        val izj: IzjavaZaPacijentaR
-        izj = realm.query<IzjavaZaPacijentaR>().find().first()
+    suspend fun selectIzjavaZaPacijenta(): IzjavaZaPacijentaR? {
+        val izj: IzjavaZaPacijentaR?
+        izj = realm.query<IzjavaZaPacijentaR>().find().firstOrNull()
         return izj
     }
 

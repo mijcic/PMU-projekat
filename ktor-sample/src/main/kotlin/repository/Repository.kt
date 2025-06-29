@@ -1428,7 +1428,7 @@ class Repository(private val connection: Connection): RepoInterface {
     override fun getPacijent(id: Int, zl: ZlocinData, zr: ZrtvaData, osobe: List<OsobaData>): PacijentData?{
         val mainQuery = "SELECT * FROM pacijent WHERE zlocinId=?"
         val mainStatement = connection.prepareStatement(mainQuery)
-        mainStatement?.setInt(1, id)
+        mainStatement?.setInt(1, zl.idZlocin)
         val resultSet = mainStatement?.executeQuery()
 
         if (resultSet != null && resultSet.next()) {

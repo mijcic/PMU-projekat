@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.androidx.storage)
     implementation(libs.androidx.ui.test.junit4.android)
     implementation(libs.androidx.runner)
+    implementation(libs.androidthings)
     testImplementation(libs.junit)
     //androidTestImplementation(libs.androidx.junit)
     //androidTestImplementation(libs.androidx.espresso.core)
