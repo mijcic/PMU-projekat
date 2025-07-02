@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.murder
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -9,7 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -20,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.data.UiStatePitanjaZaOsumnjicenog
+import rs.ac.bg.etf.projekat.data.UiStatePitanjaZaSvedoka
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 
@@ -83,12 +89,91 @@ fun WitnessesInterviewPage(
                                 selectedQuestionDetail = it
                             )
                         }
+
+
                     }
+                    // Dugme fiksirano na dnu
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        WitnessesFinishInvestigationButton(
+                            uiPitanjaZaSvedoka = uiPitanjaZaSvedoka,
+                            myViewModel = myViewModel,
+                            onFinished = {
+                            },
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            title = title
+                        )
+                    }
+                    Log.d("SVE", "FINISH")
+
                 }
             }
         }
     )
 }
+
+@Composable
+fun WitnessesFinishInvestigationButton(
+    uiPitanjaZaSvedoka: UiStatePitanjaZaSvedoka,
+    myViewModel: MyViewModel,
+    onFinished: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String
+) {
+    Log.d("SVE", "FINISHsss")
+    Button(
+        onClick = {
+            if(uiPitanjaZaSvedoka.questions.isNotEmpty()){
+                Log.d("SVEDOK","nije prazno")
+                val wId = uiPitanjaZaSvedoka.questions.first().svedokId
+                Log.d("SVEDOK",wId.toString())
+                wId?.let {
+                    myViewModel.selectIspitivanjeSvedokaZadatakViewModel(it)?.let { zadatak->
+                        myViewModel.updateWitnessTask(zadatak)
+                    }
+
+                }
+                onFinished()
+            }
+            else{
+                myViewModel.updatePitanjaZaSvedokaPitanjaEmptyViewModel(title)
+            }
+
+        },
+        modifier = modifier
+            .widthIn(min = 180.dp)
+            .wrapContentWidth()
+            .wrapContentHeight()
+            .clip(RoundedCornerShape(5.dp))
+            .shadow(4.dp, RoundedCornerShape(5.dp)),
+        colors = ButtonDefaults.buttonColors(containerColor = colorResource(
+            R.color.dark_purple
+        )
+        ),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Finish",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
+            )
+            Text(
+                text = "investigation",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)))
+            )
+        }
+    }
+}
+
 
 @Composable
 fun WitnessInfo(title: String) {

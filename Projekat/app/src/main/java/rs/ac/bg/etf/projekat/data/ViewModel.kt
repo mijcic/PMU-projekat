@@ -198,8 +198,8 @@ class MyViewModel @Inject constructor(
 
     fun clearCnt() = viewModelScope.launch {
         try {
-            _uiStateCntEvidence.value = UiStateCntEvidence(cnt = 1)
-            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = 1)
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt = 0)
+            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = 0)
         } catch (e:Exception){
             e.printStackTrace()
             _uiStateCntEvidence.value = UiStateCntEvidence(cnt=0)
@@ -268,7 +268,17 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    fun updatePitanjaZaOsumnjicenogPitanjaEmptyViewModel(osumnjicen: String) = viewModelScope.launch {
+        commonRepository.updatePitanjaZaOsumnjicenogPitanjaEmpty(osumnjicen)
+    }
+
+    fun updatePitanjaZaSvedokaPitanjaEmptyViewModel(svedok: String) = viewModelScope.launch {
+        commonRepository.updatePitanjaZaSvedokaPitanjaEmpty(svedok)
+    }
+
     fun updateWitnessTask(zadatak: IspitivanjeSvedokaZadatakR) = viewModelScope.launch {
+        Log.d("SVEDOK zad", zadatak.zadatakId?.idZadatak.toString())
+        Log.d("SVEDOK zadI", zadatak.idIspitivanjeSvedokaZadatak.toString())
         zadatak.zadatakId?.idZadatak?.let {
             commonRepository.updateIspitivanjeSvedokaZadatak(
                 zadatak.idIspitivanjeSvedokaZadatak,
@@ -1329,6 +1339,8 @@ class MyViewModel @Inject constructor(
     fun selectIspitivanjeSvedokaZadatakViewModel(svedokZ:SvedokR?): IspitivanjeSvedokaZadatakR? {
         return commonRepository.selectIspitivanjeSvedokaZadatak(svedokZ)
     }
+
+
 }
 
 data class UiStateZlocin(

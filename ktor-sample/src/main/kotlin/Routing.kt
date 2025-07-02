@@ -25,6 +25,7 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.sql.*
@@ -70,7 +71,8 @@ fun Application.configureRouting() {
         initialDataService.insertInitialMurderIfEmpty()
     }
     launch {
-        initialDataService.insertInitialMysteriousSymptomsIfEmpty()
+        delay(2000)
+        //initialDataService.insertInitialMysteriousSymptomsIfEmpty()
     }
 
     routing {

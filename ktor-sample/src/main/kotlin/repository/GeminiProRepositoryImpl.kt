@@ -311,14 +311,26 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                         motiv = m
                     )
 
+                    val indexOs = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.indexOfFirst { it.osumnjicenId == prev }
                     val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.osumnjicenId == prev }
                     ispitivanjeOsumnjicenogZadatak?.osumnjicenId = osum.idOsumnjicen
+                    if(indexOs !=-1){
+                        geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOs].osumnjicenId = osum.idOsumnjicen
+                    }
 
+                    val indexOsZr = geminiResponse2.odnosOsumnjicenZrtvaR.indexOfFirst { it.osumnjicenId == prev }
                     val odnosOsumnjicenZrtva = geminiResponse2.odnosOsumnjicenZrtvaR.find { it.osumnjicenId == prev }
                     odnosOsumnjicenZrtva?.osumnjicenId = osum.idOsumnjicen
+                    if(indexOsZr !=-1){
+                        geminiResponse2.odnosOsumnjicenZrtvaR[indexOsZr].osumnjicenId = osum.idOsumnjicen
+                    }
 
+                    val indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
                     val pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
                     pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
+                    if(indexOs !=-1){
+                        geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
+                    }
 
                     osumnjiceniLista.add(osum)
 
@@ -392,11 +404,20 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     zlocin = zl
                 )
 
+                val indexSvedok = geminiResponse2.ispitivanjeSvedokaZadatakR.indexOfFirst { it.svedokId == prev }
                 val pronadjenoIspitivanjeSvedokaZadatak = geminiResponse2.ispitivanjeSvedokaZadatakR.find { it.svedokId == prev }
                 pronadjenoIspitivanjeSvedokaZadatak?.svedokId = svedok.idSvedok
+                if (indexSvedok!=-1){
+                    println("\n\n svedok"+ geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].idIspitivanjeSvedokaZadatak)
+                    geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].svedokId=svedok.idSvedok
+                }
 
+                val indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
                 val pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
                 pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
+                if (indexSvedok!=-1){
+                    geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
+                }
 
                 svedociLista.add(svedok)
             }
@@ -1132,6 +1153,43 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
 
         for(z in zadaci){
             val prev = z.idZadatak
+
+            // Provera da li postoji bar jedan povezani entitet
+            val pronadjenoIspitivanjeSvedokaZadatak = geminiResponse2.ispitivanjeSvedokaZadatakR.find { it.zadatakId == prev }
+            val dokazZadatak = geminiResponse2.dokazZadatakR.find { it.zadatakId == prev }
+            val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.zadatakId == prev }
+            val telefonZadatak = geminiResponse2.telefonZadatakR.find { it.zadatakId == prev }
+            val forenzickiDokazZadatak = geminiResponse2.forenzickiDokazZadatakR.find { it.zadatakId == prev }
+
+            val indexSvedok = geminiResponse2.ispitivanjeSvedokaZadatakR.indexOfFirst { it.zadatakId == prev }
+            val indexDokaz = geminiResponse2.dokazZadatakR.indexOfFirst { it.zadatakId == prev }
+            val indexOsumnjiceni = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.indexOfFirst { it.zadatakId == prev }
+            val indexTelefon = geminiResponse2.telefonZadatakR.indexOfFirst { it.zadatakId == prev }
+            val indexForenzika = geminiResponse2.forenzickiDokazZadatakR.indexOfFirst { it.zadatakId == prev }
+
+
+            println("\n\n\n")
+            println(z.toString())
+            println(z.idZadatak)
+            println(z.tekst)
+
+            // Ako ne postoji nijedan - preskoči ovaj zadatak
+            if (
+                pronadjenoIspitivanjeSvedokaZadatak == null &&
+                dokazZadatak == null &&
+                ispitivanjeOsumnjicenogZadatak == null &&
+                telefonZadatak == null &&
+                forenzickiDokazZadatak == null &&
+                indexSvedok <1 &&
+                indexDokaz <1 &&
+                indexOsumnjiceni <1 &&
+                indexTelefon <1 &&
+                indexForenzika <1
+            ) {
+                println("if da")
+                continue
+            }
+
             val zad = ZadatakData(
                 idZadatak = z.idZadatak,
                 tekst = z.tekst,
@@ -1142,21 +1200,45 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             )
 
             repo.insertZadatakData(zad, zlocin)
+            println("id novi: " + zad.idZadatak.toString())
 
-            val pronadjenoIspitivanjeSvedokaZadatak = geminiResponse2.ispitivanjeSvedokaZadatakR.find { it.zadatakId == prev }
+            //val pronadjenoIspitivanjeSvedokaZadatak = geminiResponse2.ispitivanjeSvedokaZadatakR.find { it.zadatakId == prev }
             pronadjenoIspitivanjeSvedokaZadatak?.zadatakId = zad.idZadatak
+            if (indexSvedok != -1) {
+                geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].zadatakId = zad.idZadatak
+                println(geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].idIspitivanjeSvedokaZadatak)
+            }
 
-            val dokazZadatak = geminiResponse2.dokazZadatakR.find { it.zadatakId == prev }
+            //val dokazZadatak = geminiResponse2.dokazZadatakR.find { it.zadatakId == prev }
             dokazZadatak?.zadatakId = zad.idZadatak
+            if (indexDokaz != -1) {
+                println(geminiResponse2.dokazZadatakR[indexDokaz].idDokazZadatak)
+                geminiResponse2.dokazZadatakR[indexDokaz].zadatakId = zad.idZadatak
+            }
 
-            val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.zadatakId == prev }
+            //val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.zadatakId == prev }
             ispitivanjeOsumnjicenogZadatak?.zadatakId = zad.idZadatak
+            if (indexOsumnjiceni != -1) {
+                println(geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOsumnjiceni].idIspitivanjeOsumnjicenogZadatak)
 
-            val telefonZadatak = geminiResponse2.telefonZadatakR.find { it.zadatakId == prev }
+                geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOsumnjiceni].zadatakId = zad.idZadatak
+            }
+
+            //val telefonZadatak = geminiResponse2.telefonZadatakR.find { it.zadatakId == prev }
             telefonZadatak?.zadatakId = zad.idZadatak
+            if (indexTelefon != -1) {
+                println(geminiResponse2.telefonZadatakR[indexTelefon].idTelefonZadatak)
 
-            val forenzickiDokazZadatak = geminiResponse2.forenzickiDokazZadatakR.find { it.zadatakId == prev }
+                geminiResponse2.telefonZadatakR[indexTelefon].zadatakId = zad.idZadatak
+            }
+
+            //val forenzickiDokazZadatak = geminiResponse2.forenzickiDokazZadatakR.find { it.zadatakId == prev }
             forenzickiDokazZadatak?.zadatakId = zad.idZadatak
+            if (indexForenzika != -1) {
+                println(geminiResponse2.forenzickiDokazZadatakR[indexForenzika].idForenzickiDokazZadatak)
+
+                geminiResponse2.forenzickiDokazZadatakR[indexForenzika].zadatakId = zad.idZadatak
+            }
 
             zadaciLista.add(zad)
         }

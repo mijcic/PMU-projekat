@@ -431,336 +431,160 @@ fun <T> CardEvidenceLock(i: T){
 
 @Composable
 fun EvidenceDialog(
-    showDialog: MutableState<Boolean>, i: DokazR, dokazZadaci: List<DokazZadatakR>,
-    myViewModel: MyViewModel, cnt: Int
-):Boolean {
-    if (showDialog.value && dokazZadaci.isNotEmpty() && !dokazZadaci.first().uradjen) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
-                .clickable(enabled = true) { }
-        ) {
-            AlertDialog(
-                containerColor = Color.White,
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                title = { Text(text = dokazZadaci.first().tekst.toString()) },
-                text = {
-                    Column {
-                        Text("Only if you agree, please confirm.")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Evidence Type: ${if (i.tipDokaza == "fizicki") "Physical Evidence" else "Digital Evidence"}")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = {
-                            myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
-                            showDialog.value = false
-                            myViewModel.cntIncrement(cnt)
-                        }
-                    ) {
-                        Text(dokazZadaci.first().tekst,color=Color.White)
+    showDialog: MutableState<Boolean>,
+    i: DokazR,
+    dokazZadaci: List<DokazZadatakR>,
+    myViewModel: MyViewModel,
+    cnt: Int
+): Boolean {
 
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = { showDialog.value = false }
-                    ) {
-                        Text("Cancel",color=Color.White)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-    else if(showDialog.value && dokazZadaci.isNotEmpty()){
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
-                .clickable(enabled = true) { }
-        ) {
-            AlertDialog(
-                containerColor = Color.White,
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                title = { Text(text = "...") },
-                text = {
-                    Column {
-                        Text("Only if you agree, please confirm.")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Evidence Type: ${if (i.tipDokaza == "fizicki") "Physical Evidence" else "Digital Evidence"}")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = {
-                            //myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
-                            showDialog.value = false
-                            myViewModel.cntIncrement(cnt)
-                        }
-                    ) {
-                        Text(dokazZadaci.first().tekst,color=Color.White)
+    if (!showDialog.value) return false
 
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = { showDialog.value = false }
-                    ) {
-                        Text("Cancel",color=Color.White)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-    else if(showDialog.value){
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
-                .clickable(enabled = true) { }
-        ) {
-            AlertDialog(
-                containerColor = Color.White,
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                title = { Text(text = "...") },
-                text = {
-                    Column {
-                        Text("Only if you agree, please confirm.")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Evidence Type: ${if (i.tipDokaza == "fizicki") "Physical Evidence" else "Digital Evidence"}")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = {
-                            //myViewModel.updateEvidenceAndEvidenceTask(dokazZadaci.first())
-                            showDialog.value = false
-                            myViewModel.cntIncrement(cnt)
-                        }
-                    ) {
-                        Text("...",color=Color.White)
+    val task = dokazZadaci.firstOrNull()
+    val isTaskDone = task?.uradjen == true
 
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = { showDialog.value = false }
-                    ) {
-                        Text("Cancel",color=Color.White)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
+    val titleText = when {
+        task != null && !isTaskDone -> task.tekst
+        task != null && isTaskDone -> "..."
+        else -> "..."
     }
+
+    val confirmText = when {
+        task != null && !isTaskDone -> task.tekst
+        task != null && isTaskDone -> task.tekst
+        else -> "..."
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.7f))
+            .clickable(enabled = true) { }
+    ) {
+        AlertDialog(
+            containerColor = Color.White,
+            onDismissRequest = { showDialog.value = false },
+            title = { Text(text = titleText ?: "...") },
+            text = {
+                Column {
+                    Text("Only if you agree, please confirm.")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Evidence Type: ${if (i.tipDokaza == "fizicki") "Physical Evidence" else "Digital Evidence"}")
+                }
+            },
+            confirmButton = {
+                Button(
+                    colors = ButtonColors(
+                        containerColor = Color.DarkGray,
+                        disabledContainerColor = Color.DarkGray,
+                        contentColor = Color.White,
+                        disabledContentColor = Color.White
+                    ),
+                    onClick = {
+                        if (!isTaskDone && task != null) {
+                            myViewModel.updateEvidenceAndEvidenceTask(task)
+                        }
+                        showDialog.value = false
+                        myViewModel.cntIncrement(cnt)
+                    }
+                ) {
+                    Text(confirmText ?: "...", color = Color.White)
+                }
+            },
+            dismissButton = {
+                Button(
+                    colors = ButtonColors(
+                        containerColor = Color.DarkGray,
+                        disabledContainerColor = Color.DarkGray,
+                        contentColor = Color.White,
+                        disabledContentColor = Color.White
+                    ),
+                    onClick = { showDialog.value = false }
+                ) {
+                    Text("Cancel", color = Color.White)
+                }
+            },
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+
     return showDialog.value
 }
 
 
 @Composable
-fun ForensicEvidenceDialog(showDialog: MutableState<Boolean>, i: ForenzickiDokazR, dokazZadaci: List<ForenzickiDokazZadatakR>,myViewModel: MyViewModel,cnt: Int):Boolean {
+fun ForensicEvidenceDialog(
+    showDialog: MutableState<Boolean>,
+    i: ForenzickiDokazR,
+    dokazZadaci: List<ForenzickiDokazZadatakR>,
+    myViewModel: MyViewModel,
+    cnt: Int
+): Boolean {
 
-    if (showDialog.value && dokazZadaci.isNotEmpty() && !dokazZadaci.first().uradjen) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
-                .clickable(enabled = true) { }
-        ) {
-            AlertDialog(
-                containerColor = Color.White,
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                title = { Text(text = dokazZadaci.first().tekst.toString()) },
-                text = {
-                    Column {
-                        Text("Only if you agree, please confirm.")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Forensic Evidence Type: ${if (i.tipForenzickiDokaz == "DNK") "DNK" else "otisak"}")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = {
-                            myViewModel.updateForensicEvidenceAndForensicEvidenceTask(dokazZadaci.first())
-                            showDialog.value = false
-                            myViewModel.cntForensicIncrement(cnt)
+    if (!showDialog.value) return false
 
+    val task = dokazZadaci.firstOrNull()
+    val titleText = task?.tekst ?: "..."
+    val confirmText = task?.tekst ?: "..."
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.7f))
+            .clickable(enabled = true) { }
+    ) {
+        AlertDialog(
+            containerColor = Color.White,
+            onDismissRequest = { showDialog.value = false },
+            title = { Text(text = titleText) },
+            text = {
+                Column {
+                    Text("Only if you agree, please confirm.")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Forensic Evidence Type: ${if (i.tipForenzickiDokaz == "DNK") "DNK" else "otisak"}")
+                }
+            },
+            confirmButton = {
+                Button(
+                    colors = ButtonColors(
+                        containerColor = Color.DarkGray,
+                        disabledContainerColor = Color.DarkGray,
+                        contentColor = Color.White,
+                        disabledContentColor = Color.White
+                    ),
+                    onClick = {
+                        task?.let {
+                            if (!it.uradjen) {
+                                myViewModel.updateForensicEvidenceAndForensicEvidenceTask(it)
+                            }
                         }
-                    ) {
-                        Text(dokazZadaci.first().tekst,color=Color.White)
+                        showDialog.value = false
+                        myViewModel.cntForensicIncrement(cnt)
                     }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = { showDialog.value = false }
-                    ) {
-                        Text("Cancel",color=Color.White)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
+                ) {
+                    Text(confirmText, color = Color.White)
+                }
+            },
+            dismissButton = {
+                Button(
+                    colors = ButtonColors(
+                        containerColor = Color.DarkGray,
+                        disabledContainerColor = Color.DarkGray,
+                        contentColor = Color.White,
+                        disabledContentColor = Color.White
+                    ),
+                    onClick = { showDialog.value = false }
+                ) {
+                    Text("Cancel", color = Color.White)
+                }
+            },
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
-    else if(showDialog.value && dokazZadaci.isNotEmpty() ){
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
-                .clickable(enabled = true) { }
-        ) {
-            AlertDialog(
-                containerColor = Color.White,
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                title = { Text(text = "...") },
-                text = {
-                    Column {
-                        Text("Only if you agree, please confirm.")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Forensic Evidence Type: ${if (i.tipForenzickiDokaz == "DNK") "DNK" else "otisak"}")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = {
-                            //myViewModel.updateForensicEvidenceAndForensicEvidenceTask(dokazZadaci.first())
-                            showDialog.value = false
-                            myViewModel.cntForensicIncrement(cnt)
 
-                        }
-                    ) {
-                        Text(dokazZadaci.first().tekst,color=Color.White)
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = { showDialog.value = false }
-                    ) {
-                        Text("Cancel",color=Color.White)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-    else if(showDialog.value){
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.7f))
-                .clickable(enabled = true) { }
-        ) {
-            AlertDialog(
-                containerColor = Color.White,
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                title = { Text(text = "...") },
-                text = {
-                    Column {
-                        Text("Only if you agree, please confirm.")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Forensic Evidence Type: ${if (i.tipForenzickiDokaz == "DNK") "DNK" else "otisak"}")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = {
-                            //myViewModel.updateForensicEvidenceAndForensicEvidenceTask(dokazZadaci.first())
-                            showDialog.value = false
-                            myViewModel.cntForensicIncrement(cnt)
-
-                        }
-                    ) {
-                        Text("...",color=Color.White)
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = Color.DarkGray, disabledContainerColor = Color.DarkGray,
-                            contentColor = Color.DarkGray,
-                            disabledContentColor = Color.DarkGray
-                        ),
-                        onClick = { showDialog.value = false }
-                    ) {
-                        Text("Cancel",color=Color.White)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
     return showDialog.value
 }
+
 
 @Composable
 fun BoxVerticalBar(modifier: Modifier){
@@ -828,20 +652,14 @@ fun EvidenceTextColumn(pagerState: PagerState, modifier: Modifier, onClick:() ->
 
 fun getimageResIdsEvidence(): List<Int>{
     return listOf(
-        R.drawable.evidence1,
-        R.drawable.evidence10,
-        R.drawable.evidence7,
-        R.drawable.evidence8,
-        R.drawable.evidence9
+        R.drawable.evidence1, R.drawable.evidence10, R.drawable.evidence7,
+        R.drawable.evidence8, R.drawable.evidence9
     )
 }
 
 fun getimageResIdsForensic(): List<Int>{
     return listOf(
-        R.drawable.evidence4,
-        R.drawable.evidence2,
-        R.drawable.evidence6,
-        R.drawable.evidence3,
-        R.drawable.evidence5
+        R.drawable.evidence4, R.drawable.evidence2, R.drawable.evidence6,
+        R.drawable.evidence3, R.drawable.evidence5
     )
 }

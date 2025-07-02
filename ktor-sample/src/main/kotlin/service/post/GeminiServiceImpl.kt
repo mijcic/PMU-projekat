@@ -55,6 +55,7 @@ class GeminiServiceImpl(
                 val geminiResponse: GeminiResponse = response.body()
                 val t2 = System.currentTimeMillis()
                 println("Parsiranje trajanje: ${t2 - t1}ms")
+                println("\n\n"+geminiResponse+"\n\n")
 
                 val parsed = dataParser.parseGeminiResponse(geminiResponse)
                 val t3 = System.currentTimeMillis()
