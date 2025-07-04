@@ -1194,7 +1194,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                 idZadatak = z.idZadatak,
                 tekst = z.tekst,
                 korak = z.korak,
-                uradjen = z.uradjen,
+                uradjen = false,
                 nextZadatak = z.nextZadatak,
                 zlocinId = zlocin.idZlocin
             )
@@ -1291,7 +1291,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     idIspitivanjeOsumnjicenogZadatak = i.idIspitivanjeOsumnjicenogZadatak,
                     osumnjicenId = osumnjicen.idOsumnjicen,
                     zadatakId = zadatak.idZadatak,
-                    uradjen = i.uradjen
+                    uradjen = false
                 )
 
                 repo.insertIspitivanjeOsumnjicenogZadatakData(ispitivanjeOsumnjicenogZadatak, osumnjicen, zadatak)
@@ -1314,7 +1314,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     idIspitivanjeSvedokaZadatak = i.idIspitivanjeSvedokaZadatak,
                     svedokId = svedok.idSvedok,
                     zadatakId = zadatak.idZadatak,
-                    uradjen = i.uradjen
+                    uradjen = false
                 )
 
                 repo.insertIspitivanjeSvedokaZadatakData(ispitivanjeSvedokaZadatak, svedok, zadatak)
@@ -1337,7 +1337,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     idTelefonZadatak = z.idTelefonZadatak,
                     telefonId = telefon.idTelefon,
                     zadatakId = zadatak.idZadatak,
-                    uradjen = z.uradjen
+                    uradjen = false
                 )
 
                 repo.insertTelefonZadatakData(telefonZadatak, telefon, zadatak)
@@ -1360,7 +1360,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     idForenzickiDokazZadatak = z.idForenzickiDokazZadatak,
                     tekst = z.tekst,
                     forenzickiDokazId = forenzickiDokaz.idForenzickiDokaz,
-                    uradjen = z.uradjen,
+                    uradjen = false,
                     zadatakId = zadatak.idZadatak
                 )
 
