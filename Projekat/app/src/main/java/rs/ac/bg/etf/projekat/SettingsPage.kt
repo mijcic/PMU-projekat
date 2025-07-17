@@ -32,6 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("ResourceAsColor")
 @Composable
@@ -39,6 +42,15 @@ fun SettingsPage(navController: NavController) {
     val context = LocalContext.current
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
     var selectedLanguage by rememberSaveable { mutableStateOf("ENG") }
+
+    val firebaseAuth = FirebaseAuth.getInstance()
+
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(context.getString(R.string.default_web_client_id))
+        .requestEmail()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
     Box(modifier = Modifier.fillMaxSize()) {
         SettingsImage()
@@ -72,9 +84,12 @@ fun SettingsPage(navController: NavController) {
 
                 LogoutSetting(
                     onLogout = {
-                        Toast.makeText(context, "Logged out!", Toast.LENGTH_SHORT).show()
-                        navController.navigate("destinationLoginPage") {
-                            popUpTo("destinationMainScreen2") { inclusive = true }
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            firebaseAuth.signOut()
+                            Toast.makeText(context, "Logged out!", Toast.LENGTH_SHORT).show()
+                            navController.navigate("destinationLoginPage") {
+                                popUpTo("destinationMainScreen2") { inclusive = true }
+                            }
                         }
                     }
                 )

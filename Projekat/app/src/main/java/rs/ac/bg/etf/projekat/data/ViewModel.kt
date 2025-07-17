@@ -66,6 +66,7 @@ class MyViewModel @Inject constructor(
         Log.d("SIGNUP-REQUEST", korisnik.toString())
         try {
             val response = MyRepository.signUp(korisnik)
+            Log.d("SIGNUP-REQUEST", response.message)
             _uiStateSignUp.value = UiStateSignUp(message = response, isRefreshing = false)
         } catch (e: Exception) {
             e.printStackTrace()

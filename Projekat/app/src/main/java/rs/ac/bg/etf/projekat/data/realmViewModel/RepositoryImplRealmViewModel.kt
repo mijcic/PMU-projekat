@@ -19,6 +19,7 @@ import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
+import rs.ac.bg.etf.projekat.data.realm.KorisnikRequestR
 import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
 import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
 import rs.ac.bg.etf.projekat.data.realm.MedicinskiIzvestajR
@@ -39,7 +40,6 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
-import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
@@ -566,18 +566,24 @@ class RepositoryImplRealmViewModel @Inject constructor(
         return odnos
     }
 
-    override suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String): PrijavljeniKorisnikR? {
-        var prijavljeniKorisnik: PrijavljeniKorisnikR? = null
+    override suspend fun insertKorisnik(imeK: String, prezimeK: String, korisnickoImeK: String, sifraK: String, emailK: String, nacinPrijaveK: String, idTokenK: String, idTokenLast256K: String): KorisnikRequestR? {
+        var requestKorisnik: KorisnikRequestR? = null
         realm.write {
-            prijavljeniKorisnik = query<PrijavljeniKorisnikR>("korisnickoIme == $0 AND sifra == $1", korisnickoImePK, sifraPK).find().firstOrNull()
-                ?: PrijavljeniKorisnikR().apply {
-                    idKorisnik = (query<PrijavljeniKorisnikR>().find().maxOfOrNull { it.idKorisnik } ?: 0) + 1
-                    korisnickoIme = korisnickoImePK
-                    sifra = sifraPK
+            requestKorisnik = query<KorisnikRequestR>("korisnickoIme == $0 OR email == $1", korisnickoImeK, emailK).find().firstOrNull()
+                ?: KorisnikRequestR().apply {
+                    idKorisnik = (query<KorisnikRequestR>().find().maxOfOrNull { it.idKorisnik } ?: 0) + 1
+                    ime = imeK
+                    prezime = prezimeK
+                    korisnickoIme = korisnickoImeK
+                    sifra = sifraK
+                    email = emailK
+                    nacinPrijave = nacinPrijaveK
+                    idToken = idTokenK
+                    idTokenLast256 = idTokenLast256K
                 }
-            copyToRealm(prijavljeniKorisnik!!)
+            copyToRealm(requestKorisnik!!)
         }
-        return prijavljeniKorisnik
+        return requestKorisnik
     }
 
     override suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {

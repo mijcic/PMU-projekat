@@ -15,6 +15,7 @@ import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
+import rs.ac.bg.etf.projekat.data.realm.KorisnikRequestR
 import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
 import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
 import rs.ac.bg.etf.projekat.data.realm.MedicinskiIzvestajR
@@ -35,7 +36,6 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
-import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
@@ -92,7 +92,7 @@ interface RepositoryRealmViewModel {
 
     suspend fun insertOdnosOsumnjicenZrtva(idOdnosOOZ:Int,osumnjicenOOZ: OsumnjicenR?, zrtvaOOZ: ZrtvaR?, tipOdnosaOOZ: String): OdnosOsumnjicenZrtvaR?
 
-    suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String): PrijavljeniKorisnikR?
+    suspend fun insertKorisnik(imeK: String, prezimeK: String, korisnickoImeK: String, sifraK: String, emailK: String, nacinPrijaveK: String, idTokenK: String, idTokenLast256K: String): KorisnikRequestR?
 
     suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR?
 

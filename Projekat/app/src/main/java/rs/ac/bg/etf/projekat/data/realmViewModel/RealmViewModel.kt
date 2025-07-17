@@ -24,6 +24,7 @@ import rs.ac.bg.etf.projekat.data.realm.IspitivanjeOsumnjicenogZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IspitivanjeSvedokaZadatakR
 import rs.ac.bg.etf.projekat.data.realm.IzjavaZaPacijentaR
 import rs.ac.bg.etf.projekat.data.realm.KontaktR
+import rs.ac.bg.etf.projekat.data.realm.KorisnikRequestR
 import rs.ac.bg.etf.projekat.data.realm.LekarskiTestR
 import rs.ac.bg.etf.projekat.data.realm.LokacijeIstrageR
 import rs.ac.bg.etf.projekat.data.realm.MedicinskiIzvestajR
@@ -44,7 +45,6 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
-import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
 import rs.ac.bg.etf.projekat.data.realm.StatusSvedokR
 import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR
@@ -175,12 +175,12 @@ class RealmViewModel @Inject constructor(
     }
 
     fun checkIfUserExists() {
-        val userExists = realm.query<PrijavljeniKorisnikR>().count().find() > 0
+        val userExists = realm.query<KorisnikRequestR>().count().find() > 0
         _uiState.value = UiStateUserData(userExists)
     }
 
-    suspend fun insertPrijavljeniKorisnik(korisnickoImePK: String, sifraPK: String): PrijavljeniKorisnikR? {
-        return repo.insertPrijavljeniKorisnik(korisnickoImePK, sifraPK)
+    suspend fun insertKorisnik(imeK: String, prezimeK: String, korisnickoImeK: String, sifraK: String, emailK: String, nacinPrijaveK: String, idTokenK: String, idTokenLast256K: String): KorisnikRequestR? {
+        return repo.insertKorisnik(imeK, prezimeK, korisnickoImeK, sifraK, emailK, nacinPrijaveK, idTokenK, idTokenLast256K)
     }
 
     suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {

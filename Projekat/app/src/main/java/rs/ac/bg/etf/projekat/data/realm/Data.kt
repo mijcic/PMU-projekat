@@ -5,12 +5,17 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import kotlin.reflect.KClass
 
-// PrijavljeniKorisnik table
-open class PrijavljeniKorisnikR : RealmObject {
+open class KorisnikRequestR : RealmObject {
     @PrimaryKey
     var idKorisnik: Int = 0
+    var ime: String = ""
+    var prezime: String = ""
     var korisnickoIme: String = ""
     var sifra: String = ""
+    var email: String = ""
+    var nacinPrijave: String = ""
+    var idToken: String = ""
+    var idTokenLast256: String = ""
 }
 
 // Enum for stZlocin
@@ -652,7 +657,6 @@ val realmClasses = listOf(
     DokazOsumnjicenR::class,
     AlibiR::class,
     OdnosOsumnjicenZrtvaR::class,
-    PrijavljeniKorisnikR::class,
     PitanjeIspitivanjeOsumnjicenogR::class,
     PitanjeR::class,
     OdgovorR::class,
@@ -707,7 +711,7 @@ object RealmSchemaProvider {
         DokazOsumnjicenR::class,
         AlibiR::class,
         OdnosOsumnjicenZrtvaR::class,
-        PrijavljeniKorisnikR::class,
+        KorisnikRequestR::class,
         PitanjeIspitivanjeOsumnjicenogR::class,
         PitanjeR::class,
         OdgovorR::class,

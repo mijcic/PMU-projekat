@@ -59,9 +59,10 @@ CREATE TABLE `Korisnik` (
     email VARCHAR(255) NOT NULL UNIQUE,
     nacinPrijave VARCHAR(50) NOT NULL,  -- Na primer: 'Google', 'Facebook', 'Email'
     idToken VARCHAR(2048) NOT NULL,
-    UNIQUE KEY uniq_id_token (idToken(256)),
+    idTokenLast256 VARCHAR(256) GENERATED ALWAYS AS (RIGHT(idToken, 256)) STORED,
     poeni INT DEFAULT 0,
-    poslednjaAktivnost DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    poslednjaAktivnost DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE (idTokenLast256)
 );
 
 -- Tabela za tipove zločina (statični podaci)

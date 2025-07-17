@@ -788,10 +788,16 @@ class RepositoryInsert(private val conn: Connection){
     // log in
 
     fun logIn(korisnik: KorisnikRequest): Boolean {
-        val query = """
-        SELECT * FROM korisnik WHERE korisnickoIme = ? AND sifra = ?
-    """
-        var conn: Connection? = null
+        val nacinPrijave = korisnik.nacinPrijave
+
+        val query = when (nacinPrijave) {
+            "Google" -> "SELECT * FROM korisnik WHERE email = ? AND nacinPrijave = 'Google'"
+            else -> "SELECT * FROM korisnik WHERE korisnickoIme = ? AND sifra = ?"
+        }
+//        val query = """
+//        SELECT * FROM korisnik WHERE korisnickoIme = ? AND sifra = ? AND idTokenLast256 = ?
+//    """
+        // var conn: Connection? = null
         var statement: PreparedStatement? = null
         var resultSet: ResultSet? = null
 
@@ -799,8 +805,15 @@ class RepositoryInsert(private val conn: Connection){
             //conn = getDatabaseConnection()
             statement = conn?.prepareStatement(query)
 
-            statement?.setString(1, korisnik.korisnickoIme)
-            statement?.setString(2, korisnik.sifra)
+            when (nacinPrijave) {
+                "Google" -> {
+                    statement?.setString(1, korisnik.email)
+                }
+                else -> {
+                    statement?.setString(1, korisnik.korisnickoIme)
+                    statement?.setString(2, korisnik.sifra)
+                }
+            }
 
             resultSet = statement?.executeQuery()
 
