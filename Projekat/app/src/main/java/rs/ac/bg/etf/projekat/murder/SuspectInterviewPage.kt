@@ -122,7 +122,8 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
                                     onFinished = {
                                         selectedCategory = null
                                     },
-                                    modifier = Modifier.align(Alignment.BottomCenter)
+                                    modifier = Modifier.align(Alignment.BottomCenter),
+                                    title=title
                                 )
                             }
                         }
@@ -243,7 +244,8 @@ fun FinishInvestigationButton(
     uiPitanjaZaOsumnjicenog:  UiStatePitanjaZaOsumnjicenog,
     myViewModel: MyViewModel,
     onFinished: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: String
 ) {
     Button(
         onClick = {
@@ -254,6 +256,9 @@ fun FinishInvestigationButton(
                 myViewModel.selectIspitivanjeOsumnjicenogZadatakViewModel(it)?.let { zadatak ->
                     myViewModel.updateSuspectTask(zadatak)
                 }
+            }
+            if(suspectId==null){
+                myViewModel.updatePitanjaZaOsumnjicenogPitanjaEmptyViewModel(title)
             }
 
             onFinished()

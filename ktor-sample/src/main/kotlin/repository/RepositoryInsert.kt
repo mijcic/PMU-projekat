@@ -1529,7 +1529,7 @@ class RepositoryInsert(private val conn: Connection){
 
             statement.setInt(1, svedokData.idSvedok)
             statement.setInt(2, zadatakData.idZadatak)
-            statement.setBoolean(3, ispitivanjeSvedokaZadatakData.uradjen)
+            statement.setBoolean(3, false)
             statement.executeUpdate()
 
             resultSet = statement.generatedKeys

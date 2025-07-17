@@ -69,6 +69,71 @@ class CommonRepository @Inject constructor(
         return pitanja
     }
 
+    suspend fun updatePitanjaZaOsumnjicenogPitanjaEmpty(osumnjicen: String){
+        realm.write {
+            val ispitivanjeZ = query(
+                IspitivanjeOsumnjicenogZadatakR::class,
+                "osumnjicenId.osobaId.ime == $0",
+                osumnjicen
+            ).first().find()
+
+            if (ispitivanjeZ != null) {
+                ispitivanjeZ.uradjen = true
+
+                val zadatak = query(
+                    ZadatakR::class,
+                    "idZadatak == $0",
+                    ispitivanjeZ.zadatakId?.idZadatak
+                ).first().find()
+
+                if (zadatak != null) {
+                    zadatak.uradjen = true
+                    println("Zadatak  označen kao uradjen.")
+                } else {
+                    println("Zadatak  nije pronađen.")
+                }
+            } else {
+                println("Ispitivanje  nije pronađeno.")
+            }
+        }
+    }
+
+
+    suspend fun updatePitanjaZaSvedokaPitanjaEmpty(svedok: String){
+        Log.d("SVEDOK ",svedok)
+        realm.write {
+            val ispitivanjeZ = query(
+                IspitivanjeSvedokaZadatakR::class,
+                "svedokId.osobaId.ime == $0",
+                svedok
+            ).first().find()
+
+            Log.d("SVEDOK ",ispitivanjeZ?.idIspitivanjeSvedokaZadatak.toString())
+            Log.d("SVEDOK ",ispitivanjeZ?.zadatakId.toString())
+
+            if (ispitivanjeZ != null) {
+                ispitivanjeZ.uradjen = true
+
+                val zadatak = query(
+                    ZadatakR::class,
+                    "idZadatak == $0",
+                    ispitivanjeZ.zadatakId?.idZadatak
+                ).first().find()
+
+                Log.d("SVEDOK ",zadatak?.idZadatak.toString())
+
+                if (zadatak != null) {
+                    zadatak.uradjen = true
+                    println("Zadatak  označen kao uradjen.")
+                } else {
+                    println("Zadatak  nije pronađen.")
+                }
+            } else {
+                println("Ispitivanje  nije pronađeno.")
+            }
+        }
+    }
+
     suspend fun selectPitanjaBySvedok(svedokId: String): List<PitanjeIspitivanjeSvedokaR> {
         val pitanja: List<PitanjeIspitivanjeSvedokaR>
 
@@ -133,66 +198,85 @@ class CommonRepository @Inject constructor(
     }
 
     suspend fun updateDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId: Int ) {
-        val realm = realm
         realm.write {
-            val dokazZadaci = query(DokazZadatakR::class).find()
-
-            val dokazZadatak = dokazZadaci.firstOrNull { it.idDokazZadatak == dokazZadatakId }
+            val dokazZadatak = query(DokazZadatakR::class, "idDokazZadatak == $0", dokazZadatakId)
+                .first().find()
 
             if (dokazZadatak != null) {
                 dokazZadatak.uradjen = true
+                println("Označen DokazZadatak $dokazZadatakId kao uradjen.")
 
-                val zadaci = query(ZadatakR::class).find()
-
-                val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+                val zadatak = query(ZadatakR::class, "idZadatak == $0", zadatakId)
+                    .first().find()
 
                 if (zadatak != null) {
                     zadatak.uradjen = true
+                    println("Označen Zadatak $zadatakId kao uradjen.")
+                } else {
+                    println("Zadatak $zadatakId nije pronađen.")
                 }
+            } else {
+                println("DokazZadatak $dokazZadatakId nije pronađen.")
             }
         }
     }
 
     suspend fun updateForenzickiDokazZadatakAndZadatak(zadatakId: Int,dokazZadatakId: Int ) {
-        val realm = realm
         realm.write {
-            val dokazZadaci = query(ForenzickiDokazZadatakR::class).find()
-
-            val dokazZadatak = dokazZadaci.firstOrNull { it.idForenzickiDokazZadatak == dokazZadatakId }
+            val dokazZadatak = query(
+                ForenzickiDokazZadatakR::class,
+                "idForenzickiDokazZadatak == $0",
+                dokazZadatakId
+            ).first().find()
 
             if (dokazZadatak != null) {
                 dokazZadatak.uradjen = true
+                println("Forenzički dokaz $dokazZadatakId označen kao uradjen.")
 
-                val zadaci = query(ZadatakR::class).find()
-
-                val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+                val zadatak = query(
+                    ZadatakR::class,
+                    "idZadatak == $0",
+                    zadatakId
+                ).first().find()
 
                 if (zadatak != null) {
                     zadatak.uradjen = true
+                    println("Zadatak $zadatakId označen kao uradjen.")
+                } else {
+                    println("Zadatak $zadatakId nije pronađen.")
                 }
+            } else {
+                println("Forenzički dokaz $dokazZadatakId nije pronađen.")
             }
         }
     }
 
-    suspend fun updateIspitivanjeOsumnjicenogZadatak(ispitivanjeOsumnjicenogZadatak: Int,zadatakId:Int ) {
-        val realm = realm
-
+    suspend fun updateIspitivanjeOsumnjicenogZadatak(ispitivanjeOsumnjicenogZadatakId: Int,zadatakId:Int ) {
         realm.write {
-            val ispitivanje = query(IspitivanjeOsumnjicenogZadatakR::class).find()
-
-            val ispitivanjeZ =
-                ispitivanje.firstOrNull { it.idIspitivanjeOsumnjicenogZadatak == ispitivanjeOsumnjicenogZadatak }
+            val ispitivanjeZ = query(
+                IspitivanjeOsumnjicenogZadatakR::class,
+                "idIspitivanjeOsumnjicenogZadatak == $0",
+                ispitivanjeOsumnjicenogZadatakId
+            ).first().find()
 
             if (ispitivanjeZ != null) {
                 ispitivanjeZ.uradjen = true
+                println("Ispitivanje osumnjičenog $ispitivanjeOsumnjicenogZadatakId označeno kao uradjeno.")
 
-                val zadaci = query(ZadatakR::class).find()
-
-                val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+                val zadatak = query(
+                    ZadatakR::class,
+                    "idZadatak == $0",
+                    zadatakId
+                ).first().find()
 
                 if (zadatak != null) {
                     zadatak.uradjen = true
+                    println("Zadatak $zadatakId označen kao uradjen.")
+                } else {
+                    println("Zadatak $zadatakId nije pronađen.")
                 }
+            } else {
+                println("Ispitivanje $ispitivanjeOsumnjicenogZadatakId nije pronađeno.")
             }
         }
     }
@@ -209,25 +293,32 @@ class CommonRepository @Inject constructor(
 
 
 
-    suspend fun updateIspitivanjeSvedokaZadatak(ispitivanjeSvedokaZadatak: Int,zadatakId:Int ) {
-        val realm = realm
-
+    suspend fun updateIspitivanjeSvedokaZadatak(ispitivanjeSvedokaZadatakId: Int,zadatakId:Int ) {
         realm.write {
-            val ispitivanje = query(IspitivanjeSvedokaZadatakR::class).find()
-
-            val ispitivanjeZ =
-                ispitivanje.firstOrNull { it.idIspitivanjeSvedokaZadatak == ispitivanjeSvedokaZadatak }
+            val ispitivanjeZ = query(
+                IspitivanjeSvedokaZadatakR::class,
+                "idIspitivanjeSvedokaZadatak == $0",
+                ispitivanjeSvedokaZadatakId
+            ).first().find()
 
             if (ispitivanjeZ != null) {
                 ispitivanjeZ.uradjen = true
+                println("Ispitivanje svedoka $ispitivanjeSvedokaZadatakId označeno kao uradjeno.")
 
-                val zadaci = query(ZadatakR::class).find()
-
-                val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+                val zadatak = query(
+                    ZadatakR::class,
+                    "idZadatak == $0",
+                    zadatakId
+                ).first().find()
 
                 if (zadatak != null) {
                     zadatak.uradjen = true
+                    println("Zadatak $zadatakId označen kao uradjen.")
+                } else {
+                    println("Zadatak $zadatakId nije pronađen.")
                 }
+            } else {
+                println("Ispitivanje svedoka $ispitivanjeSvedokaZadatakId nije pronađeno.")
             }
         }
     }
@@ -242,25 +333,32 @@ class CommonRepository @Inject constructor(
     }
 
 
-    suspend fun updateTelefonZadatak(telefonZadatak: Int,zadatakId:Int ) {
-        val realm = realm
-
+    suspend fun updateTelefonZadatak(telefonZadatakId: Int,zadatakId:Int ) {
         realm.write {
-            val telefon = query(TelefonZadatakR::class).find()
-
-            val telefonZ =
-                telefon.firstOrNull { it.idTelefonZadatak == telefonZadatak }
+            val telefonZ = query(
+                TelefonZadatakR::class,
+                "idTelefonZadatak == $0",
+                telefonZadatakId
+            ).first().find()
 
             if (telefonZ != null) {
                 telefonZ.uradjen = true
+                println("TelefonZadatak $telefonZadatakId označen kao uradjen.")
 
-                val zadaci = query(ZadatakR::class).find()
-
-                val zadatak = zadaci.firstOrNull { it.idZadatak == zadatakId }
+                val zadatak = query(
+                    ZadatakR::class,
+                    "idZadatak == $0",
+                    zadatakId
+                ).first().find()
 
                 if (zadatak != null) {
                     zadatak.uradjen = true
+                    println("Zadatak $zadatakId označen kao uradjen.")
+                } else {
+                    println("Zadatak $zadatakId nije pronađen.")
                 }
+            } else {
+                println("TelefonZadatak $telefonZadatakId nije pronađen.")
             }
         }
     }
@@ -295,6 +393,7 @@ class CommonRepository @Inject constructor(
             false
         ).find()
 
+        Log.d("Telefon select",zadaci.firstOrNull().toString())
         return zadaci.firstOrNull()
     }
 
@@ -311,27 +410,28 @@ class CommonRepository @Inject constructor(
 
 //Mysterious Symptoms
 
-    suspend fun selectPacijent(): PacijentR {
-        val pacijent: PacijentR
-        pacijent = realm.query<PacijentR>().find().first()
+    suspend fun selectPacijent(): PacijentR? {
+        val pacijent: PacijentR?
+        pacijent = realm.query<PacijentR>().find().firstOrNull()
+
         return pacijent
     }
 
-    suspend fun selectMedicinskiIzvestaj(): MedicinskiIzvestajR {
-        val med: MedicinskiIzvestajR
-        med = realm.query<MedicinskiIzvestajR>().find().first()
+    suspend fun selectMedicinskiIzvestaj(): MedicinskiIzvestajR? {
+        val med: MedicinskiIzvestajR?
+        med = realm.query<MedicinskiIzvestajR>().find().firstOrNull()
         return med
     }
 
-    suspend fun selectLekarskiTest(): LekarskiTestR {
-        val lek: LekarskiTestR
-        lek = realm.query<LekarskiTestR>().find().first()
+    suspend fun selectLekarskiTest(): LekarskiTestR? {
+        val lek: LekarskiTestR?
+        lek = realm.query<LekarskiTestR>().find().firstOrNull()
         return lek
     }
 
-    suspend fun selectIzjavaZaPacijenta(): IzjavaZaPacijentaR {
-        val izj: IzjavaZaPacijentaR
-        izj = realm.query<IzjavaZaPacijentaR>().find().first()
+    suspend fun selectIzjavaZaPacijenta(): IzjavaZaPacijentaR? {
+        val izj: IzjavaZaPacijentaR?
+        izj = realm.query<IzjavaZaPacijentaR>().find().firstOrNull()
         return izj
     }
 

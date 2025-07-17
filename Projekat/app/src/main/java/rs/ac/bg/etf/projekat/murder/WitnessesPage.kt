@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.murder
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -178,6 +179,7 @@ fun WitnessesList(
         ) {
             item {
                 uiStateDataZlocin.witnesses.forEach { witness ->
+                    Log.d("GEMINI WIT",witness.idSvedok.toString())
                     witness.osobaId?.let { osoba ->
                         WitnessCardWithImage(
                             osobaId = osoba.idOsoba,

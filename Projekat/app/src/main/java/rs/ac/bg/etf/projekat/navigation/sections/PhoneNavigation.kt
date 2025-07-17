@@ -23,7 +23,7 @@ import rs.ac.bg.etf.projekat.phone.WhatsAppPage
 
 fun NavGraphBuilder.phoneNavigation(navController: NavHostController,myViewModel: MyViewModel) {
     composable("destinationPhonePage") {
-        PhonePage(navController)
+        PhonePage(navController,myViewModel)
     }
     composable("destinationWhatsAppPage") {
         WhatsAppPage(navController)

@@ -23,6 +23,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,17 +60,13 @@ import java.util.Locale
 fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, myViewModel: MyViewModel) {
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.patient),
-            contentDescription = "Background Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    LaunchedEffect(uiStateDataMysteriousSymptoms) {
+        myViewModel.getAllDataMysteriousSymptoms()
+    }
 
-        Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.7f))
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        PatientBackground()
 
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -264,4 +261,16 @@ fun PacijentInfoCard(icon: String, title: String, description: String, onClick: 
             }
         }
     }
+}
+
+@Composable
+fun PatientBackground(){
+    Image(
+        painter = painterResource(id = R.drawable.patient),
+        contentDescription = "Background Image",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.7f)))
 }

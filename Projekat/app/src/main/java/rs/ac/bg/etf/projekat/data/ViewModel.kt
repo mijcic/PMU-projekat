@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.Dispatchers
@@ -115,7 +116,7 @@ class MyViewModel @Inject constructor(
         try {
             val response = commonRepository.selectAllOsumnjiceni()
             val response2 = commonRepository.selectAllSvedoci()
-            Log.d("GETALL", "Svedoci iz baze: ${response2}") // ovde mora da ima sadrzaj
+            Log.d("GETALL", "Svedoci iz baze: ${response2.size}") // ovde mora da ima sadrzaj
 
             val response3 = commonRepository.selectVictim()
 
@@ -196,6 +197,17 @@ class MyViewModel @Inject constructor(
     val uiStateCntForensicEvidence: StateFlow<UiStateCntForensicEvidence> =
         _uiStateCntForensicEvidence
 
+    fun clearCnt() = viewModelScope.launch {
+        try {
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt = 0)
+            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = 0)
+        } catch (e:Exception){
+            e.printStackTrace()
+            _uiStateCntEvidence.value = UiStateCntEvidence(cnt=0)
+            _uiStateCntForensicEvidence.value = UiStateCntForensicEvidence(forensicCnt = 0)
+        }
+    }
+
     fun cntIncrement(cnt: Int) = viewModelScope.launch {
         try {
             _uiStateCntEvidence.value = UiStateCntEvidence(cnt = cnt + 1)
@@ -257,7 +269,17 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    fun updatePitanjaZaOsumnjicenogPitanjaEmptyViewModel(osumnjicen: String) = viewModelScope.launch {
+        commonRepository.updatePitanjaZaOsumnjicenogPitanjaEmpty(osumnjicen)
+    }
+
+    fun updatePitanjaZaSvedokaPitanjaEmptyViewModel(svedok: String) = viewModelScope.launch {
+        commonRepository.updatePitanjaZaSvedokaPitanjaEmpty(svedok)
+    }
+
     fun updateWitnessTask(zadatak: IspitivanjeSvedokaZadatakR) = viewModelScope.launch {
+        Log.d("SVEDOK zad", zadatak.zadatakId?.idZadatak.toString())
+        Log.d("SVEDOK zadI", zadatak.idIspitivanjeSvedokaZadatak.toString())
         zadatak.zadatakId?.idZadatak?.let {
             commonRepository.updateIspitivanjeSvedokaZadatak(
                 zadatak.idIspitivanjeSvedokaZadatak,
@@ -461,9 +483,9 @@ class MyViewModel @Inject constructor(
 
             var osumnjiceni: MutableList<OsumnjicenR> = mutableListOf()
             for (o in response.osumnjiceniRetrofit!!) {
-                val m = o.motiv?.let { realmViewModel.insertMotiv(it.opis) }
+                val m = o.motiv.let { realmViewModel.insertMotiv(it.opis) }
 
-                val millisOsumnjiceni = o.osobaId?.datum
+                val millisOsumnjiceni = o.osobaId.datum
                 val instantOsumnjiceni = millisOsumnjiceni?.let { Instant.ofEpochMilli(it) }
                 val realmInstantOsumnjiceni = instantOsumnjiceni?.let {
                     RealmInstant.from(
@@ -1291,11 +1313,13 @@ class MyViewModel @Inject constructor(
             val responseIzjava = commonRepository.selectIzjavaZaPacijenta()
             val responseLekarskiTest= commonRepository.selectLekarskiTest()
             val responseLokacije = commonRepository.selectLokacijeIstrageR()
+            Log.d("GEMINI GET selectPacijent",response.toString())
             Log.d("GEMINI GET LOKACIJE",responseLokacije.toString())
             _uiStateMysteriousSymptomsData.value =
-                UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = responseLekarskiTest, locations = responseLokacije)
+                UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = null, locations = responseLokacije)
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("GEMINI GET GRE","greska")
             _uiStateMysteriousSymptomsData.value =
                 UiStateDataMysteriousSymptoms(patient = null,medicalReport = null, statement = null, tests = null, locations = emptyList())
         }
@@ -1316,6 +1340,8 @@ class MyViewModel @Inject constructor(
     fun selectIspitivanjeSvedokaZadatakViewModel(svedokZ:SvedokR?): IspitivanjeSvedokaZadatakR? {
         return commonRepository.selectIspitivanjeSvedokaZadatak(svedokZ)
     }
+
+
 }
 
 data class UiStateZlocin(

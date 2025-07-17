@@ -164,7 +164,7 @@ fun CardWithImage(
                     onClick = {
                         isLoading = true
                         realmViewModel.clearDatabase()
-
+                        myViewModel.clearCnt()
                         myViewModel.getGeminiData(
                             realmViewModel,
                             onSuccess = {
@@ -320,13 +320,12 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
                     onClick = {
                         isLoading = true
                         realmViewModel.clearDatabase()
-
+                        myViewModel.clearCnt()
                         myViewModel.getGeminiDataMS(
                             realmViewModel,
                             onSuccess = {
                                 isLoading = false
                                 showDialog = false
-                                //insertIntoDatabase()
                                 navController.navigate(
                                     destinationMissionPage.route + "/" + image + "/" +
                                             "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
@@ -533,7 +532,7 @@ fun getCases(realmViewModel: RealmViewModel): List<CaseCard> {
             description = "Investigate strange diseases or unusual deaths, connecting the " +
                     "dots between mysterious health " +
                     "conditions and criminal activity.",
-            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            onClick = { },
             titleMP = "",
             dateMP = "",
             placeMP = "",
@@ -546,7 +545,7 @@ fun getCases(realmViewModel: RealmViewModel): List<CaseCard> {
                     "mafia organizations, " +
                     "investigating murders, extortion, drug trafficking, and other " +
                     "heinous crimes.",
-            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            onClick = {  },
             titleMP = "",
             dateMP = "",
             placeMP = "",
@@ -559,7 +558,7 @@ fun getCases(realmViewModel: RealmViewModel): List<CaseCard> {
                     "motives behind crimes of passion, " +
                     "such as murders driven by jealousy " +
                     "or violent love affairs.",
-            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            onClick = { },
             titleMP = "",
             dateMP = "",
             placeMP = "",
@@ -570,7 +569,7 @@ fun getCases(realmViewModel: RealmViewModel): List<CaseCard> {
             title = " False Identities \uD83E\uDEAA",
             description = "Solve cases involving the use of fake or stolen identities for illegal activities, " +
                     "uncovering the culprits behind them.",
-            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            onClick = { },
             titleMP = "",
             dateMP = "",
             placeMP = "",
@@ -581,7 +580,7 @@ fun getCases(realmViewModel: RealmViewModel): List<CaseCard> {
             title = "Cults and Sects \uD83D\uDC80",
             description = "Uncover the sinister operations of dangerous cults or ideological " +
                     "sects, revealing manipulation, brainwashing, and murder.",
-            onClick = { realmViewModel.insertDataForMysteriousSymptoms() },
+            onClick = { },
             titleMP = "",
             dateMP = "",
             placeMP = "",

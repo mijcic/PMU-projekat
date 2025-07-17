@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.murder
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,6 +54,8 @@ fun SuspectsPage(navController: NavController, myViewModel: MyViewModel, realmVi
     LaunchedEffect(uiStateDataZlocin.suspects) {
         myViewModel.getAllDataZlocin()
     }
+    Log.d("GEMINI ",uiStateDataZlocin.suspects.size.toString())
+
 
     Box(modifier = Modifier.fillMaxSize()) {
 

@@ -2,7 +2,6 @@ package com.example.service.get
 
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofitMysteriousSymptoms
 import com.example.data.remote.service.*
-import com.example.models.dto.service.*
 import com.example.repository.RepoInterface
 
 
