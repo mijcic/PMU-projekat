@@ -18,4 +18,8 @@ interface GeminiResponseParser {
      * @return Parsed and mapped [GeminiResponseRetrofit] object.
      */
     suspend fun parseGeminiResponse(response: GeminiResponse): GeminiResponseRetrofit
+
+    suspend fun parseGeminiResponseMurderStep1(response: GeminiResponse): String
+
+    suspend fun parseGeminiResponseMurderStep2(response: GeminiResponse): String
 }

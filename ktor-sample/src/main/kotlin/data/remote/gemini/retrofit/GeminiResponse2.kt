@@ -87,3 +87,15 @@ data class GeminiResponse2(
     override val telefonZadatakR: List<TelefonZadatakR>,
     override val forenzickiDokazZadatakR: List<ForenzickiDokazZadatakR>,
 ) : GeminiResponseCommon2
+
+@Serializable
+data class GeminiResponse2Step1(
+    val zlocinR: ZlocinR,
+    val zrtvaR: ZrtvaR
+)
+
+@Serializable
+data class GeminiResponse2Step2(
+    val osumnjicenR:  List<OsumnjicenR>,
+    val svedokR:  List<SvedokR>
+)

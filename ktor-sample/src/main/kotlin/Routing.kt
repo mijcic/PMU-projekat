@@ -58,8 +58,8 @@ fun Application.configureRouting() {
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
-        // password = "1234"
-        password = "mia123"
+         password = "1234"
+       // password = "mia123"
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
@@ -105,6 +105,45 @@ fun Application.configureRouting() {
                     call.respond(HttpStatusCode.InternalServerError, mapOf("error" to it.message))
                 }
         }
+
+        post("/geminiMurderStorySteps") {
+            println("geminiMurderStorySteps")
+
+            // Ako ti ne treba body iz requesta
+            // val requestData = call.receiveOrNull<Story>()
+
+            val jsonMurder = JsonLoader.getJsonMurderSteps(1,"")
+            val json = JSONObject(jsonMurder)
+
+            val prompt = json.getString("prompt")
+            val tables = json.getJSONObject("tables").toString()
+
+            //println("Prompt: $prompt")
+            //println("Tables: $tables")
+
+            val result = geminiService.generateContentStep1Murder(prompt,tables)
+
+            println(result)
+
+            val jsonMurder2 = JsonLoader.getJsonMurderSteps(2,result.toString())
+            val json2 = JSONObject(jsonMurder2)
+
+            val prompt2 = json2.getString("prompt")
+            val tables2 = json2.getJSONObject("tables").toString()
+
+            println("\n\n")
+           // println(prompt2)
+            //println(tables2)
+
+            val result2 = geminiService.generateContentStep2Murder(prompt2,tables2)
+
+            println(result2)
+
+            call.respond(
+                "OK"
+            )
+        }
+
         post("/geminiMSStory") {
             val requestData = call.receive<Story>()
             val jsonMS = JsonLoader.getJsonMysteriousSymptoms()

@@ -1,9 +1,157 @@
 package com.example.utils
 
+import org.json.JSONObject
+
 /**
  * Utility object for loading static JSON content used for initial data population.
  */
 object JsonLoader {
+
+    fun getJsonMurderSteps(step: Int,prev:String): String {
+        return when(step) {
+            1 -> getJsonMurderStep1() // return zlocinR i zrtvaR
+            2 -> getJsonMurderStep2(prev)// vraća osumnjičene i svedoke
+            //   3 -> // vraća dokaze
+            // 4 -> // vraća komunikaciju
+            //5 -> // vraća zadatke
+            //6 -> // vraća pitanja i odgovore
+            else -> "{}"
+        }
+    }
+
+
+    fun getJsonMurderStep1():String {
+        val jsonString = """
+        {
+          "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele.  Koristi sledeće tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
+          "tables": {
+          "zlocinR": {
+            "idZlocin": 1,
+            "tipZlocinaId": 1,
+            "naziv": "Murder of Isabelle Moreau",
+            "datum": "2025-04-17",
+            "mesto": "Casino Hotel, Paris",
+            "opis": "Isabelle Moreau, a high-profile gambler, was found dead in her hotel room with a knife wound. The investigation is ongoing.",
+            "status": "u_istrazi"
+          },
+          "zrtvaR": {
+            "idZrtva": 1,
+            "tipZrtve": "Individual",
+            "detalji": "Isabelle Moreau, a 32-year-old gambler known for her luxurious lifestyle and turbulent relationships, was found murdered in her hotel room.",
+            "statusZrtva": "ziva",
+            "zlocinId": 1,
+            "osobaId": {
+              "idOsoba": 1,
+              "ime": "Isabelle Moreau",
+              "kontakt": "+33612345678",
+              "datum": "1993-04-12",
+              "zanimanje": "Gambler",
+              "pol": "zenski",
+              "zlocinId": 1
+            }
+          }
+        }
+        }
+        """.trimIndent()
+
+        return jsonString
+    }
+
+
+
+    fun getJsonMurderStep2(step1:String):String {
+        val jsonString = """
+        {
+          "prompt": "Dopuni zapocetu pricu za detektivsku aplikaciju o ubistvu.Pocetna prica ce biti data na kraju. Popuni sve podatke u tabelama kao u primeru koji dajem ispod - OsumnjicenR i SvedokR, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu.  Koristi sledeće tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. OsumnjicenR treba da ima barem 4 elemenata, a svedokR 2.",
+          "tables": {
+            "osumnjicenR": [
+            {
+              "idOsumnjicen": 1,
+              "status": 0,
+              "tipOsumnjicen": "Pojedinac",
+              "motiv": {
+                "idMotiv": 1,
+                "opis": "Financial struggles and jealousy."
+              },
+              "zlocinId": 1,
+              "kriv": 0,
+              "osobaId": {
+                "idOsoba": 2,
+                "ime": "Amelia Fontaine",
+                "kontakt": "+33623456789",
+                "datum": "1990-06-14",
+                "zanimanje": "Casino Dealer",
+                "pol": "zenski",
+                "zlocinId": 1
+              }
+            },
+            {
+              "idOsumnjicen": 2,
+              "status": 0,
+              "tipOsumnjicen": "Pojedinac",
+              "motiv": {
+                "idMotiv": 2,
+                "opis": "Financial problems linked to Isabelle's gambling habits."
+              },
+              "zlocinId": 1,
+              "kriv": 0,
+              "osobaId": {
+                "idOsoba": 3,
+                "ime": "Marco Bellini",
+                "kontakt": "+33698765432",
+                "datum": "1985-02-21",
+                "zanimanje": "Gambler",
+                "pol": "muski",
+                "zlocinId": 1
+              }
+            }
+          ],
+          "svedokR": [
+            {
+              "idSvedok": 1,
+              "izjava": "Amelia Fontaine was seen leaving Isabelle's room shortly before the body was discovered. She seemed anxious.",
+              "statusSvedok": "aktivno",
+              "statusIspitan": 0,
+              "zlocinId": 1,
+              "osobaId": {
+                "idOsoba": 4,
+                "ime": "Luc Moreau",
+                "kontakt": "+33622334455",
+                "datum": "1989-08-05",
+                "zanimanje": "Hotel Staff",
+                "pol": "muski",
+                "zlocinId": 1
+              }
+            },
+            {
+              "idSvedok": 2,
+              "izjava": "I overheard a heated argument between Isabelle and Marco, but I couldn't understand what was being said.",
+              "statusSvedok": "aktivno",
+              "statusIspitan": 0,
+              "zlocinId": 1,
+              "osobaId": {
+                "idOsoba": 5,
+                "ime": "Vincent Duval",
+                "kontakt": "+33644455566",
+                "datum": "1987-12-01",
+                "zanimanje": "Casino Manager",
+                "pol": "muski",
+                "zlocinId": 1
+              }
+            }
+          ]
+          
+        }
+        }
+        """.trimIndent()
+
+        val jsonObject = JSONObject(jsonString)
+        val prompt = jsonObject.getString("prompt")
+        val extendedPrompt = "$prompt\nPocetna prica:\n$step1"
+        jsonObject.put("prompt", extendedPrompt)
+        return jsonObject.toString()
+
+    }
 
     /**
      * Returns a JSON string representing a detailed murder case scenario.
