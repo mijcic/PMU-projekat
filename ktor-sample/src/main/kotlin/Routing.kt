@@ -108,36 +108,121 @@ fun Application.configureRouting() {
 
         post("/geminiMurderStorySteps") {
             println("geminiMurderStorySteps")
-
-            // Ako ti ne treba body iz requesta
-            // val requestData = call.receiveOrNull<Story>()
-
-            val jsonMurder = JsonLoader.getJsonMurderSteps(1,"")
+            /*step1*/
+            val jsonMurder = JsonLoader.getJsonMurderSteps(1,"","","","")
             val json = JSONObject(jsonMurder)
-
             val prompt = json.getString("prompt")
             val tables = json.getJSONObject("tables").toString()
-
-            //println("Prompt: $prompt")
-            //println("Tables: $tables")
-
             val result = geminiService.generateContentStep1Murder(prompt,tables)
+            //println(result)
 
-            println(result)
+            val rawResultString = result.getOrNull()
+            if (rawResultString != null) {
+                val prettyPrinted = rawResultString
+                    .replace(",", ",\n")
+                    .replace("(", "(\n")
+                    .replace(")", "\n)")
+                    .replace("=", ": ")
+                    .replace("Success", "✅ Success")
 
-            val jsonMurder2 = JsonLoader.getJsonMurderSteps(2,result.toString())
+                println("===== Formatirani rezultat =====")
+                println(prettyPrinted)
+            } else {
+                println("❌ Neuspešan rezultat: ${result.exceptionOrNull()?.message}")
+            }
+            println("\n\n")
+
+            /*step2*/
+            val jsonMurder2 = JsonLoader.getJsonMurderSteps(2,result.toString(),"","","")
             val json2 = JSONObject(jsonMurder2)
-
             val prompt2 = json2.getString("prompt")
             val tables2 = json2.getJSONObject("tables").toString()
-
-            println("\n\n")
-           // println(prompt2)
-            //println(tables2)
-
             val result2 = geminiService.generateContentStep2Murder(prompt2,tables2)
+           // println(result2)
 
-            println(result2)
+            val rawResultString2 = result2.getOrNull()
+            if (rawResultString2 != null) {
+                val prettyPrinted = rawResultString2
+                    .replace(",", ",\n")
+                    .replace("(", "(\n")
+                    .replace(")", "\n)")
+                    .replace("=", ": ")
+                    .replace("Success", "✅ Success")
+
+                println("===== Formatirani rezultat 2=====")
+                println(prettyPrinted)
+            } else {
+                println("❌ Neuspešan rezultat: ${result.exceptionOrNull()?.message}")
+            }
+
+            /*step3*/
+
+            val jsonMurder3 = JsonLoader.getJsonMurderSteps(3,result.toString(),result2.toString(),"","")
+            val json3 = JSONObject(jsonMurder3)
+            val prompt3 = json3.getString("prompt")
+            val tables3 = json3.getJSONObject("tables").toString()
+            val result3 = geminiService.generateContentStep3Murder(prompt3,tables3)
+            //println(result3)
+            val rawResultString3 = result3.getOrNull()
+            if (rawResultString3 != null) {
+                val prettyPrinted3 = rawResultString3
+                    .replace(",", ",\n")
+                    .replace("(", "(\n")
+                    .replace(")", "\n)")
+                    .replace("=", ": ")
+                    .replace("Success", "✅ Success")
+
+                println("===== Formatirani rezultat 3=====")
+                println(prettyPrinted3)
+            } else {
+                println("❌ Neuspešan rezultat: ${result.exceptionOrNull()?.message}")
+            }
+
+            /*step4*/
+            val jsonMurder4 = JsonLoader.getJsonMurderSteps(4,result.toString(),result2.toString(),result3.toString(),"")
+            val json4 = JSONObject(jsonMurder4)
+            val prompt4 = json4.getString("prompt")
+            val tables4 = json4.getJSONObject("tables").toString()
+            val result4 = geminiService.generateContentStep4Murder(prompt4,tables4)
+            //println(result3)
+            val rawResultString4 = result4.getOrNull()
+            if (rawResultString4 != null) {
+                val prettyPrinted4 = rawResultString4
+                    .replace(",", ",\n")
+                    .replace("(", "(\n")
+                    .replace(")", "\n)")
+                    .replace("=", ": ")
+                    .replace("Success", "✅ Success")
+
+                println("===== Formatirani rezultat 4=====")
+                println(prettyPrinted4)
+            } else {
+                println("❌ Neuspešan rezultat: ${result.exceptionOrNull()?.message}")
+            }
+
+            /*step5*/
+            /*
+            val jsonMurder5 = JsonLoader.getJsonMurderSteps(5,result.toString(),result2.toString(),result3.toString(),"")
+            val json5 = JSONObject(jsonMurder5)
+            val prompt5 = json5.getString("prompt")
+            val tables5 = json5.getJSONObject("tables").toString()
+            val result5 = geminiService.generateContentStep5Murder(prompt5,tables5)
+            //println(result3)
+            val rawResultString5 = result5.getOrNull()
+            if (rawResultString5 != null) {
+                val prettyPrinted5 = rawResultString5
+                    .replace(",", ",\n")
+                    .replace("(", "(\n")
+                    .replace(")", "\n)")
+                    .replace("=", ": ")
+                    .replace("Success", "✅ Success")
+
+                println("===== Formatirani rezultat 5=====")
+                println(prettyPrinted5)
+            } else {
+                println("❌ Neuspešan rezultat: ${result.exceptionOrNull()?.message}")
+            }*/
+
 
             call.respond(
                 "OK"

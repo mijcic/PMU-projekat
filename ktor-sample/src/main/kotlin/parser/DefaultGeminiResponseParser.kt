@@ -1,10 +1,7 @@
 package com.example.parser
 
 import com.example.data.remote.gemini.response.GeminiResponse
-import com.example.data.remote.gemini.retrofit.GeminiResponse2
-import com.example.data.remote.gemini.retrofit.GeminiResponse2Step1
-import com.example.data.remote.gemini.retrofit.GeminiResponse2Step2
-import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.gemini.retrofit.*
 import com.example.data.remote.tables.OsobaData
 import com.example.data.remote.tables.UsedZlocinData
 import com.example.data.remote.tables.ZlocinData
@@ -57,52 +54,11 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
                     it
                 )
             }
-        println(geminiResponse2)
-
-        val geminiResponseRetrofit: GeminiResponseRetrofit = GeminiResponseRetrofit(
-            zlocinRetrofit = null,
-            zrtvaRetrofit = null,
-            osumnjiceniRetrofit = null,
-            dokaziRetrofit =null,
-            telefoniRetrofit = null,
-            forenzickiDokazRetrofit = null,
-            obdukcijaRetrofit = null,
-            svedociRetrofit =null,
-            oneContactRetrofit = null,
-            kontaktiRetrofit = null,
-            porukeRetrofit = null,
-            poziviRetrofit = null,
-            galerijaRetrofit = null,
-            aplikacijeRetrofit = null,
-            tragoviRetrofit = null,
-            dokaziOsumnjiceniRetrofit = null,
-            beleskeRetrofit = null,
-            whatsappKontaktRetrofit = null,
-            whatsappPorukaRetrofit = null,
-            oneCallRetrofit = null,
-            galleryRetrofit = null,
-            obicnePorukeRetrofit = null,
-            odnosiOsumnjiceniZrtvaRetrofit = null,
-            pitanjaRetrofit = null,
-            odgovoriRetrofit = null,
-            pitanjeIspitivanjeOsumnjicenogRetrofit = null,
-            pitanjeIspitivanjeSvedokaRetrofit = null,
-            osobeRetrofit = null,
-            zadaciRetrofit = null,
-            dokaziZadaciRetrofit = null,
-            ispitivanjeOsumnjicenogZadaciRetrofit = null,
-            ispitivanjeSvedokaZadaciRetrofit = null,
-            telefonZadaciRetrofit = null,
-            forenzickiDokazZadaciRetrofit = null
-        )
+        //println(geminiResponse2)
 
 
         //conn?.close()
         return geminiResponse2.toString()
-
-
-
-
     }
 
     override suspend fun parseGeminiResponseMurderStep2(geminiResponse: GeminiResponse): String {
@@ -119,8 +75,56 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
                     it
                 )
             }
-        println(geminiResponse2)
+       // println(geminiResponse2)
 
         return geminiResponse2.toString()
+    }
+
+    override suspend fun parseGeminiResponseMurderStep3(geminiResponse: GeminiResponse): String {
+        val geminiProRepo = GeminiProRepositoryImpl()
+        val json2 = Json { ignoreUnknownKeys = true }
+        val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
+        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        val geminiResponse3: GeminiResponse2Step3? =
+            cleanJsonString2?.let {
+                json2.decodeFromString(
+                    it
+                )
+            }
+        // println(geminiResponse2)
+
+        return geminiResponse3.toString()
+    }
+
+    override suspend fun parseGeminiResponseMurderStep4(geminiResponse: GeminiResponse): String {
+        val geminiProRepo = GeminiProRepositoryImpl()
+        val json2 = Json { ignoreUnknownKeys = true }
+        val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
+        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        val geminiResponse4: GeminiResponse2Step4? =
+            cleanJsonString2?.let {
+                json2.decodeFromString(
+                    it
+                )
+            }
+        // println(geminiResponse2)
+
+        return geminiResponse4.toString()
+    }
+
+    override suspend fun parseGeminiResponseMurderStep5(geminiResponse: GeminiResponse): String {
+        val geminiProRepo = GeminiProRepositoryImpl()
+        val json2 = Json { ignoreUnknownKeys = true }
+        val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
+        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        val geminiResponse5: GeminiResponse2Step5? =
+            cleanJsonString2?.let {
+                json2.decodeFromString(
+                    it
+                )
+            }
+        // println(geminiResponse2)
+
+        return geminiResponse5.toString()
     }
 }

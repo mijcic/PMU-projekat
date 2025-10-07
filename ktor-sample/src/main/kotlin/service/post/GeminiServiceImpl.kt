@@ -28,8 +28,6 @@ class GeminiServiceImpl(
     private val dataParser: GeminiResponseParser
 ) : GeminiService {
 
-
-
     /**
      * Sends a prompt and table data to the Gemini API and parses the response into a [GeminiResponseRetrofit].
      *
@@ -40,13 +38,11 @@ class GeminiServiceImpl(
      * @throws Exception if the API call fails or the response cannot be parsed correctly.
      */
     override suspend fun generateContent(prompt: String, tables: String): Result<GeminiResponseRetrofit> {
-        val request = GeminiRequest(
-            contents = listOf(Content(parts = listOf(Part(text = prompt + tables))))
-        )
+        val request = GeminiRequest(contents = listOf(Content(parts = listOf(Part(text = prompt + tables)))))
 
         return try {
             val t0 = System.currentTimeMillis()
-            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey") {
+            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -83,7 +79,7 @@ class GeminiServiceImpl(
 
         try {
             val t0 = System.currentTimeMillis()
-            val response: HttpResponse = GeminiClient.geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY") {
+            val response: HttpResponse = GeminiClient.geminiClient.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$GEMINI_API_KEY") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -128,7 +124,7 @@ class GeminiServiceImpl(
 
         return try {
 
-            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey") {
+            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -138,7 +134,7 @@ class GeminiServiceImpl(
                 val geminiResponse: GeminiResponse = response.body()
                 val t2 = System.currentTimeMillis()
 
-                println("\n\n"+geminiResponse+"\n\n")
+               // println("\n\n"+geminiResponse+"\n\n")
 
                 val parsed = dataParser.parseGeminiResponseMurderStep1(geminiResponse)
 
@@ -165,7 +161,7 @@ class GeminiServiceImpl(
 
         return try {
 
-            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey") {
+            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -175,11 +171,98 @@ class GeminiServiceImpl(
                 val geminiResponse: GeminiResponse = response.body()
                 val t2 = System.currentTimeMillis()
 
-                println("\n\n"+geminiResponse+"\n\n")
+               // println("\n\n"+geminiResponse+"\n\n")
 
                 val parsed = dataParser.parseGeminiResponseMurderStep2(geminiResponse)
 
 
+                Result.success(
+                    value =parsed
+                )
+            } else {
+                val error = response.bodyAsText()
+                println("Error from Gemini: ${response.status} - $error")
+                Result.failure(Exception("Gemini API error: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            println("Exception during Gemini API call: ${e.message}")
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun generateContentStep3Murder(prompt: String, tables: String): Result<String> {
+        val request = GeminiRequest(contents = listOf(Content(parts = listOf(Part(text = prompt + tables)))))
+
+        return try {
+            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+
+            if (response.status == HttpStatusCode.OK) {
+                val geminiResponse: GeminiResponse = response.body()
+                val t2 = System.currentTimeMillis()
+
+                val parsed = dataParser.parseGeminiResponseMurderStep3(geminiResponse)
+                Result.success(
+                    value =parsed
+                )
+            } else {
+                val error = response.bodyAsText()
+                println("Error from Gemini: ${response.status} - $error")
+                Result.failure(Exception("Gemini API error: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            println("Exception during Gemini API call: ${e.message}")
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun generateContentStep4Murder(prompt: String, tables: String): Result<String> {
+        val request = GeminiRequest(contents = listOf(Content(parts = listOf(Part(text = prompt + tables)))))
+
+        return try {
+            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+
+            if (response.status == HttpStatusCode.OK) {
+                val geminiResponse: GeminiResponse = response.body()
+                val t2 = System.currentTimeMillis()
+
+                val parsed = dataParser.parseGeminiResponseMurderStep4(geminiResponse)
+                Result.success(
+                    value =parsed
+                )
+            } else {
+                val error = response.bodyAsText()
+                println("Error from Gemini: ${response.status} - $error")
+                Result.failure(Exception("Gemini API error: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            println("Exception during Gemini API call: ${e.message}")
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun generateContentStep5Murder(prompt: String, tables: String): Result<String> {
+        val request = GeminiRequest(contents = listOf(Content(parts = listOf(Part(text = prompt + tables)))))
+
+        return try {
+            val response = client.post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+
+            if (response.status == HttpStatusCode.OK) {
+                val geminiResponse: GeminiResponse = response.body()
+                val t2 = System.currentTimeMillis()
+
+                val parsed = dataParser.parseGeminiResponseMurderStep5(geminiResponse)
                 Result.success(
                     value =parsed
                 )

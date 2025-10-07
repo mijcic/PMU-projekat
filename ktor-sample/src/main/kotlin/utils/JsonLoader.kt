@@ -7,14 +7,13 @@ import org.json.JSONObject
  */
 object JsonLoader {
 
-    fun getJsonMurderSteps(step: Int,prev:String): String {
+    fun getJsonMurderSteps(step: Int,prev1:String,prev2:String, prev3:String, prev4:String): String {
         return when(step) {
             1 -> getJsonMurderStep1() // return zlocinR i zrtvaR
-            2 -> getJsonMurderStep2(prev)// vraća osumnjičene i svedoke
-            //   3 -> // vraća dokaze
-            // 4 -> // vraća komunikaciju
-            //5 -> // vraća zadatke
-            //6 -> // vraća pitanja i odgovore
+            2 -> getJsonMurderStep2(prev1)// vraca osumnjicene i svedoke
+            3 -> getJsonMurderStep3(prev1,prev2) // vraca dokazR, obdukcijaR, forenzickiDokazR
+            4 -> getJsonMurderStep4(prev1,prev2,prev3) // vraca telefonR, oneContactR, beleskaR, whatsAppKontaktR, galleryR, obicnaPorukaR
+            5 -> getJsonMurderStep5(prev1,prev2,prev3,prev4)
             else -> "{}"
         }
     }
@@ -23,7 +22,7 @@ object JsonLoader {
     fun getJsonMurderStep1():String {
         val jsonString = """
         {
-          "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele.  Koristi sledeće tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne [].",
+          "prompt": "Smisli priču za detektivsku aplikaciju o ubistvu. Popuni sve podatke u tabelama kao u primeru koji dajem ispod, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu pricu o ubistvu i na osnovu toga popuni tabele.  Koristi sledeće tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. Koristi engleski jezik.",
           "tables": {
           "zlocinR": {
             "idZlocin": 1,
@@ -62,7 +61,7 @@ object JsonLoader {
     fun getJsonMurderStep2(step1:String):String {
         val jsonString = """
         {
-          "prompt": "Dopuni zapocetu pricu za detektivsku aplikaciju o ubistvu.Pocetna prica ce biti data na kraju. Popuni sve podatke u tabelama kao u primeru koji dajem ispod - OsumnjicenR i SvedokR, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu.  Koristi sledeće tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. OsumnjicenR treba da ima barem 4 elemenata, a svedokR 2.",
+          "prompt": "Dopuni zapocetu pricu za detektivsku aplikaciju o ubistvu.Pocetna prica ce biti data na kraju. Popuni sve podatke u tabelama kao u primeru koji dajem ispod - OsumnjicenR i SvedokR, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu.  Koristi sledeće tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. OsumnjicenR treba da ima barem 4 elemenata, a svedokR 2. Koristi engleski jezik.",
           "tables": {
             "osumnjicenR": [
             {
@@ -148,6 +147,439 @@ object JsonLoader {
         val jsonObject = JSONObject(jsonString)
         val prompt = jsonObject.getString("prompt")
         val extendedPrompt = "$prompt\nPocetna prica:\n$step1"
+        jsonObject.put("prompt", extendedPrompt)
+        return jsonObject.toString()
+
+    }
+
+    fun getJsonMurderStep3(step1:String, step2:String):String {
+        val jsonString = """
+        {
+          "prompt": "Dopuni zapocetu pricu za detektivsku aplikaciju o ubistvu.Pocetna prica ce biti data na kraju. Popuni sve podatke u tabelama kao u primeru koji dajem ispod - dokazR, obdukcijaR i forenzickiDokazR, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu.  Koristi sledece tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. dokazR treba da ima barem 4 elemenata, a obdukcijaR 1, i forenzickiDokazR barem 4. Koristi engleski jezik.",
+          "tables": {
+            "dokazR": [
+            {
+              "idDokaz": 1,
+              "tipDokaza": "fizicki",
+              "opis": "A knife with blood traces found near the victim's room.",
+              "zlocinId": 1,
+              "zrtvaId": 1,
+              "status": 0
+            },
+            {
+              "idDokaz": 2,
+              "tipDokaza": "digitalni",
+              "opis": "Threatening messages found on Isabelle's phone.",
+              "zlocinId": 1,
+              "zrtvaId": 1,
+              "status": 0
+            }
+          ],
+          "obdukcijaR": {
+            "idObdukcija": 1,
+            "izvestaj": "The victim died from a single stab wound to the chest. There was also evidence of struggle before her death.",
+            "datum": "2025-04-17",
+            "uzrokSmrti": "Stab wound to the chest.",
+            "zrtvaId": 1,
+            "informacije": "No signs of sexual assault. The victim's hands showed defensive wounds."
+          },
+          "forenzickiDokazR": [
+            {
+              "idForenzickiDokaz": 1,
+              "tipForenzickiDokaz": "DNK",
+              "opis": "DNA traces found on the knife match those of Amelia Fontaine.",
+              "statusS": 0,
+              "veza": "The evidence strongly links Amelia Fontaine to the murder.",
+              "zrtvaId": 1
+            }
+          ]
+          
+        }
+        }
+        """.trimIndent()
+
+        val jsonObject = JSONObject(jsonString)
+        val prompt = jsonObject.getString("prompt")
+        val extendedPrompt = "$prompt\nPocetna prica:\n" +
+                "$step1\n$step2"
+        jsonObject.put("prompt", extendedPrompt)
+        return jsonObject.toString()
+
+    }
+
+    fun getJsonMurderStep4(step1:String, step2:String,step3:String):String {
+        val jsonString = """
+        {
+          "prompt": "Dopuni zapocetu pricu za detektivsku aplikaciju o ubistvu.Pocetna prica ce biti data na kraju. Popuni sve podatke u tabelama kao u primeru koji dajem ispod - telefonR, oneContactR, oneCallR, beleskaR, whatsAppKontaktR,whatsAppPorukaR, galleryR, obicnaPorukaR, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu.  Koristi sledece tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. telefonR ima bar 2 element, oneContact, oneCallR, beleskaR, obicnaPorukaR, galleryR, whatsAppKontaktR i whatsAppPorukaR treba da ima barem 4 elemenata. Koristi engleski jezik.",
+          "tables": {
+            "telefonR": [
+            {
+              "idTelefon": 1,
+              "model": "iPhone 12",
+              "os": "IOS",
+              "sifra": "123456",
+              "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature.",
+              "zrtvaId": 1
+            },
+            {
+              "idTelefon": 2,
+              "model": "Samsung Galaxy S20",
+              "os": "Android",
+              "sifra": "654321",
+              "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death.",
+              "zrtvaId": 1
+            }
+          ],
+          "oneContactR": [
+            {
+              "idOneContact": 1,
+              "zlocinId": 1,
+              "ime": "Marco Bellini",
+              "broj": "+33698765432",
+              "slika": 1
+            },
+            {
+              "idOneContact": 2,
+              "zlocinId": 1,
+              "ime": "Amelia Fontaine",
+              "broj": "+33623456789",
+              "slika": 1
+            }
+          ],
+          "beleskaR": [
+            {
+              "idBeleska": 1,
+              "zlocinId": 1,
+              "tekst": "Witnesses reported seeing Amelia Fontaine near the scene of the crime.",
+              "datum": "2025-04-17"
+            },
+            {
+              "idBeleska": 2,
+              "zlocinId": 1,
+              "tekst": "Security footage showed Marco Bellini near Isabelle's room earlier that evening.",
+              "datum": "2025-04-17"
+            }
+          ],
+          "whatsAppKontaktR": [
+          {
+            "idWhatsAppKontakt": 1,
+            "zlocinId": 1,
+            "ime": "Oliver Chase",
+            "broj": "+12065559900",
+            "slika": 1
+          },
+          {
+            "idWhatsAppKontakt": 2,
+            "zlocinId": 1,
+            "ime": "Sophia Blake",
+            "broj": "+12067771122",
+            "slika": 1
+          }],
+          "whatsAppPorukaR": [
+              {
+                "idWhatsAppPoruka": 1,
+                "kontaktKoSalje": 1,
+                "kontaktKomeSalje": 2,
+                "tekst": "Nathan was getting too close. We had to act.",
+                "datum": "2025-04-17",
+                "procitana": true
+              },
+              {
+                "idWhatsAppPoruka": 2,
+                "kontaktKoSalje": 2,
+                "kontaktKomeSalje": 1,
+                "tekst": "I hope nobody traces this back to us.",
+                "datum": "2025-04-17",
+                "procitana": false
+              }
+            ],
+            "oneCallR": [
+            {
+              "idOneCall": 1,
+              "kontakt": 1,
+              "datum": "2025-04-17",
+              "propusten": false,
+              "dolazni": true,
+              "zrtvaId": 1
+            },
+            {
+              "idOneCall": 2,
+              "kontakt": 2,
+              "datum": "2025-04-17",
+              "propusten": true,
+              "dolazni": false,
+              "zrtvaId": 1
+            }
+          ],
+          "galleryR": [
+          {
+            "idPhoto": 1,
+            "zlocinId": 1,
+            "slika": 1,
+            "datum": "2025-04-17",
+            "mesto": "Casino Hotel, Paris"
+          },
+          {
+            "idPhoto": 2,
+            "zlocinId": 1,
+            "slika": 2,
+            "datum": "2025-04-17",
+            "mesto": "Casino Hotel Lobby, Paris"
+          }
+        ],
+        "obicnaPorukaR": [
+            {
+              "idObicnaPoruka": 1,
+              "kontaktKoSalje": 1,
+              "kontaktKomeSalje": 2,
+              "tekst": "Videli su me u hotelu. Sta da radim?",
+              "datum": "2025-04-17",
+              "procitana": true
+            },
+            {
+              "idObicnaPoruka": 2,
+              "kontaktKoSalje": 2,
+              "kontaktKomeSalje": 1,
+              "tekst": "Samo se pravi da ništa ne znaš. Sve će biti u redu.",
+              "datum": "2025-04-17",
+              "procitana": false
+            }
+          ]
+          
+          
+          
+          }
+        }
+        """.trimIndent()
+
+        val jsonObject = JSONObject(jsonString)
+        val prompt = jsonObject.getString("prompt")
+        val extendedPrompt = "$prompt\nPocetna prica:\n" +
+                "$step1\n$step2"
+        jsonObject.put("prompt", extendedPrompt)
+        return jsonObject.toString()
+
+    }
+
+
+    fun getJsonMurderStep5(step1:String, step2:String,step3:String,step4:String):String {
+        val jsonString = """
+        {
+          "prompt": "Dopuni zapocetu pricu za detektivsku aplikaciju o ubistvu.Pocetna prica ce biti data na kraju. Popuni sve podatke u tabelama kao u primeru koji dajem ispod - pitanjeR, odnosOsumnjicenZrtvaR, odgovorR, pitanjeIspitivanjeOsumnjicenogR, pitanjeIspitivanjeSvedokaR, zadatakR, ispitivanjeSvedokaZadatakR,ispitivanjeOsumnjicenogZadatakR, dokazZadatakR, telefonZadatakR, forenzickiDokazZadatak, ali ne zelim da mi prica i podaci budu isti vec generisi neku novu.  Koristi sledece tabele za popunjavanje podataka. Ali odgovor napisi samo u json obliku i ne ubacuj dodatne []. pitanjeR i odgovorR ima bar 4 element, pitanjeIspitivanjeOsumnjicenogR i pitanjeIspitivanjeSvedokaR ima bar 5 elemenata, zadatakR ima bar 5 elemenata, ispitivanjeOsumnjicenogZadatakR, ispitivanjeSvedokaZadatakR, dokazZadatakR, telefonZadatakR i forenzickiDokazZadatak ima bar 5 elemenata. Koristi engleski jezik.",
+          "tables": {
+            "pitanjeR": [
+              {
+                "idPitanje": 1,
+                "zlocinId": 1,
+                "tekst": "Ko je poslednji put viđen sa Isabelle Moreau pre njene smrti?"
+              },
+              {
+                "idPitanje": 2,
+                "zlocinId": 1,
+                "tekst": "Da li su pronađeni tragovi borbe u hotelskoj sobi?"
+              },
+              {
+                "idPitanje": 3,
+                "zlocinId": 1,
+                "tekst": "Koji su motivi osumnjičenih Amelije Fontaine i Marca Bellinija?"
+              }
+            ],
+            "odnosOsumnjicenZrtvaR": [
+              {
+                "idOdnos": 1,
+                "osumnjicenId": 1,
+                "zrtvaId": 1,
+                "tipOdnosa": "koleginice sa posla"
+              },
+              {
+                "idOdnos": 2,
+                "osumnjicenId": 2,
+                "zrtvaId": 1,
+                "tipOdnosa": "kockarski rivali"
+              }
+            ],
+            "odgovorR": [
+              {
+                "idOdogovor": 1,
+                "pitanjeId": 1,
+                "tekstOdgovora": "Amelia Fontaine je bila viđena kako izlazi iz sobe žrtve.",
+                "tacan": true,
+                "bodovi": 10
+              },
+              {
+                "idOdogovor": 2,
+                "pitanjeId": 1,
+                "tekstOdgovora": "Marco Bellini je bio na drugom kraju grada.",
+                "tacan": false,
+                "bodovi": 0
+              },
+              {
+                "idOdogovor": 3,
+                "pitanjeId": 1,
+                "tekstOdgovora": "Niko nije viđen u blizini sobe žrtve.",
+                "tacan": false,
+                "bodovi": 0
+              }
+            ],
+            "pitanjeIspitivanjeOsumnjicenogR": [
+              {
+                "idPitanjeIspitivanjeOsumnjicenog": 1,
+                "kategorija": "Alibi",
+                "tekst": "Gde ste bili u noći kada je Nathan Clarke ubijen?",
+                "odgovor": "Bio sam kod kuće, sam, gledajući TV.",
+                "komentar": "Nema potvrde alibija od treće strane.",
+                "osumnjicenId": 2
+              },
+              {
+                "idPitanjeIspitivanjeOsumnjicenog": 2,
+                "kategorija": "Motiv",
+                "tekst": "Da li ste imali neki razlog da naudite Nathanu?",
+                "odgovor": "Ne, nismo imali nikakve probleme.",
+                "komentar": "Svedoci tvrde da su imali žestoku raspravu nedelju dana ranije.",
+                "osumnjicenId": 2
+              },
+              {
+                "idPitanjeIspitivanjeOsumnjicenog": 3,
+                "kategorija": "Pristup mestu zločina",
+                "tekst": "Da li imate ključ ili način da uđete u Nathanuov stan?",
+                "odgovor": "Ne, nikada nisam imao ključ.",
+                "komentar": "Forenzičari nisu pronašli tragove provale.",
+                "osumnjicenId": 1
+            }],
+          "pitanjeIspitivanjeSvedokaR": [
+            {
+              "idPitanjeIspitivanjeSvedoka": 1,
+              "tekst": "Gde ste bili u trenutku kada je zločin izveden?",
+              "odgovor": "Bio sam kod kuće.",
+              "svedokId": 2,
+              "nextPitanje": 3
+            },
+            {
+              "idPitanjeIspitivanjeSvedoka": 2,
+              "tekst": "Da li ste ikada imali konflikata sa osumnjičenim?",
+              "odgovor": "Ne, nikada.",
+              "svedokId": 2,
+              "nextPitanje": 0
+            },
+            {
+              "idPitanjeIspitivanjeSvedoka": 3,
+              "tekst": "Da li možete potvrditi alibi osumnjičenog?",
+              "odgovor": "Da, bio je sa mnom.",
+              "svedokId": 3,
+              "nextPitanje": 0
+            }
+          ],
+          "zadatakR": [
+          {
+            "idZadatak": 1,
+            "tekst": "Ispitati mesto zločina",
+            "korak": "1",
+            "uradjen": false,
+            "nextZadatak": 2,
+            "zlocinId": 101
+          },
+          {
+            "idZadatak": 2,
+            "tekst": "Pronaći svedoke",
+            "korak": "2",
+            "uradjen": false,
+            "nextZadatak": 3,
+            "zlocinId": 101
+          }
+        ],
+        "ispitivanjeSvedokaZadatakR":[
+          {
+            "idIspitivanjeSvedokaZadatak": 1,
+            "svedokId": 101,
+            "zadatakId": 1001,
+            "uradjen": false
+          },
+          {
+            "idIspitivanjeSvedokaZadatak": 2,
+            "svedokId": 102,
+            "zadatakId": 1002,
+            "uradjen": true
+          },
+          {
+            "idIspitivanjeSvedokaZadatak": 3,
+            "svedokId": 103,
+            "zadatakId": 1003,
+            "uradjen": false
+          }
+        ],
+        "dokazZadatakR": [
+          {
+            "idDokazZadatak": 1,
+            "tekst": "Analiziraj DNK tragove pronađene na nožu.",
+            "dokazId": 1,
+            "uradjen": false,
+            "zadatakId": 2
+          },
+          {
+            "idDokazZadatak": 2,
+            "tekst": "Uporedi otiske prstiju sa čaše sa bazom osumnjičenih.",
+            "dokazId": 2,
+            "uradjen": false,
+            "zadatakId": 3
+          }],
+          "ispitivanjeOsumnjicenogZadatakR":[
+          {
+            "idIspitivanjeOsumnjicenogZadatak": 1,
+            "osumnjicenId": 42,
+            "zadatakId": 7,
+            "uradjen": false
+          },
+          {
+            "idIspitivanjeOsumnjicenogZadatak": 2,
+            "osumnjicenId": 43,
+            "zadatakId": 8,
+            "uradjen": true
+          },
+          {
+            "idIspitivanjeOsumnjicenogZadatak": 3,
+            "osumnjicenId": 42,
+            "zadatakId": 9,
+            "uradjen": false
+          }
+        ],
+        "telefonZadatakR": [
+              {
+                "idTelefonZadatak": 1,
+                "telefonId": 10,
+                "zadatakId": 3,
+                "uradjen": false
+              },
+              {
+                "idTelefonZadatak": 2,
+                "telefonId": 11,
+                "zadatakId": 4,
+                "uradjen": true
+              }
+        ],
+        "forenzickiDokazZadatakR": [
+          {
+            "idForenzickiDokazZadatak": 1,
+            "tekst": "Uporedi DNK tragove sa uzorcima osumnjičenih.",
+            "forenzickiDokazId": 1,
+            "uradjen": false,
+            "zadatakId": 1
+          },
+          {
+            "idForenzickiDokazZadatak": 2,
+            "tekst": "Proveri da li postoji još tragova DNK na dršci noža.",
+            "forenzickiDokazId": 1,
+            "uradjen": false,
+            "zadatakId": 2
+          }
+        ]
+        }
+        }
+        """.trimIndent()
+
+        val jsonObject = JSONObject(jsonString)
+        val prompt = jsonObject.getString("prompt")
+        val extendedPrompt = "$prompt\nPocetna prica:\n" +
+                "$step1\n$step2"
         jsonObject.put("prompt", extendedPrompt)
         return jsonObject.toString()
 

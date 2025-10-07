@@ -22,4 +22,9 @@ interface GeminiResponseParser {
     suspend fun parseGeminiResponseMurderStep1(response: GeminiResponse): String
 
     suspend fun parseGeminiResponseMurderStep2(response: GeminiResponse): String
+
+    suspend fun parseGeminiResponseMurderStep3(response: GeminiResponse): String
+
+    suspend fun parseGeminiResponseMurderStep4(response: GeminiResponse): String
+    suspend fun parseGeminiResponseMurderStep5(response: GeminiResponse): String
 }
