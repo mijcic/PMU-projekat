@@ -99,3 +99,40 @@ data class GeminiResponse2Step2(
     val osumnjicenR:  List<OsumnjicenR>,
     val svedokR:  List<SvedokR>
 )
+
+
+@Serializable
+data class GeminiResponse2Step3(
+    val dokazR:  List<DokazR>,
+    val obdukcijaR: ObdukcijaR,
+    val forenzickiDokazR: List<ForenzickiDokazR>
+)
+
+@Serializable
+data class GeminiResponse2Step4(
+    val telefonR: List<TelefonR>,
+    val oneContactR: List<OneContactR>,
+    val beleskaR: List<BeleskaR>,
+    val whatsAppKontaktR: List<WhatsAppKontaktR>,
+    val whatsAppPorukaR: List<WhatsAppPorukaR>,
+    val oneCallR: List<OneCallR>,
+    val galleryR: List<GalleryR>,
+    val obicnaPorukaR: List<ObicnaPorukaR>,
+
+)
+
+@Serializable
+data class GeminiResponse2Step5(
+    val odnosOsumnjicenZrtvaR: List<OdnosOsumnjicenZrtvaR>,
+    val pitanjeR: List<PitanjeR>,
+    val odgovorR: List<OdgovorR>,
+    val pitanjeIspitivanjeOsumnjicenogR: List<PitanjeIspitivanjeOsumnjicenogR>,
+    val pitanjeIspitivanjeSvedokaR: List<PitanjeIspitivanjeSvedokaR>,
+
+    val zadatakR: List<ZadatakR>,
+    val dokazZadatakR: List<DokazZadatakR>,
+    val ispitivanjeOsumnjicenogZadatakR: List<IspitivanjeOsumnjicenogZadatakR>,
+    val ispitivanjeSvedokaZadatakR: List<IspitivanjeSvedokaZadatakR>,
+    val telefonZadatakR: List<TelefonZadatakR>,
+    val forenzickiDokazZadatakR: List<ForenzickiDokazZadatakR>
+)

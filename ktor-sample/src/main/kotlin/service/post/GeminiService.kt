@@ -33,7 +33,12 @@ interface GeminiService {
      */
     suspend fun queryGeminiMysteriousSymptoms(prompt: String,tables:String): Any
 
-    suspend fun generateContentStep1Murder(prompt: String, tables: String): Result<String>
 
+
+    suspend fun generateContentStep1Murder(prompt: String, tables: String): Result<String>
     suspend fun generateContentStep2Murder(prompt: String, tables: String): Result<String>
+    suspend fun generateContentStep3Murder(prompt: String, tables: String): Result<String>
+
+    suspend fun generateContentStep4Murder(prompt: String, tables: String): Result<String>
+    suspend fun generateContentStep5Murder(prompt: String, tables: String): Result<String>
 }
