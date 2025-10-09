@@ -55,6 +55,7 @@ import java.sql.*
  */
 fun Application.configureRouting() {
 
+
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
@@ -278,6 +279,18 @@ fun Application.configureRouting() {
         }
 
         // get request
+
+        get("/Murder"){
+            val geminiMurderService: GeminiMurderService = GeminiMurderService(repository)
+            val result = geminiMurderService.getGeminiMurderbezupdateUsedZlocinMurder()
+
+            if (result != null) {
+                call.respond(result)
+            }
+            else {
+                call.respond(HttpStatusCode.NotFound, "Murder data not found.")
+            }
+        }
 
         get("/geminiMurder") {
             val geminiMurderService: GeminiMurderService = GeminiMurderService(repository)
