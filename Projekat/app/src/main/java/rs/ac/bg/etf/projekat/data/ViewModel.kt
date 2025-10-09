@@ -321,7 +321,7 @@ class MyViewModel @Inject constructor(
         val storyJson = JSONObject()
         storyJson.put("story", "Murder")
         val requestBody = storyJson.toString().toRequestBody("application/json".toMediaType())
-
+        /*
         try {
             val response = MyRepository.geminiMurderStory(requestBody)
             Log.d("GEMINI POST", "Uspesan? POST: ${response}")
@@ -331,7 +331,7 @@ class MyViewModel @Inject constructor(
             e.printStackTrace()
             //_uiStateGeminiData.value = UiStateGeminiData(null)
             onError()
-        }
+        }*/
     }
 
     fun postGeminiMSData( onSuccess: () -> Unit, onError: () -> Unit) = viewModelScope.launch {

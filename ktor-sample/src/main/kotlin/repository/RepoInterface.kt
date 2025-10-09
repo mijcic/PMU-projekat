@@ -16,6 +16,15 @@ import com.example.data.remote.tables.*
  */
 interface RepoInterface {
     /**
+     * Delete story from database.
+     *
+     * @param id The ID of the crime record to be marked as used.
+     * @return `true` if the update affected at least one row, `false` otherwise.
+     *
+     * @throws SQLException if a database access error occurs.
+     */
+    fun deleteStoryById(id:Int):Boolean
+    /**
      * Updates the `used` flag of a crime record in the `usedzlocin` table to indicate that it has been used.
      *
      * This method sets the `used` column to `1` for the record with the specified `id` in the `idUsedZlocin` column.
@@ -47,6 +56,14 @@ interface RepoInterface {
      * @return A [ZlocinData] object if found, or `null` if not.
      */
     fun getZlocin(zlocinId:Int): ZlocinData?
+
+    /**
+     * Retrieves a list of crimes (zlocin).
+     *
+     * @return A [List<ZlocinData>] object if found, or `null` if not.
+     */
+    fun getAllZlocin(): List<ZlocinData>?
+
 
     /**
      * Retrieves the crime type by ID.

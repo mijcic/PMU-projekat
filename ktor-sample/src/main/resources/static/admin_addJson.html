@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>WHODUNIT Admin - Dodaj JSON</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: #005fa3;
+        }
+        #jsonPreview {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 700px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            color: #222;
+            margin-top: 20px;
+        }
+        #message {
+            margin-top: 15px;
+            color: green;
+        }
+        #error {
+            margin-top: 15px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>WHODUNIT Admin - Dodaj JSON Priču</h1>
+
+<h3>1. Ubistvo:</h3>
+
+<input type="file" id="jsonFileInput" accept=".json" />
+<button class="button" onclick="previewJson()">Pregled JSON-a</button>
+<button class="button" onclick="submitJson()">Sačuvaj u bazu</button>
+
+<div id="jsonPreview"><em>Ovde će se prikazati sadržaj JSON fajla za ubistvo...</em></div>
+<div id="message"></div>
+<div id="error"></div>
+
+<script>
+    let jsonData = null;
+
+    function previewJson() {
+        const input = document.getElementById('jsonFileInput');
+        const preview = document.getElementById('jsonPreview');
+        const errorDiv = document.getElementById('error');
+        const messageDiv = document.getElementById('message');
+
+        messageDiv.textContent = "";
+        errorDiv.textContent = "";
+
+        if (!input.files || input.files.length === 0) {
+            errorDiv.textContent = "Molimo izaberite JSON fajl.";
+            return;
+        }
+
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            try {
+                jsonData = JSON.parse(e.target.result);
+                preview.textContent = JSON.stringify(jsonData, null, 4); // lep format
+            } catch(err) {
+                jsonData = null;
+                preview.textContent = "";
+                errorDiv.textContent = "Greška: fajl nije validan JSON.";
+            }
+        };
+
+        reader.readAsText(file);
+    }
+
+    async function submitJson() {
+        const errorDiv = document.getElementById('error');
+        const messageDiv = document.getElementById('message');
+
+        messageDiv.textContent = "";
+        errorDiv.textContent = "";
+
+        if (!jsonData) {
+            errorDiv.textContent = "Nema JSON-a za slanje. Molimo prvo pregledajte fajl.";
+            return;
+        }
+
+        try {
+            const response = await fetch('/admin/addJson', {  // backend ruta
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            });
+
+            if (response.ok) {
+                messageDiv.textContent = "Uspesno";
+            } else {
+                const data = await response.json();
+                errorDiv.textContent = "Greška pri čuvanju: " + (data.error || response.statusText);
+            }
+        } catch (err) {
+            errorDiv.textContent = "Greška u komunikaciji: " + err.message;
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -2,12 +2,14 @@ package com.example
 
 import com.example.data.remote.client.GEMINI_API_KEY
 import com.example.data.remote.client.GeminiClient
-import com.example.data.remote.tables.KorisnikRequest
-import com.example.data.remote.tables.MessageResponse
 import com.example.models.domain.Story
 import com.example.data.remote.gemini.request.GeminiRequest2
 import com.example.data.remote.gemini.request.GeminiRequest2MysteriousSymptoms
+import com.example.data.remote.gemini.retrofit.GeminiResponse2
+import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.tables.*
 import com.example.parser.DefaultGeminiResponseParser
+import com.example.repository.GeminiProRepositoryImpl
 import com.example.service.post.GeminiService
 import com.example.service.post.GeminiServiceImpl
 import com.example.repository.Repository
@@ -25,10 +27,21 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import java.sql.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.http.*
+import io.ktor.server.application.*
+import com.google.gson.Gson
+
+
 
 /**
  * Configures the routing and endpoints for the Ktor application.
@@ -55,12 +68,19 @@ import java.sql.*
  */
 fun Application.configureRouting() {
 
+    install(CORS) {
+        anyHost()
+        allowHeader(HttpHeaders.ContentType)
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Delete)
+    }
+
 
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
-        // password = "1234"
-        password = "mia123"
+        password = "1234"
+        //password = "mia123"
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
@@ -68,15 +88,285 @@ fun Application.configureRouting() {
     val initialDataService = InitialDataService(geminiService, databaseService)
     val korisnikService = KorisnikService(databaseService)
 
-    launch {
-        initialDataService.insertInitialMurderIfEmpty()
-    }
+    //launch {
+      //  initialDataService.insertInitialMurderIfEmpty()
+    //}
     launch {
         delay(2000)
         //initialDataService.insertInitialMysteriousSymptomsIfEmpty()
     }
 
     routing {
+
+        post("/admin/addJson"){
+            val conn = getDatabaseConnection()
+
+            val geminiResponseRetrofit: GeminiResponseRetrofit = GeminiResponseRetrofit(
+                zlocinRetrofit = null,
+                zrtvaRetrofit = null,
+                osumnjiceniRetrofit = null,
+                dokaziRetrofit =null,
+                telefoniRetrofit = null,
+                forenzickiDokazRetrofit = null,
+                obdukcijaRetrofit = null,
+                svedociRetrofit =null,
+                oneContactRetrofit = null,
+                kontaktiRetrofit = null,
+                porukeRetrofit = null,
+                poziviRetrofit = null,
+                galerijaRetrofit = null,
+                aplikacijeRetrofit = null,
+                tragoviRetrofit = null,
+                dokaziOsumnjiceniRetrofit = null,
+                beleskeRetrofit = null,
+                whatsappKontaktRetrofit = null,
+                whatsappPorukaRetrofit = null,
+                oneCallRetrofit = null,
+                galleryRetrofit = null,
+                obicnePorukeRetrofit = null,
+                odnosiOsumnjiceniZrtvaRetrofit = null,
+                pitanjaRetrofit = null,
+                odgovoriRetrofit = null,
+                pitanjeIspitivanjeOsumnjicenogRetrofit = null,
+                pitanjeIspitivanjeSvedokaRetrofit = null,
+                osobeRetrofit = null,
+                zadaciRetrofit = null,
+                dokaziZadaciRetrofit = null,
+                ispitivanjeOsumnjicenogZadaciRetrofit = null,
+                ispitivanjeSvedokaZadaciRetrofit = null,
+                telefonZadaciRetrofit = null,
+                forenzickiDokazZadaciRetrofit = null
+            )
+
+            if(conn == null){
+                print("CONN JE NULL")
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    mapOf("error" to "Nevalidan JSON format")
+                )
+
+            }
+            val repo = RepositoryInsert(conn!!)
+
+            try {
+
+                var jsonText = call.receiveText()
+                jsonText = jsonText.replace("ΓÇÖ", "'")
+                    .replace("─ç", "ć")
+                    .replace("┼í", "i")
+
+                // 2. Proveri da li je validan JSON
+                val jsonElement = Json.parseToJsonElement(jsonText)
+                val json = Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                }
+                val geminiResponse2 = json.decodeFromString<GeminiResponse2>(jsonText)
+
+                val geminiProRepo = GeminiProRepositoryImpl()
+                val datumString = geminiResponse2.zlocinR.datum
+                var timestamp: Long? = null
+
+                try {
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    val datum = datumString?.let { LocalDate.parse(it, formatter) }
+                    timestamp = datum?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+                } catch (e: Exception) {
+                    try {
+                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val datum = datumString?.let { LocalDateTime.parse(it, formatter) }
+                        timestamp = datum?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+                    } catch (ex: Exception) {
+                        println("Greška pri parsiranju datuma: ${ex.message}")
+                    }
+                }
+
+                geminiResponse2.zlocinR.datum?.let {
+                    if (timestamp != null) {
+
+                        val zl = ZlocinData(
+                            idZlocin = geminiResponse2.zlocinR.idZlocin,
+                            tipZlocinaId = 1,
+                            naziv = geminiResponse2.zlocinR.naziv,
+                            datum = timestamp,
+                            mesto = geminiResponse2.zlocinR.mesto,
+                            opis = geminiResponse2.zlocinR.opis,
+                            status = geminiResponse2.zlocinR.status,
+                        )
+                        repo.insertZlocinData(zl)
+                        geminiResponseRetrofit.zlocinRetrofit=zl
+
+                        val datumStr = geminiResponse2.zrtvaR.osobaId?.datum
+                        val datumLong = datumStr?.let {
+                            LocalDate.parse(it)
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant()
+                                .toEpochMilli()
+                        } ?: timestamp
+                        val osoba = OsobaData(
+                            idOsoba = geminiResponse2.zrtvaR.osobaId?.idOsoba ?: -1,
+                            ime = geminiResponse2.zrtvaR.osobaId?.ime ?: "Nepoznato",
+                            kontakt = geminiResponse2.zrtvaR.osobaId?.kontakt ?: "Nepoznato",
+                            datum = datumLong ?: timestamp,
+                            zanimanje = geminiResponse2.zrtvaR.osobaId?.zanimanje ?: "Nepoznato",
+                            pol = geminiResponse2.zrtvaR.osobaId?.pol ?: "M",
+                            zlocinId = geminiResponse2.zrtvaR.osobaId?.zlocinId ?: -1
+                        )
+                        repo.insertOsobaData(osoba, zl)
+
+                        val zrtva = ZrtvaData(
+                            idZrtva = geminiResponse2.zrtvaR.idZrtva,
+                            tipZrtve = geminiResponse2.zrtvaR.tipZrtve,
+                            detalji = geminiResponse2.zrtvaR.detalji,
+                            statusZrtva = geminiResponse2.zrtvaR.statusZrtva,
+                            zlocinId = geminiResponse2.zrtvaR.zlocinId,
+                            osobaId = osoba
+                        )
+                        val usedZlocin = UsedZlocinData(
+                            idUsedZlocin = 1,
+                            zlocinId = zl,
+                            used = false
+                        )
+                        //repo.insertZlocinData(zl)
+                        repo.insertUsedZlocinData(usedZlocin)
+                        geminiResponseRetrofit.zlocinRetrofit=zl
+
+
+                        //zrtva i osoba
+                        val sviDokaziZrtva = geminiProRepo.insertGeminiZrtva(geminiResponse2,geminiResponseRetrofit,timestamp,zl,repo)
+
+                        //osumnjiceni i osobe (izmeniti)
+                        val osumnjiceniLista = geminiProRepo.insertGeminiOsumnjicen(geminiResponse2,geminiResponseRetrofit,timestamp,zl,repo)
+
+                        //svedoci
+                        val svedociLista = geminiProRepo.insertGeminiSvedok(geminiResponse2,geminiResponseRetrofit,timestamp,zl,repo)
+
+                        // kontakti
+                        val kontaktiLista = geminiProRepo.insertGeminiOneContact(geminiResponse2, geminiResponseRetrofit, zl,repo)
+
+                        // beleske
+                        geminiProRepo.insertGeminiBeleska(geminiResponse2, geminiResponseRetrofit, zl, timestamp,repo)
+
+                        // whatsAppKontakt
+                        val whatsAppKontaktiLista = geminiProRepo.insertGeminiWhatsAppKontakt(geminiResponse2, geminiResponseRetrofit,zl,repo)
+
+                        val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+                        scope.launch {
+                            geminiProRepo.suspendInsertKontakti(whatsAppKontaktiLista,geminiResponse2,geminiResponseRetrofit,timestamp,kontaktiLista,zl,zrtva, repo)
+                        }
+
+                        // odnos osumnjicen zrtva
+
+                        sviDokaziZrtva.zrtva?.let { it1 ->
+                            geminiProRepo.insertGeminiOdnosOsumnjicenZrtva(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista,
+                                it1,repo
+                            )
+                        }
+
+                        // prijavljeni korisnik
+
+                        geminiProRepo.insertGeminiPrijavljeniKorisnik(geminiResponse2,repo)
+
+                        // pitanje
+
+                        val pitanjaLista = geminiProRepo.insertGeminiPitanje(geminiResponse2, geminiResponseRetrofit,zl,repo)
+
+                        scope.launch {
+                            geminiProRepo.suspendInsertPitanja(pitanjaLista,geminiResponse2,geminiResponseRetrofit,timestamp,osumnjiceniLista,svedociLista,zl, repo)
+                        }
+
+                        // zadatak
+
+                        val zadaciLista = geminiProRepo.insertGeminiZadatak(geminiResponse2, zl,repo)
+                        geminiProRepo.updateGeminiZadatakList(geminiResponse2,geminiResponseRetrofit, zl,repo)
+                        geminiResponseRetrofit.zadaciRetrofit = zadaciLista
+
+                        scope.launch {
+                            geminiProRepo.suspendInsertZadaci(zadaciLista, geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, svedociLista, sviDokaziZrtva, repo)
+                        }
+
+                        // porukeZadatak
+                    }
+                }
+
+                // 4. Vrati potvrdu
+                call.respond(HttpStatusCode.OK, mapOf("ok" to "Validc JSON format"))
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    mapOf("error" to "Nevalidan JSON format")
+                )
+
+            }
+        }
+
+        get("/admin/getAll") {
+            val allStories = repository.getAllZlocin()?: emptyList()
+            call.respond(allStories)
+        }
+
+        delete("/admin/delete/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            if (id == null) {
+                call.respond(HttpStatusCode.BadRequest, "Pogrešan ID")
+                return@delete
+            }
+
+            val success = repository.deleteStoryById(id)
+
+            if (success) {
+                call.respond(HttpStatusCode.OK, "Priča obrisana")
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Priča nije pronađena")
+            }
+        }
+
+        get("/admin/stats") {
+            val zlocini = repository.getAllZlocin() // tvoja funkcija za dohvat svih
+
+            val ukupno = zlocini?.size
+            val uIstr = zlocini?.count { it.status == "u_istrazi" }
+            val zatvoreni = zlocini?.count { it.status == "resen" }
+
+            //val prosecnoOsumnjicenih = if (ukupno > 0) {
+              //  osumnjiceni.groupBy { it.zlocinId }.values.map { it.size }.average()
+            //} else 0.0
+
+            val stats = mapOf(
+                "ukupnoZlocina" to ukupno,
+                "uIstr" to uIstr,
+                "zatvoreni" to zatvoreni,
+                //"prosecnoOsumnjicenih" to String.format("%.2f", prosecnoOsumnjicenih)
+            )
+
+            call.respond(stats)
+        }
+
+
+        post("/admin/gemini") {
+            val jsonMurder = JsonLoader.getJsonMurderSteps(1, "", "", "", "")
+            val json = JSONObject(jsonMurder)
+            val prompt = json.getString("prompt")
+            val tables = json.getJSONObject("tables").toString()
+
+            val result = geminiService.generateContentStep1Murder(prompt, tables)
+
+            result.onSuccess { parsedResponse ->
+                if (parsedResponse != null) {
+                    call.respond(parsedResponse)  // šalje samo konkretan objekat
+                } else {
+                    call.respond(HttpStatusCode.InternalServerError, "Greška: prazni odgovor od Gemini API-ja")
+                }
+            }
+
+            result.onFailure { e ->
+                call.respond(HttpStatusCode.InternalServerError, "Greška: ${e.message}")
+            }
+        }
+
+
+
         //gemini
         post("/gemini") {
             val requestData = call.receive<GeminiRequest2>()
@@ -119,15 +409,7 @@ fun Application.configureRouting() {
 
             val rawResultString = result.getOrNull()
             if (rawResultString != null) {
-                val prettyPrinted = rawResultString
-                    .replace(",", ",\n")
-                    .replace("(", "(\n")
-                    .replace(")", "\n)")
-                    .replace("=", ": ")
-                    .replace("Success", "✅ Success")
 
-                println("===== Formatirani rezultat =====")
-                println(prettyPrinted)
             } else {
                 println("❌ Neuspešan rezultat: ${result.exceptionOrNull()?.message}")
             }
@@ -292,6 +574,18 @@ fun Application.configureRouting() {
             }
         }
 
+        get("/getFirstMurder"){
+            val geminiMurderService: GeminiMurderService = GeminiMurderService(repository)
+            val result = geminiMurderService.getGeminiMurder()
+
+            if (result != null) {
+                call.respond(result)
+            }
+            else {
+                call.respond(HttpStatusCode.NotFound, "Murder data not found.")
+            }
+        }
+
         get("/geminiMurder") {
             val geminiMurderService: GeminiMurderService = GeminiMurderService(repository)
             val result = geminiMurderService.getGeminiMurder()
@@ -377,8 +671,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        //"1234"
-        "mia123"
+        "1234"
+        //"mia123"
     )
 }
 

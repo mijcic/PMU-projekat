@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>WHODUNIT Admin - Pregled Priča</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background:#f0f0f0; }
+        table { width:100%; border-collapse: collapse; background:white; margin-top:15px; }
+        th, td { border:1px solid #ccc; padding:8px; }
+        th { background:#e0e0e0; }
+        button { padding:6px 12px; border:none; border-radius:5px; cursor:pointer; color:white; }
+        .delete-btn { background:#d9534f; }
+        .delete-btn:hover { background:#b52b27; }
+        #jsonPreview { background:white; padding:15px; border-radius:8px; margin-top:20px; white-space:pre-wrap; max-height:400px; overflow:auto; }
+    </style>
+</head>
+<body>
+
+<h1>Pregled svih priča (zločina)</h1>
+<table id="zlocinTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Naziv</th>
+        <th>Mesto</th>
+        <th>Opis</th>
+        <th>Datum</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>JSON podaci</h2>
+<pre id="jsonPreview"></pre>
+
+<script>
+    async function fetchStories() {
+        try {
+            const response = await fetch("http://localhost:8080/admin/getAll");
+            if (!response.ok) throw new Error("Greška u komunikaciji sa serverom");
+
+            const data = await response.json();
+            renderTable(data);
+            document.getElementById("jsonPreview").textContent = JSON.stringify(data, null, 4);
+        } catch (err) {
+            alert("❌ " + err.message);
+        }
+    }
+
+
+    function renderTable(stories) {
+        const tbody = document.querySelector("#zlocinTable tbody");
+        tbody.innerHTML = "";
+
+        stories.forEach((z) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td>${z.idZlocin}</td>
+            <td>${z.naziv}</td>
+            <td>${z.mesto}</td>
+            <td>${z.opis}</td>
+            <td>${new Date(z.datum).toLocaleDateString()}</td>
+            <td>${z.status}</td>
+
+        `;
+            tbody.appendChild(tr);
+        });
+    }
+    fetchStories();
+</script>
+
+</body>
+</html>

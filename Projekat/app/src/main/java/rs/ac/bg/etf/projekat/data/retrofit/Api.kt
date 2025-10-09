@@ -31,6 +31,8 @@ interface Api {
     @POST("geminiMurderStory")
     suspend fun geminiMurderStory(@Body request: RequestBody):Story
 
+    //@GET("geminiMurderStory")
+    //suspend fun geminiMurderStory(@Body request: RequestBody):Story
 
     @POST("geminiMSStory")
     suspend fun geminiMSStory(@Body request: RequestBody):Story

@@ -39,7 +39,7 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
         return gem.getDataGeminiResponse(response)
     }
 
-    override suspend fun parseGeminiResponseMurderStep1(geminiResponse: GeminiResponse): String {
+    override suspend fun parseGeminiResponseMurderStep1(geminiResponse: GeminiResponse): GeminiResponse2Step1? {
         //val geminiResponse: GeminiResponse = GeminiResponse()
 
         val geminiProRepo = GeminiProRepositoryImpl()
@@ -58,7 +58,7 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
 
 
         //conn?.close()
-        return geminiResponse2.toString()
+        return geminiResponse2
     }
 
     override suspend fun parseGeminiResponseMurderStep2(geminiResponse: GeminiResponse): String {
