@@ -10,6 +10,12 @@ plugins {
     id("org.jetbrains.dokka") version "1.9.0"
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 group = "com.example"
 version = "0.0.1"
 
