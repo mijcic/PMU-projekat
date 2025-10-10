@@ -8,6 +8,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.ScoreKorisnikaRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Story
 
@@ -46,4 +47,6 @@ interface Api {
     @GET("geminiMysteriousSymptoms")
     suspend fun geminiMysteriousSymptoms(): GeminiResponseRetrofitMysteriousSymptoms
 
+    @POST("setScoreKorisnika")
+    suspend fun setScoreKorisnika(@Body request: ScoreKorisnikaRequest): MessageResponse
 }

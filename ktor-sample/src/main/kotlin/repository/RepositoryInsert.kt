@@ -830,6 +830,42 @@ class RepositoryInsert(private val conn: Connection){
         return false
     }
 
+    // score korisnika
+
+    fun insertScoreKorisnika(scoreKorisnikaRequest: ScoreKorisnikaRequest): Boolean {
+        val query = """
+            UPDATE scoreKorisnika
+            SET korisnickoIme = ?
+            WHERE score > ?
+        """
+        var statement: PreparedStatement? = null
+        var resultSet: ResultSet? = null
+
+        println("Statement pripremljen: ${statement != null}")
+
+        try {
+            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            if (statement == null) {
+                println("Prepare statement failed: statement is null")
+                return false
+            }
+
+            statement.setString(1, scoreKorisnikaRequest.korisnickoIme)
+            statement.setInt(2, scoreKorisnikaRequest.score)
+            statement.executeUpdate()
+
+            resultSet = statement.generatedKeys
+            if (resultSet?.next() == true) {
+                return true
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            closeResources(conn, statement, null)
+        }
+        return false
+    }
+
     // one contact
 
     fun insertOneContactData(oneContactData: OneContactData, zlocin: ZlocinData) {

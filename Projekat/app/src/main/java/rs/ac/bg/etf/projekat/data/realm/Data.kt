@@ -101,6 +101,14 @@ open class OsobaR: RealmObject{
     var zlocinId: ZlocinR? = null
 }
 
+//ScoreKorisnikaR table
+open class ScoreKorisnikaR: RealmObject{
+    @PrimaryKey
+    var idScoreKorisnika: Int = 0
+    var korisnickoIme: String = ""
+    var score: Int = 0
+}
+
 enum class PolR{
     muski,
     zenski

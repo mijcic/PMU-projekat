@@ -7,6 +7,7 @@ import com.example.data.remote.tables.MessageResponse
 import com.example.models.domain.Story
 import com.example.data.remote.gemini.request.GeminiRequest2
 import com.example.data.remote.gemini.request.GeminiRequest2MysteriousSymptoms
+import com.example.data.remote.tables.ScoreKorisnikaRequest
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.service.post.GeminiService
 import com.example.service.post.GeminiServiceImpl
@@ -356,6 +357,29 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to log in Korisnik"))
             }
         }
+
+        post("/setScoreKorisnika"){
+            try{
+                val conn = databaseService.getDatabaseConnection()
+                val repo = conn?.let { RepositoryInsert(it) }
+                println("setScoreKorisnika")
+                val scoreKorisnika = call.receive<ScoreKorisnikaRequest>()
+                val result = repo?.insertScoreKorisnika(scoreKorisnika)
+                if (result == true) {
+                    println("Score is set")
+                    call.respond(MessageResponse("TRUE"))
+                }
+                else {
+                    println("Score is not set")
+                    call.respond(MessageResponse("FALSE"))
+                }
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to set score for korisnik"))
+            }
+        }
+
         staticResources("/static", "static")
     }
 }

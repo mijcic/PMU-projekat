@@ -91,6 +91,11 @@ data class ScorePageKorisnikResponse(
     val poeni:Int
 )
 
+data class ScoreKorisnikaRequest (
+    var korisnickoIme: String,
+    var score: Int
+)
+
 
 // gemini
 
