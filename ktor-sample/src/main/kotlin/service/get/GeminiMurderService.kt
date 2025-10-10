@@ -24,6 +24,79 @@ class GeminiMurderService(private val repository: RepoInterface) {
      */
     fun getGeminiMurder(): GeminiResponseRetrofit? {
         val id = repository.getUsedZlocinMurder() ?: run {
+            println("Neki podaci su null — provera nije prošla. getUsedZlocinMurder")
+            return null
+        }
+        println(id)
+
+        val zlocinData = loadZlocinDataGeminiRetrofit(id) ?: run {
+            println("Neki podaci su null — provera nije prošla. loadZlocinDataGeminiRetrofit")
+            return null
+        }
+        println(zlocinData)
+
+        val zrtvaData = loadZrtvaDataGeminiRetrofit(id)?: run {
+            println("Neki podaci su null — provera nije prošla. loadZrtvaDataGeminiRetrofit")
+            return null
+        }
+
+        val osumnjiceniData = loadOsumnjiceniDataGeminiRetrofit(id,zrtvaData) ?: run {
+            println("Neki podaci su null — provera nije prošla. loadOsumnjiceniDataGeminiRetrofit")
+            return null
+        }
+
+        val zadaciData = loadZadaciData(id) ?: run {
+            println("Neki podaci su null — provera nije prošla. loadZadaciData")
+            return null
+        }
+
+        val otherData = loadOtherData(id) ?: run {
+            println("Neki podaci su null — provera nije prošla. loadOtherData")
+            return null
+        }
+
+        val geminiResponseRetrofit: GeminiResponseRetrofit = GeminiResponseRetrofit(
+            zlocinRetrofit = zlocinData.zlocin,
+            zrtvaRetrofit = zrtvaData.zrtva,
+            osumnjiceniRetrofit = osumnjiceniData.osumnjiceni,
+            dokaziRetrofit =zrtvaData.dokazi,
+            telefoniRetrofit = zrtvaData.telefoni,
+            forenzickiDokazRetrofit = zrtvaData.forenzika,
+            obdukcijaRetrofit = zrtvaData.obdukcija,
+            svedociRetrofit =zrtvaData.svedoci,
+            oneContactRetrofit = zrtvaData.oneContact,
+            kontaktiRetrofit = zrtvaData.kontakti,
+            porukeRetrofit = zrtvaData.poruke,
+            poziviRetrofit = zrtvaData.pozivi,
+            galerijaRetrofit = zrtvaData.galerija,
+            aplikacijeRetrofit = zrtvaData.aplikacije,
+            tragoviRetrofit = osumnjiceniData.tragovi,
+            dokaziOsumnjiceniRetrofit = osumnjiceniData.dokaziOsumnjiceni,
+            beleskeRetrofit = zrtvaData.beleske,
+            whatsappKontaktRetrofit = zrtvaData.whatsappKontakti,
+            whatsappPorukaRetrofit = zrtvaData.whatsappPoruke,
+            oneCallRetrofit = zrtvaData.oneCall,
+            galleryRetrofit = otherData.gallery,
+            obicnePorukeRetrofit = zrtvaData.obicnaPoruka,
+            odnosiOsumnjiceniZrtvaRetrofit = otherData.odnosi,
+            pitanjaRetrofit = otherData.pitanja,
+            odgovoriRetrofit = otherData.odgovori,
+            pitanjeIspitivanjeOsumnjicenogRetrofit = otherData.pitanjaIspitivanjeOsumnjicenog,
+            pitanjeIspitivanjeSvedokaRetrofit = otherData.pitanjaIspitivanjeSvedoka,
+            osobeRetrofit = otherData.osobe,
+            zadaciRetrofit = zadaciData.zadaci,
+            dokaziZadaciRetrofit = zadaciData.dokaziZadaci,
+            ispitivanjeOsumnjicenogZadaciRetrofit = zadaciData.ispitivanjeOsumnjicenogZadaci,
+            ispitivanjeSvedokaZadaciRetrofit = zadaciData.ispitivanjeSvedokaZadaci,
+            telefonZadaciRetrofit = zadaciData.telefonZadaci,
+            forenzickiDokazZadaciRetrofit = zadaciData.forenzickiDokazZadaci
+        )
+        repository.updateUsedZlocinMurder(id)
+        return geminiResponseRetrofit
+    }
+
+    fun getGeminiMurderbezupdateUsedZlocinMurder(): GeminiResponseRetrofit? {
+        val id = repository.getUsedZlocinMurder() ?: run {
             println("Neki podaci su null — provera nije prošla.")
             return null
         }
@@ -90,7 +163,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             telefonZadaciRetrofit = zadaciData.telefonZadaci,
             forenzickiDokazZadaciRetrofit = zadaciData.forenzickiDokazZadaci
         )
-        repository.updateUsedZlocinMurder(id)
+        //repository.updateUsedZlocinMurder(id)
         return geminiResponseRetrofit
     }
 
@@ -114,11 +187,16 @@ class GeminiMurderService(private val repository: RepoInterface) {
      * @return A [ZrtvaDataGeminiRetrofit] object with all victim-related information, or `null` if something is missing
      */
     private fun loadZrtvaDataGeminiRetrofit(id: Int): ZrtvaDataGeminiRetrofit? {
+        println("ovde "+id)
         val zrtva = repository.getZrtva(id) ?: return null
+        println(zrtva)
         val kontakti = repository.getKontakti(id, zrtva) ?: return null
+        println(kontakti)
         val whatsappKontakti = repository.getWhatsAppKontakt(id, zrtva) ?: return null
+        println(whatsappKontakti)
         val oneContact =repository.getOneContact(id) ?: return null
-        return ZrtvaDataGeminiRetrofit(
+        println(oneContact)
+        val z = ZrtvaDataGeminiRetrofit(
             zrtva = zrtva,
             dokazi = repository.getDokazi(id, zrtva) ?: return null,
             telefoni = repository.getTelefon(zrtva.idZrtva) ?: return null,
@@ -137,6 +215,8 @@ class GeminiMurderService(private val repository: RepoInterface) {
             oneCall = repository.getOneCall(id, oneContact) ?: return null,
             obicnaPoruka = repository.getObicnaPoruka(id, oneContact) ?: return null
         )
+        println(z)
+        return z
     }
 
     /**

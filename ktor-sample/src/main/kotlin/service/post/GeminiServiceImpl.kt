@@ -6,6 +6,7 @@ import com.example.data.remote.gemini.request.GeminiRequest
 import com.example.data.remote.gemini.response.Content
 import com.example.data.remote.gemini.response.GeminiResponse
 import com.example.data.remote.gemini.response.Part
+import com.example.data.remote.gemini.retrofit.GeminiResponse2Step1
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 import com.example.parser.GeminiResponseParser
 import io.ktor.client.*
@@ -117,7 +118,7 @@ class GeminiServiceImpl(
         }
     }
 
-    override suspend fun generateContentStep1Murder(prompt: String, tables: String): Result<String> {
+    override suspend fun generateContentStep1Murder(prompt: String, tables: String): Result<GeminiResponse2Step1?> {
         val request = GeminiRequest(
             contents = listOf(Content(parts = listOf(Part(text = prompt + tables))))
         )
@@ -136,8 +137,8 @@ class GeminiServiceImpl(
 
                // println("\n\n"+geminiResponse+"\n\n")
 
-                val parsed = dataParser.parseGeminiResponseMurderStep1(geminiResponse)
-
+               // val parsed = dataParser.parseGeminiResponseMurderStep1(geminiResponse)
+               val parsed = dataParser.parseGeminiResponseMurderStep1(geminiResponse)
 
                Result.success(
                    value =parsed

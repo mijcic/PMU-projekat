@@ -176,10 +176,10 @@ fun CardWithImage(
                                             "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
                                 )
 
-                                myViewModel.postGeminiData(
+                                /*myViewModel.postGeminiData(
                                     onSuccess = { Log.d("GEMINI","GENERISANA PRICA")},
                                     onError = {navController.navigate("destinationErrorPage")}
-                                )
+                                )*/
                             },
                             onError = {
                                 isLoading = false

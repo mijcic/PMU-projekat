@@ -4,6 +4,15 @@ import com.example.data.remote.tables.*
 import java.sql.Connection
 
 class Repository(private val connection: Connection): RepoInterface {
+    override fun deleteStoryById(id: Int): Boolean {
+        val query = "DELETE FROM zlocin WHERE idZlocin = ?"
+
+        val preparedStatement = connection.prepareStatement(query)
+        preparedStatement.setInt(1, id)
+
+        val affectedRows = preparedStatement.executeUpdate()
+        return affectedRows > 0 // vraca true ako je nesto obrisano
+    }
 
     override fun updateUsedZlocinMurder(id: Int): Boolean {
         val query = "UPDATE usedzlocin SET used = 1 WHERE idUsedZlocin = $id"
@@ -80,6 +89,38 @@ class Repository(private val connection: Connection): RepoInterface {
         }
         return null
     }
+
+    override fun getAllZlocin(): List<ZlocinData>? {
+        val query = "SELECT * FROM zlocin"
+
+        val statement = connection.createStatement()
+        val resultSet = statement?.executeQuery(query)
+        val lista = mutableListOf<ZlocinData>()
+
+        while (resultSet != null && resultSet.next()) {
+            val idZlocin = resultSet.getInt("idZlocin")
+            val tipZlocinaId = resultSet.getInt("tipZlocinaId")
+            val naziv = resultSet.getString("naziv")
+            val datum = resultSet.getTimestamp("datum")
+            val mesto = resultSet.getString("mesto")
+            val opis = resultSet.getString("opis")
+            val status = resultSet.getString("statusS")
+
+            val zl = ZlocinData(
+                idZlocin = idZlocin,
+                tipZlocinaId = tipZlocinaId,
+                naziv = naziv,
+                datum = datum.time,
+                mesto = mesto,
+                opis = opis,
+                status = status
+            )
+            lista.add(zl)
+        }
+
+        return lista
+    }
+
 
     override fun getTipZlocina(id:Int): TipZlocinaDC? {
         val query = "SELECT * from tipzlocina WHERE idTipZlocina=$id"

@@ -17,6 +17,8 @@ fun main() {
  * Sets up serialization and routing.
  */
 fun Application.module() {
+
     configureSerialization()
     configureRouting()
+    configureStaticContent()
 }

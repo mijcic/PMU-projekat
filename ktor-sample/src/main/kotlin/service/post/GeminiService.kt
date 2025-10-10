@@ -1,5 +1,6 @@
 package com.example.service.post
 
+import com.example.data.remote.gemini.retrofit.GeminiResponse2Step1
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 
 /**
@@ -35,7 +36,7 @@ interface GeminiService {
 
 
 
-    suspend fun generateContentStep1Murder(prompt: String, tables: String): Result<String>
+    suspend fun generateContentStep1Murder(prompt: String, tables: String): Result<GeminiResponse2Step1?>
     suspend fun generateContentStep2Murder(prompt: String, tables: String): Result<String>
     suspend fun generateContentStep3Murder(prompt: String, tables: String): Result<String>
 

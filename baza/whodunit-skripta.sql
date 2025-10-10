@@ -80,14 +80,14 @@ CREATE TABLE Zlocin (
     mesto VARCHAR(255) NOT NULL,
     opis TEXT NOT NULL,
     statusS ENUM('u_istrazi', 'resen') NOT NULL,
-    FOREIGN KEY (tipZlocinaId) REFERENCES TipZlocina(idTipZlocina)
+    FOREIGN KEY (tipZlocinaId) REFERENCES TipZlocina(idTipZlocina) ON DELETE CASCADE
 );
 
 CREATE TABLE UsedZlocin(
 	idUsedZlocin INT AUTO_INCREMENT PRIMARY KEY,
 	zlocinId INT NOT NULL,
     used BOOLEAN NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 
@@ -115,7 +115,7 @@ CREATE TABLE Osoba (
     zanimanje VARCHAR(100) NOT NULL,
     pol VARCHAR(50) NOT NULL,       
     zlocinId INT NOT NULL,                   -- Spoljašnji ključ na Zlocin
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)  -- Veza sa Zlocin tabelom
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE -- Veza sa Zlocin tabelom
 );
 
 CREATE TABLE Zrtva (
@@ -125,8 +125,8 @@ CREATE TABLE Zrtva (
     statusZrtva VARCHAR(50) NOT NULL,        -- Status žrtve
     zlocinId INT NOT NULL,                   -- Spoljašnji ključ na Zlocin
     osobaId INT NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),  -- Veza sa Zlocin tabelom
-    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) 
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE,  -- Veza sa Zlocin tabelom
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) ON DELETE CASCADE
 );
 
 CREATE TABLE Dokaz (
@@ -136,8 +136,8 @@ CREATE TABLE Dokaz (
     zlocinId INT NOT NULL,
     zrtvaId INT NOT NULL,
     statusS INT NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 
@@ -148,8 +148,8 @@ CREATE TABLE Svedok (
     statusIspitan INT NOT NULL,
     zlocinId INT NOT NULL,
     osobaId INT NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
-    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE,
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) ON DELETE CASCADE
 );
 
 CREATE TABLE Motiv (
@@ -165,9 +165,9 @@ CREATE TABLE Osumnjicen (
     zlocinId INT NOT NULL,
     kriv INT NOT NULL,
     osobaId INT NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
-    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba),
-    FOREIGN KEY (motiv) REFERENCES Motiv(idMotiv)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE,
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) ON DELETE CASCADE,
+    FOREIGN KEY (motiv) REFERENCES Motiv(idMotiv) ON DELETE CASCADE
 );
 
 CREATE TABLE OdnosOsumnjicenZrtva (
@@ -175,8 +175,8 @@ CREATE TABLE OdnosOsumnjicenZrtva (
     osumnjicenId INT NOT NULL,
     zrtvaId INT NOT NULL,
     tipOdnosa ENUM('poslovni', 'licni','porodicni','rivalski','slucajni','ljubavni') NOT NULL, 
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva),
-    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE,
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 
@@ -184,8 +184,8 @@ CREATE TABLE DokazOsumnjicen (
     idDokazOsumnjicen INT AUTO_INCREMENT PRIMARY KEY,
     dokazId INT NOT NULL,
     osumnjicenId INT NOT NULL,
-    FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz),
-    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz) ON DELETE CASCADE,
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 CREATE TABLE Alibi (
@@ -194,8 +194,8 @@ CREATE TABLE Alibi (
     svedokId INT,
     opis VARCHAR(255) NOT NULL,
     statusAlibija ENUM('potvrdjen', 'lazan', 'nepotvrdjen') NOT NULL, 
-    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen),
-    FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok)
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE,
+    FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok) ON DELETE CASCADE
 );
 
 CREATE TABLE Trag (
@@ -203,8 +203,8 @@ CREATE TABLE Trag (
     opis TEXT NOT NULL,
     idDokaz INT NOT NULL,
     idOsumnjicen INT NOT NULL,
-    FOREIGN KEY (idDokaz) REFERENCES Dokaz(idDokaz),
-    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (idDokaz) REFERENCES Dokaz(idDokaz) ON DELETE CASCADE,
+    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 CREATE TABLE Obdukcija (
@@ -214,7 +214,7 @@ CREATE TABLE Obdukcija (
     uzrokSmrti VARCHAR(255) NOT NULL,
     zrtvaId INT NOT NULL,
     informacije VARCHAR(255) NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 CREATE TABLE ForenzickiDokaz (
@@ -224,7 +224,7 @@ CREATE TABLE ForenzickiDokaz (
 	statusS INT NOT NULL,
     zrtvaId INT NOT NULL,
     veza VARCHAR(255) NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 CREATE TABLE Telefon (
@@ -234,21 +234,21 @@ CREATE TABLE Telefon (
 	zrtvaId INT NOT NULL,
     sifra VARCHAR(100) NOT NULL,
     informacije VARCHAR(255) NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 CREATE TABLE Ucena (
     idUcena INT AUTO_INCREMENT PRIMARY KEY,
     opis TEXT NOT NULL,
     idOsumnjicen INT NOT NULL,
-    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 CREATE TABLE TajnaPorodice (
     idTajna INT AUTO_INCREMENT PRIMARY KEY,
     opis TEXT NOT NULL,
     idOsumnjicen INT NOT NULL,
-    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 CREATE TABLE Organizacija (
@@ -261,8 +261,8 @@ CREATE TABLE ClanOrganizacije (
     idClan INT AUTO_INCREMENT PRIMARY KEY,
     idOsumnjicen INT NOT NULL,
     idOrganizacija INT NOT NULL,
-    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen),
-    FOREIGN KEY (idOrganizacija) REFERENCES Organizacija(idOrganizacija)
+    FOREIGN KEY (idOsumnjicen) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE,
+    FOREIGN KEY (idOrganizacija) REFERENCES Organizacija(idOrganizacija) ON DELETE CASCADE
 );
 
 CREATE TABLE Misija (
@@ -279,7 +279,7 @@ CREATE TABLE MisijaPoruka (
     statusS INT NOT NULL,
     posiljalac VARCHAR(100) NOT NULL,
     poruka TEXT NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE NapredakIstrage (
@@ -288,8 +288,8 @@ CREATE TABLE NapredakIstrage (
     idZlocin INT NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('U toku', 'Završeno', 'Neuspelo')),
     datumPromene DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik),
-    FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik) ON DELETE CASCADE,
+    FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE ZabelezeniIzbor (
@@ -298,8 +298,8 @@ CREATE TABLE ZabelezeniIzbor (
     idZlocin INT NOT NULL,
     opisIzbora TEXT NOT NULL,
     datumIzbora DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik),
-    FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (idKorisnik) REFERENCES Korisnik(idKorisnik) ON DELETE CASCADE,
+    FOREIGN KEY (idZlocin) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE OneContact (
@@ -308,7 +308,7 @@ CREATE TABLE OneContact (
     ime VARCHAR(100) NOT NULL,
     broj VARCHAR(100) NOT NULL,
     slika INT,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE Beleska (
@@ -316,7 +316,7 @@ CREATE TABLE Beleska (
     zlocinId INT NOT NULL,
     tekst VARCHAR(1000) NOT NULL,
 	datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE WhatsAppKontakt (
@@ -325,7 +325,7 @@ CREATE TABLE WhatsAppKontakt (
     ime VARCHAR(100) NOT NULL,
     broj VARCHAR(100) NOT NULL,
     slika INT,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE WhatsAppPoruka (
@@ -335,8 +335,8 @@ CREATE TABLE WhatsAppPoruka (
     tekst VARCHAR(1000) NOT NULL,
     datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     procitana TINYINT(0),
-    FOREIGN KEY (kontaktKoSalje) REFERENCES WhatsAppKontakt(idWhatsAppKontakt),
-    FOREIGN KEY (kontaktKomeSalje) REFERENCES WhatsAppKontakt(idWhatsAppKontakt)
+    FOREIGN KEY (kontaktKoSalje) REFERENCES WhatsAppKontakt(idWhatsAppKontakt) ON DELETE CASCADE,
+    FOREIGN KEY (kontaktKomeSalje) REFERENCES WhatsAppKontakt(idWhatsAppKontakt) ON DELETE CASCADE
 );
 
 CREATE TABLE OneCall (
@@ -346,8 +346,8 @@ CREATE TABLE OneCall (
     propusten TINYINT(0),
     dolazni TINYINT(0),
     zrtvaId INT NOT NULL,
-    FOREIGN KEY (kontakt) REFERENCES OneContact(idOneContact),
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (kontakt) REFERENCES OneContact(idOneContact) ON DELETE CASCADE,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 CREATE TABLE Gallery (
@@ -356,7 +356,7 @@ CREATE TABLE Gallery (
     slika INT,
     datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     mesto VARCHAR(100) NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE ObicnaPoruka (
@@ -366,8 +366,8 @@ CREATE TABLE ObicnaPoruka (
     tekst VARCHAR(1000) NOT NULL,
     datum DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     procitana TINYINT(0),
-    FOREIGN KEY (kontaktKoSalje) REFERENCES OneContact(idOneContact),
-    FOREIGN KEY (kontaktKomeSalje) REFERENCES OneContact(idOneContact)
+    FOREIGN KEY (kontaktKoSalje) REFERENCES OneContact(idOneContact) ON DELETE CASCADE,
+    FOREIGN KEY (kontaktKomeSalje) REFERENCES OneContact(idOneContact) ON DELETE CASCADE
 );
 
 -- CREATE TABLE OdnosOsumnjicenZrtva (
@@ -397,7 +397,7 @@ CREATE TABLE Odgovor (
     tekstOdgovora VARCHAR(1000) NOT NULL,
     tacan TINYINT(0),
     bodovi INT NOT NULL,
-    FOREIGN KEY (pitanjeId) REFERENCES Pitanje(idPitanje)
+    FOREIGN KEY (pitanjeId) REFERENCES Pitanje(idPitanje) ON DELETE CASCADE
 );
 
 CREATE TABLE PitanjeIspitivanjeOsumnjicenog (
@@ -407,7 +407,7 @@ CREATE TABLE PitanjeIspitivanjeOsumnjicenog (
     odgovor VARCHAR(1000) NOT NULL,
     komentar VARCHAR(1000) NOT NULL,
     osumnjicenId INT NOT NULL,
-    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 CREATE TABLE PitanjeIspitivanjeSvedoka (
@@ -416,7 +416,7 @@ CREATE TABLE PitanjeIspitivanjeSvedoka (
     odgovor VARCHAR(1000) NOT NULL,
     svedokId INT NOT NULL,
     nextPitanje INT NOT NULL,
-	FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok)
+	FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok) ON DELETE CASCADE
 );
 
 CREATE TABLE Zadatak (
@@ -426,7 +426,7 @@ CREATE TABLE Zadatak (
     uradjen TINYINT(0),
     nextZadatak INT,
     zlocinId INT NOT NULL,
-	FOREIGN KEY (nextZadatak) REFERENCES Zadatak(idZadatak)
+	FOREIGN KEY (nextZadatak) REFERENCES Zadatak(idZadatak) ON DELETE CASCADE
 );
 
 CREATE TABLE DokazZadatak (
@@ -435,8 +435,8 @@ CREATE TABLE DokazZadatak (
     dokazId INT NOT NULL,
     uradjen TINYINT(0),
     zadatakId INT NOT NULL,
-	FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz),
-    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+	FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz) ON DELETE CASCADE,
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak) ON DELETE CASCADE
 );
 
 CREATE TABLE IspitivanjeOsumnjicenogZadatak (
@@ -444,8 +444,8 @@ CREATE TABLE IspitivanjeOsumnjicenogZadatak (
     osumnjicenId INT NOT NULL,
     zadatakId INT NOT NULL,
     uradjen TINYINT(0),
-	FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen),
-    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+	FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE,
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak) ON DELETE CASCADE
 );
 
 CREATE TABLE IspitivanjeSvedokaZadatak (
@@ -453,8 +453,8 @@ CREATE TABLE IspitivanjeSvedokaZadatak (
     svedokId INT NOT NULL,
     zadatakId INT NOT NULL,
     uradjen TINYINT(0),
-    FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok),
-    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+    FOREIGN KEY (svedokId) REFERENCES Svedok(idSvedok) ON DELETE CASCADE,
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak) ON DELETE CASCADE
 );
 
 CREATE TABLE TelefonZadatak (
@@ -462,8 +462,8 @@ CREATE TABLE TelefonZadatak (
     telefonId INT NOT NULL,
     zadatakId INT NOT NULL,
     uradjen TINYINT(0),
-    FOREIGN KEY (telefonId) REFERENCES Telefon(idTelefon),
-    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+    FOREIGN KEY (telefonId) REFERENCES Telefon(idTelefon) ON DELETE CASCADE,
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak) ON DELETE CASCADE
 );
 
 CREATE TABLE ForenzickiDokazZadatak (
@@ -472,8 +472,8 @@ CREATE TABLE ForenzickiDokazZadatak (
     forenzickiDokazId INT NOT NULL,
     uradjen TINYINT(0),
     zadatakId INT NOT NULL,
-    FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz),
-    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak)
+    FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz) ON DELETE CASCADE,
+    FOREIGN KEY (zadatakId) REFERENCES Zadatak(idZadatak) ON DELETE CASCADE
 );
 
 -- CREATE TABLE PorukeZadatak (
@@ -493,7 +493,7 @@ CREATE TABLE Kontakt (
     broj varchar(50) NOT NULL,
     statusS INT NOT NULL,
     zrtvaId INT NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Poruke`;
@@ -507,8 +507,8 @@ CREATE TABLE Poruke (
     posiljalacId INT NOT NULL,
     statusPoruke ENUM('sent', 'read', 'delete') NOT NULL,
     sifrovana boolean NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva),
-    FOREIGN KEY (posiljalacId) REFERENCES Kontakt(idKontakt)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE,
+    FOREIGN KEY (posiljalacId) REFERENCES Kontakt(idKontakt) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Pozivi`;
@@ -521,8 +521,8 @@ CREATE TABLE Pozivi (
     zrtvaId INT NOT NULL,
     statusS INT NOT NULL,
     kontaktId INT NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva),
-    FOREIGN KEY (kontaktId) REFERENCES Kontakt(idKontakt)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE,
+    FOREIGN KEY (kontaktId) REFERENCES Kontakt(idKontakt) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Galerija`;
@@ -534,7 +534,7 @@ CREATE TABLE Galerija (
     zrtvaId INT NOT NULL,
 	datumVreme DATETIME DEFAULT CURRENT_TIMESTAMP,
     lokacija varchar(100) NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Aplikacija`;
@@ -546,7 +546,7 @@ CREATE TABLE Aplikacija (
     zrtvaId INT NOT NULL,
     aktivna boolean NOT NULL,
     informacije varchar(100) NOT NULL,
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Trag`;
@@ -555,8 +555,8 @@ CREATE TABLE Trag (
     idTrag INT AUTO_INCREMENT PRIMARY KEY,
     forenzickiDokazId INT NOT NULL,
     osumnjicenId INT NOT NULL,
-    FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz),
-    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (forenzickiDokazId) REFERENCES ForenzickiDokaz(idForenzickiDokaz) ON DELETE CASCADE,
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `DokazOsumnjicen`;
@@ -565,8 +565,8 @@ CREATE TABLE DokazOsumnjicen (
     idDokazOsumnjicen INT AUTO_INCREMENT PRIMARY KEY,
     dokazId INT NOT NULL,
     osumnjicenId INT NOT NULL,
-    FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz),
-    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen)
+    FOREIGN KEY (dokazId) REFERENCES Dokaz(idDokaz) ON DELETE CASCADE,
+    FOREIGN KEY (osumnjicenId) REFERENCES Osumnjicen(idOsumnjicen) ON DELETE CASCADE
 );
 
 
@@ -580,9 +580,9 @@ CREATE TABLE Pacijent (
     prijavio INT NOT NULL,
     zlocinId INT NOT NULL,
     zrtvaId INT NOT NULL,
-    FOREIGN KEY (prijavio) REFERENCES Osoba(idOsoba),
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin),
-    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva)
+    FOREIGN KEY (prijavio) REFERENCES Osoba(idOsoba) ON DELETE CASCADE,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE,
+    FOREIGN KEY (zrtvaId) REFERENCES Zrtva(idZrtva) ON DELETE CASCADE
 );
 
 
@@ -597,7 +597,7 @@ CREATE TABLE MedicinskiIzvestaj (
     toksikoloskeAnalize varchar(255) NOT NULL,
     zakljucak varchar(255) NOT NULL,
     pacijentId INT NOT NULL,
-    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent)
+    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `IzjavaZaPacijenta`;
@@ -607,8 +607,8 @@ CREATE TABLE IzjavaZaPacijenta (
     izjava varchar(255) NOT NULL,
     pacijentId INT NOT NULL,
     osobaId INT NOT NULL,
-    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent),
-    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba)
+    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent) ON DELETE CASCADE,
+    FOREIGN KEY (osobaId) REFERENCES Osoba(idOsoba) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `LekarskiTest`;
@@ -617,7 +617,7 @@ CREATE TABLE LekarskiTest (
     idLekarskiTest INT AUTO_INCREMENT PRIMARY KEY,
     pacijentId INT NOT NULL,
     izjava varchar(255) NOT NULL,
-    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent)
+    FOREIGN KEY (pacijentId) REFERENCES Pacijent(idPacijent) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `LokacijeIstrage`;
@@ -630,5 +630,5 @@ CREATE TABLE LokacijeIstrage (
     zlocinId INT NOT NULL,
     geoTackaALatitude DOUBLE NOT NULL,
     geoTackaALongitude DOUBLE NOT NULL,
-    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin)
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );

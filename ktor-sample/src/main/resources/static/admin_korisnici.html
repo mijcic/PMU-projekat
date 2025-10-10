@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - Upravljanje korisnicima</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #searchUser {
+            margin-bottom: 15px;
+            width: 300px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            user-select: none;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .actions button {
+            margin-right: 5px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+        }
+
+        .actions .edit-btn {
+            background-color: #28a745;
+        }
+
+        .actions .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .actions .edit-btn:hover {
+            background-color: #218838;
+        }
+
+        .actions .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        #addUserBtn {
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+
+        #addUserBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Upravljanje korisnicima</h1>
+
+<input type="text" id="searchUser" placeholder="Pretraži korisnike..." />
+
+<button id="addUserBtn">Dodaj korisnika</button>
+
+<table id="usersTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ime</th>
+        <th>Email</th>
+        <th>Uloga</th>
+        <th>Status</th>
+        <th>Akcije</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Dinamički se ubacuju korisnici ovde -->
+    <tr>
+        <td>1</td>
+        <td>Marko Marković</td>
+        <td>marko@example.com</td>
+        <td>Admin</td>
+        <td>Aktivan</td>
+        <td class="actions">
+            <button class="edit-btn">Izmeni</button>
+            <button class="delete-btn">Obriši</button>
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Jelena Jelić</td>
+        <td>jelena@example.com</td>
+        <td>Korisnik</td>
+        <td>Neaktivan</td>
+        <td class="actions">
+            <button class="edit-btn">Izmeni</button>
+            <button class="delete-btn">Obriši</button>
+        </td>
+    </tr>
+    <!-- ... -->
+    </tbody>
+</table>
+
+<script>
+    // Filter tabela na osnovu pretrage
+    document.getElementById('searchUser').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+
+        rows.forEach(row => {
+            const cellsText = row.textContent.toLowerCase();
+            row.style.display = cellsText.includes(filter) ? '' : 'none';
+        });
+    });
+
+    // Primer: Dodavanje korisnika (tu možeš povezati sa modalom ili novom stranom)
+    document.getElementById('addUserBtn').addEventListener('click', () => {
+        alert('Otvori formu za dodavanje korisnika');
+    });
+
+    // Primer za edit/delete dugmad
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const userId = row.children[0].textContent;
+            alert('Izmeni korisnika sa ID: ' + userId);
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const userId = row.children[0].textContent;
+            if(confirm('Da li ste sigurni da želite da obrišete korisnika sa ID: ' + userId + '?')) {
+                // logika za brisanje korisnika
+                row.remove();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

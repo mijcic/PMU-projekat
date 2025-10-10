@@ -1,0 +1,567 @@
+{
+  "zlocinR": {
+    "idZlocin": 1,
+    "tipZlocinaId": 1,
+    "naziv": "Murder of Dr. Evelyn Carter",
+    "datum": "2025-08-22",
+    "mesto": "Carter Neurology Clinic, New York City",
+    "opis": "Dr. Evelyn Carter, a renowned neurosurgeon, was found dead in her private office with signs of blunt force trauma.",
+    "status": "u_istrazi"
+  },
+  "zrtvaR": {
+    "idZrtva": 1,
+    "tipZrtve": "Individual",
+    "detalji": "Dr. Evelyn Carter, 45, one of the top neurosurgeons in NYC, was murdered in her clinic late at night.",
+    "statusZrtva": "ziva",
+    "zlocinId": 1,
+    "osobaId": {
+      "idOsoba": 1,
+      "ime": "Dr. Evelyn Carter",
+      "kontakt": "+12125551234",
+      "datum": "1980-02-05",
+      "zanimanje": "Neurosurgeon",
+      "pol": "female",
+      "zlocinId": 1
+    }
+  },
+  "osumnjicenR": [
+    {
+      "idOsumnjicen": 1,
+      "status": 0,
+      "tipOsumnjicen": "Pojedinac",
+      "motiv": {
+        "idMotiv": 1,
+        "opis": "Professional jealousy after being passed over for a prestigious medical research grant."
+      },
+      "zlocinId": 1,
+      "kriv": 0,
+      "osobaId": {
+        "idOsoba": 2,
+        "ime": "Dr. Maria Solano",
+        "kontakt": "+12125554321",
+        "datum": "1978-09-12",
+        "zanimanje": "Neurosurgeon",
+        "pol": "zenski",
+        "zlocinId": 1
+      }
+    },
+    {
+      "idOsumnjicen": 2,
+      "status": 0,
+      "tipOsumnjicen": "Pojedinac",
+      "motiv": {
+        "idMotiv": 2,
+        "opis": "Revenge for a past malpractice report filed by Dr. Carter that ended his medical career."
+      },
+      "zlocinId": 1,
+      "kriv": 0,
+      "osobaId": {
+        "idOsoba": 3,
+        "ime": "Thomas Reed",
+        "kontakt": "+12125556789",
+        "datum": "1975-07-19",
+        "zanimanje": "Former Surgeon",
+        "pol": "muski",
+        "zlocinId": 1
+      }
+    }
+  ],
+  "dokazR": [
+    {
+      "idDokaz": 1,
+      "tipDokaza": "fizicki",
+      "opis": "A blood-stained surgical hammer found under the victim’s desk.",
+      "zlocinId": 1,
+      "zrtvaId": 1,
+      "status": 0
+    },
+    {
+      "idDokaz": 2,
+      "tipDokaza": "digitalni",
+      "opis": "Encrypted emails threatening Dr. Carter found on her clinic computer.",
+      "zlocinId": 1,
+      "zrtvaId": 1,
+      "status": 0
+    }
+  ],
+  "svedokR": [
+    {
+      "idSvedok": 1,
+      "izjava": "Dr. Solano was seen arguing with Dr. Carter the day before the murder. The conversation was heated and emotional.",
+      "statusSvedok": "aktivno",
+      "statusIspitan": 0,
+      "zlocinId": 1,
+      "osobaId": {
+        "idOsoba": 4,
+        "ime": "Nina Ellis",
+        "kontakt": "+12127778888",
+        "datum": "1990-03-10",
+        "zanimanje": "Clinic Nurse",
+        "pol": "zenski",
+        "zlocinId": 1
+      }
+    },
+    {
+      "idSvedok": 2,
+      "izjava": "I saw a man who looked like Thomas Reed near the back entrance of the clinic around midnight.",
+      "statusSvedok": "aktivno",
+      "statusIspitan": 0,
+      "zlocinId": 1,
+      "osobaId": {
+        "idOsoba": 5,
+        "ime": "David Kim",
+        "kontakt": "+12126667777",
+        "datum": "1985-11-20",
+        "zanimanje": "Security Guard",
+        "pol": "muski",
+        "zlocinId": 1
+      }
+    }
+  ],
+  "obdukcijaR": {
+    "idObdukcija": 1,
+    "izvestaj": "The cause of death was blunt force trauma to the head. The victim also had defensive wounds on her forearms.",
+    "datum": "2025-08-23",
+    "uzrokSmrti": "Blunt force trauma to the skull.",
+    "zrtvaId": 1,
+    "informacije": "No traces of alcohol or drugs. Wounds suggest the victim tried to resist her attacker."
+  },
+  "forenzickiDokazR": [
+    {
+      "idForenzickiDokaz": 1,
+      "tipForenzickiDokaz": "DNK",
+      "opis": "DNA found on the surgical hammer matched Dr. Solano.",
+      "statusS": 0,
+      "veza": "This strongly links Dr. Solano to the murder weapon.",
+      "zrtvaId": 1
+    }
+  ],
+  "telefonR": [
+    {
+      "idTelefon": 1,
+      "model": "iPhone 13 Pro",
+      "os": "IOS",
+      "sifra": "2025",
+      "informacije": "Contained encrypted emails and a voice memo from Dr. Carter mentioning threats.",
+      "zrtvaId": 1
+    },
+    {
+      "idTelefon": 2,
+      "model": "Google Pixel 6",
+      "os": "Android",
+      "sifra": "123",
+      "informacije": "Messages referencing the grant results and resentment toward Dr. Carter.",
+      "zrtvaId": 1
+    }
+  ],
+  "oneContactR": [
+    {
+      "idOneContact": 1,
+      "zlocinId": 1,
+      "ime": "Dr. Maria Solano",
+      "broj": "+12125554321",
+      "slika": 1
+    },
+    {
+      "idOneContact": 2,
+      "zlocinId": 1,
+      "ime": "Thomas Reed",
+      "broj": "+12125556789",
+      "slika": 1
+    }
+  ],
+  "beleskaR": [
+    {
+      "idBeleska": 1,
+      "zlocinId": 1,
+      "tekst": "Dr. Carter was under immense pressure after losing the grant. Witness statements indicate she received threatening calls.",
+      "datum": "2025-08-23"
+    },
+    {
+      "idBeleska": 2,
+      "zlocinId": 1,
+      "tekst": "Security footage from the clinic lobby shows an unknown person entering late at night.",
+      "datum": "2025-08-23"
+    }
+  ],
+  "whatsAppKontaktR": [
+    {
+      "idWhatsAppKontakt": 1,
+      "zlocinId": 1,
+      "ime": "Leo Turner",
+      "broj": "+12067770011",
+      "slika": 1
+    },
+    {
+      "idWhatsAppKontakt": 2,
+      "zlocinId": 1,
+      "ime": "Sophia Ramos",
+      "broj": "+12068881122",
+      "slika": 1
+    }
+  ],
+  "whatsAppPorukaR": [
+    {
+      "idWhatsAppPoruka": 1,
+      "kontaktKoSalje": 1,
+      "kontaktKomeSalje": 2,
+      "tekst": "She found out about the past. This could ruin us.",
+      "datum": "2025-08-22",
+      "procitana": true
+    },
+    {
+      "idWhatsAppPoruka": 2,
+      "kontaktKoSalje": 2,
+      "kontaktKomeSalje": 1,
+      "tekst": "Then she left us no choice.",
+      "datum": "2025-08-22",
+      "procitana": false
+    }
+  ],
+  "oneCallR": [
+    {
+      "idOneCall": 1,
+      "kontakt": 1,
+      "datum": "2025-08-22",
+      "propusten": false,
+      "dolazni": true,
+      "zrtvaId": 1
+    },
+    {
+      "idOneCall": 2,
+      "kontakt": 2,
+      "datum": "2025-08-22",
+      "propusten": true,
+      "dolazni": false,
+      "zrtvaId": 1
+    }
+  ],
+  "galleryR": [
+    {
+      "idPhoto": 1,
+      "zlocinId": 1,
+      "slika": 1,
+      "datum": "2025-08-22",
+      "mesto": "Carter Neurology Clinic, Office"
+    },
+    {
+      "idPhoto": 2,
+      "zlocinId": 1,
+      "slika": 2,
+      "datum": "2025-08-22",
+      "mesto": "Clinic Lobby Security Footage"
+    }
+  ],
+  "obicnaPorukaR": [
+    {
+      "idObicnaPoruka": 1,
+      "kontaktKoSalje": 1,
+      "kontaktKomeSalje": 2,
+      "tekst": "I can’t believe she did this again. She’ll pay for it.",
+      "datum": "2025-08-22",
+      "procitana": true
+    },
+    {
+      "idObicnaPoruka": 2,
+      "kontaktKoSalje": 2,
+      "kontaktKomeSalje": 1,
+      "tekst": "Keep your head down. We’ll handle it soon.",
+      "datum": "2025-08-22",
+      "procitana": false
+    }
+  ],
+  "prijavljeniKorisnikR": [
+    {
+      "idKorisnik": 1,
+      "korisnickoIme": "detektiv.carter",
+      "sifra": "securePassword123"
+    },
+    {
+      "idKorisnik": 2,
+      "korisnickoIme": "inspektor.morgan",
+      "sifra": "investigate456"
+    }
+  ],
+  "pitanjeR": [
+    {
+      "idPitanje": 1,
+      "zlocinId": 1,
+      "tekst": "Who had access to Dr. Carter’s office on the night of the murder?"
+    },
+    {
+      "idPitanje": 2,
+      "zlocinId": 1,
+      "tekst": "What was the nature of the disagreement between Dr. Carter and Thomas Reed?"
+    },
+    {
+      "idPitanje": 3,
+      "zlocinId": 1,
+      "tekst": "Do the threatening emails link to any of the suspects?"
+    }
+  ],
+  "odnosOsumnjicenZrtvaR": [
+    {
+      "idOdnos": 1,
+      "osumnjicenId": 1,
+      "zrtvaId": 1,
+      "tipOdnosa": "Colleague and rival in research funding."
+    },
+    {
+      "idOdnos": 2,
+      "osumnjicenId": 2,
+      "zrtvaId": 1,
+      "tipOdnosa": "Former assistant with a grudge."
+    }
+  ],
+  "odgovorR": [
+    {
+      "idOdogovor": 1,
+      "pitanjeId": 1,
+      "tekstOdgovora": "Only Dr. Solano and Thomas Reed had keys to the office.",
+      "tacan": true,
+      "bodovi": 10
+    },
+    {
+      "idOdogovor": 2,
+      "pitanjeId": 2,
+      "tekstOdgovora": "They argued over the failed grant and accusations of sabotage.",
+      "tacan": true,
+      "bodovi": 10
+    }
+  ],
+  "pitanjeIspitivanjeOsumnjicenogR": [
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 1,
+      "kategorija": "Alibi",
+      "tekst": "Where were you on the night of August 22, 2025?",
+      "odgovor": "Bio sam kod kuće, sam, gledajući TV.",
+      "komentar": "Alibi nepotvrđen. Svedok tvrdi da je bio blizu klinike.",
+      "osumnjicenId": 2
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 2,
+      "kategorija": "Motiv",
+      "tekst": "Da li ste imali razloga da naudite Dr. Carter zbog njene prijave?",
+      "odgovor": "Ne, to je stara priča, prešao sam preko toga.",
+      "komentar": "Motiv osvete je jak, s obzirom na uništenu karijeru. Odgovor je sumnjiv.",
+      "osumnjicenId": 2
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 3,
+      "kategorija": "Pristup mestu zločina",
+      "tekst": "Da li imate ključ od kancelarije Dr. Carter?",
+      "odgovor": "Ne, ja nemam ključ.",
+      "komentar": "Istraga je utvrdila da je Thomas Reed imao rezervni ključ.",
+      "osumnjicenId": 2
+    }
+  ],
+  "pitanjeIspitivanjeSvedokaR": [
+    {
+      "idPitanjeIspitivanjeSvedoka": 1,
+      "tekst": "Did you see anyone suspicious near the clinic that night?",
+      "odgovor": "No.",
+      "svedokId": 1,
+      "nextPitanje": 2
+    },
+    {
+      "idPitanjeIspitivanjeSvedoka": 2,
+      "tekst": "Can you describe the unknown person on the security footage?",
+      "odgovor": "No.",
+      "svedokId": 1,
+      "nextPitanje": 0
+    }
+  ],
+  "osobaR": [
+    {
+      "idOsoba": 1,
+      "ime": "Marko Marković",
+      "kontakt": "123456789",
+      "datum": "2025-04-17",
+      "zanimanje": "Detektiv",
+      "pol": "Muški",
+      "zlocinId": 101
+    },
+    {
+      "idOsoba": 2,
+      "ime": "Jovana Jovanović",
+      "kontakt": "987654321",
+      "datum": "2025-04-17",
+      "zanimanje": "Advokat",
+      "pol": "Ženski",
+      "zlocinId": 102
+    },
+    {
+      "idOsoba": 3,
+      "ime": "Nikola Nikolić",
+      "kontakt": "1122334455",
+      "datum": "2025-04-17",
+      "zanimanje": "Novinar",
+      "pol": "Muški",
+      "zlocinId": 103
+    }
+  ],
+  "zadatakR": [
+    {
+      "idZadatak": 1,
+      "tekst": "Ispitati mesto zločina",
+      "korak": "1",
+      "uradjen": false,
+      "nextZadatak": 2,
+      "zlocinId": 101
+    },
+    {
+      "idZadatak": 2,
+      "tekst": "Pronaći svedoke",
+      "korak": "2",
+      "uradjen": false,
+      "nextZadatak": 3,
+      "zlocinId": 101
+    }
+  ],
+  "ispitivanjeSvedokaZadatakR": [
+    {
+      "idIspitivanjeSvedokaZadatak": 1,
+      "svedokId": 101,
+      "zadatakId": 1001,
+      "uradjen": false
+    },
+    {
+      "idIspitivanjeSvedokaZadatak": 2,
+      "svedokId": 102,
+      "zadatakId": 1002,
+      "uradjen": true
+    }
+  ],
+  "dokazZadatakR": [
+    {
+      "idDokazZadatak": 1,
+      "tekst": "Analiziraj DNK tragove pronađene na nožu.",
+      "dokazId": 1,
+      "uradjen": false,
+      "zadatakId": 2
+    },
+    {
+      "idDokazZadatak": 2,
+      "tekst": "Uporedi otiske prstiju sa čaše sa bazom osumnjičenih.",
+      "dokazId": 2,
+      "uradjen": false,
+      "zadatakId": 3
+    }
+  ],
+  "ispitivanjeOsumnjicenogZadatakR": [
+    {
+      "idIspitivanjeOsumnjicenogZadatak": 1,
+      "osumnjicenId": 42,
+      "zadatakId": 7,
+      "uradjen": false
+    },
+    {
+      "idIspitivanjeOsumnjicenogZadatak": 2,
+      "osumnjicenId": 43,
+      "zadatakId": 8,
+      "uradjen": true
+    },
+    {
+      "idIspitivanjeOsumnjicenogZadatak": 3,
+      "osumnjicenId": 42,
+      "zadatakId": 9,
+      "uradjen": false
+    }
+  ],
+  "telefonZadatakR": [
+    {
+      "idTelefonZadatak": 1,
+      "telefonId": 10,
+      "zadatakId": 3,
+      "uradjen": false
+    },
+    {
+      "idTelefonZadatak": 2,
+      "telefonId": 11,
+      "zadatakId": 4,
+      "uradjen": true
+    }
+  ],
+  "forenzickiDokazZadatakR": [
+    {
+      "idForenzickiDokazZadatak": 1,
+      "tekst": "Uporedi DNK tragove sa uzorcima osumnjičenih.",
+      "forenzickiDokazId": 1,
+      "uradjen": false,
+      "zadatakId": 1
+    },
+    {
+      "idForenzickiDokazZadatak": 2,
+      "tekst": "Proveri da li postoji još tragova DNK na dršci noža.",
+      "forenzickiDokazId": 1,
+      "uradjen": false,
+      "zadatakId": 2
+    }
+  ],
+  "kontaktKtor": [
+    {
+      "idKontakt": 0,
+      "ime": "",
+      "broj": "",
+      "status": 0,
+      "zrtvaId": 0
+    }
+  ],
+  "porukeKtor": [
+    {
+      "idPoruke": 0,
+      "tipPoruke": "",
+      "sadrzaj": "",
+      "datumVreme": "2023-11-11 08:30:00",
+      "zrtvaId": 0,
+      "posiljalacId": 0,
+      "statusPoruke": "",
+      "sirovana": false
+    }
+  ],
+  "poziviKtor": [
+    {
+      "idPoziv": 0,
+      "tip": 0,
+      "broj": "",
+      "datumVreme": "2023-11-11 08:30:00",
+      "zrtvaId": 0,
+      "status": 0,
+      "kontaktId": 0
+    }
+  ],
+  "galerijaKtor": [
+    {
+      "idGalerija": 0,
+      "tip": 0,
+      "putanja": "",
+      "zrtvaId": 0,
+      "datumVreme": "2023-11-11 9:30:00",
+      "lokacija": ""
+    }
+  ],
+  "aplikacijaKtor": [
+    {
+      "idAplikacije": 0,
+      "naziv": "",
+      "tip": 0,
+      "zrtvaId": 0,
+      "aktivna": false,
+      "informacije": ""
+    }
+  ],
+  "tragKtor": [
+    {
+      "idTrag": 0,
+      "forenzickiDokazId": 0,
+      "osumnjicenId": 0
+    }
+  ],
+  "dokazOsumnjicenKtor": [
+    {
+      "idDokazOsumnjicen": 0,
+      "dokazId": 0,
+      "osumnjicenId": 0
+    }
+  ]
+}

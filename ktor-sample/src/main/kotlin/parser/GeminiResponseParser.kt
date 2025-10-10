@@ -1,6 +1,7 @@
 package com.example.parser
 
 import com.example.data.remote.gemini.response.GeminiResponse
+import com.example.data.remote.gemini.retrofit.GeminiResponse2Step1
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 
 //Parser treba da pretvori (parsira) sirovi odgovor od Gemini API-ja u tvoje konkretne domenske objekte, tj. DTO-ove koje koristiš za dalje procesiranje ili upis u ba
@@ -19,7 +20,7 @@ interface GeminiResponseParser {
      */
     suspend fun parseGeminiResponse(response: GeminiResponse): GeminiResponseRetrofit
 
-    suspend fun parseGeminiResponseMurderStep1(response: GeminiResponse): String
+    suspend fun parseGeminiResponseMurderStep1(response: GeminiResponse): GeminiResponse2Step1?
 
     suspend fun parseGeminiResponseMurderStep2(response: GeminiResponse): String
 

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8" />
+    <title>WHODUNIT Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .button:hover {
+            background-color: #005fa3;
+        }
+        #storyContainer {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 700px;
+            white-space: pre-wrap; /* da formatira novi red */
+            line-height: 1.5;
+            color: #222;
+        }
+        #storyContainer h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>WHODUNIT Admin Panel</h1>
+<a href="admin_addJson.html">Idi na admin_addJson stranicu</a><br>
+<a href="admin_addFormsMurder.html">Idi na admin_addFormsMurder stranicu</a><br>
+<a href="admin_addGemini.html">Idi na admin_addGemini stranicu</a><br>
+<a href="admin_korisnici.html">Idi na admin_korisnici stranicu</a><br>
+<a href="admin_story.html">Idi na admin_story stranicu</a><br>
+<a href="admin_delete.html">Idi na admin_delete stranicu</a><br>
+<a href="admin_stats.html">Idi na admin_stats stranicu</a><br>
+<a href="admin_login.html">Idi na admin_login stranicu</a><br>
+
+<button class="button" onclick="generateMurder()">🔪Dohvati pricu</button>
+
+<div id="storyContainer">
+    <em>Ovde će se prikazati generisana priča...</em>
+</div>
+
+<script>
+    async function generateMurder() {
+        const container = document.getElementById('storyContainer');
+        container.textContent = "Učitavanje priče...";
+
+        try {
+            const res = await fetch('/Murder');
+            if (res.ok) {
+                const data = await res.json();  // <-- OVDDE DOBIJAŠ JSON!
+
+                if (data.zlocinRetrofit && data.zrtvaRetrofit) {
+                    container.textContent = ""; // očisti prethodni sadržaj
+
+                    // Naslov
+                    const title = document.createElement('h2');
+                    title.textContent = data.zlocinRetrofit.naziv || "Murder Priča";
+                    container.appendChild(title);
+
+                    // Detalji o zločinu
+                    const crimeDetails = document.createElement('p');
+                    const date = new Date(data.zlocinRetrofit.datum);
+                    crimeDetails.innerHTML = `<strong>Datum:</strong> ${date.toLocaleDateString()}<br/>
+                      <strong>Mesto:</strong> ${data.zlocinRetrofit.mesto}<br/>
+                      <strong>Opis:</strong> ${data.zlocinRetrofit.opis}<br/>
+                      <strong>Status:</strong> ${data.zlocinRetrofit.status}`;
+                    container.appendChild(crimeDetails);
+
+                    // Detalji o žrtvi
+                    const victimDetails = document.createElement('p');
+                    victimDetails.innerHTML = `<strong>Žrtva:</strong> ${data.zrtvaRetrofit.detalji}<br/>
+                       <strong>Status žrtve:</strong> ${data.zrtvaRetrofit.statusZrtva}`;
+                    container.appendChild(victimDetails);
+
+                    // Osumnjičeni
+                    if (data.osumnjiceniRetrofit && data.osumnjiceniRetrofit.length > 0) {
+                        const suspectsTitle = document.createElement('h3');
+                        suspectsTitle.textContent = "Osumnjičeni:";
+                        container.appendChild(suspectsTitle);
+
+                        const suspectsList = document.createElement('ul');
+                        data.osumnjiceniRetrofit.forEach(osumnjiceni => {
+                            const li = document.createElement('li');
+                            const osoba = osumnjiceni.osobaId || {};
+                            li.innerHTML = `<strong>Ime:</strong> ${osoba.ime || 'Nepoznato'}<br/>
+                                        <strong>Status:</strong> ${osumnjiceni.status === 0 ? 'Aktivan' : 'Neaktivan'}<br/>
+                                        <strong>Motiv:</strong> ${osumnjiceni.motiv?.opis || 'Nepoznat'}<br/>
+                                        <strong>Kriv:</strong> ${osumnjiceni.kriv ? 'Da' : 'Ne'}`;
+                            suspectsList.appendChild(li);
+                        });
+                        container.appendChild(suspectsList);
+                    }
+
+                    // Dokazi
+                    if (data.dokaziRetrofit && data.dokaziRetrofit.length > 0) {
+                        const evidenceTitle = document.createElement('h3');
+                        evidenceTitle.textContent = "Dokazi:";
+                        container.appendChild(evidenceTitle);
+
+                        const evidenceList = document.createElement('ul');
+                        data.dokaziRetrofit.forEach(dokaz => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong>Tip:</strong> ${dokaz.tipDokaza}<br/>
+                                        <strong>Opis:</strong> ${dokaz.opis}<br/>
+                                        <strong>Status:</strong> ${dokaz.status === 0 ? 'Aktivan' : 'Neaktivan'}`;
+                            evidenceList.appendChild(li);
+                        });
+                        container.appendChild(evidenceList);
+                    }
+
+                    // Svedoci
+                    if (data.svedociRetrofit && data.svedociRetrofit.length > 0) {
+                        const witnessesTitle = document.createElement('h3');
+                        witnessesTitle.textContent = "Svedoci:";
+                        container.appendChild(witnessesTitle);
+
+                        const witnessesList = document.createElement('ul');
+                        data.svedociRetrofit.forEach(svedok => {
+                            const osoba = svedok.osobaId || {};
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong>Ime:</strong> ${osoba.ime || 'Nepoznato'}<br/>
+                                        <strong>Izjava:</strong> ${svedok.izjava}<br/>
+                                        <strong>Status:</strong> ${svedok.statusSvedok}`;
+                            witnessesList.appendChild(li);
+                        });
+                        container.appendChild(witnessesList);
+                    }
+
+                    // Obdukcija
+                    if (data.obdukcijaRetrofit) {
+                        const autopsyTitle = document.createElement('h3');
+                        autopsyTitle.textContent = "Izveštaj o obdukciji:";
+                        container.appendChild(autopsyTitle);
+
+                        const autopsyDetails = document.createElement('p');
+                        const autopsyDate = new Date(data.obdukcijaRetrofit.datum);
+                        autopsyDetails.innerHTML = `<strong>Datum:</strong> ${autopsyDate.toLocaleDateString()}<br/>
+                                                <strong>Uzrok smrti:</strong> ${data.obdukcijaRetrofit.uzrokSmrti}<br/>
+                                                <strong>Informacije:</strong> ${data.obdukcijaRetrofit.informacije}<br/>
+                                                <strong>Izveštaj:</strong> ${data.obdukcijaRetrofit.izvestaj}`;
+                        container.appendChild(autopsyDetails);
+                    }
+
+                    // Dodatno možeš na isti način dodati ostale sekcije poput telefona, poruka itd.
+
+                } else {
+                    container.textContent = "Podaci o priči nisu dostupni.";
+                }
+            } else {
+                container.textContent = "Greška: Priča nije pronađena.";
+            }
+        } catch (e) {
+            container.textContent = "Greška u komunikaciji: " + e.message;
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

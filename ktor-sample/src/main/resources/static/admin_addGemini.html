@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>WHODUNIT Admin - Ručni Unos</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background:#f0f0f0; }
+        h1,h2,h3 { color:#333; }
+        form { background:white; padding:15px; border-radius:8px; margin-bottom:20px; }
+        input, textarea, select { width: 100%; margin-bottom: 10px; padding:5px; }
+        button { padding:10px 20px; margin-top:5px; cursor:pointer; border:none; border-radius:5px; background:#0077cc; color:white; }
+        button:hover { background:#005fa3; }
+        #jsonPreview { background:white; padding:15px; border-radius:8px; white-space: pre-wrap; max-height:400px; overflow-y:auto; margin-top:20px; }
+    </style>
+</head>
+<body>
+
+<h1>WHODUNIT Admin - Ručni Unos Ubistvo</h1>
+
+<div id="formsContainer">
+
+    <!-- Ubistvo -->
+    <h2>1️⃣ Ubistvo (zlocinR)</h2>
+    <form id="zlocinForm">
+        <label>Naziv: <input type="text" name="naziv" /></label>
+        <label>Datum: <input type="date" name="datum" /></label>
+        <label>Mesto: <input type="text" name="mesto" /></label>
+        <label>Opis: <textarea name="opis"></textarea></label>
+        <label>Status:
+            <select name="status">
+                <option value="u_istrazi">U istrazi</option>
+                <option value="resen">resen</option>
+            </select>
+        </label>
+        <button type="button" onclick="addZlocin()">Dodaj Ubistvo</button>
+    </form>
+
+    <!-- Žrtva -->
+    <h2>2️⃣ Žrtva (zrtvaR)</h2>
+    <form id="zrtvaForm">
+        <label>Tip žrtve: <input type="text" name="tipZrtve" /></label>
+        <label>Detalji: <textarea name="detalji"></textarea></label>
+        <label>Status: <input type="text" name="statusZrtva" /></label>
+        <label>Ime: <input type="text" name="ime" /></label>
+        <label>Kontakt: <input type="text" name="kontakt" /></label>
+        <label>Datum rođenja: <input type="date" name="datumOsoba" /></label>
+        <label>Zanimanje: <input type="text" name="zanimanje" /></label>
+        <label>Pol:
+            <select name="pol">
+                <option value="muski">muski</option>
+                <option value="zenski">zenski</option>
+            </select>
+        </label>
+
+        <button type="button" onclick="addZrtva()">Dodaj Žrtvu</button>
+    </form>
+
+    <button onclick="popuniAutomatski()">🤖 Popuni automatski (Gemini)</button>
+
+
+    <!-- Osumnjičeni -->
+    <h2>3️⃣ Osumnjičeni (osumnjicenR)</h2>
+    <form id="osumnjicenForm">
+        <label>Tip osumnjičenog: <input type="text" name="tipOsumnjicen" /></label>
+        <label>Kriv? <input type="number" name="kriv" /></label>
+        <label>Motiv: <input type="text" name="motivOpis" /></label>
+        <label>Ime osobe: <input type="text" name="imeOsumnjicen" /></label>
+        <label>Kontakt osobe: <input type="text" name="kontaktOsumnjicen" /></label>
+        <label>Datum rođenja: <input type="date" name="datumOsumnjicen" /></label>
+        <label>Zanimanje: <input type="text" name="zanimanjeOsumnjicen" /></label>
+        <label>Pol: <input type="text" name="polOsumnjicen" /></label>
+        <button type="button" onclick="addOsumnjicen()">Dodaj Osumnjičenog</button>
+    </form>
+
+    <!-- Dokazi -->
+    <h2>4️⃣ Dokazi (dokazR)</h2>
+    <form id="dokazForm">
+        <label>Tip dokaza: <input type="text" name="tipDokaza" /></label>
+        <label>Opis: <textarea name="opis"></textarea></label>
+        <label>Status: <input type="number" name="status" /></label>
+        <button type="button" onclick="addDokaz()">Dodaj dokaz</button>
+    </form>
+
+    <!-- Svedoci -->
+    <h2>5️⃣ Svedoci (svedokR)</h2>
+    <form id="svedokForm">
+        <label>Ime: <input type="text" name="ime" /></label>
+        <label>Kontakt: <input type="text" name="kontakt" /></label>
+        <label>Datum rođenja: <input type="date" name="datum" /></label>
+        <label>Zanimanje: <input type="text" name="zanimanje" /></label>
+        <label>Pol: <input type="text" name="pol" /></label>
+        <label>Izjava: <textarea name="izjava"></textarea></label>
+        <button type="button" onclick="addSvedok()">Dodaj svedoka</button>
+    </form>
+
+</div>
+
+<button onclick="generateJsonFile()">Generiši JSON fajl</button>
+<h3>📄 Trenutni JSON:</h3>
+<div id="jsonPreview">{}</div>
+
+<script>
+    let geminiData = {
+        zlocinR: null,
+        zrtvaR: null,
+        osumnjicenR: [],
+        dokazR: [],
+        svedokR: []
+    };
+
+    function updatePreview() {
+        document.getElementById("jsonPreview").textContent = JSON.stringify(geminiData, null, 4);
+    }
+
+    function addZlocin() {
+        const f = document.getElementById("zlocinForm");
+        geminiData.zlocinR = {
+            idZlocin: Date.now(),
+            tipZlocinaId: 1,
+            naziv: f.naziv.value,
+            datum: f.datum.value,
+            mesto: f.mesto.value,
+            opis: f.opis.value,
+            status: f.status.value
+        };
+        updatePreview();
+        alert("Ubistvo dodato!");
+    }
+
+    function addZrtva() {
+        const f = document.getElementById("zrtvaForm");
+        geminiData.zrtvaR = {
+            idZrtva: Date.now(),
+            tipZrtve: f.tipZrtve.value,
+            detalji: f.detalji.value,
+            statusZrtva: f.statusZrtva.value,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            osobaId: {
+                idOsoba: Date.now(),
+                ime: f.ime.value,
+                kontakt: f.kontakt.value,
+                datum: f.datumOsoba.value,
+                zanimanje: f.zanimanje.value,
+                pol: f.pol.value,
+                zlocinId: geminiData.zlocinR?.idZlocin || 0
+            }
+        };
+        updatePreview();
+        alert("Žrtva dodata!");
+    }
+
+    function addOsumnjicen() {
+        const f = document.getElementById("osumnjicenForm");
+        geminiData.osumnjicenR.push({
+            idOsumnjicen: Date.now(),
+            status: 0,
+            tipOsumnjicen: f.tipOsumnjicen.value,
+            motiv: { idMotiv: Date.now(), opis: f.motivOpis.value },
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            kriv: parseInt(f.kriv.value),
+            osobaId: {
+                idOsoba: Date.now(),
+                ime: f.imeOsumnjicen.value,
+                kontakt: f.kontaktOsumnjicen.value,
+                datum: f.datumOsumnjicen.value,
+                zanimanje: f.zanimanjeOsumnjicen.value,
+                pol: f.polOsumnjicen.value,
+                zlocinId: geminiData.zlocinR?.idZlocin || 0
+            }
+        });
+        updatePreview();
+        alert("Osumnjičeni dodan!");
+    }
+
+    function addDokaz() {
+        const f = document.getElementById("dokazForm");
+        geminiData.dokazR.push({
+            idDokaz: Date.now(),
+            tipDokaza: f.tipDokaza.value,
+            opis: f.opis.value,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            zrtvaId: geminiData.zrtvaR?.idZrtva || 0,
+            status: parseInt(f.status.value)
+        });
+        updatePreview();
+        alert("Dokaz dodat!");
+    }
+
+    function addSvedok() {
+        const f = document.getElementById("svedokForm");
+        geminiData.svedokR.push({
+            idSvedok: Date.now(),
+            izjava: f.izjava.value,
+            statusSvedok: "aktivno",
+            statusIspitan: 0,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            osobaId: {
+                idOsoba: Date.now(),
+                ime: f.ime.value,
+                kontakt: f.kontakt.value,
+                datum: f.datum.value,
+                zanimanje: f.zanimanje.value,
+                pol: f.pol.value,
+                zlocinId: geminiData.zlocinR?.idZlocin || 0
+            }
+        });
+        updatePreview();
+        alert("Svedok dodat!");
+    }
+
+    function generateJsonFile() {
+        const dataStr = JSON.stringify(geminiData, null, 4);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "whodunit_story.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        alert("JSON fajl generisan!");
+    }
+
+    async function popuniAutomatski() {
+        try {
+            const res = await fetch("http://localhost:8080/admin/gemini", {
+                method: "POST"
+            });
+
+            if (!res.ok) throw new Error("Greška pri pozivu Gemini-a");
+
+            const data = await res.json();
+
+            // Pretpostavka: data ima `zlocinR` i `zrtvaR` kao što su ti u geminiData
+            geminiData.zlocinR = data.zlocinR;
+            geminiData.zrtvaR = data.zrtvaR;
+
+            // Popuni formu za zločin
+            const zForm = document.getElementById("zlocinForm");
+            zForm.naziv.value = data.zlocinR.naziv;
+            zForm.datum.value = data.zlocinR.datum;
+            zForm.mesto.value = data.zlocinR.mesto;
+            zForm.opis.value = data.zlocinR.opis;
+            zForm.status.value = data.zlocinR.status;
+
+            // Popuni formu za žrtvu
+            const zrtvaForm = document.getElementById("zrtvaForm");
+            const osoba = data.zrtvaR.osobaId;
+            zrtvaForm.tipZrtve.value = data.zrtvaR.tipZrtve;
+            zrtvaForm.detalji.value = data.zrtvaR.detalji;
+            zrtvaForm.statusZrtva.value = data.zrtvaR.statusZrtva;
+            zrtvaForm.ime.value = osoba.ime;
+            zrtvaForm.kontakt.value = osoba.kontakt;
+            zrtvaForm.datumOsoba.value = osoba.datum;
+            zrtvaForm.zanimanje.value = osoba.zanimanje;
+            zrtvaForm.pol.value = osoba.pol;
+
+            updatePreview();
+            alert("✅ Podaci popunjeni automatski!");
+        } catch (err) {
+            alert("❌ " + err.message);
+        }
+    }
+
+</script>
+</body>
+</html>
