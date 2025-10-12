@@ -41,6 +41,7 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
+import rs.ac.bg.etf.projekat.data.realm.ScoreKorisnikaR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
@@ -585,6 +586,34 @@ class RepositoryImplRealmViewModel @Inject constructor(
             copyToRealm(requestKorisnik!!)
         }
         return requestKorisnik
+    }
+
+    override suspend fun insertScoreKorisnika(korisnickoImeK: String, scoreK: Int): ScoreKorisnikaR? {
+        var scoreKorisnika: ScoreKorisnikaR? = null
+
+        realm.write {
+            val existing = query<ScoreKorisnikaR>("korisnickoIme == $0", korisnickoImeK)
+                .first().find()
+
+            if (existing != null) {
+                existing.score = scoreK
+                scoreKorisnika = existing
+            } else {
+                val newScore = ScoreKorisnikaR().apply {
+                    idScoreKorisnika = (query<ScoreKorisnikaR>().find().maxOfOrNull { it.idScoreKorisnika } ?: 0) + 1
+                    korisnickoIme = korisnickoImeK
+                    this.score = scoreK
+                }
+                scoreKorisnika = copyToRealm(newScore)
+            }
+        }
+        return scoreKorisnika
+    }
+
+    override suspend fun getAllScores(): List<ScoreKorisnikaR>? {
+        return realm.query<ScoreKorisnikaR>()
+            .sort("score", Sort.DESCENDING)
+            .find()
     }
 
     override suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {

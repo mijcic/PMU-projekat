@@ -6,17 +6,20 @@ import io.ktor.server.routing.*
 
 fun Application.configureStaticContent() {
     routing {
-        staticResources("/admin", "static")
-        staticResources("/admin_korisnici", "static")
-        staticResources("/admin_addJson", "static")
+        staticResources("/admin", "static/templates")
+        staticResources("/admin_korisnici", "static/templates")
+        staticResources("/admin_addJson", "static/templates")
+        staticResources("/admin_addFormsMurder", "static/templates")
+        staticResources("/admin_story", "static/templates")
+        staticResources("/admin_delete", "static/templates")
 
-        staticResources("/admin_addJsonMS", "static")
-        staticResources("/admin_addFormsMurder", "static")
-        staticResources("/admin_story", "static")
-        staticResources("/admin_delete", "static")
+        staticResources("/admin_stats", "static/templates")
+        staticResources("/admin_login", "static/templates")
+        staticResources("/admin_addGemini", "static/templates")
 
-        staticResources("/admin_stats", "static")
-        staticResources("/admin_login", "static")
-        staticResources("/admin_addGemini", "static")
+        staticResources("/css", "static/css")
+        staticResources("/fonts", "static/fonts")
+        staticResources("/img", "static/img")
+        staticResources("/js", "static/js")
     }
 }

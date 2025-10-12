@@ -81,7 +81,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(
-    navController: NavController
+    navController: NavController, viewModel: MyViewModel
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -91,7 +91,6 @@ fun LoginPage(
         var password by remember { mutableStateOf("") }
 
         var context = LocalContext.current
-        val viewModel: MyViewModel = hiltViewModel()
         val realmViewModel: RealmViewModel = hiltViewModel()
         val uiState by viewModel.uiStateLogIn.collectAsState()
         var showDialog by remember { mutableStateOf(false) }

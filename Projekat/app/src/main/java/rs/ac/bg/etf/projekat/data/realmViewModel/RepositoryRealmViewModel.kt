@@ -36,6 +36,7 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
+import rs.ac.bg.etf.projekat.data.realm.ScoreKorisnikaR
 import rs.ac.bg.etf.projekat.data.realm.SvedokR
 import rs.ac.bg.etf.projekat.data.realm.TelefonR
 import rs.ac.bg.etf.projekat.data.realm.TelefonZadatakR
@@ -93,6 +94,10 @@ interface RepositoryRealmViewModel {
     suspend fun insertOdnosOsumnjicenZrtva(idOdnosOOZ:Int,osumnjicenOOZ: OsumnjicenR?, zrtvaOOZ: ZrtvaR?, tipOdnosaOOZ: String): OdnosOsumnjicenZrtvaR?
 
     suspend fun insertKorisnik(imeK: String, prezimeK: String, korisnickoImeK: String, sifraK: String, emailK: String, nacinPrijaveK: String, idTokenK: String, idTokenLast256K: String): KorisnikRequestR?
+
+    suspend fun insertScoreKorisnika(korisnickoImeK: String, scoreK: Int): ScoreKorisnikaR?
+
+    suspend fun getAllScores(): List<ScoreKorisnikaR>?
 
     suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR?
 

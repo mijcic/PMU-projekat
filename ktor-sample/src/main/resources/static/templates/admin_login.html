@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WHODUNIT Admin — Login</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        @font-face {
+            font-family: 'Special Elite';
+            src: url('/fonts/SpecialElite-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Special Elite', cursive;
+            margin: 0;
+            padding: 30px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/img/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            font-size: 32px;
+            text-align: center;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-size: 16px;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .small {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            background-color: #3E2F5B;
+            color: white;
+            transition: background-color 0.3s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: #2A213E;
+        }
+
+        button.secondary {
+            background-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        button.secondary:hover {
+            background-color: rgba(255,255,255,0.5);
+        }
+
+        .error {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #d9534f;
+            display: none;
+        }
+
+        .inline { display:inline-block; vertical-align:middle; }
+
+        .show-pass {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            padding: 6px;
+        }
+
+        .show-pass:hover {
+            background: transparent;
+        }
+
+        .foot {
+            margin-top:16px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" role="main" aria-labelledby="loginTitle">
+    <h1 id="loginTitle">Admin Login</h1>
+
+    <form id="loginForm" autocomplete="on">
+        <label for="username">Korisničko ime</label>
+        <input id="username" name="username" type="text" required autocomplete="username" placeholder="detektiv.paris" />
+
+        <label for="password">Lozinka</label>
+        <div class="password-container">
+            <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" />
+            <button type="button" class="show-pass" id="togglePass" title="Prikaži lozinku">Show</button>
+        </div>
+
+        <label for="remember" style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; cursor:pointer; width:100%;">
+            <input id="remember" name="remember" type="checkbox" />
+            <span class="small">Zapamti me</span>
+        </label>
+
+        <div class="actions">
+            <button id="submitBtn" type="submit">Prijavi se</button>
+            <button id="demoBtn" type="button" class="secondary" onclick="fillDemo()">Demo</button>
+        </div>
+
+        <div id="error" class="error" role="alert" aria-live="polite"></div>
+
+        <div class="foot">Ako nemaš nalog, kontaktiraj IT tim.</div>
+    </form>
+</div>
+
+<script>
+    const togglePassBtn = document.getElementById('togglePass');
+    const passwordInput = document.getElementById('password');
+
+    togglePassBtn.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            togglePassBtn.textContent = 'Hide';
+        } else {
+            passwordInput.type = 'password';
+            togglePassBtn.textContent = 'Show';
+        }
+    });
+
+    function fillDemo() {
+        document.getElementById('username').value = 'demo.admin';
+        document.getElementById('password').value = 'demo123';
+    }
+</script>
+
+</body>
+</html>

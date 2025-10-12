@@ -7,6 +7,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.ScoreKorisnikaRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Story
 import javax.inject.Inject
@@ -33,4 +34,8 @@ class Repository @Inject constructor(
     suspend fun geminiMurder(): GeminiResponseRetrofit = Api.geminiMurder()
 
     suspend fun geminiMysteriousSymptoms(): GeminiResponseRetrofitMysteriousSymptoms = Api.geminiMysteriousSymptoms()
+
+    suspend fun setScoreKorisnika(@Body request: ScoreKorisnikaRequest): MessageResponse = Api.setScoreKorisnika(request)
+
+    suspend fun getAllScores(): List<ScoreKorisnikaRequest> = Api.getAllScores()
 }

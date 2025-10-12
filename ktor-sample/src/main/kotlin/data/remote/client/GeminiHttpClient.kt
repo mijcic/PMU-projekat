@@ -40,6 +40,7 @@ object GeminiClient {
             socketTimeoutMillis = 60_000       // koliko dugo čeka na čitanje sa soketa (30 sekundi)
         }
         engine {
+            pipelining = true
             requestTimeout = 60_000
         }
     }

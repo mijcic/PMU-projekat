@@ -46,6 +46,7 @@ import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofit
 import rs.ac.bg.etf.projekat.data.retrofit.models.GeminiResponseRetrofitMysteriousSymptoms
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.MessageResponse
+import rs.ac.bg.etf.projekat.data.retrofit.models.ScoreKorisnikaRequest
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScorePageKorisnikResponse
 import rs.ac.bg.etf.projekat.data.retrofit.models.Zlocin
 import java.time.Instant
@@ -96,13 +97,38 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    private val _uiStateScoreKorisnika1 = MutableStateFlow(UiStateScoreKorisnika1())
+    val uiStateScoreKorisnika1: StateFlow<UiStateScoreKorisnika1> = _uiStateScoreKorisnika1
+
+    fun setScoreKorisnika(scoreKorisnika: ScoreKorisnikaRequest) = viewModelScope.launch {
+        try {
+            val response = MyRepository.setScoreKorisnika(scoreKorisnika)
+            _uiStateScoreKorisnika1.value = UiStateScoreKorisnika1(message = response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _uiStateScoreKorisnika1.value = UiStateScoreKorisnika1(message = null)
+        }
+    }
+
+    private val _uiStateScoreKorisnikaList = MutableStateFlow(UiStateScoreKorisnikaList())
+    val uiStateScoreKorisnikaList: StateFlow<UiStateScoreKorisnikaList> = _uiStateScoreKorisnikaList
+
+    fun scoreKorisnikaList() = viewModelScope.launch {
+        val scores = MyRepository.getAllScores() ?: emptyList()
+        _uiStateScoreKorisnikaList.value = UiStateScoreKorisnikaList(scoreList = scores)
+    }
+
     private val _uiStateLogIn = MutableStateFlow(UiStateLogIn())
     val uiStateLogIn: StateFlow<UiStateLogIn> = _uiStateLogIn
+
+    private val _uiStateKorisnik = MutableStateFlow(UiStateKorisnik())
+    val uiStateKorisnik: StateFlow<UiStateKorisnik> = _uiStateKorisnik
 
     fun logIn(korisnik: KorisnikRequest) = viewModelScope.launch {
         try {
             val response = MyRepository.logIn(korisnik)
             _uiStateLogIn.value = UiStateLogIn(message = response)
+            _uiStateKorisnik.value = UiStateKorisnik(korisnickoIme = korisnik.korisnickoIme)
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateLogIn.value = UiStateLogIn(message = null)
@@ -1369,6 +1395,10 @@ data class UiStateLogIn(
     val message: MessageResponse? =null
 )
 
+data class UiStateKorisnik(
+    val korisnickoIme: String? = null
+)
+
 data class UiStateDataZlocin(
     val suspects: List<OsumnjicenR> = emptyList(),
     val witnesses: List<SvedokR> = emptyList(),
@@ -1419,6 +1449,15 @@ data class UiStateScoreKorisnika(
     val isRefreshing: Boolean = false,
     val error: String? = null
 )
+
+data class UiStateScoreKorisnika1(
+    val message: MessageResponse? =null
+)
+
+data class UiStateScoreKorisnikaList(
+    val scoreList: List<ScoreKorisnikaRequest>? = null
+)
+
 
 //gemini
 

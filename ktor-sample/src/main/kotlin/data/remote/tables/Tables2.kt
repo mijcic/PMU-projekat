@@ -182,6 +182,12 @@ data class KorisnikRequest(
     val idTokenLast256: String
 )
 
+@Serializable
+data class ScoreKorisnikaRequest(
+    val korisnickoIme: String,
+    val score: Int
+)
+
 // telefon zrtve
 
 @Serializable

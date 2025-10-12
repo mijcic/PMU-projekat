@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - Upravljanje korisnicima</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        @font-face {
+            font-family: 'Special Elite';
+            src: url('/fonts/SpecialElite-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Special Elite', cursive;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+            url('/img/background.jpg') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 20px;
+        }
+
+        h1 {
+            color: white;
+            margin: 10px 0 5px 0;
+            text-align: center;
+            font-size: 45px;
+            line-height: 1.1;
+        }
+
+        h2.subtitle {
+            color: white;
+            font-size: 30px;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        .white-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #searchUser {
+            width: 60%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #000;
+        }
+
+        #addUserBtn {
+            padding: 10px 20px;
+            background: #3E2F5B;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #addUserBtn:hover {
+            background-color: #2A213E;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            text-align: left;
+        }
+
+        th {
+            color: #fff;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .actions button {
+            margin-right: 5px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .actions .edit-btn {
+            background-color: #3E2F5B;
+        }
+
+        .actions .edit-btn:hover {
+            background-color: #2A213E;
+        }
+
+        .actions .delete-btn {
+            background-color: #A99367;
+        }
+
+        .actions .delete-btn:hover {
+            background-color: #8E825B;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            h2.subtitle {
+                font-size: 22px;
+            }
+
+            .white-box {
+                padding: 20px;
+                width: 100%;
+            }
+
+            #searchUser {
+                width: 100%;
+                max-width: none;
+                font-size: 15px;
+            }
+
+            #addUserBtn {
+                width: 100%;
+                font-size: 15px;
+            }
+
+            table {
+                font-size: 14px;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .actions button {
+                font-size: 12px;
+                padding: 5px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .white-box {
+                padding: 15px;
+            }
+
+            #addUserBtn {
+                padding: 8px;
+            }
+
+            th, td {
+                font-size: 13px;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>WHODUNIT</h1>
+<h2 class="subtitle">Admin - Upravljanje korisnicima</h2>
+
+<div class="white-box">
+    <div class="search-container">
+        <input type="text" id="searchUser" placeholder="Pretraži korisnike..." />
+        <button id="addUserBtn">Dodaj korisnika</button>
+    </div>
+
+    <table id="usersTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ime</th>
+            <th>Korisnicko ime</th>
+            <th>Email</th>
+            <th>Uloga</th>
+            <th>Nacin prijave</th>
+            <th>Status</th>
+            <th>Akcije</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('searchUser').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+
+        rows.forEach(row => {
+            const cellsText = row.textContent.toLowerCase();
+            row.style.display = cellsText.includes(filter) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('addUserBtn').addEventListener('click', () => {
+        alert('Otvori formu za dodavanje korisnika');
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const userId = row.children[0].textContent;
+            alert('Izmeni korisnika sa ID: ' + userId);
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const userId = row.children[0].textContent;
+            if(confirm('Da li ste sigurni da želite da obrišete korisnika sa ID: ' + userId + '?')) {
+                row.remove();
+            }
+        });
+    });
+
+    async function loadUsers() {
+        try {
+            const response = await fetch('/admin/allUsers');
+            if (!response.ok) {
+                throw new Error('Greška prilikom učitavanja korisnika: ' + response.status);
+            }
+
+            const users = await response.json();
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.idKorisnik}</td>
+                    <td>${user.ime} ${user.prezime}</td>
+                    <td>${user.korisnickoIme}</td>
+                    <td>${user.email}</td>
+                    <td>Korisnik</td>
+                    <td>${user.nacinPrijave}</td>
+                    <td>Aktivan</td>
+                    <td class="actions">
+                        <button class="edit-btn">Izmeni</button>
+                        <button class="delete-btn">Obriši</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert('Došlo je do greške pri učitavanju korisnika.');
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadUsers)
+</script>
+
+</body>
+</html>

@@ -5,6 +5,7 @@ import com.example.data.remote.client.GeminiClient
 import com.example.models.domain.Story
 import com.example.data.remote.gemini.request.GeminiRequest2
 import com.example.data.remote.gemini.request.GeminiRequest2MysteriousSymptoms
+import com.example.data.remote.tables.ScoreKorisnikaRequest
 import com.example.data.remote.gemini.retrofit.GeminiResponse2
 import com.example.data.remote.gemini.retrofit.GeminiResponse2MysteriousSymptoms
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
@@ -44,8 +45,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import com.google.gson.Gson
 
-
-
 /**
  * Configures the routing and endpoints for the Ktor application.
  *
@@ -82,8 +81,8 @@ fun Application.configureRouting() {
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
-        password = "1234"
-        //password = "mia123"
+        // password = "1234"
+        password = "mia123"
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
@@ -596,6 +595,11 @@ fun Application.configureRouting() {
             call.respond(stats)
         }
 
+        get("/admin/allUsers") {
+            val users = repository.getAllUsers()
+            call.respond(users ?: emptyList())
+        }
+
 
         post("/admin/gemini") {
             val jsonMurder = JsonLoader.getJsonMurderSteps(1, "", "", "", "")
@@ -916,6 +920,34 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to log in Korisnik"))
             }
         }
+
+        post("/setScoreKorisnika"){
+            try{
+                val conn = databaseService.getDatabaseConnection()
+                val repo = conn?.let { RepositoryInsert(it) }
+                println("setScoreKorisnika")
+                val scoreKorisnika = call.receive<ScoreKorisnikaRequest>()
+                val result = repo?.insertScoreKorisnika(scoreKorisnika)
+                if (result == true) {
+                    println("Score is set")
+                    call.respond(MessageResponse("TRUE"))
+                }
+                else {
+                    println("Score is not set")
+                    call.respond(MessageResponse("FALSE"))
+                }
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+                call.respond(HttpStatusCode.BadRequest, MessageResponse("Failed to set score for korisnik"))
+            }
+        }
+
+        get("/getAllScores") {
+            val allScores= repository.getAllScores()?: emptyList()
+            call.respond(allScores)
+        }
+
         staticResources("/static", "static")
     }
 }
@@ -924,8 +956,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        "1234"
-        //"mia123"
+        // "1234"
+        "mia123"
     )
 }
 

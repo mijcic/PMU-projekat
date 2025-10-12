@@ -45,6 +45,7 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
+import rs.ac.bg.etf.projekat.data.realm.ScoreKorisnikaR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
 import rs.ac.bg.etf.projekat.data.realm.StatusSvedokR
 import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR
@@ -181,6 +182,14 @@ class RealmViewModel @Inject constructor(
 
     suspend fun insertKorisnik(imeK: String, prezimeK: String, korisnickoImeK: String, sifraK: String, emailK: String, nacinPrijaveK: String, idTokenK: String, idTokenLast256K: String): KorisnikRequestR? {
         return repo.insertKorisnik(imeK, prezimeK, korisnickoImeK, sifraK, emailK, nacinPrijaveK, idTokenK, idTokenLast256K)
+    }
+
+    suspend fun insertScoreKorisnika(korisnickoImeK: String, scoreK: Int): ScoreKorisnikaR? {
+        return repo.insertScoreKorisnika(korisnickoImeK, scoreK)
+    }
+
+    suspend fun getAllScores(): List<ScoreKorisnikaR>? {
+        return repo.getAllScores()
     }
 
     suspend fun insertPitanjeIspitivanjeOsumnjicenog(idPitanjeIspitivanjeOsumnjicenogZ:Int, osumnjicenIdZ: Int, kategorijaZ: String, tekstZ: String, odgovorZ: String, komentarZ: String): PitanjeIspitivanjeOsumnjicenogR? {

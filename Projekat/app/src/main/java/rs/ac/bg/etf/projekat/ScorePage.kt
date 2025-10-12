@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -50,10 +52,15 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
     val uiStateScoreKorisnika by myViewModel.uiStateScoreKorisnika.collectAsState()
+    val uiStateScoreKorisnikaList by myViewModel.uiStateScoreKorisnikaList.collectAsState()
 
     LaunchedEffect(uiStateScoreKorisnika.scoreList){ myViewModel.scoreKorisnika() }
-    LaunchedEffect(Unit){ myViewModel.scoreKorisnika() }
+    LaunchedEffect(Unit){
+        myViewModel.scoreKorisnika()
+        myViewModel.scoreKorisnikaList()
+    }
 
+    Log.d("AAAA", uiStateScoreKorisnikaList.scoreList.toString())
     Surface(modifier = Modifier.fillMaxSize()) {
 
         ScoreBackground()
@@ -78,13 +85,13 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
 
             ScorePageDivider()
 
-            if (uiStateScoreKorisnika.scoreList!=null){
+            if (uiStateScoreKorisnikaList.scoreList!=null){
                 LazyColumn {
-                    items(uiStateScoreKorisnika.scoreList!!){ items->
+                    itemsIndexed(uiStateScoreKorisnikaList.scoreList!!){ index, items->
                         Row{
                             Spacer(modifier = Modifier.width(22.dp))
                             Text(
-                                text = items.mesto.toString()+"  ",
+                                text = "${index + 1}.",
                                 style = TextStyle(color = Color.White),
                                 modifier = Modifier.padding(top=15.dp)
                             )
@@ -108,7 +115,7 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
                             )
                             Spacer(modifier = Modifier.width(42.dp))
                             Text(
-                                text = items.poeni.toString() + " XP",
+                                text = items.score.toString() + " XP",
                                 style = TextStyle(
                                     fontFamily = FontFamily(Font(R.font.special_elite)),
                                     color = Color.White,

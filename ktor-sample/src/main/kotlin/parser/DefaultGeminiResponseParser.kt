@@ -47,7 +47,10 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
             ignoreUnknownKeys = true
         }
         val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
-        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        var cleanJsonString2 = cleanJsonString?.removePrefix("json")?.replace(Regex(",\\s*}"), "}")
+        if (cleanJsonString2 != null && !cleanJsonString2.trim().endsWith("}")) {
+            cleanJsonString2 += "}"  // primitivno zatvaranje
+        }
         val geminiResponse2: GeminiResponse2Step1? =
             cleanJsonString2?.let {
                 json2.decodeFromString(
@@ -68,7 +71,10 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
             ignoreUnknownKeys = true
         }
         val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
-        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        var cleanJsonString2 = cleanJsonString?.removePrefix("json")?.replace(Regex(",\\s*}"), "}")
+        if (cleanJsonString2 != null && !cleanJsonString2.trim().endsWith("}")) {
+            cleanJsonString2 += "}"  // primitivno zatvaranje
+        }
         val geminiResponse2: GeminiResponse2Step2? =
             cleanJsonString2?.let {
                 json2.decodeFromString(
@@ -84,7 +90,10 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
         val geminiProRepo = GeminiProRepositoryImpl()
         val json2 = Json { ignoreUnknownKeys = true }
         val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
-        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        var cleanJsonString2 = cleanJsonString?.removePrefix("json")?.replace(Regex(",\\s*}"), "}")
+        if (cleanJsonString2 != null && !cleanJsonString2.trim().endsWith("}")) {
+            cleanJsonString2 += "}"  // primitivno zatvaranje
+        }
         val geminiResponse3: GeminiResponse2Step3? =
             cleanJsonString2?.let {
                 json2.decodeFromString(
@@ -100,7 +109,10 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
         val geminiProRepo = GeminiProRepositoryImpl()
         val json2 = Json { ignoreUnknownKeys = true }
         val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
-        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        var cleanJsonString2 = cleanJsonString?.removePrefix("json")?.replace(Regex(",\\s*}"), "}")
+        if (cleanJsonString2 != null && !cleanJsonString2.trim().endsWith("}")) {
+            cleanJsonString2 += "}"  // primitivno zatvaranje
+        }
         val geminiResponse4: GeminiResponse2Step4? =
             cleanJsonString2?.let {
                 json2.decodeFromString(
@@ -116,7 +128,10 @@ class DefaultGeminiResponseParser : GeminiResponseParser {
         val geminiProRepo = GeminiProRepositoryImpl()
         val json2 = Json { ignoreUnknownKeys = true }
         val cleanJsonString = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text?.replace("`", "")
-        val cleanJsonString2 = cleanJsonString?.removePrefix("json")
+        var cleanJsonString2 = cleanJsonString?.removePrefix("json")?.replace(Regex(",\\s*}"), "}")
+        if (cleanJsonString2 != null && !cleanJsonString2.trim().endsWith("}")) {
+            cleanJsonString2 += "}"  // primitivno zatvaranje
+        }
         val geminiResponse5: GeminiResponse2Step5? =
             cleanJsonString2?.let {
                 json2.decodeFromString(

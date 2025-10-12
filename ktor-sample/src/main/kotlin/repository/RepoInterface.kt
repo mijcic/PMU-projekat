@@ -401,4 +401,25 @@ interface RepoInterface {
      * @return An [IzjavaZaPacijentaData] object, or `null` if no statement is found.
      */
     fun getIzjavaZaPacijenta(pacijent: PacijentData, osobe: List<OsobaData>?): IzjavaZaPacijentaData?
+
+    /**
+     * Retrieves all user scores from the database.
+     *
+     * This function returns a list of [ScoreKorisnikaRequest] objects representing
+     * the users and their respective scores. If there are no scores available, an empty list is returned.
+     *
+     * @return A list of [ScoreKorisnikaRequest] containing all user scores, or an empty list if none exist.
+     */
+    fun getAllScores(): List<ScoreKorisnikaRequest>?
+
+    /**
+     * Retrieves all registered users from the database.
+     *
+     * This function returns a list of [Korisnik] objects representing
+     * all users stored in the system. If there are no users in the database,
+     * an empty list is returned.
+     *
+     * @return A list of [Korisnik] containing all users, or an empty list if none exist.
+     */
+    fun getAllUsers(): List<Korisnik>?
 }
