@@ -1,49 +1,50 @@
-{"zlocinR": {
-            "idZlocin": 1,
-            "tipZlocinaId": 1,
-            "naziv": "Murder of Isabelle Moreau",
-            "datum": "2025-04-17",
-            "mesto": "Casino Hotel, Paris",
-            "opis": "Isabelle Moreau, a high-profile gambler, was found dead in her hotel room with a knife wound. The investigation is ongoing.",
-            "status": "u_istrazi"
-          },
-          "zrtvaR": {
-            "idZrtva": 1,
-            "tipZrtve": "Individual",
-            "detalji": "Isabelle Moreau, a 32-year-old gambler known for her luxurious lifestyle and turbulent relationships, was found murdered in her hotel room.",
-            "statusZrtva": "ziva",
-            "zlocinId": 1,
-            "osobaId": {
-              "idOsoba": 1,
-              "ime": "Isabelle Moreau",
-              "kontakt": "+33612345678",
-              "datum": "1993-04-12",
-              "zanimanje": "Gambler",
-              "pol": "zenski",
-              "zlocinId": 1
-            }
-          },
-          "osumnjicenR": [
-            {
-              "idOsumnjicen": 1,
-              "status": 0,
-              "tipOsumnjicen": "Pojedinac",
-              "motiv": {
-                "idMotiv": 1,
-                "opis": "Financial struggles and jealousy."
-              },
-              "zlocinId": 1,
-              "kriv": 0,
-              "osobaId": {
-                "idOsoba": 2,
-                "ime": "Amelia Fontaine",
-                "kontakt": "+33623456789",
-                "datum": "1990-06-14",
-                "zanimanje": "Casino Dealer",
-                "pol": "zenski",
-                "zlocinId": 1
-              }
-            },
+{
+  "zlocinR": {
+    "idZlocin": 1,
+    "tipZlocinaId": 1,
+    "naziv": "Murder of Isabelle Moreau",
+    "datum": "2025-04-17",
+    "mesto": "Casino Hotel, Paris",
+    "opis": "Isabelle Moreau, a high-profile gambler, was found dead in her hotel room with a knife wound. The investigation is ongoing.",
+    "status": "u_istrazi"
+  },
+  "zrtvaR": {
+    "idZrtva": 1,
+    "tipZrtve": "Individual",
+    "detalji": "Isabelle Moreau, a 32-year-old gambler known for her luxurious lifestyle and turbulent relationships, was found murdered in her hotel room.",
+    "statusZrtva": "ziva",
+    "zlocinId": 1,
+    "osobaId": {
+      "idOsoba": 1,
+      "ime": "Isabelle Moreau",
+      "kontakt": "+33612345678",
+      "datum": "1993-04-12",
+      "zanimanje": "Gambler",
+      "pol": "zenski",
+      "zlocinId": 1
+    }
+  },
+  "osumnjicenR": [
+    {
+      "idOsumnjicen": 1,
+      "status": 0,
+      "tipOsumnjicen": "Pojedinac",
+      "motiv": {
+        "idMotiv": 1,
+        "opis": "Financial struggles and jealousy."
+      },
+      "zlocinId": 1,
+      "kriv": 0,
+      "osobaId": {
+        "idOsoba": 2,
+        "ime": "Amelia Fontaine",
+        "kontakt": "+33623456789",
+        "datum": "1990-06-14",
+        "zanimanje": "Casino Dealer",
+        "pol": "zenski",
+        "zlocinId": 1
+      }
+    },
             {
               "idOsumnjicen": 2,
               "status": 0,

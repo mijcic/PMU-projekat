@@ -1,7 +1,10 @@
 package com.example.service.get
 
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
+import com.example.data.remote.generic.PitanjeIspitivanjeOsumnjicenogR
 import com.example.data.remote.service.*
+import com.example.data.remote.tables.PitanjeIspitivanjeOsumnjicenogData
+import com.example.data.remote.tables.PitanjeIspitivanjeSvedokaData
 import com.example.repository.RepoInterface
 
 /**
@@ -33,7 +36,6 @@ class GeminiMurderService(private val repository: RepoInterface) {
             println("Neki podaci su null — provera nije prošla. loadZlocinDataGeminiRetrofit")
             return null
         }
-        println(zlocinData)
 
         val zrtvaData = loadZrtvaDataGeminiRetrofit(id)?: run {
             println("Neki podaci su null — provera nije prošla. loadZrtvaDataGeminiRetrofit")
@@ -50,7 +52,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             return null
         }
 
-        val otherData = loadOtherData(id) ?: run {
+        val otherData = loadOtherData(id,osumnjiceniData, zrtvaData) ?: run {
             println("Neki podaci su null — provera nije prošla. loadOtherData")
             return null
         }
@@ -122,7 +124,7 @@ class GeminiMurderService(private val repository: RepoInterface) {
             return null
         }
 
-        val otherData = loadOtherData(id) ?: run {
+        val otherData = loadOtherData(id,osumnjiceniData,zrtvaData) ?: run {
             println("Neki podaci su null — provera nije prošla.")
             return null
         }
@@ -189,13 +191,9 @@ class GeminiMurderService(private val repository: RepoInterface) {
     private fun loadZrtvaDataGeminiRetrofit(id: Int): ZrtvaDataGeminiRetrofit? {
         println("ovde "+id)
         val zrtva = repository.getZrtva(id) ?: return null
-        println(zrtva)
         val kontakti = repository.getKontakti(id, zrtva) ?: return null
-        println(kontakti)
         val whatsappKontakti = repository.getWhatsAppKontakt(id, zrtva) ?: return null
-        println(whatsappKontakti)
         val oneContact =repository.getOneContact(id) ?: return null
-        println(oneContact)
         val z = ZrtvaDataGeminiRetrofit(
             zrtva = zrtva,
             dokazi = repository.getDokazi(id, zrtva) ?: return null,
@@ -262,14 +260,33 @@ class GeminiMurderService(private val repository: RepoInterface) {
      * @param id Crime ID
      * @return An [OtherDataGeminiRetrofit] object with supplementary case data, or `null` if something is missing
      */
-    private fun loadOtherData(id: Int): OtherDataGeminiRetrofit? {
+    private fun loadOtherData(id: Int, osumnjiceniDataGeminiRetrofit: OsumnjiceniDataGeminiRetrofit, zrtvaData: ZrtvaDataGeminiRetrofit): OtherDataGeminiRetrofit? {
+        val lista = mutableListOf<PitanjeIspitivanjeOsumnjicenogData>()
+
+        for (o in osumnjiceniDataGeminiRetrofit.osumnjiceni) {
+            val pitanja = repository.getPitanjeIspitivanjeOsumnjicenog(o.idOsumnjicen)
+            if (pitanja != null) {
+                lista.addAll(pitanja)
+            }
+        }
+
+        val listaS = mutableListOf<PitanjeIspitivanjeSvedokaData>()
+
+        for (s in zrtvaData.svedoci!!) {
+            val pitanjaS = repository.getPitanjeIspitivanjeSvedoka(s.idSvedok)
+            if (pitanjaS != null) {
+                listaS.addAll(pitanjaS)
+            }
+        }
+
+
         return OtherDataGeminiRetrofit(
             gallery = repository.getGallery(id)?: return null,
             odnosi = repository.getOdnosOsumnjicenZrtva(id)?: return null,
             pitanja = repository.getPitanja(id)?: return null,
             odgovori = repository.getOdgovor(id)?: return null,
-            pitanjaIspitivanjeOsumnjicenog = repository.getPitanjeIspitivanjeOsumnjicenog(id)?: return null,
-            pitanjaIspitivanjeSvedoka = repository.getPitanjeIspitivanjeSvedoka(id)?: return null,
+            pitanjaIspitivanjeOsumnjicenog = lista,
+            pitanjaIspitivanjeSvedoka = listaS,
             osobe = repository.getOsobe(id)?: return null
         )
     }

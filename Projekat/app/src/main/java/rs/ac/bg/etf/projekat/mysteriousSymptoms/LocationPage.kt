@@ -69,6 +69,8 @@ fun createMapView(context: Context, locations: List<LokacijeIstrageR>): MapView 
         context,
         context.getSharedPreferences("osm_prefs", Context.MODE_PRIVATE)
     )
+    Configuration.getInstance().userAgentValue = context.packageName
+
 
     val mapView = MapView(context).apply {
         setTileSource(TileSourceFactory.MAPNIK)

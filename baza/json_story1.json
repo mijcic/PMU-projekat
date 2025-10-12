@@ -64,6 +64,26 @@
         "pol": "muski",
         "zlocinId": 1
       }
+    },
+    {
+      "idOsumnjicen": 3,
+      "status": 0,
+      "tipOsumnjicen": "Pojedinac",
+      "motiv": {
+        "idMotiv": 3,
+        "opis": "Belief that Dr. Carter was involved in unethical experiments that led to her brother’s neurological decline."
+      },
+      "zlocinId": 1,
+      "kriv": 0,
+      "osobaId": {
+        "idOsoba": 6,
+        "ime": "Maria Roberts",
+        "kontakt": "+381641112233",
+        "datum": "1986-06-18",
+        "zanimanje": "Investigative Journalist",
+        "pol": "zenski",
+        "zlocinId": 1
+      }
     }
   ],
   "dokazR": [
@@ -79,6 +99,22 @@
       "idDokaz": 2,
       "tipDokaza": "digitalni",
       "opis": "Encrypted emails threatening Dr. Carter found on her clinic computer.",
+      "zlocinId": 1,
+      "zrtvaId": 1,
+      "status": 0
+    },
+    {
+      "idDokaz": 3,
+      "tipDokaza": "fizicki",
+      "opis": "Security footage showing an unidentified woman entering the clinic around 23:45, approximately 15 minutes before the estimated time of death.",
+      "zlocinId": 1,
+      "zrtvaId": 1,
+      "status": 0
+    },
+    {
+      "idDokaz": 4,
+      "tipDokaza": "fizicki",
+      "opis": "A torn letter found in Dr. Carter’s office drawer, apparently written by a former patient’s relative accusing her of ruining his brother’s life.",
       "zlocinId": 1,
       "zrtvaId": 1,
       "status": 0
@@ -134,6 +170,22 @@
       "statusS": 0,
       "veza": "This strongly links Dr. Solano to the murder weapon.",
       "zrtvaId": 1
+    },
+    {
+      "idForenzickiDokaz": 2,
+      "tipForenzickiDokaz": "otisak",
+      "opis": "Traces of blood and cleaning chemicals found on Dr. Solano’s lab coat in her locker.",
+      "statusS": 0,
+      "veza": "This strongly links Dr. Solano to the murder.",
+      "zrtvaId": 1
+    },
+    {
+      "idForenzickiDokaz": 3,
+      "tipForenzickiDokaz": "otisak",
+      "opis": "Partial fingerprints found on the broken window of the clinic’s back entrance.",
+      "statusS": 0,
+      "veza": "?",
+      "zrtvaId": 1
     }
   ],
   "telefonR": [
@@ -168,19 +220,74 @@
       "ime": "Thomas Reed",
       "broj": "+12125556789",
       "slika": 1
+    },
+    {
+      "idOneContact": 3,
+      "zlocinId": 1,
+      "ime": "Mum",
+      "broj": "+12125556783",
+      "slika": 1
+    },
+    {
+      "idOneContact": 4,
+      "zlocinId": 1,
+      "ime": "Dad",
+      "broj": "+32125556783",
+      "slika": 1
+    },
+    {
+      "idOneContact": 5,
+      "zlocinId": 1,
+      "ime": "Tom Harvy",
+      "broj": "+42125556783",
+      "slika": 1
+    },
+    {
+      "idOneContact": 6,
+      "zlocinId": 1,
+      "ime": "Dr. Emily",
+      "broj": "+41125556783",
+      "slika": 1
+    },
+    {
+      "idOneContact": 7,
+      "zlocinId": 1,
+      "ime": "Boyfriend",
+      "broj": "+43125556783",
+      "slika": 1
+    },
+    {
+      "idOneContact": 8,
+      "zlocinId": 1,
+      "ime": "Friend X",
+      "broj": "+46125556783",
+      "slika": 1
+    },
+    {
+      "idOneContact": 9,
+      "zlocinId": 1,
+      "ime": "Me (Evelyn)",
+      "broj": "+87125556783",
+      "slika": 1
     }
   ],
   "beleskaR": [
     {
       "idBeleska": 1,
       "zlocinId": 1,
-      "tekst": "Dr. Carter was under immense pressure after losing the grant. Witness statements indicate she received threatening calls.",
+      "tekst": "Buy power bank.",
       "datum": "2025-08-23"
     },
     {
       "idBeleska": 2,
       "zlocinId": 1,
-      "tekst": "Security footage from the clinic lobby shows an unknown person entering late at night.",
+      "tekst": "Buy stuff for the garden",
+      "datum": "2025-08-23"
+    },
+    {
+      "idBeleska": 3,
+      "zlocinId": 1,
+      "tekst": "Check out these books",
       "datum": "2025-08-23"
     }
   ],
@@ -234,6 +341,36 @@
       "propusten": true,
       "dolazni": false,
       "zrtvaId": 1
+    },
+    {
+      "idOneCall": 3,
+      "kontakt": 2,
+      "datum": "2025-08-21",
+      "propusten": false,
+      "dolazni": false,
+      "zrtvaId": 1
+    },
+    {
+      "idOneCall": 4,
+      "kontakt": 2,
+      "datum": "2025-08-20",
+      "propusten": false,
+      "dolazni": false,
+      "zrtvaId": 1
+    },{
+      "idOneCall": 5,
+      "kontakt": 3,
+      "datum": "2025-08-10",
+      "propusten": false,
+      "dolazni": false,
+      "zrtvaId": 1
+    },{
+      "idOneCall": 6,
+      "kontakt": 4,
+      "datum": "2025-08-09",
+      "propusten": false,
+      "dolazni": false,
+      "zrtvaId": 1
     }
   ],
   "galleryR": [
@@ -256,18 +393,47 @@
     {
       "idObicnaPoruka": 1,
       "kontaktKoSalje": 1,
-      "kontaktKomeSalje": 2,
+      "kontaktKomeSalje": 9,
       "tekst": "I can’t believe she did this again. She’ll pay for it.",
       "datum": "2025-08-22",
-      "procitana": true
+      "procitana": true,
+      "statusPoruke":"read"
     },
     {
       "idObicnaPoruka": 2,
       "kontaktKoSalje": 2,
-      "kontaktKomeSalje": 1,
+      "kontaktKomeSalje": 9,
       "tekst": "Keep your head down. We’ll handle it soon.",
       "datum": "2025-08-22",
-      "procitana": false
+      "procitana": true,
+      "statusPoruke":"read"
+    },
+    {
+      "idObicnaPoruka": 3,
+      "kontaktKoSalje": 2,
+      "kontaktKomeSalje": 9,
+      "tekst": "No comment",
+      "datum": "2025-08-22",
+      "procitana": true,
+      "statusPoruke":"read"
+    },
+    {
+      "idObicnaPoruka": 4,
+      "kontaktKoSalje": 3,
+      "kontaktKomeSalje": 9,
+      "tekst": "How do you explain that?",
+      "datum": "2025-08-22",
+      "procitana": true,
+      "statusPoruke":"read"
+    },
+    {
+      "idObicnaPoruka": 5,
+      "kontaktKoSalje": 5,
+      "kontaktKomeSalje": 9,
+      "tekst": "Call me please",
+      "datum": "2025-08-22",
+      "procitana": true,
+      "statusPoruke":"read"
     }
   ],
   "prijavljeniKorisnikR": [
@@ -332,42 +498,142 @@
   "pitanjeIspitivanjeOsumnjicenogR": [
     {
       "idPitanjeIspitivanjeOsumnjicenog": 1,
-      "kategorija": "Alibi",
+      "kategorija": "alibi",
       "tekst": "Where were you on the night of August 22, 2025?",
-      "odgovor": "Bio sam kod kuće, sam, gledajući TV.",
-      "komentar": "Alibi nepotvrđen. Svedok tvrdi da je bio blizu klinike.",
+      "odgovor": "I was at home watching a documentary. Alone.",
+      "komentar": "No one can confirm this alibi. Witness placed him near the clinic around the same time.",
       "osumnjicenId": 2
     },
     {
       "idPitanjeIspitivanjeOsumnjicenog": 2,
-      "kategorija": "Motiv",
-      "tekst": "Da li ste imali razloga da naudite Dr. Carter zbog njene prijave?",
-      "odgovor": "Ne, to je stara priča, prešao sam preko toga.",
-      "komentar": "Motiv osvete je jak, s obzirom na uništenu karijeru. Odgovor je sumnjiv.",
+      "kategorija": "opsta",
+      "tekst": "What was your relationship with Dr. Carter like?",
+      "odgovor": "We used to be close professionally, but things changed after she reported me.",
+      "komentar": "Statement confirms a history of tension, consistent with known motive.",
       "osumnjicenId": 2
     },
     {
       "idPitanjeIspitivanjeOsumnjicenog": 3,
-      "kategorija": "Pristup mestu zločina",
-      "tekst": "Da li imate ključ od kancelarije Dr. Carter?",
-      "odgovor": "Ne, ja nemam ključ.",
-      "komentar": "Istraga je utvrdila da je Thomas Reed imao rezervni ključ.",
+      "kategorija": "dokaz",
+      "tekst": "Why were your fingerprints found on the back door of the clinic?",
+      "odgovor": "I visited the clinic a few days before the incident. Maybe that’s when they were left.",
+      "komentar": "Suspicious timing. No official record of his visit. Needs verification.",
       "osumnjicenId": 2
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 4,
+      "kategorija": "kontradikcija",
+      "tekst": "You said you didn’t have a key, but security footage shows you unlocking the office door.",
+      "odgovor": "That’s impossible. I swear I didn’t go in.",
+      "komentar": "Direct contradiction of earlier statement. Raises serious doubt about credibility.",
+      "osumnjicenId": 2
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 5,
+      "kategorija": "alibi",
+      "tekst": "Can anyone confirm your location that night?",
+      "odgovor": "No, I live alone. No one was with me.",
+      "komentar": "Unverifiable alibi. Matches timing of the crime.",
+      "osumnjicenId": 1
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 6,
+      "kategorija": "dokaz",
+      "tekst": "How do you explain your DNA being on the murder weapon?",
+      "odgovor": "I used that hammer during surgery preparation a week ago. It’s shared equipment.",
+      "komentar": "Possible explanation, but unlikely due to cleaning protocols. Forensics show recent deposit.",
+      "osumnjicenId": 1
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 7,
+      "kategorija": "opsta",
+      "tekst": "Did you argue with Dr. Carter recently?",
+      "odgovor": "Yes. We disagreed about the grant allocation, but nothing more.",
+      "komentar": "Multiple witnesses confirm the argument was heated. Motive exists.",
+      "osumnjicenId": 1
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 8,
+      "kategorija": "kontradikcija",
+      "tekst": "You said you were home, but a witness saw you leaving the clinic late that night.",
+      "odgovor": "I don’t remember going there. Maybe I went to pick up something and left quickly.",
+      "komentar": "Unclear and evasive. Suggests possibility of presence at crime scene.",
+      "osumnjicenId": 1
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 9,
+      "kategorija": "opsta",
+      "tekst": "Why were you investigating Dr. Carter's clinical trials?",
+      "odgovor": "Because my brother's condition worsened after participating. I had to know the truth.",
+      "komentar": "Shows strong personal motivation. Emotionally driven involvement.",
+      "osumnjicenId": 3
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 10,
+      "kategorija": "alibi",
+      "tekst": "Were you in the vicinity of the clinic on the night of the murder?",
+      "odgovor": "Yes, but I was just trying to speak to someone about her research.",
+      "komentar": "Admits being near the scene. Timing is suspicious.",
+      "osumnjicenId": 3
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 11,
+      "kategorija": "dokaz",
+      "tekst": "Your notebook with clinic sketches was found in the trash behind the building. Why?",
+      "odgovor": "I must have dropped it. I didn't mean to hide anything.",
+      "komentar": "Strange location for such a notebook. Possibly discarded intentionally.",
+      "osumnjicenId": 3
+    },
+    {
+      "idPitanjeIspitivanjeOsumnjicenog": 12,
+      "kategorija": "kontradikcija",
+      "tekst": "You denied being in contact with Dr. Carter, but messages show otherwise.",
+      "odgovor": "I only messaged her once. It was a warning, not a threat.",
+      "komentar": "Downplaying communication. Wording in message suggests aggression.",
+      "osumnjicenId": 3
     }
   ],
   "pitanjeIspitivanjeSvedokaR": [
     {
       "idPitanjeIspitivanjeSvedoka": 1,
       "tekst": "Did you see anyone suspicious near the clinic that night?",
-      "odgovor": "No.",
+      "odgovor": "I saw a woman in a hoodie near the side entrance, but I couldn't see her face.",
       "svedokId": 1,
       "nextPitanje": 2
     },
     {
       "idPitanjeIspitivanjeSvedoka": 2,
       "tekst": "Can you describe the unknown person on the security footage?",
-      "odgovor": "No.",
+      "odgovor": "She was about average height, slim, and moved quickly, like she knew the place well.",
       "svedokId": 1,
+      "nextPitanje": 0
+    },
+    {
+      "idPitanjeIspitivanjeSvedoka": 3,
+      "tekst": "Did Dr. Carter mention feeling threatened before the incident?",
+      "odgovor": "Yes, she told me someone had been leaving anonymous notes in her office.",
+      "svedokId": 1,
+      "nextPitanje": 0
+    },
+    {
+      "idPitanjeIspitivanjeSvedoka": 5,
+      "tekst": "Can you confirm if Thomas Reed was near the clinic around midnight?",
+      "odgovor": "Yes, I saw someone who looked like him entering through the back. He was wearing a dark coat and cap.",
+      "svedokId": 2,
+      "nextPitanje": 6
+    },
+    {
+      "idPitanjeIspitivanjeSvedoka": 6,
+      "tekst": "Did the security system log any unusual access that night?",
+      "odgovor": "Yes, the side door was accessed around 23:47. Only staff should have had the code.",
+      "svedokId": 2,
+      "nextPitanje": 7
+    },
+    {
+      "idPitanjeIspitivanjeSvedoka": 7,
+      "tekst": "Did you hear anything unusual coming from the clinic?",
+      "odgovor": "Yes, around midnight I heard something that sounded like a loud crash or a heavy object falling.",
+      "svedokId": 2,
       "nextPitanje": 0
     }
   ],
@@ -380,24 +646,6 @@
       "zanimanje": "Detektiv",
       "pol": "Muški",
       "zlocinId": 101
-    },
-    {
-      "idOsoba": 2,
-      "ime": "Jovana Jovanović",
-      "kontakt": "987654321",
-      "datum": "2025-04-17",
-      "zanimanje": "Advokat",
-      "pol": "Ženski",
-      "zlocinId": 102
-    },
-    {
-      "idOsoba": 3,
-      "ime": "Nikola Nikolić",
-      "kontakt": "1122334455",
-      "datum": "2025-04-17",
-      "zanimanje": "Novinar",
-      "pol": "Muški",
-      "zlocinId": 103
     }
   ],
   "zadatakR": [
@@ -515,7 +763,7 @@
       "datumVreme": "2023-11-11 08:30:00",
       "zrtvaId": 0,
       "posiljalacId": 0,
-      "statusPoruke": "",
+      "statusPoruke": "sent",
       "sirovana": false
     }
   ],
@@ -536,7 +784,7 @@
       "tip": 0,
       "putanja": "",
       "zrtvaId": 0,
-      "datumVreme": "2023-11-11 9:30:00",
+      "datumVreme": "2023-11-11 09:30:00",
       "lokacija": ""
     }
   ],

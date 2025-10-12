@@ -458,7 +458,7 @@ class MyViewModel @Inject constructor(
                         response.obdukcijaRetrofit!!.informacije
                     )
                 }
-
+                /*
                 for (k in response.kontaktiRetrofit!!) {
                     realmViewModel.insertKontakt(
                         idKontaktK = k.idKontakt,
@@ -478,7 +478,7 @@ class MyViewModel @Inject constructor(
                         aktivnaA = a.aktivna,
                         informacijeA = a.informacije
                     )
-                }
+                }*/
             }
 
             var osumnjiceni: MutableList<OsumnjicenR> = mutableListOf()
@@ -602,7 +602,7 @@ class MyViewModel @Inject constructor(
                     )
                 }
             }
-
+            /*
             for (t in response.tragoviRetrofit!!) {
                 val osum = osumnjiceni.find { it.idOsumnjicen == t.osumnjicenId.idOsumnjicen }
                 val foren =
@@ -614,7 +614,7 @@ class MyViewModel @Inject constructor(
                         osumnjicenIdT = osum
                     )
                 }
-            }
+            }*/
 
             for (d in response.dokaziOsumnjiceniRetrofit!!) {
                 val osum = osumnjiceni.find { it.idOsumnjicen == d.osumnjicenId.idOsumnjicen }
@@ -640,7 +640,13 @@ class MyViewModel @Inject constructor(
                     datumB = realmInstantBeleska
                 )
             }
+            Log.d("WHATS APP K",response.whatsappKontaktRetrofit!!.toString())
 
+            Log.d("WHATS APP P",response.whatsappPorukaRetrofit!!.toString())
+
+            Log.d("WHATS APP ONE CALL",response.oneCallRetrofit!!.toString())
+
+            Log.d("WHATS APP Obicna",response.obicnePorukeRetrofit!!.toString())
             val whatsAppLista: MutableList<WhatsAppKontaktR> = mutableListOf()
             for (wa in response.whatsappKontaktRetrofit!!) {
                 wa.slika?.let {
@@ -685,7 +691,7 @@ class MyViewModel @Inject constructor(
             }
 
             for (oC in response.oneCallRetrofit!!) {
-                val oneCont = oneContactLista.find { it.idOneContact == oC.idOneCall }
+                val oneCont = oneContactLista.find { it.idOneContact == oC.kontakt }
 
                 val millisOneCall = oC.datum
                 val instantOneCall = millisOneCall?.let { Instant.ofEpochMilli(it) }
@@ -736,20 +742,21 @@ class MyViewModel @Inject constructor(
                 )
             }
 
-            withContext(Dispatchers.IO) {
+            //withContext(Dispatchers.IO) {
+            Log.d("PITANJE ISPIT",response.pitanjeIspitivanjeOsumnjicenogRetrofit!!.toString())
                 for (p in response.pitanjeIspitivanjeOsumnjicenogRetrofit!!) {
                     val osum = osumnjiceni.find { it.idOsumnjicen == p.osumnjicenId }
 
                     realmViewModel.insertPitanjeIspitivanjeOsumnjicenog(
                         idPitanjeIspitivanjeOsumnjicenogZ = p.idPitanjeIspitivanjeOsumnjicenog,
-                        osumnjicenIdZ = osum?.idOsumnjicen ?: -1,
+                        osumnjicenIdZ = p.osumnjicenId,
                         kategorijaZ = p.kategorija,
                         tekstZ = p.tekst,
                         odgovorZ = p.odgovor,
                         komentarZ = p.komentar
                     )
                 }
-            }
+            //}
 
             for (pIS in response.pitanjeIspitivanjeSvedokaRetrofit!!) {
                 val sv = svedokLista.find { it.idSvedok == pIS.svedokId }

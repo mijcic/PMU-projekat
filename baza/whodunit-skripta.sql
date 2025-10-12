@@ -388,7 +388,8 @@ CREATE TABLE PrijavljeniKorisnik (
 CREATE TABLE Pitanje (
 	idPitanje INT AUTO_INCREMENT PRIMARY KEY,
     zlocinId INT,
-    tekst VARCHAR(1000) NOT NULL
+    tekst VARCHAR(1000) NOT NULL,
+    FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
 );
 
 CREATE TABLE Odgovor (

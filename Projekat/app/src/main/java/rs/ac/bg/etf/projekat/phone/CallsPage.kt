@@ -75,6 +75,7 @@ fun CallsPage(navController: NavController) {
                     Instant.ofEpochSecond(it.epochSeconds, it.nanosecondsOfSecond.toLong())
                 }
             } ?: emptyList()
+
     }
 
     val filteredCalls = if (selectedButton == 1) calls else calls.filter { it.propusten == true }

@@ -101,12 +101,13 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             insertGeminiAplikacija(geminiResponse2,geminiResponseRetrofit,zr,repo)
 
             //osumnjiceni i osobe (izmeniti)
+            /*
             var osumnjicenLista=insertGeminiOsumnjicen(geminiResponse2,geminiResponseRetrofit,timestamp,zl,repo)
             //geminiResponseRetrofit.osumnjiceniRetrofit=osumnjicenLista
 
             insertGeminiTrag(geminiResponse2,geminiResponseRetrofit,forenzickiDokaziLista,osumnjicenLista,repo)
 
-            insertGeminiDokazOsumnjicen(geminiResponse2,geminiResponseRetrofit,dokaziLista,osumnjicenLista,repo)
+            insertGeminiDokazOsumnjicen(geminiResponse2,geminiResponseRetrofit,dokaziLista,osumnjicenLista,repo)*/
 
         }
         return SviDokaziOdZrtve(dokaziLista, telefoniLista, forenzickiDokaziLista, zr)
@@ -325,11 +326,19 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                         geminiResponse2.odnosOsumnjicenZrtvaR[indexOsZr].osumnjicenId = osum.idOsumnjicen
                     }
 
-                    val indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
-                    val pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
+                    var indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
+                    var pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
                     pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
                     if(indexOs !=-1){
                         geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
+                    }
+                    while(pitanjeIspitivanjeOsumnjicenog!=null){
+                        indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
+                        pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
+                        pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
+                        if(indexOs !=-1){
+                            geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
+                        }
                     }
 
                     osumnjiceniLista.add(osum)
@@ -412,11 +421,19 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].svedokId=svedok.idSvedok
                 }
 
-                val indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
-                val pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
+                var indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
+                var pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
                 pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
                 if (indexSvedok!=-1){
                     geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
+                }
+                while (pitanjeIspitivanjeSvedoka!=null){
+                    indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
+                    pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
+                    pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
+                    if (indexSvedok!=-1){
+                        geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
+                    }
                 }
 
                 svedociLista.add(svedok)
@@ -447,8 +464,13 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
 
             repo.insertOneContactData(kontakt, zl)
 
-            val oneCall = geminiResponse2.oneCallR.find { it.kontakt == prev }
+            var oneCall = geminiResponse2.oneCallR.find { it.kontakt == prev }
             oneCall?.kontakt = kontakt.idOneContact
+            while (oneCall!=null){
+                oneCall = geminiResponse2.oneCallR.find { it.kontakt == prev }
+                oneCall?.kontakt = kontakt.idOneContact
+            }
+
 
             val kontaktKoSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKoSalje == prev }
             kontaktKoSalje?.kontaktKoSalje = kontakt.idOneContact

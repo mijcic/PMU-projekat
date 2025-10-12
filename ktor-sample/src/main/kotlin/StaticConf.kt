@@ -9,6 +9,8 @@ fun Application.configureStaticContent() {
         staticResources("/admin", "static")
         staticResources("/admin_korisnici", "static")
         staticResources("/admin_addJson", "static")
+
+        staticResources("/admin_addJsonMS", "static")
         staticResources("/admin_addFormsMurder", "static")
         staticResources("/admin_story", "static")
         staticResources("/admin_delete", "static")

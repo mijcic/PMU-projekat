@@ -592,6 +592,12 @@ class RepositoryImplRealmViewModel @Inject constructor(
         realm.write {
             val existingOsumnjicen = query<OsumnjicenR>("idOsumnjicen == $0", osumnjicenIdZ).find().firstOrNull()
 
+            // KRITIČNA PROVERA: Ako osumnjičeni ne postoji, prekinite.
+            if (existingOsumnjicen == null) {
+                println("GRESKA: OsumnjicenR sa idOsumnjicen=$osumnjicenIdZ nije pronadjen u Realmu.")
+                return@write // Prekida realm.write blok, vraća null iz cele funkcije
+            }
+
             pitanje = query<PitanjeIspitivanjeOsumnjicenogR>("idPitanjeIspitivanjeOsumnjicenog ==$0 AND kategorija == $1 AND tekst == $2 AND odgovor == $3 AND komentar == $4 AND osumnjicenId == $5",
                 idPitanjeIspitivanjeOsumnjicenogZ,kategorijaZ, tekstZ, odgovorZ, komentarZ, existingOsumnjicen).find().firstOrNull()
                 ?: PitanjeIspitivanjeOsumnjicenogR().apply {

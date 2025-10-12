@@ -189,6 +189,8 @@ class GeminiServiceResponseImpl(
                     // whatsAppKontakt
                     val whatsAppKontaktiLista = geminiProRepo.insertGeminiWhatsAppKontakt(geminiResponse2, geminiResponseRetrofit,zl,repo)
 
+                    // kontakti
+
                     val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
                     scope.launch {
