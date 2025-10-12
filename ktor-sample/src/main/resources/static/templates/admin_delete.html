@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>WHODUNIT Admin - Brisanje Priča</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        @font-face {
+            font-family: 'Special Elite';
+            src: url('/fonts/SpecialElite-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Special Elite', cursive;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/background.jpg') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 45px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+            text-align: center;
+            margin: 10px 0 5px 0;
+        }
+
+        h2.subtitle {
+            color: white;
+            font-size: 30px;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+            text-align: center;
+        }
+
+        .white-box {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 25px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 95%;
+            max-width: 1200px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        th {
+            background-color: rgba(62,47,91,0.9);
+            color: white;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.7);
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.9);
+        }
+
+        .delete-btn {
+            background-color: #A99367;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-family: 'Special Elite', cursive;
+            transition: background-color 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .delete-btn:hover {
+            background-color: #8E825B;
+        }
+
+        #jsonPreview {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            color: #222;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .white-box {
+                width: 90%;
+                padding: 20px;
+            }
+
+            table {
+                font-size: 14px;
+                min-width: 500px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            #jsonPreview {
+                max-height: 300px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2.subtitle {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>WHODUNIT</h1>
+<h2 class="subtitle">Admin - Brisanje priča (zločina)</h2>
+
+<div class="white-box">
+    <div class="table-container">
+        <table id="zlocinTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Naziv</th>
+                <th>Mesto</th>
+                <th>Opis</th>
+                <th>Datum</th>
+                <th>Status</th>
+                <th>Radnja</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <h3 class="subtitle" style="margin-top:25px;">JSON podaci</h3>
+    <div id="jsonPreview"><em>Ovde će se prikazati JSON podaci o pričama...</em></div>
+</div>
+
+<script>
+    async function fetchStories() {
+        try {
+            const response = await fetch("http://localhost:8080/admin/getAll");
+            if (!response.ok) throw new Error("Greška u komunikaciji sa serverom");
+
+            const data = await response.json();
+            renderTable(data);
+            document.getElementById("jsonPreview").textContent = JSON.stringify(data, null, 4);
+        } catch (err) {
+            alert("❌ " + err.message);
+        }
+    }
+
+    function renderTable(stories) {
+        const tbody = document.querySelector("#zlocinTable tbody");
+        tbody.innerHTML = "";
+
+        stories.forEach((z) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${z.idZlocin}</td>
+                <td>${z.naziv}</td>
+                <td>${z.mesto}</td>
+                <td>${z.opis}</td>
+                <td>${new Date(z.datum).toLocaleDateString()}</td>
+                <td>${z.status}</td>
+                <td style="text-align:center;">
+                    <button class="delete-btn" onclick="obrisi(${z.idZlocin})">Obriši</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function obrisi(id) {
+        if (!confirm("Da li želite da obrišete priču ID: " + id + "?")) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/admin/delete/${id}`, { method: "DELETE" });
+            if (response.ok) {
+                alert("✅ Priča je uspešno obrisana.");
+                fetchStories();
+            } else {
+                const errText = await response.text();
+                alert("❌ Greška pri brisanju: " + errText);
+            }
+        } catch (err) {
+            alert("❌ Greška u komunikaciji: " + err.message);
+        }
+    }
+
+    fetchStories();
+</script>
+
+</body>
+</html>

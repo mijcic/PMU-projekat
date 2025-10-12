@@ -35,19 +35,9 @@ object GeminiClient {
             })
         }
         install(io.ktor.client.plugins.HttpTimeout) {
-<<<<<<< HEAD
-//            requestTimeoutMillis = 60_000      // koliko maksimalno traje ceo zahtev (60 sekundi)
-//            connectTimeoutMillis = 15_000      // koliko dugo pokušava da se poveže (15 sekundi)
-//            socketTimeoutMillis = 30_000       // koliko dugo čeka na čitanje sa soketa (30 sekundi)
-
-            requestTimeoutMillis = 120_000      // koliko maksimalno traje ceo zahtev (60 sekundi)
-            connectTimeoutMillis = 60_000      // koliko dugo pokušava da se poveže (15 sekundi)
-            socketTimeoutMillis = 120_000       // koliko dugo čeka na čitanje sa soketa (30 sekundi)
-=======
             requestTimeoutMillis = 120_000      // koliko maksimalno traje ceo zahtev (60 sekundi)
             connectTimeoutMillis = 15_000      // koliko dugo pokušava da se poveže (15 sekundi)
             socketTimeoutMillis = 60_000       // koliko dugo čeka na čitanje sa soketa (30 sekundi)
->>>>>>> 570a6451899306e30e011c5b2c2d11efbf9b48bb
         }
         engine {
             pipelining = true

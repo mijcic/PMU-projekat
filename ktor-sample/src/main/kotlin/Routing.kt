@@ -5,13 +5,10 @@ import com.example.data.remote.client.GeminiClient
 import com.example.models.domain.Story
 import com.example.data.remote.gemini.request.GeminiRequest2
 import com.example.data.remote.gemini.request.GeminiRequest2MysteriousSymptoms
-<<<<<<< HEAD
 import com.example.data.remote.tables.ScoreKorisnikaRequest
-=======
 import com.example.data.remote.gemini.retrofit.GeminiResponse2
 import com.example.data.remote.gemini.retrofit.GeminiResponseRetrofit
 import com.example.data.remote.tables.*
->>>>>>> 570a6451899306e30e011c5b2c2d11efbf9b48bb
 import com.example.parser.DefaultGeminiResponseParser
 import com.example.repository.GeminiProRepositoryImpl
 import com.example.service.post.GeminiService
@@ -44,8 +41,6 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import com.google.gson.Gson
-
-
 
 /**
  * Configures the routing and endpoints for the Ktor application.
@@ -83,8 +78,8 @@ fun Application.configureRouting() {
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
-        password = "1234"
-        //password = "mia123"
+        // password = "1234"
+        password = "mia123"
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)

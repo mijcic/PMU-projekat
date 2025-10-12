@@ -2,24 +2,157 @@
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
-    <title>WHODUNIT Admin - Ručni Unos</title>
+    <title>WHODUNIT Admin - Ručni Unos Ubistvo</title>
     <style>
-        body { font-family: Arial; padding: 20px; background:#f0f0f0; }
-        h1,h2,h3 { color:#333; }
-        form { background:white; padding:15px; border-radius:8px; margin-bottom:20px; }
-        input, textarea, select { width: 100%; margin-bottom: 10px; padding:5px; }
-        button { padding:10px 20px; margin-top:5px; cursor:pointer; border:none; border-radius:5px; background:#0077cc; color:white; }
-        button:hover { background:#005fa3; }
-        #jsonPreview { background:white; padding:15px; border-radius:8px; white-space: pre-wrap; max-height:400px; overflow-y:auto; margin-top:20px; }
+        @font-face {
+            font-family: 'Special Elite';
+            src: url('/fonts/SpecialElite-Regular.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'Special Elite', cursive;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/background.jpg') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: white;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 45px;
+            margin: 10px 0 5px 0;
+            line-height: 1.1;
+        }
+
+        h2.subtitle {
+            color: white;
+            font-size: 30px;
+            margin-bottom: 20px;
+            margin-top: 5px;
+        }
+
+        .entity-box {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 12px;
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .entity-box h2 {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        label {
+            width: 100%;
+            margin-bottom: 10px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        input, textarea, select {
+            width: 90%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.5);
+            font-size: 16px;
+            background-color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: #3E2F5B;
+            color: white;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2A213E;
+        }
+
+        #jsonPreview {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 700px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            color: #222;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        @media (max-width: 480px) {
+            .entity-box {
+                width: 90%;
+                padding: 20px;
+            }
+            input, textarea, select {
+                font-size: 14px;
+                width: 95%;
+                padding: 6px;
+            }
+            button {
+                width: 100%;
+                font-size: 14px;
+                padding: 8px 0;
+            }
+            #jsonPreview {
+                max-height: 300px;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
 
-<h1>WHODUNIT Admin - Ručni Unos Ubistvo</h1>
+<h1>WHODUNIT</h1>
+<h2 class="subtitle">Ubistvo - Ručni unos</h2>
 
-<div id="formsContainer">
-
-    <!-- Ubistvo -->
+<div class="entity-box">
     <h2>1️⃣ Ubistvo (zlocinR)</h2>
     <form id="zlocinForm">
         <label>Naziv: <input type="text" name="naziv" /></label>
@@ -29,13 +162,11 @@
         <label>Status:
             <select name="status">
                 <option value="u_istrazi">U istrazi</option>
-                <option value="resen">resen</option>
+                <option value="resen">Rešen</option>
             </select>
         </label>
-        <button type="button" onclick="addZlocin()">Dodaj Ubistvo</button>
+        <button type="button" onclick="addZlocin()" style="margin-bottom: 20px">Dodaj Ubistvo</button>
     </form>
-
-    <!-- Žrtva -->
     <h2>2️⃣ Žrtva (zrtvaR)</h2>
     <form id="zrtvaForm">
         <label>Tip žrtve: <input type="text" name="tipZrtve" /></label>
@@ -47,15 +178,16 @@
         <label>Zanimanje: <input type="text" name="zanimanje" /></label>
         <label>Pol:
             <select name="pol">
-                <option value="muski">muski</option>
-                <option value="zenski">zenski</option>
+                <option value="muski">muški</option>
+                <option value="zenski">ženski</option>
             </select>
         </label>
-
         <button type="button" onclick="addZrtva()">Dodaj Žrtvu</button>
     </form>
+    <button onclick="popuniAutomatski()">🤖 Popuni automatski (Gemini)</button>
+</div>
 
-    <!-- Osumnjičeni -->
+<div class="entity-box">
     <h2>3️⃣ Osumnjičeni (osumnjicenR)</h2>
     <form id="osumnjicenForm">
         <label>Tip osumnjičenog: <input type="text" name="tipOsumnjicen" /></label>
@@ -68,8 +200,9 @@
         <label>Pol: <input type="text" name="polOsumnjicen" /></label>
         <button type="button" onclick="addOsumnjicen()">Dodaj Osumnjičenog</button>
     </form>
+</div>
 
-    <!-- Dokazi -->
+<div class="entity-box">
     <h2>4️⃣ Dokazi (dokazR)</h2>
     <form id="dokazForm">
         <label>Tip dokaza: <input type="text" name="tipDokaza" /></label>
@@ -77,8 +210,9 @@
         <label>Status: <input type="number" name="status" /></label>
         <button type="button" onclick="addDokaz()">Dodaj dokaz</button>
     </form>
+</div>
 
-    <!-- Svedoci -->
+<div class="entity-box">
     <h2>5️⃣ Svedoci (svedokR)</h2>
     <form id="svedokForm">
         <label>Ime: <input type="text" name="ime" /></label>
@@ -89,21 +223,15 @@
         <label>Izjava: <textarea name="izjava"></textarea></label>
         <button type="button" onclick="addSvedok()">Dodaj svedoka</button>
     </form>
-
 </div>
 
 <button onclick="generateJsonFile()">Generiši JSON fajl</button>
+
 <h3>📄 Trenutni JSON:</h3>
 <div id="jsonPreview">{}</div>
 
 <script>
-    let geminiData = {
-        zlocinR: null,
-        zrtvaR: null,
-        osumnjicenR: [],
-        dokazR: [],
-        svedokR: []
-    };
+    let geminiData = { zlocinR: null, zrtvaR: null, osumnjicenR: [], dokazR: [], svedokR: [] };
 
     function updatePreview() {
         document.getElementById("jsonPreview").textContent = JSON.stringify(geminiData, null, 4);
@@ -166,7 +294,7 @@
             }
         });
         updatePreview();
-        alert("Osumnjičeni dodan!");
+        alert("Osumnjičeni dodat!");
     }
 
     function addDokaz() {
@@ -216,6 +344,43 @@
         URL.revokeObjectURL(url);
         alert("JSON fajl generisan!");
     }
+
+    async function popuniAutomatski() {
+        try {
+            const res = await fetch("http://localhost:8080/admin/gemini", { method: "POST" });
+            if (!res.ok) throw new Error("Greška pri pozivu Gemini-a");
+            const data = await res.json();
+
+            geminiData.zlocinR = data.zlocinR;
+            geminiData.zrtvaR = data.zrtvaR;
+
+            // Popuni formu za zločin
+            const zForm = document.getElementById("zlocinForm");
+            zForm.naziv.value = data.zlocinR.naziv;
+            zForm.datum.value = data.zlocinR.datum;
+            zForm.mesto.value = data.zlocinR.mesto;
+            zForm.opis.value = data.zlocinR.opis;
+            zForm.status.value = data.zlocinR.status;
+
+            // Popuni formu za žrtvu
+            const zrtvaForm = document.getElementById("zrtvaForm");
+            const osoba = data.zrtvaR.osobaId;
+            zrtvaForm.tipZrtve.value = data.zrtvaR.tipZrtve;
+            zrtvaForm.detalji.value = data.zrtvaR.detalji;
+            zrtvaForm.statusZrtva.value = data.zrtvaR.statusZrtva;
+            zrtvaForm.ime.value = osoba.ime;
+            zrtvaForm.kontakt.value = osoba.kontakt;
+            zrtvaForm.datumOsoba.value = osoba.datum;
+            zrtvaForm.zanimanje.value = osoba.zanimanje;
+            zrtvaForm.pol.value = osoba.pol;
+
+            updatePreview();
+            alert("✅ Podaci popunjeni automatski!");
+        } catch (err) {
+            alert("❌ " + err.message);
+        }
+    }
 </script>
+
 </body>
 </html>
