@@ -1654,4 +1654,25 @@ class Repository(private val connection: Connection): RepoInterface {
 
         return null
     }
+
+    override fun getAllScores(): List<ScoreKorisnikaRequest>? {
+        val query = "SELECT * FROM scoreKorisnika ORDER BY score DESC"
+
+        val statement = connection.createStatement()
+        val resultSet = statement?.executeQuery(query)
+        val lista = mutableListOf<ScoreKorisnikaRequest>()
+
+        while (resultSet != null && resultSet.next()) {
+            val korisnickoIme = resultSet.getString("korisnickoIme")
+            val score = resultSet.getInt("score")
+
+            val sc = ScoreKorisnikaRequest(
+                korisnickoIme = korisnickoIme,
+                score = score
+            )
+            lista.add(sc)
+        }
+
+        return lista
+    }
 }

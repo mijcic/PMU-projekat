@@ -110,6 +110,14 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    private val _uiStateScoreKorisnikaList = MutableStateFlow(UiStateScoreKorisnikaList())
+    val uiStateScoreKorisnikaList: StateFlow<UiStateScoreKorisnikaList> = _uiStateScoreKorisnikaList
+
+    fun scoreKorisnikaList() = viewModelScope.launch {
+        val scores = MyRepository.getAllScores() ?: emptyList()
+        _uiStateScoreKorisnikaList.value = UiStateScoreKorisnikaList(scoreList = scores)
+    }
+
     private val _uiStateLogIn = MutableStateFlow(UiStateLogIn())
     val uiStateLogIn: StateFlow<UiStateLogIn> = _uiStateLogIn
 
@@ -1438,6 +1446,11 @@ data class UiStateScoreKorisnika(
 data class UiStateScoreKorisnika1(
     val message: MessageResponse? =null
 )
+
+data class UiStateScoreKorisnikaList(
+    val scoreList: List<ScoreKorisnikaRequest>? = null
+)
+
 
 //gemini
 

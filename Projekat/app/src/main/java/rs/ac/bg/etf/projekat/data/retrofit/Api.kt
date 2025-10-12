@@ -51,4 +51,7 @@ interface Api {
 
     @POST("setScoreKorisnika")
     suspend fun setScoreKorisnika(@Body request: ScoreKorisnikaRequest): MessageResponse
+
+    @GET("getAllScores")
+    suspend fun getAllScores(): List<ScoreKorisnikaRequest>
 }

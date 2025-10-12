@@ -36,4 +36,6 @@ class Repository @Inject constructor(
     suspend fun geminiMysteriousSymptoms(): GeminiResponseRetrofitMysteriousSymptoms = Api.geminiMysteriousSymptoms()
 
     suspend fun setScoreKorisnika(@Body request: ScoreKorisnikaRequest): MessageResponse = Api.setScoreKorisnika(request)
+
+    suspend fun getAllScores(): List<ScoreKorisnikaRequest> = Api.getAllScores()
 }

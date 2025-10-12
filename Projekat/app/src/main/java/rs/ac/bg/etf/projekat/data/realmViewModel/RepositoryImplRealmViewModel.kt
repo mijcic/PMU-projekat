@@ -590,14 +590,22 @@ class RepositoryImplRealmViewModel @Inject constructor(
 
     override suspend fun insertScoreKorisnika(korisnickoImeK: String, scoreK: Int): ScoreKorisnikaR? {
         var scoreKorisnika: ScoreKorisnikaR? = null
+
         realm.write {
-            scoreKorisnika = query<ScoreKorisnikaR>("korisnickoIme == $0", korisnickoImeK).find().firstOrNull()
-                ?: ScoreKorisnikaR().apply {
+            val existing = query<ScoreKorisnikaR>("korisnickoIme == $0", korisnickoImeK)
+                .first().find()
+
+            if (existing != null) {
+                existing.score = scoreK
+                scoreKorisnika = existing
+            } else {
+                val newScore = ScoreKorisnikaR().apply {
                     idScoreKorisnika = (query<ScoreKorisnikaR>().find().maxOfOrNull { it.idScoreKorisnika } ?: 0) + 1
                     korisnickoIme = korisnickoImeK
-                    score = scoreK
+                    this.score = scoreK
                 }
-            copyToRealm(scoreKorisnika!!)
+                scoreKorisnika = copyToRealm(newScore)
+            }
         }
         return scoreKorisnika
     }

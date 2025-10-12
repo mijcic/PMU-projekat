@@ -833,31 +833,54 @@ class RepositoryInsert(private val conn: Connection){
     // score korisnika
 
     fun insertScoreKorisnika(scoreKorisnikaRequest: ScoreKorisnikaRequest): Boolean {
+//        val query = """
+//            INSERT INTO scoreKorisnika (korisnickoIme, score)
+//            VALUES (?, ?)
+//            ON DUPLICATE KEY UPDATE
+//                score = VALUES(score)
+//        """
+//        var statement: PreparedStatement? = null
+//        var resultSet: ResultSet? = null
+//
+//        println("Statement pripremljen: ${statement != null}")
+//
+//        try {
+//            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+//            if (statement == null) {
+//                println("Prepare statement failed: statement is null")
+//                return false
+//            }
+//
+//            statement.setString(1, scoreKorisnikaRequest.korisnickoIme)
+//            statement.setInt(2, scoreKorisnikaRequest.score)
+//            statement.executeUpdate()
+//
+//            resultSet = statement.generatedKeys
+//            if (resultSet?.next() == true) {
+//                return true
+//            }
+//        } catch (e: SQLException) {
+//            e.printStackTrace()
+//        } finally {
+//            closeResources(conn, statement, null)
+//        }
+//        return false
+
         val query = """
-            UPDATE scoreKorisnika
-            SET korisnickoIme = ?
-            WHERE score > ?
-        """
+        INSERT INTO scoreKorisnika (korisnickoIme, score)
+        VALUES (?, ?)
+        ON DUPLICATE KEY UPDATE
+            score = VALUES(score)
+    """
         var statement: PreparedStatement? = null
-        var resultSet: ResultSet? = null
-
-        println("Statement pripremljen: ${statement != null}")
-
         try {
-            statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-            if (statement == null) {
-                println("Prepare statement failed: statement is null")
-                return false
-            }
-
+            statement = conn.prepareStatement(query)
             statement.setString(1, scoreKorisnikaRequest.korisnickoIme)
             statement.setInt(2, scoreKorisnikaRequest.score)
-            statement.executeUpdate()
 
-            resultSet = statement.generatedKeys
-            if (resultSet?.next() == true) {
-                return true
-            }
+            val rowsAffected = statement.executeUpdate()
+            println("Rows affected: $rowsAffected")
+            return rowsAffected > 0
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {

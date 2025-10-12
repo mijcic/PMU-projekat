@@ -28,7 +28,7 @@ fun NavigationGraph(navController: NavHostController) {
         //startDestination = "destinationSignUpPage"
     ) {
         mainNavigation(navController)
-        authNavigation(navController)
+        authNavigation(navController, viewModel)
         murderNavigation(navController, viewModel, realmViewModel)
         phoneNavigation(navController, viewModel)
         medicalNavigation(navController, viewModel, realmViewModel,hospitalViewModel)

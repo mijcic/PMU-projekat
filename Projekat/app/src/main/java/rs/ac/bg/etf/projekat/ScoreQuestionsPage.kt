@@ -1,5 +1,7 @@
 package rs.ac.bg.etf.projekat
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,24 +47,33 @@ import rs.ac.bg.etf.projekat.data.realm.OdgovorR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.retrofit.models.ScoreKorisnikaRequest
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ScoreQuestionsPage(navController: NavController, totalScore: String, myViewModel: MyViewModel) {
     val realmViewModel: RealmViewModel = hiltViewModel()
     var questions by remember { mutableStateOf<List<PitanjeR>>(emptyList()) }
     val selectedAnswers by myViewModel.uiSteteSelectedAnswers.collectAsState()
     var userScore by remember { mutableStateOf(0) }
-    val loggedUser = myViewModel.uiStateKorisnik
-    // GDE NAM JE OVDE DUGME?
-    // realmViewModel.insertScoreKorisnika(loggedUser.value.korisnickoIme, userScore)
-    // loggedUser.value.korisnickoIme?.let { ScoreKorisnikaRequest(it, userScore) }
-    //     ?.let { myViewModel.setScoreKorisnika(it) }
-    // realmViewModel.getAllScores() - da bi postavili sve sortirano
+
+    val uiStateKorisnik by myViewModel.uiStateKorisnik.collectAsState()
+    val loggedUser = uiStateKorisnik.korisnickoIme
+
+    LaunchedEffect(userScore) {
+        if (loggedUser != null) {
+            realmViewModel.insertScoreKorisnika(loggedUser, userScore)
+
+            val request = ScoreKorisnikaRequest(loggedUser, userScore)
+            myViewModel.setScoreKorisnika(request)
+
+            Log.d("SCORE_SAVE", "Score $userScore sačuvan za $loggedUser")
+        }
+    }
 
     LaunchedEffect(Unit) {
         questions = realmViewModel.getAllPitanje() ?: emptyList()
     }
 
-    LaunchedEffect(questions, selectedAnswers) {
+    LaunchedEffect(questions.hashCode(), selectedAnswers.hashCode()) {
         userScore = calculateScore(
             questions,
             selectedAnswers.selectedAnswers ?: emptyMap(),

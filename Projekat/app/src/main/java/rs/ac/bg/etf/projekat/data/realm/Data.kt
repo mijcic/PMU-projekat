@@ -743,6 +743,7 @@ object RealmSchemaProvider {
         MedicinskiIzvestajR::class,
         IzjavaZaPacijentaR::class,
         LekarskiTestR::class,
-        LokacijeIstrageR::class
+        LokacijeIstrageR::class,
+        ScoreKorisnikaR::class
     )
 }
