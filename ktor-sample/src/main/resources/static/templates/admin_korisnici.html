@@ -47,7 +47,7 @@
             padding: 30px;
             border-radius: 15px;
             width: 90%;
-            max-width: 900px;
+            max-width: 1200px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -217,35 +217,16 @@
         <tr>
             <th>ID</th>
             <th>Ime</th>
+            <th>Korisnicko ime</th>
             <th>Email</th>
             <th>Uloga</th>
+            <th>Nacin prijave</th>
             <th>Status</th>
             <th>Akcije</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>1</td>
-            <td>Marko Marković</td>
-            <td>marko@example.com</td>
-            <td>Admin</td>
-            <td>Aktivan</td>
-            <td class="actions">
-                <button class="edit-btn">Izmeni</button>
-                <button class="delete-btn">Obriši</button>
-            </td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Jelena Jelić</td>
-            <td>jelena@example.com</td>
-            <td>Korisnik</td>
-            <td>Neaktivan</td>
-            <td class="actions">
-                <button class="edit-btn">Izmeni</button>
-                <button class="delete-btn">Obriši</button>
-            </td>
-        </tr>
+
         </tbody>
     </table>
 </div>
@@ -282,6 +263,43 @@
             }
         });
     });
+
+    async function loadUsers() {
+        try {
+            const response = await fetch('/admin/allUsers');
+            if (!response.ok) {
+                throw new Error('Greška prilikom učitavanja korisnika: ' + response.status);
+            }
+
+            const users = await response.json();
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.idKorisnik}</td>
+                    <td>${user.ime} ${user.prezime}</td>
+                    <td>${user.korisnickoIme}</td>
+                    <td>${user.email}</td>
+                    <td>Korisnik</td>
+                    <td>${user.nacinPrijave}</td>
+                    <td>Aktivan</td>
+                    <td class="actions">
+                        <button class="edit-btn">Izmeni</button>
+                        <button class="delete-btn">Obriši</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert('Došlo je do greške pri učitavanju korisnika.');
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadUsers)
 </script>
 
 </body>

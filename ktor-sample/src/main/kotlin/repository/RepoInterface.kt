@@ -411,4 +411,15 @@ interface RepoInterface {
      * @return A list of [ScoreKorisnikaRequest] containing all user scores, or an empty list if none exist.
      */
     fun getAllScores(): List<ScoreKorisnikaRequest>?
+
+    /**
+     * Retrieves all registered users from the database.
+     *
+     * This function returns a list of [Korisnik] objects representing
+     * all users stored in the system. If there are no users in the database,
+     * an empty list is returned.
+     *
+     * @return A list of [Korisnik] containing all users, or an empty list if none exist.
+     */
+    fun getAllUsers(): List<Korisnik>?
 }

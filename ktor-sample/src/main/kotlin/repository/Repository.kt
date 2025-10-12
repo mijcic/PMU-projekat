@@ -1675,4 +1675,43 @@ class Repository(private val connection: Connection): RepoInterface {
 
         return lista
     }
+
+    override fun getAllUsers(): List<Korisnik>? {
+        val query = "SELECT * FROM korisnik"
+
+        val statement = connection.createStatement()
+        val resultSet = statement?.executeQuery(query)
+        val lista = mutableListOf<Korisnik>()
+
+        while (resultSet != null && resultSet.next()) {
+            val ime = resultSet.getString("ime")
+            val prezime = resultSet.getString("prezime")
+            val korisnickoIme = resultSet.getString("korisnickoIme")
+            val sifra = resultSet.getString("sifra")
+            val email = resultSet.getString("email")
+            val nacinPrijave = resultSet.getString("nacinPrijave")
+            val idToken = resultSet.getString("idToken")
+            val idTokenLast256 = resultSet.getString("idTokenLast256")
+            val idKorisnik = resultSet.getInt("idKorisnik")
+            val poeni = resultSet.getInt("poeni")
+            val poslednjaAktivnost = resultSet.getTimestamp("poslednjaAktivnost")
+
+            val kor = Korisnik(
+                ime = ime,
+                prezime = prezime,
+                korisnickoIme = korisnickoIme,
+                sifra = sifra,
+                email = email,
+                nacinPrijave = nacinPrijave,
+                idToken = idToken,
+                idTokenLast256 = idTokenLast256,
+                idKorisnik = idKorisnik,
+                poeni = poeni,
+                poslednjaAktivnost = poslednjaAktivnost?.time ?: 0
+            )
+            lista.add(kor)
+        }
+
+        return lista
+    }
 }

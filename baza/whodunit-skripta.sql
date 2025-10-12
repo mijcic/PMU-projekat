@@ -46,6 +46,7 @@ DROP TABLE IF EXISTS `IspitivanjeOsumnjicenogZadatak`;
 DROP TABLE IF EXISTS `IspitivanjeSvedokaZadatak`;
 DROP TABLE IF EXISTS `TelefonZadatak`;
 DROP TABLE IF EXISTS `ForenzickiDokazZadatak`;
+DROP TABLE IF EXISTS `ScoreKorisnika`;
 -- DROP TABLE IF EXISTS `PorukeZadatak`;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -631,4 +632,10 @@ CREATE TABLE LokacijeIstrage (
     geoTackaALatitude DOUBLE NOT NULL,
     geoTackaALongitude DOUBLE NOT NULL,
     FOREIGN KEY (zlocinId) REFERENCES Zlocin(idZlocin) ON DELETE CASCADE
+);
+
+CREATE TABLE ScoreKorisnika (
+    idScoreKorisnika INT PRIMARY KEY AUTO_INCREMENT,
+    korisnickoIme VARCHAR(255) NOT NULL UNIQUE,
+    score INT NOT NULL
 );

@@ -342,6 +342,11 @@ fun Application.configureRouting() {
             call.respond(stats)
         }
 
+        get("/admin/allUsers") {
+            val users = repository.getAllUsers()
+            call.respond(users ?: emptyList())
+        }
+
 
         post("/admin/gemini") {
             val jsonMurder = JsonLoader.getJsonMurderSteps(1, "", "", "", "")
