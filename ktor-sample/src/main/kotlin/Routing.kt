@@ -328,6 +328,16 @@ fun Application.configureRouting() {
                         }
 
                         // porukeZadatak
+
+
+
+                        scope.launch {
+                            geminiProRepo.insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista,zadaciLista, repo)
+                        }
+
+                        scope.launch {
+                            geminiProRepo.insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista,zadaciLista, repo)
+                        }
                     }
                 }
 

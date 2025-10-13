@@ -328,7 +328,7 @@ class CommonRepository @Inject constructor(
             "svedokId == $0 AND uradjen == $1",
             svedokZ, false
         ).find()
-
+        Log.d("ZADACI", zadaci.toString())
         return zadaci.firstOrNull()
     }
 
