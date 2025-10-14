@@ -305,22 +305,69 @@
       "ime": "Sophia Ramos",
       "broj": "+12068881122",
       "slika": 1
+    },
+    {
+      "idWhatsAppKontakt": 3,
+      "zlocinId": 1,
+      "ime": "Me (Evelyn)",
+      "broj": "+87125556783",
+      "slika": 1
     }
   ],
   "whatsAppPorukaR": [
     {
       "idWhatsAppPoruka": 1,
       "kontaktKoSalje": 1,
-      "kontaktKomeSalje": 2,
+      "kontaktKomeSalje": 3,
       "tekst": "She found out about the past. This could ruin us.",
       "datum": "2025-08-22",
       "procitana": true
     },
     {
       "idWhatsAppPoruka": 2,
-      "kontaktKoSalje": 2,
+      "kontaktKoSalje": 1,
       "kontaktKomeSalje": 1,
       "tekst": "Then she left us no choice.",
+      "datum": "2025-08-22",
+      "procitana": false
+    },
+    {
+      "idWhatsAppPoruka": 3,
+      "kontaktKoSalje": 2,
+      "kontaktKomeSalje": 3,
+      "tekst": "I need you to help me with something very important.",
+      "datum": "2025-08-22",
+      "procitana": false
+    },
+    {
+      "idWhatsAppPoruka": 4,
+      "kontaktKoSalje": 3,
+      "kontaktKomeSalje": 2,
+      "tekst": "What can I do to help.",
+      "datum": "2025-08-22",
+      "procitana": false
+    },
+    {
+      "idWhatsAppPoruka": 5,
+      "kontaktKoSalje": 2,
+      "kontaktKomeSalje": 3,
+      "tekst": "Are you working today?",
+      "datum": "2025-08-22",
+      "procitana": false
+    },
+    {
+      "idWhatsAppPoruka": 6,
+      "kontaktKoSalje": 3,
+      "kontaktKomeSalje": 2,
+      "tekst": "Yes.",
+      "datum": "2025-08-22",
+      "procitana": false
+    },
+    {
+      "idWhatsAppPoruka": 7,
+      "kontaktKoSalje": 2,
+      "kontaktKomeSalje": 3,
+      "tekst": "OK.",
       "datum": "2025-08-22",
       "procitana": false
     }
@@ -410,8 +457,8 @@
     },
     {
       "idObicnaPoruka": 3,
-      "kontaktKoSalje": 2,
-      "kontaktKomeSalje": 9,
+      "kontaktKoSalje": 9,
+      "kontaktKomeSalje": 2,
       "tekst": "No comment",
       "datum": "2025-08-22",
       "procitana": true,
@@ -491,6 +538,53 @@
       "idOdogovor": 2,
       "pitanjeId": 2,
       "tekstOdgovora": "They argued over the failed grant and accusations of sabotage.",
+      "tacan": true,
+      "bodovi": 10
+    },
+    {
+      "idOdogovor": 3,
+      "pitanjeId": 1,
+      "tekstOdgovora": "The cleaning crew and security guard had master keys, but they clocked out early.",
+      "tacan": false,
+      "bodovi": 0
+    },
+    {
+      "idOdogovor": 4,
+      "pitanjeId": 1,
+      "tekstOdgovora": "A broken side window suggests a third person may have entered without a key.",
+      "tacan": false,
+      "bodovi": 0
+    },
+    {
+      "idOdogovor": 5,
+      "pitanjeId": 2,
+      "tekstOdgovora": "Reed was upset that Carter was trying to steal his research on gene editing.",
+      "tacan": false,
+      "bodovi": 0
+    },
+    {
+      "idOdogovor": 6,
+      "pitanjeId": 2,
+      "tekstOdgovora": "They were arguing over the allocation of lab funds for the new equipment.",
+      "tacan": false,
+      "bodovi": 0
+    },
+    {
+      "idOdogovor": 7,
+      "pitanjeId": 3,
+      "tekstOdgovora": "The IP address traces back to a disposable VPN, making identification difficult.",
+      "tacan": false,
+      "bodovi": 0
+    },{
+      "idOdogovor": 8,
+      "pitanjeId": 3,
+      "tekstOdgovora": "The email was sent from a public library computer used by multiple students.",
+      "tacan": false,
+      "bodovi": 0
+    },{
+      "idOdogovor": 9,
+      "pitanjeId": 3,
+      "tekstOdgovora": "Yes, forensic analysis confirmed the writing style matches Thomas Reed's known correspondence.",
       "tacan": true,
       "bodovi": 10
     }
@@ -649,20 +743,29 @@
     }
   ],
   "zadatakR": [
+    
     {
-      "idZadatak": 1,
-      "tekst": "Ispitati mesto zločina",
-      "korak": "1",
+      "idZadatak": 3,
+      "tekst": "Send the evidence for analysis.",
+      "korak": "3",
       "uradjen": false,
-      "nextZadatak": 2,
+      "nextZadatak": 4,
       "zlocinId": 101
     },
     {
-      "idZadatak": 2,
-      "tekst": "Pronaći svedoke",
-      "korak": "2",
+      "idZadatak": 4,
+      "tekst": "Check the victim's phone.",
+      "korak": "4",
       "uradjen": false,
-      "nextZadatak": 3,
+      "nextZadatak": 5,
+      "zlocinId": 101
+    },
+    {
+      "idZadatak": 5,
+      "tekst": "Look for forensic evidence.",
+      "korak": "5",
+      "uradjen": false,
+      "nextZadatak": 6,
       "zlocinId": 101
     }
   ],
@@ -683,15 +786,8 @@
   "dokazZadatakR": [
     {
       "idDokazZadatak": 1,
-      "tekst": "Analiziraj DNK tragove pronađene na nožu.",
+      "tekst": "DNA",
       "dokazId": 1,
-      "uradjen": false,
-      "zadatakId": 2
-    },
-    {
-      "idDokazZadatak": 2,
-      "tekst": "Uporedi otiske prstiju sa čaše sa bazom osumnjičenih.",
-      "dokazId": 2,
       "uradjen": false,
       "zadatakId": 3
     }
@@ -719,15 +815,9 @@
   "telefonZadatakR": [
     {
       "idTelefonZadatak": 1,
-      "telefonId": 10,
-      "zadatakId": 3,
-      "uradjen": false
-    },
-    {
-      "idTelefonZadatak": 2,
-      "telefonId": 11,
+      "telefonId": 1,
       "zadatakId": 4,
-      "uradjen": true
+      "uradjen": false
     }
   ],
   "forenzickiDokazZadatakR": [
@@ -736,14 +826,7 @@
       "tekst": "Uporedi DNK tragove sa uzorcima osumnjičenih.",
       "forenzickiDokazId": 1,
       "uradjen": false,
-      "zadatakId": 1
-    },
-    {
-      "idForenzickiDokazZadatak": 2,
-      "tekst": "Proveri da li postoji još tragova DNK na dršci noža.",
-      "forenzickiDokazId": 1,
-      "uradjen": false,
-      "zadatakId": 2
+      "zadatakId": 5
     }
   ],
   "kontaktKtor": [

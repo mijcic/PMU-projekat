@@ -274,8 +274,8 @@ fun WhatsappChatScreen(messages: List<WhatsAppPorukaR>, modifier: Modifier) {
 
 @Composable
 fun WhatsappMessageBubble(message: WhatsAppPorukaR, spacing: Dp) {
-    val backgroundColor = if (message.kontaktKoSalje?.ime == "Me") colorResource(R.color.iphone_yellow_green) else Color.White
-    val alignment = if (message.kontaktKoSalje?.ime == "Me") Alignment.CenterEnd else Alignment.CenterStart
+    val backgroundColor = if (message.kontaktKoSalje?.ime?.contains("Me")==true) colorResource(R.color.iphone_yellow_green) else Color.White
+    val alignment = if (message.kontaktKoSalje?.ime?.contains("Me")==true) Alignment.CenterEnd else Alignment.CenterStart
 
     Box(
         modifier = Modifier
