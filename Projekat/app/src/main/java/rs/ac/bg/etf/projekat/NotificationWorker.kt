@@ -30,7 +30,7 @@ class NotificationWorker(context: Context, workerParams: WorkerParameters) :
 
     @SuppressLint("NotificationPermission")
     private fun showNotification(title: String, message: String) {
-        val channelId = "daily_reminder_channel_v4"
+        val channelId = "daily_reminder_channel_v5"
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -86,8 +86,8 @@ fun scheduleDailyReminder(context: Context) {
     val currentDate = Calendar.getInstance()
     val dueDate = Calendar.getInstance()
 
-    dueDate.set(Calendar.HOUR_OF_DAY, 19)
-    dueDate.set(Calendar.MINUTE, 57)
+    dueDate.set(Calendar.HOUR_OF_DAY, 12)
+    dueDate.set(Calendar.MINUTE, 0)
     dueDate.set(Calendar.SECOND, 0)
 
     if (dueDate.before(currentDate)) {
