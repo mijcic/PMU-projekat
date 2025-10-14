@@ -304,6 +304,7 @@ class MyViewModel @Inject constructor(
     }
 
     fun updateWitnessTask(zadatak: IspitivanjeSvedokaZadatakR) = viewModelScope.launch {
+        Log.d("PROBA", "USLO")
         Log.d("SVEDOK zad", zadatak.zadatakId?.idZadatak.toString())
         Log.d("SVEDOK zadI", zadatak.idIspitivanjeSvedokaZadatak.toString())
         zadatak.zadatakId?.idZadatak?.let {

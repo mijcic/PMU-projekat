@@ -335,6 +335,16 @@ fun Application.configureRouting() {
                         println("DOSLI DO ZADATAKA ")
 
                         // porukeZadatak
+
+
+
+                        scope.launch {
+                            geminiProRepo.insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista,zadaciLista, repo)
+                        }
+
+                        scope.launch {
+                            geminiProRepo.insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista,zadaciLista, repo)
+                        }
                     }
                 }
 

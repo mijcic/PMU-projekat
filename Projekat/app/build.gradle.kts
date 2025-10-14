@@ -134,6 +134,9 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.10")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 
+    // work-manager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
     // firebase-authentication
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
