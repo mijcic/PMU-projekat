@@ -295,21 +295,21 @@ fun Application.configureRouting() {
                         val pitanjaLista = geminiProRepo.insertGeminiPitanje(geminiResponse2, geminiResponseRetrofit,zl,repo)
 
                         // odgovor
-                        val odgovoriDeferred = async(Dispatchers.IO) {
+                       // val odgovoriDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiOdgovor(geminiResponse2, geminiResponseRetrofit,pitanjaLista, repo)
-                        }
+                        //}
                         // pitanjeIspitivanjeOsumnjicenog
-                        val pitanjeIspitivanjeOsumnjicenogDeferred = async(Dispatchers.IO) {
+                        //val pitanjeIspitivanjeOsumnjicenogDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiPitanjeIspitivanjeOsumnjicenog(geminiResponse2, geminiResponseRetrofit,osumnjiceniLista, repo)
-                        }
+                        //}
                         // pitanjeIspitivanjeSvedoka
-                        val pitanjeIspitivanjeSvedokaDeferred = async(Dispatchers.IO) {
+                        //val pitanjeIspitivanjeSvedokaDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiPitanjeIspitivanjeSvedoka(geminiResponse2, geminiResponseRetrofit,svedociLista, repo)
-                        }
+                        //}
                         //  osoba
-                        val osobaDeferred = async(Dispatchers.IO) {
+                        //val osobaDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiOsoba(geminiResponse2, geminiResponseRetrofit, zl, timestamp, repo)
-                        }
+                        //}
 
                         /*
                         scope.launch {
@@ -337,14 +337,6 @@ fun Application.configureRouting() {
                         // porukeZadatak
 
 
-
-                        scope.launch {
-                            geminiProRepo.insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista,zadaciLista, repo)
-                        }
-
-                        scope.launch {
-                            geminiProRepo.insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista,zadaciLista, repo)
-                        }
                     }
                 }
 

@@ -1,0 +1,391 @@
+{
+    "zlocinR": {
+    "idZlocin": 1,
+    "tipZlocinaId": 1,
+    "naziv": "Patient 00",
+    "datum": "2025-04-17",
+    "mesto": "Hospital of Salvation, Paris",
+    "opis": "A man in his late twenties was admitted to the emergency ward in a catatonic state. No injuries, no signs of violence. Doctors are unable to determine the cause. You, a detective specializing in unusual cases, have been called in to investigate.",
+    "status": "u_istrazi"
+    },
+    "pacijentR":{
+        "idPacijent":0,
+        "simptomi":"Unresponsive, no motor reaction, mute",
+        "statusPacijenta":"ziva",
+        "datumPrijave":"2025-04-17",
+        "prijavio":{
+        "idOsoba": 5,
+        "ime": "Dr. Ana King",
+        "kontakt": "+33644455566",
+        "datum": "1987-12-01",
+        "zanimanje": "doctor",
+        "pol": "zenski",
+        "zlocinId": 1
+        },
+        "zlocinId":1,
+        "zrtvaId":{
+        "idZrtva": 1,
+        "tipZrtve": "osoba",
+        "detalji": "Victim of unknown assault or condition",
+        "statusZrtva": "ziva",
+        "zlocinId": 1,
+        "osobaId": {
+            "idOsoba": 1,
+            "ime": "",
+            "kontakt": "+33612345678",
+            "datum": "1993-04-12",
+            "zanimanje": "Gambler",
+            "pol": "zenski",
+            "zlocinId": 1
+        }
+    }
+    },
+    "medicinskiIzvestajR":{
+        "idMedicinskiIzvestaj":1,
+        "rezime": "Patient experienced a short period of cardiac arrest with spontaneous recovery. All tests returned normal results.",
+        "CTnalaz": "No anomalies or trauma visible on brain or chest CT scan.",
+        "MRInalaz": "MRI results clean; no evidence of neurological irregularities.",
+        "krvnaSlika": "All parameters within normal limits.",
+        "toksikoloskeAnalize": "No substances detected in blood or urine.",
+        "zakljucak": "Cause of cardiac arrest unexplained. No physical or toxicological basis found.",
+        "pacijentId":1
+    },
+    "lokacijeIstrageR":[
+        {
+            "idLokacijeIstrage":1,
+            "mesto":"Victim's apartment, Paris",
+            "naziv":"Apartment 3B, Rue de Rivoli",
+            "opis":"The victim’s personal residence where strange books were found.",
+            "zlocinId":1,
+            "geoTackaALatitude":48.8566,
+            "geoTackaALongitude":2.3522
+        },
+        {
+            "idLokacijeIstrage":2,
+            "mesto":"Paris",
+            "naziv":"Restaurant",
+            "opis":"The victim’s favorite restaurant.",
+            "zlocinId":1,
+            "geoTackaALatitude":48.8566,
+            "geoTackaALongitude":2.4522
+        },
+        {
+            "idLokacijeIstrage":3,
+            "mesto":"Paris",
+            "naziv":"Hospital",
+            "opis":"The victim’s hospital.",
+            "zlocinId":1,
+            "geoTackaALatitude":48.8566,
+            "geoTackaALongitude":2.3622
+        }
+    ],
+    "izjavaZaPacijentaR":{
+        "idIzjavaZaPacijenta":1,
+        "izjava":"I remember the sound of whispers.",
+        "pacijentId":1,
+        "osobaId":1
+    },
+    "lekarskiTestR":{
+        "idLekarskiTest":1,
+        "pacijentId":1,
+        "izvestaj":"The patient underwent a full physical examination, blood analysis, ECG, and neurological tests. All results were within normal ranges."
+    },
+    "dokazR": [
+        {
+            "idDokaz": 1,
+            "tipDokaza": "fizicki",
+            "opis": "Weird books in the apartment",
+            "zlocinId": 1,
+            "zrtvaId": 1,
+            "status": 0
+        },
+        {
+            "idDokaz": 2,
+            "tipDokaza": "digitalni",
+            "opis": "Threatening messages found on Isabelle's phone.",
+            "zlocinId": 1,
+            "zrtvaId": 1,
+            "status": 0
+        }
+    ],
+    "forenzickiDokazR": [
+        {
+            "idForenzickiDokaz": 1,
+            "tipForenzickiDokaz": "DNK",
+            "opis": "Partial DNA sample recovered from the edge of a strange book found in the victim’s apartment. The sample does not match the victim or anyone in the national database.",
+            "statusS": 0,
+            "veza": "Linked to Evidence ID 1 – physical evidence (book)."
+        }
+    ],
+    "telefonR": [
+        {
+            "idTelefon": 1,
+            "model": "iPhone 12",
+            "os": "IOS",
+            "sifra": "123456",
+            "informacije": "The phone showed messages between the victim and the suspects. Some were threatening in nature."
+        },
+        {
+            "idTelefon": 2,
+            "model": "Samsung Galaxy S20",
+            "os": "Android",
+            "sifra": "654321",
+            "informacije": "The phone had records of Marco Bellini's calls with Isabelle the day before her death."
+        }
+    ],
+    "oneContactR": [
+        {
+            "idOneContact": 1,
+            "zlocinId": 1,
+            "ime": "Marco",
+            "broj": "+33698765432",
+            "slika": 1
+        },
+        {
+            "idOneContact": 2,
+            "zlocinId": 1,
+            "ime": "Amelia",
+            "broj": "+33623456789",
+            "slika": 1
+        }
+    ],
+    "beleskaR": [
+        {
+            "idBeleska": 1,
+            "zlocinId": 1,
+            "tekst": "The only unusual detail was a set of old books in a language that appears to be Latin or a variant of it.",
+            "datum": "2025-04-17"
+        },
+        {
+            "idBeleska": 2,
+            "zlocinId": 1,
+            "tekst": "The tone suggests personal vendettas, but the messages stopped abruptly two days before the incident.",
+            "datum": "2025-04-17"
+        }
+    ],
+    "whatsAppKontaktR": [
+        {
+        "idWhatsAppKontakt": 1,
+        "zlocinId": 1,
+        "ime": "Oliver",
+        "broj": "+12065559900",
+        "slika": 1
+        },
+        {
+        "idWhatsAppKontakt": 2,
+        "zlocinId": 1,
+        "ime": "Sophia",
+        "broj": "+12067771122",
+        "slika": 1
+    }],
+    "whatsAppPorukaR": [
+        {
+        "idWhatsAppPoruka": 1,
+        "kontaktKoSalje": 1,
+        "kontaktKomeSalje": 2,
+        "tekst": "She opened the book. I told you this would happen.",
+        "datum": "2025-04-17",
+        "procitana": true
+        },
+        {
+        "idWhatsAppPoruka": 2,
+        "kontaktKoSalje": 2,
+        "kontaktKomeSalje": 1,
+        "tekst": "You said it was just a legend. What do we do now?",
+        "datum": "2025-04-17",
+        "procitana": false
+        }
+    ],
+    "oneCallR": [
+    {
+        "idOneCall": 1,
+        "kontakt": 1,
+        "datum": "2025-04-17",
+        "propusten": false,
+        "dolazni": true,
+        "zrtvaR": 1
+    },
+    {
+        "idOneCall": 2,
+        "kontakt": 2,
+        "datum": "2025-04-17",
+        "propusten": true,
+        "dolazni": false,
+        "zrtvaR": 1
+    }
+    ],
+    "galleryR": [
+        {
+        "idPhoto": 1,
+        "zlocinId": 1,
+        "slika": 1,
+        "datum": "2025-04-17",
+        "mesto": "Paris"
+        },
+        {
+        "idPhoto": 2,
+        "zlocinId": 1,
+        "slika": 2,
+        "datum": "2025-04-17",
+        "mesto": "Paris"
+        }
+    ],
+    "obicnaPorukaR": [
+        {
+            "idObicnaPoruka": 1,
+            "kontaktKoSalje": 1,
+            "kontaktKomeSalje": 2,
+            "tekst": "We shouldn’t have left the book with her. This is getting out of control.",
+            "datum": "2025-04-17",
+            "procitana": true
+        },
+        {
+            "idObicnaPoruka": 2,
+            "kontaktKoSalje": 2,
+            "kontaktKomeSalje": 1,
+            "tekst": "Stop texting me. If anyone finds out, we’re both finished.",
+            "datum": "2025-04-17",
+            "procitana": false
+        }
+    ],
+    "pitanjeR": [
+        {
+        "idPitanje": 1,
+        "zlocinId": 1,
+        "tekst": "What unusual object was found in the victim's apartment that may be linked to the incident?"
+        },
+        {
+        "idPitanje": 2,
+        "zlocinId": 1,
+        "tekst": "Whose threatening messages were discovered on the victim's phone?"
+        },
+        {
+        "idPitanje": 3,
+        "zlocinId": 1,
+        "tekst": "What was the patient's condition upon arrival at the hospital?"
+        }
+    ],
+    "odgovorR": [
+        {
+        "idOdogovor": 1,
+        "pitanjeId": 1,
+        "tekstOdgovora": "A set of strange books with unknown symbols.",
+        "tacan": true,
+        "bodovi": 10
+        },
+        {
+        "idOdogovor": 2,
+        "pitanjeId": 1,
+        "tekstOdgovora": "A loaded handgun hidden under the bed.",
+        "tacan": false,
+        "bodovi": 0
+        },
+        {
+        "idOdogovor": 3,
+        "pitanjeId": 1,
+        "tekstOdgovora": "A passport with a different identity.",
+        "tacan": false,
+        "bodovi": 0
+        }
+    ],
+    "osobaR": [
+        {
+            "idOsoba": 1,
+            "ime": "Marko Marković",
+            "kontakt": "123456789",
+            "datum": "2025-04-17",
+            "zanimanje": "Detektiv",
+            "pol": "Muški",
+            "zlocinId": 101
+        },
+        {
+            "idOsoba": 2,
+            "ime": "Jovana Jovanović",
+            "kontakt": "987654321",
+            "datum": "2025-04-17",
+            "zanimanje": "Advokat",
+            "pol": "Ženski",
+            "zlocinId": 102
+        },
+        {
+            "idOsoba": 3,
+            "ime": "Nikola Nikolić",
+            "kontakt": "1122334455",
+            "datum": "2025-04-17",
+            "zanimanje": "Novinar",
+            "pol": "Muški",
+            "zlocinId": 103
+        }
+    ],
+    "zadatakR": [
+        {
+        "idZadatak": 1,
+        "tekst": "Investigate the victim’s locations.",
+        "korak": "1",
+        "uradjen": false,
+        "nextZadatak": 2,
+        "zlocinId": 101
+        },
+        {
+        "idZadatak": 2,
+        "tekst": "Analyze the threatening messages found on the victim’s phone.",
+        "korak": "2",
+        "uradjen": false,
+        "nextZadatak": 3,
+        "zlocinId": 101
+        }
+    ],
+    "dokazZadatakR": [
+        {
+        "idDokazZadatak": 1,
+        "tekst": "Examine the strange books found in the victim’s apartment for hidden clues.",
+        "dokazId": 1,
+        "uradjen": false,
+        "zadatakId": 2
+        },
+        {
+        "idDokazZadatak": 2,
+        "tekst": "Review the threatening messages discovered phone.",
+        "dokazId": 2,
+        "uradjen": false,
+        "zadatakId": 3
+    }],
+    "telefonZadatakR": [
+            {
+            "idTelefonZadatak": 1,
+            "telefonId": 10,
+            "zadatakId": 3,
+            "uradjen": false
+            },
+            {
+            "idTelefonZadatak": 2,
+            "telefonId": 11,
+            "zadatakId": 4,
+            "uradjen": true
+            }
+    ],
+    "forenzickiDokazZadatakR": [
+        {
+        "idForenzickiDokazZadatak": 1,
+        "tekst": "Analyze the DNA samples collected from the victim’s apartment",
+        "forenzickiDokazId": 1,
+        "uradjen": false,
+        "zadatakId": 1
+        },
+        {
+        "idForenzickiDokazZadatak": 2,
+        "tekst": "Compare DNA evidence with known suspects in the case.",
+        "forenzickiDokazId": 1,
+        "uradjen": false,
+        "zadatakId": 2
+        }
+    ],
+    "aplikacijaKtor":[{
+        "idAplikacije":0,
+        "naziv": "",
+        "tip": 0,
+        "zrtvaId": 0,
+        "aktivna": false,
+        "informacije": ""
+    }]
+}
