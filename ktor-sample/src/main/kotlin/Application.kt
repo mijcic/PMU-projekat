@@ -9,7 +9,7 @@ import io.ktor.server.netty.*
  * Starts an embedded Ktor server on port 8080 using Netty.
  */
 fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 8080,module = Application::module).start(wait = true)
 }
 
 /**

@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.phone
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,6 +58,8 @@ fun ChatPage(id: Int, name: String, photo: Int, navController: NavController) {
 
     LaunchedEffect(Unit) {
         messages = realmViewModel.getMessagesWithContact(id)!!.reversed()
+
+        Log.d("CONTACT",messages.toString())
     }
 
     Column(

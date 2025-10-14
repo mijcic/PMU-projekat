@@ -226,10 +226,16 @@
 
     <input type="file" id="jsonFileInput" accept=".json" />
 
-    <div class="buttons-container">
+    <!--<div class="buttons-container">
         <button class="button" onclick="previewJson()">Pregled JSON-a</button>
         <button class="button" onclick="submitJson()">Sačuvaj u bazu</button>
+    </div>-->
+    <div class="buttons-container">
+        <button class="button" onclick="previewJson()">Pregled JSON-a</button>
+        <button class="button" id="saveUbistvoBtn" onclick="submitJson()">Sačuvaj ubistvo</button>
+        <button class="button" id="saveMSBtn" onclick="submitJsonMS()" style="display: none;">Sačuvaj MS</button>
     </div>
+
 
     <div id="jsonPreview"><em>Ovde će se prikazati sadržaj JSON fajla za ubistvo...</em></div>
     <div id="message"></div>
@@ -248,6 +254,8 @@
         const preview = document.getElementById('jsonPreview');
         const errorDiv = document.getElementById('error');
         const messageDiv = document.getElementById('message');
+        const saveUbistvoBtn = document.getElementById('saveUbistvoBtn');
+        const saveMSBtn = document.getElementById('saveMSBtn');
 
         if (type == 'ubistvo') {
             btnUbistvo.classList.add('active');
@@ -255,12 +263,16 @@
             preview.innerHTML = "<em>Ovde će se prikazati sadržaj JSON fajla za ubistvo...</em>";
             errorDiv.innerHTML="";
             messageDiv.innerHTML="";
+            saveUbistvoBtn.style.display = "inline-block";
+            saveMSBtn.style.display = "none";
         } else if (type == 'MS') {
             btnUbistvo.classList.remove('active');
             btnMS.classList.add('active');
             preview.innerHTML = "<em>Ovde će se prikazati sadržaj JSON fajla za misteriozne simptome...</em>";
             errorDiv.innerHTML="";
             messageDiv.innerHTML="";
+            saveUbistvoBtn.style.display = "none";
+            saveMSBtn.style.display = "inline-block";
         }
     }
 
@@ -314,6 +326,38 @@
 
         try {
             const response = await fetch('/admin/addJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            });
+
+            if (response.ok) {
+                messageDiv.textContent = "Uspesno";
+            } else {
+                const data = await response.json();
+                errorDiv.textContent = "Greška pri čuvanju: " + (data.error || response.statusText);
+            }
+        } catch (err) {
+            errorDiv.textContent = "Greška u komunikaciji: " + err.message;
+        }
+    }
+
+    async function submitJsonMS() {
+        const errorDiv = document.getElementById('error');
+        const messageDiv = document.getElementById('message');
+
+        messageDiv.textContent = "";
+        errorDiv.textContent = "";
+
+        if (!jsonData) {
+            errorDiv.textContent = "Nema JSON-a za slanje. Molimo prvo pregledajte fajl.";
+            return;
+        }
+
+        try {
+            const response = await fetch('/admin/addMSJson', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

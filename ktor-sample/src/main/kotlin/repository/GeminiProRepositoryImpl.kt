@@ -471,12 +471,20 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                 oneCall?.kontakt = kontakt.idOneContact
             }
 
-
-            val kontaktKoSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKoSalje == prev }
+            var kontaktKoSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKoSalje == prev }
             kontaktKoSalje?.kontaktKoSalje = kontakt.idOneContact
+            while(kontaktKoSalje!=null){
+                kontaktKoSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKoSalje == prev }
+                kontaktKoSalje?.kontaktKoSalje = kontakt.idOneContact
+            }
 
-            val kontaktKomeSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKomeSalje == prev }
+
+            var kontaktKomeSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKomeSalje == prev }
             kontaktKomeSalje?.kontaktKomeSalje = kontakt.idOneContact
+            while(kontaktKomeSalje!=null){
+                kontaktKomeSalje = geminiResponse2.obicnaPorukaR.find { it.kontaktKomeSalje == prev }
+                kontaktKomeSalje?.kontaktKomeSalje = kontakt.idOneContact
+            }
 
             kontaktiLista.add(kontakt)
         }
@@ -798,11 +806,19 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
 
             repo.insertWhatsAppKontaktData(whatsAppKontakt, zl)
 
-            val waKontaktKoSalje = geminiResponse2.whatsAppPorukaR.find { it.kontaktKoSalje == prev }
+            var waKontaktKoSalje = geminiResponse2.whatsAppPorukaR.find { it.kontaktKoSalje == prev }
             waKontaktKoSalje?.kontaktKoSalje = whatsAppKontakt.idWhatsAppKontakt
+            while(waKontaktKoSalje !=null){
+                waKontaktKoSalje = geminiResponse2.whatsAppPorukaR.find { it.kontaktKoSalje == prev }
+                waKontaktKoSalje?.kontaktKoSalje = whatsAppKontakt.idWhatsAppKontakt
+            }
 
-            val waKontaktKomeSalje = geminiResponse2.whatsAppPorukaR.find { it.kontaktKomeSalje == prev }
+            var waKontaktKomeSalje = geminiResponse2.whatsAppPorukaR.find { it.kontaktKomeSalje == prev }
             waKontaktKomeSalje?.kontaktKomeSalje = whatsAppKontakt.idWhatsAppKontakt
+            while(waKontaktKomeSalje !=null){
+                waKontaktKomeSalje = geminiResponse2.whatsAppPorukaR.find { it.kontaktKomeSalje == prev }
+                waKontaktKomeSalje?.kontaktKomeSalje = whatsAppKontakt.idWhatsAppKontakt
+            }
 
             whatsAppLista.add(whatsAppKontakt)
         }
@@ -1043,8 +1059,12 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
 
             repo.insertPitanjeData(pitanje, zl)
 
-            val pronadjeniOdgovor = geminiResponse2.odgovorR.find { it.pitanjeId == prev }
+            var pronadjeniOdgovor = geminiResponse2.odgovorR.find { it.pitanjeId == prev }
             pronadjeniOdgovor?.pitanjeId = pitanje.idPitanje
+            while(pronadjeniOdgovor!=null){
+                pronadjeniOdgovor = geminiResponse2.odgovorR.find { it.pitanjeId == prev }
+                pronadjeniOdgovor?.pitanjeId = pitanje.idPitanje
+            }
 
             pitanjeList.add(pitanje)
         }
@@ -1234,14 +1254,14 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             //val dokazZadatak = geminiResponse2.dokazZadatakR.find { it.zadatakId == prev }
             dokazZadatak?.zadatakId = zad.idZadatak
             if (indexDokaz != -1) {
-                println(geminiResponse2.dokazZadatakR[indexDokaz].idDokazZadatak)
+                //println(geminiResponse2.dokazZadatakR[indexDokaz].idDokazZadatak)
                 geminiResponse2.dokazZadatakR[indexDokaz].zadatakId = zad.idZadatak
             }
 
             //val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.zadatakId == prev }
             ispitivanjeOsumnjicenogZadatak?.zadatakId = zad.idZadatak
             if (indexOsumnjiceni != -1) {
-                println(geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOsumnjiceni].idIspitivanjeOsumnjicenogZadatak)
+                //println(geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOsumnjiceni].idIspitivanjeOsumnjicenogZadatak)
 
                 geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOsumnjiceni].zadatakId = zad.idZadatak
             }
@@ -1249,7 +1269,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             //val telefonZadatak = geminiResponse2.telefonZadatakR.find { it.zadatakId == prev }
             telefonZadatak?.zadatakId = zad.idZadatak
             if (indexTelefon != -1) {
-                println(geminiResponse2.telefonZadatakR[indexTelefon].idTelefonZadatak)
+                //println(geminiResponse2.telefonZadatakR[indexTelefon].idTelefonZadatak)
 
                 geminiResponse2.telefonZadatakR[indexTelefon].zadatakId = zad.idZadatak
             }
@@ -1257,13 +1277,14 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             //val forenzickiDokazZadatak = geminiResponse2.forenzickiDokazZadatakR.find { it.zadatakId == prev }
             forenzickiDokazZadatak?.zadatakId = zad.idZadatak
             if (indexForenzika != -1) {
-                println(geminiResponse2.forenzickiDokazZadatakR[indexForenzika].idForenzickiDokazZadatak)
+                //println(geminiResponse2.forenzickiDokazZadatakR[indexForenzika].idForenzickiDokazZadatak)
 
                 geminiResponse2.forenzickiDokazZadatakR[indexForenzika].zadatakId = zad.idZadatak
             }
 
             zadaciLista.add(zad)
         }
+        println(zadaciLista)
 
         return zadaciLista
     }
@@ -1475,33 +1496,34 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
 
         val geminiProRepo = GeminiProRepositoryImpl()
         // dokazZadatak
-        val dokazZadatakDeferred = async(Dispatchers.IO) {
+        //val dokazZadatakDeferred = async(Dispatchers.IO) {
             geminiProRepo.insertGeminiDokazZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.dokaziLista, zadaciLista, repo)
-        }
+        //}
         // ispitivanjeOsumnjicenogZadatak
-        val ispitivanjeOsumnjicenogZadatakDeferred = async(Dispatchers.IO) {
+        //val ispitivanjeOsumnjicenogZadatakDeferred = async(Dispatchers.IO) {
             geminiProRepo.insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, zadaciLista, repo)
-        }
+        //}
         // ispitivanjeSvedokaZadatak
-        val ispitivanjeSvedokaZadatakDeferred = async(Dispatchers.IO) {
+        ///val ispitivanjeSvedokaZadatakDeferred = async(Dispatchers.IO) {
             geminiProRepo.insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista, zadaciLista, repo)
-        }
+        //}
         // telefonZadatak
-        val telefonZadatakDeferred = async(Dispatchers.IO) {
+        //val telefonZadatakDeferred = async(Dispatchers.IO) {
             geminiProRepo.insertGeminiTelefonZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.telefoniLista, zadaciLista, repo)
-        }
+        //}
 
         // forenzickiDokazZadatak
-        val forenzickiDokazZadatakDeferred = async(Dispatchers.IO) {
+        ///val forenzickiDokazZadatakDeferred = async(Dispatchers.IO) {
             geminiProRepo.insertGeminiForenzickiDokazZadatak(geminiResponse2, geminiResponseRetrofit,sviDokaziZrtva.forenzickiDokaziLista, zadaciLista, repo)
 
-        }
+        //}
         // cekanje rezultata
+        /*
         dokazZadatakDeferred.await()
         ispitivanjeOsumnjicenogZadatakDeferred.await()
         ispitivanjeSvedokaZadatakDeferred.await()
         telefonZadatakDeferred.await()
-        forenzickiDokazZadatakDeferred.await()
+        forenzickiDokazZadatakDeferred.await()*/
     }
 
 }

@@ -380,7 +380,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun getContactsLastMessages(): List<OneContactPreviewItem> {
-        val kontaktMe = realm.query<OneContactR>("ime == $0", "Me").first().find()
+        val kontaktMe = realm.query<OneContactR>("ime CONTAINS[c] $0", "Me").first().find()
             ?: return emptyList()
 
         val contacts = getAllContacts().filter { it.idOneContact != kontaktMe.idOneContact }
@@ -403,12 +403,15 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun getMessagesWithContact(contactId: Int): List<ObicnaPorukaR> {
-        val kontaktMe = realm.query<OneContactR>("ime == $0", "Me").first().find()
+        val kontaktMe = realm.query<OneContactR>("ime CONTAINS[c] $0", "Me").first().find()
             ?: return emptyList()
 
         val kontakt = realm.query<OneContactR>("idOneContact == $0", contactId).first().find()
             ?: return emptyList()
 
+        Log.d("CONTACT me",kontaktMe.toString())
+
+        Log.d("CONTACT",kontakt.toString())
         return realm.query<ObicnaPorukaR>(
             """
         (kontaktKoSalje == $0 AND kontaktKomeSalje == $1) OR 
@@ -427,7 +430,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun getContactsLastWhatsappMessages(): List<WhatsAppPreviewItem> {
-        val kontaktMe = realm.query<WhatsAppKontaktR>("ime == $0", "Me").first().find()
+        val kontaktMe = realm.query<WhatsAppKontaktR>("ime CONTAINS[c] $0", "Me").first().find()
             ?: return emptyList()
 
         val contacts = getAllWhatsAppContacts().filter { it.idWhatsAppKontakt != kontaktMe.idWhatsAppKontakt }
@@ -450,7 +453,7 @@ class RealmViewModel @Inject constructor(
     }
 
     suspend fun getWhatsappMessagesWithContact(contactId: Int): List<WhatsAppPorukaR> {
-        val kontaktMe = realm.query<WhatsAppKontaktR>("ime == $0", "Me").first().find()
+        val kontaktMe = realm.query<WhatsAppKontaktR>("ime CONTAINS[c] $0", "Me").first().find()
             ?: return emptyList()
 
         val kontakt = realm.query<WhatsAppKontaktR>("idWhatsAppKontakt == $0", contactId).first().find()

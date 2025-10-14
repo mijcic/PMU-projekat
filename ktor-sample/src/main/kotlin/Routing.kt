@@ -81,8 +81,8 @@ fun Application.configureRouting() {
     val databaseService = DatabaseService(
         dbUrl = "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         user = "root",
-        // password = "1234"
-        password = "mia123"
+        password = "1234"
+        //password = "mia123"
     )
     val connection = databaseService.getDatabaseConnection() ?: error("Database connection failed — cannot start routing.")
     val repository: Repository = Repository(connection)
@@ -236,7 +236,6 @@ fun Application.configureRouting() {
                         repo.insertUsedZlocinData(usedZlocin)
                         geminiResponseRetrofit.zlocinRetrofit=zl
 
-
                         //zrtva i osoba
                         val sviDokaziZrtva = geminiProRepo.insertGeminiZrtva(geminiResponse2,geminiResponseRetrofit,timestamp,zl,repo)
 
@@ -296,21 +295,21 @@ fun Application.configureRouting() {
                         val pitanjaLista = geminiProRepo.insertGeminiPitanje(geminiResponse2, geminiResponseRetrofit,zl,repo)
 
                         // odgovor
-                        val odgovoriDeferred = async(Dispatchers.IO) {
+                       // val odgovoriDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiOdgovor(geminiResponse2, geminiResponseRetrofit,pitanjaLista, repo)
-                        }
+                        //}
                         // pitanjeIspitivanjeOsumnjicenog
-                        val pitanjeIspitivanjeOsumnjicenogDeferred = async(Dispatchers.IO) {
+                        //val pitanjeIspitivanjeOsumnjicenogDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiPitanjeIspitivanjeOsumnjicenog(geminiResponse2, geminiResponseRetrofit,osumnjiceniLista, repo)
-                        }
+                        //}
                         // pitanjeIspitivanjeSvedoka
-                        val pitanjeIspitivanjeSvedokaDeferred = async(Dispatchers.IO) {
+                        //val pitanjeIspitivanjeSvedokaDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiPitanjeIspitivanjeSvedoka(geminiResponse2, geminiResponseRetrofit,svedociLista, repo)
-                        }
+                        //}
                         //  osoba
-                        val osobaDeferred = async(Dispatchers.IO) {
+                        //val osobaDeferred = async(Dispatchers.IO) {
                             geminiProRepo.insertGeminiOsoba(geminiResponse2, geminiResponseRetrofit, zl, timestamp, repo)
-                        }
+                        //}
 
                         /*
                         scope.launch {
@@ -319,25 +318,25 @@ fun Application.configureRouting() {
 
                         // zadatak
 
+                        println("DOSLI DO ZADATAKA ")
                         val zadaciLista = geminiProRepo.insertGeminiZadatak(geminiResponse2, zl,repo)
+
+                        println("DOSLI DO ZADATAKA ")
                         geminiProRepo.updateGeminiZadatakList(geminiResponse2,geminiResponseRetrofit, zl,repo)
+
+                        println("DOSLI DO ZADATAKA ")
                         geminiResponseRetrofit.zadaciRetrofit = zadaciLista
 
-                        scope.launch {
-                            geminiProRepo.suspendInsertZadaci(zadaciLista, geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, svedociLista, sviDokaziZrtva, repo)
-                        }
+                        println("DOSLI DO ZADATAKA ")
+                       // scope.launch {
+                        geminiProRepo.suspendInsertZadaci(zadaciLista, geminiResponse2, geminiResponseRetrofit, osumnjiceniLista, svedociLista, sviDokaziZrtva, repo)
+                        //}
+
+                        println("DOSLI DO ZADATAKA ")
 
                         // porukeZadatak
 
 
-
-                        scope.launch {
-                            geminiProRepo.insertGeminiIspitivanjeSvedokaZadatak(geminiResponse2, geminiResponseRetrofit, svedociLista,zadaciLista, repo)
-                        }
-
-                        scope.launch {
-                            geminiProRepo.insertGeminiIspitivanjeOsumnjicenogZadatak(geminiResponse2, geminiResponseRetrofit, osumnjiceniLista,zadaciLista, repo)
-                        }
                     }
                 }
 
@@ -966,8 +965,8 @@ fun getDatabaseConnection(): Connection? {
     return DriverManager.getConnection(
         "jdbc:mysql://localhost:3306/whodunit?useSSL=false&allowPublicKeyRetrieval=true",
         "root",
-        // "1234"
-        "mia123"
+         "1234"
+        //"mia123"
     )
 }
 
