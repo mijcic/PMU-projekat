@@ -880,8 +880,9 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
         get("/scoreKorisnika"){
-            print("scoreKorisnika")
+            println("scoreKorisnika")
             val korisnici =korisnikService.fetchTopScored()
+            println(korisnici)
             call.respond(korisnici)
         }
 

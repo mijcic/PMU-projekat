@@ -115,6 +115,7 @@ class RepositoryImplRealmViewModel @Inject constructor(
                     copyToRealm(it)
                 }
             val existingOsoba = query<OsobaR>("idOsoba == $0", idOsobaO).find().firstOrNull()
+
             if(existingOsoba==null){
                 osoba = query<OsobaR>("idOsoba ==$0 AND ime == $1 AND kontakt == $2 AND datum == $3 AND zanimanje == $4 AND pol == $5 AND zlocinId == $6",
                     idOsobaO,imeZ, kontaktZ, datumZ, zanimanjeZ,polZ, existingZlocin).find().firstOrNull()

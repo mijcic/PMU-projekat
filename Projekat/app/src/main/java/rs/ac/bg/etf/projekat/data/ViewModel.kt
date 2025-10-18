@@ -70,6 +70,11 @@ class MyViewModel @Inject constructor(
             val response = MyRepository.signUp(korisnik)
             Log.d("SIGNUP-REQUEST", response.message)
             _uiStateSignUp.value = UiStateSignUp(message = response, isRefreshing = false)
+            //_uiStateLogIn.value = UiStateLogIn(message = response)
+            //_uiStateKorisnik.value = UiStateKorisnik(korisnickoIme = korisnik.korisnickoIme)
+            //_uiStateUser.value = UiStateUser(korisnickoIme=korisnik.korisnickoIme,
+                //  ime = korisnik.ime, prezime = korisnik.prezime, email = korisnik.email,poeni = 0)
+            logIn(korisnik)
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateSignUp.value =
@@ -87,6 +92,15 @@ class MyViewModel @Inject constructor(
             Log.d("SCORE", response.toString())
             _uiStateScoreKorisnika.value =
                 UiStateScoreKorisnika(scoreList = response, isRefreshing = false)
+            val korisnickoImeUlogovanog = _uiStateUser.value.korisnickoIme
+
+            val ulogovaniScore = _uiStateScoreKorisnika.value.scoreList?.find { scoreItem ->
+                scoreItem.korisnickoIme == korisnickoImeUlogovanog
+            }
+            _uiStateUser.value.poeni=ulogovaniScore?.poeni
+            _uiStateUser.value.mesto=ulogovaniScore?.mesto
+
+
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateScoreKorisnika.value = UiStateScoreKorisnika(
@@ -124,15 +138,25 @@ class MyViewModel @Inject constructor(
     private val _uiStateKorisnik = MutableStateFlow(UiStateKorisnik())
     val uiStateKorisnik: StateFlow<UiStateKorisnik> = _uiStateKorisnik
 
+    private val _uiStateUser = MutableStateFlow(UiStateUser())
+    val uiStateUser: StateFlow<UiStateUser> = _uiStateUser
+
     fun logIn(korisnik: KorisnikRequest) = viewModelScope.launch {
         try {
             val response = MyRepository.logIn(korisnik)
             _uiStateLogIn.value = UiStateLogIn(message = response)
             _uiStateKorisnik.value = UiStateKorisnik(korisnickoIme = korisnik.korisnickoIme)
+            _uiStateUser.value = UiStateUser(korisnickoIme=korisnik.korisnickoIme,
+                ime = korisnik.ime, prezime = korisnik.prezime, email = korisnik.email,poeni = 0,mesto = 0)
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateLogIn.value = UiStateLogIn(message = null)
         }
+    }
+
+    fun resetLoginState() {
+        _uiStateLogIn.value = UiStateLogIn() // Resetuj state
+        _uiStateUser.value = UiStateUser()
     }
 
     private val _uiStateZlocinData = MutableStateFlow(UiStateDataZlocin())
@@ -1160,7 +1184,7 @@ class MyViewModel @Inject constructor(
             }
 
             for (oC in response.oneCallRetrofit!!) {
-                val oneCont = oneContactLista.find { it.idOneContact == oC.idOneCall }
+                val oneCont = oneContactLista.find { it.idOneContact == oC.kontakt }
 
                 val millisOneCall = oC.datum
                 val instantOneCall = millisOneCall?.let { Instant.ofEpochMilli(it) }
@@ -1282,6 +1306,7 @@ class MyViewModel @Inject constructor(
                 )
             }
 
+            Log.d("LOKACIJE ",response.lokacijeIstrageRetrofit!!.toString())
             for (l in response.lokacijeIstrageRetrofit!!) {
                 if (zlocin != null) {
                     realmViewModel.insertLokacijeIstrage(
@@ -1295,9 +1320,13 @@ class MyViewModel @Inject constructor(
                     )
                 }
             }
+            Log.d("LOKACIJE IZJ",response.izjavaZaPacijentaRetrofit!!.toString())
+            Log.d("LOKACIJE IZJ",response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.toString())
 
             if (response.izjavaZaPacijentaRetrofit != null && pacijent != null) {
-                val millisOsoba = response.izjavaZaPacijentaRetrofit!!.osobaId.datum
+                val osobaIzjava=osobeList.find { it.idOsoba == response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.idOsoba }
+
+                /*val millisOsoba = response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.datum
                 val instantOsoba = millisOsoba?.let { Instant.ofEpochMilli(it) }
                 val realmInstantOsoba = instantOsoba?.let {
                     RealmInstant.from(
@@ -1308,14 +1337,16 @@ class MyViewModel @Inject constructor(
                     ?: RealmInstant.now()
 
                 var osobaIzjava = realmViewModel.insertOsoba(
-                    idOsobaO = response.izjavaZaPacijentaRetrofit!!.osobaId.idOsoba,
-                    imeZ = response.izjavaZaPacijentaRetrofit!!.osobaId.ime,
-                    kontaktZ = response.izjavaZaPacijentaRetrofit!!.osobaId.kontakt,
+                    idOsobaO = response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.idOsoba,
+                    imeZ = response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.ime,
+                    kontaktZ = response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.kontakt,
                     datumZ = realmInstantOsoba,
-                    zanimanjeZ = response.izjavaZaPacijentaRetrofit!!.osobaId.zanimanje,
-                    polZ = response.izjavaZaPacijentaRetrofit!!.osobaId.pol,
+                    zanimanjeZ = response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.zanimanje,
+                    polZ = response.izjavaZaPacijentaRetrofit!!.pacijentId.prijavio.pol,
                     zlocinZ = zlocin
-                )
+                )*/
+
+                Log.d("LOKACIJE IZJ os",osobaIzjava!!.toString())
 
                 if (osobaIzjava != null) {
                     realmViewModel.insertIzjavaZaPacijenta(
@@ -1328,7 +1359,7 @@ class MyViewModel @Inject constructor(
             }
             onSuccess()
             realmViewModel.callGetTitleDatePlaceDescFromCrime()
-            Log.d("G","SUCCESS")
+
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateGeminiDataMS.value = UiStateGeminiDataMS(null)
@@ -1347,13 +1378,11 @@ class MyViewModel @Inject constructor(
             val responseIzjava = commonRepository.selectIzjavaZaPacijenta()
             val responseLekarskiTest= commonRepository.selectLekarskiTest()
             val responseLokacije = commonRepository.selectLokacijeIstrageR()
-            Log.d("GEMINI GET selectPacijent",response.toString())
-            Log.d("GEMINI GET LOKACIJE",responseLokacije.toString())
+
             _uiStateMysteriousSymptomsData.value =
-                UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = null, locations = responseLokacije)
+                UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = responseLekarskiTest, locations = responseLokacije)
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("GEMINI GET GRE","greska")
             _uiStateMysteriousSymptomsData.value =
                 UiStateDataMysteriousSymptoms(patient = null,medicalReport = null, statement = null, tests = null, locations = emptyList())
         }
@@ -1398,6 +1427,15 @@ data class UiStateLogIn(
 
 data class UiStateKorisnik(
     val korisnickoIme: String? = null
+)
+
+data class UiStateUser(
+    val korisnickoIme: String?=null,
+    val ime:String?= null,
+    val prezime:String?=null,
+    val email:String?=null,
+    var poeni:Int?=null,
+    var mesto:Int?=null
 )
 
 data class UiStateDataZlocin(

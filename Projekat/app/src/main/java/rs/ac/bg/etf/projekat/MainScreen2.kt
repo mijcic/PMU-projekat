@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,9 +50,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.MyViewModel
 
 @Composable
-fun MainScreen2(navController: NavController) {
+fun MainScreen2(navController: NavController,viewModel: MyViewModel) {
     var explanationOn by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -63,7 +65,8 @@ fun MainScreen2(navController: NavController) {
         MainScreen2Content(
             explanationOn = explanationOn,
             onToggleExplanation = { explanationOn = !explanationOn },
-            navController = navController
+            navController = navController,
+            viewModel = viewModel
         )
     }
 }
@@ -83,14 +86,24 @@ fun MainScreen2BackgroundWithOverlay(imageRes: Int) {
 fun MainScreen2Content(
     explanationOn: Boolean,
     onToggleExplanation: () -> Unit,
-    navController: NavController
+    navController: NavController,
+    viewModel: MyViewModel
 ) {
+    val uiStateUser by viewModel.uiStateUser.collectAsState()
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MainScreen2TopNavigationBar(
-            onProfileClick = { navController.navigate("destinationLoginPage") },
+            onProfileClick = {
+
+                    if (uiStateUser.korisnickoIme!=null){
+                        navController.navigate("destinationUserProfile")
+                    }else{
+                        navController.navigate("destinationLoginPage")
+                    }
+                 },
             onSettingsClick = { navController.navigate("destinationSettingsPage") }
         )
 

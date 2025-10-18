@@ -1591,27 +1591,27 @@ class Repository(private val connection: Connection): RepoInterface {
 
         val listaLokacijeIstrage = mutableListOf<LokacijeIstrageData>()
 
-        if (resultSet != null && resultSet.next()) {
-            //idLokacijeIstrage, mesto, naziv, opis, zlocinId
+        if (resultSet != null) {
+            while (resultSet.next()) {
+                val idLokacijeIstrage = resultSet.getInt("idLokacijeIstrage")
+                val mesto = resultSet.getString("mesto")
+                val naziv = resultSet.getString("naziv")
+                val opis = resultSet.getString("opis")
+                val zlocinId = resultSet.getInt("zlocinId")
+                val geoTackaALatitude = resultSet.getDouble("geoTackaALatitude")
+                val geoTackaALongitude = resultSet.getDouble("geoTackaALongitude")
 
-            val idLokacijeIstrage = resultSet.getInt("idLokacijeIstrage")
-            val mesto = resultSet.getString("mesto")
-            val naziv = resultSet.getString("naziv")
-            val opis = resultSet.getString("opis")
-            val zlocinId = resultSet.getInt("zlocinId")
-            val geoTackaALatitude = resultSet.getDouble("geoTackaALatitude")
-            val geoTackaALongitude = resultSet.getDouble("geoTackaALongitude")
-
-            val l = LokacijeIstrageData(
-                idLokacijeIstrage = idLokacijeIstrage,
-                mesto = mesto,
-                naziv = naziv,
-                opis = opis,
-                zlocinId = zlocinId,
-                geoTackaALatitude = geoTackaALatitude,
-                geoTackaALongitude = geoTackaALongitude
-            )
-            listaLokacijeIstrage.add(l)
+                val l = LokacijeIstrageData(
+                    idLokacijeIstrage = idLokacijeIstrage,
+                    mesto = mesto,
+                    naziv = naziv,
+                    opis = opis,
+                    zlocinId = zlocinId,
+                    geoTackaALatitude = geoTackaALatitude,
+                    geoTackaALongitude = geoTackaALongitude
+                )
+                listaLokacijeIstrage.add(l)
+            }
         }
 
         resultSet?.close()

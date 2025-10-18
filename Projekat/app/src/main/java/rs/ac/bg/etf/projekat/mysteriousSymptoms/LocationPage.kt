@@ -1,6 +1,7 @@
 package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +45,7 @@ fun LocationPage(
     val uiStateData by viewModel.uiStateMysteriousSymptomsData.collectAsState()
     val context = LocalContext.current
     val mapViewRef = remember { mutableStateOf<MapView?>(null) }
-
+    Log.d("LOKACIJA", uiStateData.locations.toString())
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = {

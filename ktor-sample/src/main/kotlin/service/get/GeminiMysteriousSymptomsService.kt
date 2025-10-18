@@ -136,6 +136,13 @@ class GeminiMysteriousSymptomsService(private val repository: RepoInterface) {
     private fun loadPacijentDataGeminiRetrofit(id: Int, zlocin: ZlocinDataGeminiRetrofit, zrtva: ZrtvaMSDataGeminiRetrofit): PacijentMSDataGeminiRetrofit? {
         val osobe = repository.getOsobe(id)?: return null
         val pacijent = repository.getPacijent(id, zlocin.zlocin, zrtva.zrtva, osobe) ?: return null
+        val izjave =repository.getIzjavaZaPacijenta(pacijent, osobe) ?: return null
+        val loka = repository.getLokacijeIstrage(id) ?: return null
+        for (i in izjave.izjava){
+            println(i)
+        }
+        println(izjave)
+        println(loka)
 
         return PacijentMSDataGeminiRetrofit(
             pacijent = pacijent,

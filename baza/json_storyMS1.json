@@ -81,7 +81,7 @@
     ],
     "izjavaZaPacijentaR":{
         "idIzjavaZaPacijenta":1,
-        "izjava":"I remember the sound of whispers.",
+        "izjava":"Patient exhibits signs of acute dissociation. Repeats the phrase: ‘They know I’m here.’ Reports auditory hallucinations focused around ‘whispers’ and claims someone is watching him through the walls.",
         "pacijentId":1,
         "osobaId":1
     },
@@ -144,7 +144,28 @@
         {
             "idOneContact": 2,
             "zlocinId": 1,
-            "ime": "Amelia",
+            "ime": "Mr.Chao",
+            "broj": "+33623456789",
+            "slika": 1
+        },
+        {
+            "idOneContact": 3,
+            "zlocinId": 1,
+            "ime": "Elenor",
+            "broj": "+33623456789",
+            "slika": 1
+        },
+        {
+            "idOneContact": 4,
+            "zlocinId": 1,
+            "ime": "Ana",
+            "broj": "+33623456789",
+            "slika": 1
+        },
+        {
+            "idOneContact": 5,
+            "zlocinId": 1,
+            "ime": "Me",
             "broj": "+33623456789",
             "slika": 1
         }
@@ -153,53 +174,135 @@
         {
             "idBeleska": 1,
             "zlocinId": 1,
-            "tekst": "The only unusual detail was a set of old books in a language that appears to be Latin or a variant of it.",
+            "tekst": "Mirror fogged up — wrote something from the inside.",
             "datum": "2025-04-17"
         },
         {
             "idBeleska": 2,
             "zlocinId": 1,
-            "tekst": "The tone suggests personal vendettas, but the messages stopped abruptly two days before the incident.",
+            "tekst": "Watcher = real??",
+            "datum": "2025-04-17"
+        },
+        {
+            "idBeleska": 3,
+            "zlocinId": 1,
+            "tekst": "If I disappear — it wasn’t an accident.",
+            "datum": "2025-04-17"
+        },
+        {
+            "idBeleska": 4,
+            "zlocinId": 1,
+            "tekst": "Red candle = visions. White candle = silence.",
             "datum": "2025-04-17"
         }
     ],
     "whatsAppKontaktR": [
         {
-        "idWhatsAppKontakt": 1,
-        "zlocinId": 1,
-        "ime": "Oliver",
-        "broj": "+12065559900",
-        "slika": 1
+            "idWhatsAppKontakt": 1,
+            "zlocinId": 1,
+            "ime": "Oliver",
+            "broj": "+12065559900",
+            "slika": 1
         },
         {
-        "idWhatsAppKontakt": 2,
-        "zlocinId": 1,
-        "ime": "Sophia",
-        "broj": "+12067771122",
-        "slika": 1
-    }],
+            "idWhatsAppKontakt": 2,
+            "zlocinId": 1,
+            "ime": "Sophia",
+            "broj": "+12067771122",
+            "slika": 1
+        },
+        {
+            "idWhatsAppKontakt": 3,
+            "zlocinId": 1,
+            "ime": "Leo",
+            "broj": "+12067772011",
+            "slika": 1
+        },
+        {
+            "idWhatsAppKontakt": 4,
+            "zlocinId": 1,
+            "ime": "Mr.Chao",
+            "broj": "+12068881192",
+            "slika": 1
+        },
+        {
+            "idWhatsAppKontakt": 5,
+            "zlocinId": 1,
+            "ime": "Me",
+            "broj": "+87125556783",
+            "slika": 1
+        }
+    ],
     "whatsAppPorukaR": [
         {
         "idWhatsAppPoruka": 1,
         "kontaktKoSalje": 1,
-        "kontaktKomeSalje": 2,
+        "kontaktKomeSalje": 5,
         "tekst": "She opened the book. I told you this would happen.",
         "datum": "2025-04-17",
         "procitana": true
         },
         {
         "idWhatsAppPoruka": 2,
-        "kontaktKoSalje": 2,
+        "kontaktKoSalje": 5,
         "kontaktKomeSalje": 1,
         "tekst": "You said it was just a legend. What do we do now?",
         "datum": "2025-04-17",
         "procitana": false
+        },
+        {
+        "idWhatsAppPoruka": 3,
+        "kontaktKoSalje": 5,
+        "kontaktKomeSalje": 4,
+        "tekst": "I’ve been feeling strange since the last gathering. Is that normal?",
+        "datum": "2025-04-17",
+        "procitana": false
+        },
+        {
+        "idWhatsAppPoruka": 4,
+        "kontaktKoSalje": 4,
+        "kontaktKomeSalje": 5,
+        "tekst": "You are awakening. The veil is thin now. This is not fear — it is clarity.",
+        "datum": "2025-04-17",
+        "procitana": false
+        },
+        {
+        "idWhatsAppPoruka": 5,
+        "kontaktKoSalje": 5,
+        "kontaktKomeSalje": 4,
+        "tekst": "But I’m not sleeping. I have these dreams that don’t feel like dreams. Something is... watching me.",
+        "datum": "2025-04-17",
+        "procitana": false
+        },
+        {
+        "idWhatsAppPoruka": 6,
+        "kontaktKoSalje": 4,
+        "kontaktKomeSalje": 5,
+        "tekst": "Not something. Someone. The Watcher only reveals itself to the worthy. You should feel honored.",
+        "datum": "2025-04-17",
+        "procitana": false
+        },
+        {
+        "idWhatsAppPoruka": 7,
+        "kontaktKoSalje": 5,
+        "kontaktKomeSalje": 4,
+        "tekst": "I want to stop. I want out.",
+        "datum": "2025-04-17",
+        "procitana": false
+        },{
+        "idWhatsAppPoruka": 8,
+        "kontaktKoSalje": 4,
+        "kontaktKomeSalje": 5,
+        "tekst": "There is no out. You have already been marked. Leaving would be... dangerous. For you. For those you love",
+        "datum": "2025-04-17",
+        "procitana": false
         }
+        
     ],
     "oneCallR": [
     {
         "idOneCall": 1,
-        "kontakt": 1,
+        "kontakt": 2,
         "datum": "2025-04-17",
         "propusten": false,
         "dolazni": true,
@@ -209,6 +312,30 @@
         "idOneCall": 2,
         "kontakt": 2,
         "datum": "2025-04-17",
+        "propusten": true,
+        "dolazni": false,
+        "zrtvaR": 1
+    },
+    {
+        "idOneCall": 3,
+        "kontakt": 2,
+        "datum": "2025-04-17",
+        "propusten": true,
+        "dolazni": false,
+        "zrtvaR": 1
+    },
+    {
+        "idOneCall": 4,
+        "kontakt": 1,
+        "datum": "2025-04-15",
+        "propusten": false,
+        "dolazni": false,
+        "zrtvaR": 1
+    },
+    {
+        "idOneCall": 5,
+        "kontakt": 2,
+        "datum": "2025-04-13",
         "propusten": true,
         "dolazni": false,
         "zrtvaR": 1
@@ -234,18 +361,18 @@
         {
             "idObicnaPoruka": 1,
             "kontaktKoSalje": 1,
-            "kontaktKomeSalje": 2,
-            "tekst": "We shouldn’t have left the book with her. This is getting out of control.",
+            "kontaktKomeSalje": 5,
+            "tekst": "Feeling watched. Even in my dreams.",
             "datum": "2025-04-17",
             "procitana": true
         },
         {
             "idObicnaPoruka": 2,
-            "kontaktKoSalje": 2,
+            "kontaktKoSalje": 5,
             "kontaktKomeSalje": 1,
-            "tekst": "Stop texting me. If anyone finds out, we’re both finished.",
+            "tekst": "Try to record tonight. Hide phone this time.",
             "datum": "2025-04-17",
-            "procitana": false
+            "procitana": true
         }
     ],
     "pitanjeR": [
@@ -297,24 +424,6 @@
             "zanimanje": "Detektiv",
             "pol": "Muški",
             "zlocinId": 101
-        },
-        {
-            "idOsoba": 2,
-            "ime": "Jovana Jovanović",
-            "kontakt": "987654321",
-            "datum": "2025-04-17",
-            "zanimanje": "Advokat",
-            "pol": "Ženski",
-            "zlocinId": 102
-        },
-        {
-            "idOsoba": 3,
-            "ime": "Nikola Nikolić",
-            "kontakt": "1122334455",
-            "datum": "2025-04-17",
-            "zanimanje": "Novinar",
-            "pol": "Muški",
-            "zlocinId": 103
         }
     ],
     "zadatakR": [

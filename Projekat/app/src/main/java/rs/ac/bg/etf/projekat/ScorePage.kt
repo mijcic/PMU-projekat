@@ -54,13 +54,15 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
     val uiStateScoreKorisnika by myViewModel.uiStateScoreKorisnika.collectAsState()
     val uiStateScoreKorisnikaList by myViewModel.uiStateScoreKorisnikaList.collectAsState()
 
-    LaunchedEffect(uiStateScoreKorisnika.scoreList){ myViewModel.scoreKorisnika() }
     LaunchedEffect(Unit){
         myViewModel.scoreKorisnika()
         myViewModel.scoreKorisnikaList()
     }
 
-    Log.d("AAAA", uiStateScoreKorisnikaList.scoreList.toString())
+    Log.d("SCORE PAFW", uiStateScoreKorisnikaList.scoreList.toString())
+
+    Log.d("SCORE PAFW", uiStateScoreKorisnika.toString())
+
     Surface(modifier = Modifier.fillMaxSize()) {
 
         ScoreBackground()
@@ -79,15 +81,15 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
 
             Spacer(modifier = Modifier.padding((screenHeight/50).dp))
 
-            UserScoreCard(screenWidth = screenWidth)
+            UserScoreCard(screenWidth = screenWidth,myViewModel)
 
             Spacer(modifier = Modifier.padding((screenHeight/40).dp))
 
             ScorePageDivider()
 
-            if (uiStateScoreKorisnikaList.scoreList!=null){
+            if (uiStateScoreKorisnika.scoreList!=null){
                 LazyColumn {
-                    itemsIndexed(uiStateScoreKorisnikaList.scoreList!!){ index, items->
+                    itemsIndexed(uiStateScoreKorisnika.scoreList!!){ index, items->
                         Row{
                             Spacer(modifier = Modifier.width(22.dp))
                             Text(
@@ -96,11 +98,11 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
                                 modifier = Modifier.padding(top=15.dp)
                             )
                             Spacer(modifier = Modifier.width(42.dp))
-                            Image(
+                            /*Image(
                                 painter = painterResource(id = R.drawable.abuse),
                                 contentDescription = "User Avatar",
                                 modifier = Modifier.size(40.dp)
-                            )
+                            )*/
 
                             Spacer(modifier = Modifier.width(42.dp))
 
@@ -115,7 +117,7 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
                             )
                             Spacer(modifier = Modifier.width(42.dp))
                             Text(
-                                text = items.score.toString() + " XP",
+                                text = items.poeni.toString() + " XP",
                                 style = TextStyle(
                                     fontFamily = FontFamily(Font(R.font.special_elite)),
                                     color = Color.White,
@@ -185,7 +187,8 @@ fun ScorePageHeader(screenHeight: Int, navController: NavController) {
 }
 
 @Composable
-fun UserScoreCard(screenWidth: Int) {
+fun UserScoreCard(screenWidth: Int,myViewModel: MyViewModel) {
+    val uiStateUser by myViewModel.uiStateUser.collectAsState()
 
     Box(
         contentAlignment = Alignment.CenterStart,
@@ -205,8 +208,9 @@ fun UserScoreCard(screenWidth: Int) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+
             Text(
-                text = "Your score: 100",
+                text = "Your score: ${uiStateUser.mesto ?: ""}",
                 style = TextStyle(
                     fontFamily = FontFamily(Font(R.font.special_elite)),
                     color = Color.White,
@@ -225,7 +229,7 @@ fun UserScoreCard(screenWidth: Int) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "real_detective_101",
+                text = "${uiStateUser.korisnickoIme ?: ""}",
                 style = TextStyle(
                     fontFamily = FontFamily(Font(R.font.special_elite)),
                     color = Color.White,
@@ -236,7 +240,7 @@ fun UserScoreCard(screenWidth: Int) {
             )
             Spacer(modifier = Modifier.height(15.dp))
             Text(
-                text = "257 XP",
+                text = "${uiStateUser.poeni ?: ""} XP",
                 style = TextStyle(
                     fontFamily = FontFamily(Font(R.font.special_elite)),
                     color = Color.White,
