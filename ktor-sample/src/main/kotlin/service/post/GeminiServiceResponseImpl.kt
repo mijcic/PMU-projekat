@@ -342,7 +342,9 @@ class GeminiServiceResponseImpl(
                     repo.insertUsedZlocinData(usedZlocin)
 
                     var pacijent= geminiProMysteriousSymptomsRepository.insertGeminiPacijent(geminiResponse2,geminiResponseRetrofit,zl,repo)
-
+                    if (pacijent != null) {
+                        zrtva.idZrtva=pacijent.zrtvaId.idZrtva
+                    }
                     var dokaziLista: MutableList<DokazData> = mutableListOf()
                     var telefoniLista: MutableList<TelefonData> = mutableListOf()
                     var forenzickiDokaziLista: MutableList<ForenzickiDokazData> = mutableListOf()

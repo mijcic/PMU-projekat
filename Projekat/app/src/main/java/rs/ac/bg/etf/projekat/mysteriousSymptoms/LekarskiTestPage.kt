@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -57,25 +58,10 @@ fun LekarskiTestPage(myViewModel: MyViewModel) {
     var test by remember { mutableStateOf<LekarskiTestRezultat?>(null) }
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
-
     LaunchedEffect(Unit) {
         test = realmViewModel.getLastLekarskiTest()
     }
 
-    test = LekarskiTestRezultat(
-        ime = "Mia Marjanovic",
-        datum = RealmInstant.now(),
-        pol = "Zenski",
-        izvestaj = "Pacijent se žali na uporne glavobolje, vrtoglavicu i povremene mučnine. \n" +
-                "Na fizikalnom pregledu prisutna je blaga tahikardija i povišen krvni pritisak (145/95 mmHg). \n" +
-                "Laboratorijske analize pokazuju blago povišen nivo leukocita, dok su svi ostali nalazi u granicama normale.\n" +
-                "\n" +
-                "S obzirom na simptome i klinički nalaz, preporučuje se dalja dijagnostika – prvenstveno CT glave i neurološka obrada. \n" +
-                "Pacijent je upućen na dodatna ispitivanja i savetovana je privremena terapija analgeticima uz mirovanje.\n" +
-                "\n" +
-                "Dijagnoza (privremena): Cephalgia incerta causa – Glavobolja nepoznatog porekla."
-    )
-    
     Surface(
         modifier = Modifier.fillMaxSize().padding(top=22.dp),
     ) {
@@ -86,100 +72,7 @@ fun LekarskiTestPage(myViewModel: MyViewModel) {
             contentScale = ContentScale.Crop
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-        )
-
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                //.background(Color(0xFF300000))
-//                .padding(top = (screenWidth / 9).dp).padding(horizontal = 8.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-//        ) {
-//            Text(
-//                text = "Rezultati testova",
-//                fontSize = 30.sp,
-//                fontWeight = FontWeight.Bold,
-//                color = Color.White,
-//                textAlign = TextAlign.Center,
-//                style = TextStyle(
-//                    fontFamily = FontFamily(
-//                        Font(R.font.special_elite)
-//                    )
-//                )
-//            )
-//
-//            Spacer(modifier = Modifier.height(30.dp))
-//
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 20.dp)
-//                    .aspectRatio(0.6f)
-//                    .clip(RoundedCornerShape(16.dp)),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                val datum: RealmInstant? = uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.datum
-//                val formattedDateDatum: String = datum?.let {
-//                    val date = Date(it.epochSeconds)
-//                    val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-//                    dateFormat.format(date)
-//                } ?: "Nepoznato"
-//
-//                Column(
-//                    modifier = Modifier
-//                        .fillMaxWidth(0.7f)
-//                        .wrapContentHeight()
-//                        .background(color = colorResource(R.color.light_gray))
-//                        .padding(top = 115.dp, bottom = 140.dp),
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    if (test != null) {
-//                        Text(
-//                            text = "Ime i prezime: ${uiStateDataMysteriousSymptoms.tests?.pacijentId?.zrtvaId?.osobaId?.ime ?: "Nepoznato"}",
-//                            color = Color(0xFF000070),
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Bold,
-//                            textAlign = TextAlign.Center,
-//                            lineHeight = 16.sp
-//                        )
-//                        Spacer(modifier = Modifier.height(2.dp))
-//                        Text(
-//                            text = "Datum rodjenja: ${formattedDateDatum} ?: \"Nepoznato\"",
-//                            color = Color(0xFF000070),
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Bold,
-//                            textAlign = TextAlign.Center,
-//                            lineHeight = 16.sp
-//                        )
-//                        Spacer(modifier = Modifier.height(2.dp))
-//                        Text(
-//                            text = "Pol: ${uiStateDataMysteriousSymptoms.tests?.pacijentId?.zrtvaId?.osobaId?.pol ?: "Nepoznato"}",
-//                            color = Color(0xFF000070),
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Bold,
-//                            textAlign = TextAlign.Center,
-//                            lineHeight = 16.sp
-//                        )
-//                        Spacer(modifier = Modifier.height(20.dp))
-//                        uiStateDataMysteriousSymptoms.tests?.izvestaj?.let {
-//                            Text(
-//                                text = it,
-//                                color = Color(0xFF000070),
-//                                fontSize = 13.sp,
-//                                fontWeight = FontWeight.Bold,
-//                                textAlign = TextAlign.Left,
-//                                lineHeight = 18.sp
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)))
 
         Column(
             modifier = Modifier
@@ -187,10 +80,10 @@ fun LekarskiTestPage(myViewModel: MyViewModel) {
                 .padding(top = (screenWidth / 9).dp)
                 .padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center // <-- CENTRIRA SVE UNUTAR COLUNMA
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Rezultati testova",
+                text = "Test Results",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -225,32 +118,6 @@ fun LekarskiTestPage(myViewModel: MyViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (test != null) {
-                        Text(
-                            text = "Ime i prezime: ${uiStateDataMysteriousSymptoms.tests?.pacijentId?.zrtvaId?.osobaId?.ime ?: "Nepoznato"}",
-                            color = Color.Black,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 16.sp
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Datum rodjenja: $formattedDateDatum",
-                            color = Color.Black,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 16.sp
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Pol: ${uiStateDataMysteriousSymptoms.tests?.pacijentId?.zrtvaId?.osobaId?.pol ?: "Nepoznato"}",
-                            color = Color.Black,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 16.sp
-                        )
                         Spacer(modifier = Modifier.height(20.dp))
                         uiStateDataMysteriousSymptoms.tests?.izvestaj?.let {
                             Text(

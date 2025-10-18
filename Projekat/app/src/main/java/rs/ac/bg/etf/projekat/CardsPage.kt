@@ -332,10 +332,11 @@ fun CardWithImage2(image: Int, title:String, text:String, navController: NavCont
                                             "titleMP" + "/" + "dateMP" + "/" + "placeMP" + "/" + "descMP"
                                 )
 
+                                /*
                                 myViewModel.postGeminiMSData(
                                     onSuccess = { Log.d("GEMINI","MS GENERISANA PRICA")},
                                     onError = {navController.navigate("destinationErrorPage")}
-                                )
+                                )*/
                             },
                             onError = {
                                 isLoading = false

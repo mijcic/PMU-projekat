@@ -3,6 +3,7 @@ package rs.ac.bg.etf.projekat.auth
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -89,6 +91,7 @@ fun LoginPage(
         val imagePainter = painterResource(id = R.drawable.background_login_signup)
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        val uiStateUser by viewModel.uiStateUser.collectAsState()
 
         var context = LocalContext.current
         val realmViewModel: RealmViewModel = hiltViewModel()
@@ -242,6 +245,7 @@ fun LoginPage(
                             fontSize = 18.sp,
                             color = Color.Black
                         ),
+                        visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(15.dp))

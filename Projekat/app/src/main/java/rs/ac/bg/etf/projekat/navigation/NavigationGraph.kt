@@ -27,7 +27,7 @@ fun NavigationGraph(navController: NavHostController) {
         startDestination = "destinationMainScreen2"
         //startDestination = "destinationSignUpPage"
     ) {
-        mainNavigation(navController)
+        mainNavigation(navController,viewModel)
         authNavigation(navController, viewModel)
         murderNavigation(navController, viewModel, realmViewModel)
         phoneNavigation(navController, viewModel)

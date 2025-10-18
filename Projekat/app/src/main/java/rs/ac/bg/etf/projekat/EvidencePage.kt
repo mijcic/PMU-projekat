@@ -185,16 +185,23 @@ fun EvidenceListSection(
             val filteredTasks = uiState.evidencesTasks.filter { task ->
                 task.dokazId?.idDokaz == i.idDokaz
             }
+
+            // Ovo će kreirati poseban showDialog za svaku stavku, po i.idDokaz (ili index)
+            val showDialogForThis = remember(i.idDokaz) { mutableStateOf(false) }
+
             if (index <= cntState.cnt) {
-                CardEvidenceShow(showDialog, i)
-                showDialog.value = EvidenceDialog(
-                    showDialog, i, filteredTasks, myViewModel, cntState.cnt
-                )
+                CardEvidenceShow(showDialogForThis, i)
+                if (showDialogForThis.value) {
+                    EvidenceDialog(
+                        showDialogForThis, i, filteredTasks, myViewModel, cntState.cnt
+                    )
+                }
             } else {
                 CardEvidenceLock(i)
             }
         }
     }
+
 }
 
 @Composable
@@ -206,15 +213,26 @@ fun ForensicEvidenceListSection(
     val showDialog2 = remember { mutableStateOf(false) }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
-        itemsIndexed(uiState.forensicEvidences) { index, i ->
+        itemsIndexed(uiState.forensicEvidences, key = { _, item -> item.idForenzickiDokaz }) { index, i ->
             val filteredTasks = uiState.forensicEvidencesTasks.filter { task ->
                 task.forenzickiDokazId?.idForenzickiDokaz == i.idForenzickiDokaz
             }
+
+            // Pravilno per-item stanje
+            val showDialogForThisItem = remember(i.idForenzickiDokaz) { mutableStateOf(false) }
+
             if (index <= cntState.forensicCnt) {
-                CardEvidenceShow(showDialog2, i)
-                showDialog2.value = ForensicEvidenceDialog(
-                    showDialog2, i, filteredTasks, myViewModel, cntState.forensicCnt
-                )
+                CardEvidenceShow(showDialogForThisItem, i)
+
+                if (showDialogForThisItem.value) {
+                    ForensicEvidenceDialog(
+                        showDialog = showDialogForThisItem,
+                        i = i,
+                        dokazZadaci = filteredTasks,
+                        myViewModel = myViewModel,
+                        cnt = cntState.forensicCnt
+                    )
+                }
             } else {
                 CardEvidenceLock(i)
             }
@@ -375,7 +393,7 @@ fun <T> CardEvidenceShow(showDialog: MutableState<Boolean>, i: T) {
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
-
+                /*
                 Text(
                     text = "Victim: Isabelle Moreau",
                     style = TextStyle(
@@ -384,6 +402,8 @@ fun <T> CardEvidenceShow(showDialog: MutableState<Boolean>, i: T) {
                         color = Color.Black
                     )
                 )
+
+                 */
             }
         }
     }

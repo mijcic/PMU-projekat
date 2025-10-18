@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import rs.ac.bg.etf.projekat.auth.LoginPage
 import rs.ac.bg.etf.projekat.auth.SignUpPage
+import rs.ac.bg.etf.projekat.auth.UserProfile
 import rs.ac.bg.etf.projekat.data.MyViewModel
 
 fun NavGraphBuilder.authNavigation(navController: NavHostController, viewModel: MyViewModel,) {
@@ -12,6 +13,9 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController, viewModel: 
         LoginPage(navController, viewModel)
     }
     composable("destinationSignUpPage") {
-        SignUpPage(navController)
+        SignUpPage(navController,viewModel)
+    }
+    composable("destinationUserProfile"){
+        UserProfile(navController,viewModel)
     }
 }

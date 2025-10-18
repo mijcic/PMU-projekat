@@ -63,6 +63,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -95,7 +96,7 @@ import rs.ac.bg.etf.projekat.navigation.destinationMissionPage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpPage(
-    navController: NavController
+    navController: NavController,viewModel:MyViewModel
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -106,7 +107,7 @@ fun SignUpPage(
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
-        val viewModel: MyViewModel = hiltViewModel()
+        //val viewModel: MyViewModel = hiltViewModel()
         val uistateSignUp by viewModel.uiStateSignUp.collectAsState()
         val uiStateLogIn by viewModel.uiStateLogIn.collectAsState()
 
@@ -371,6 +372,7 @@ fun SignUpPage(
                             fontSize = 18.sp,
                             color = Color.Black
                         ),
+                        visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(15.dp))
@@ -482,6 +484,7 @@ fun SignUpPage(
                                 viewModel.signUp(KorisnikRequest(
                                     ime, prezime, username, password, email, nacinPrijave = "registracija", idToken = username + password, idTokenLast256 = ""))
 
+                                //viewModel.logIn(KorisnikRequest("","",username, password,"","","",""))
                                 navController.navigate("destinationMainScreen2")
                             }
                         },

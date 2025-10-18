@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat.mysteriousSymptoms
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -60,8 +61,11 @@ import java.util.Locale
 fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, myViewModel: MyViewModel) {
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
-    LaunchedEffect(uiStateDataMysteriousSymptoms) {
+    LaunchedEffect(Unit) {
         myViewModel.getAllDataMysteriousSymptoms()
+
+
+        //Log.d("LOKACIJA",uiStateDataMysteriousSymptoms.locations.toString())
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
