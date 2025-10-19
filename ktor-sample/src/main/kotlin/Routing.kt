@@ -159,6 +159,7 @@ fun Application.configureRouting() {
 
                 // 2. Proveri da li je validan JSON
                 val jsonElement = Json.parseToJsonElement(jsonText)
+                print("DA LI JE VALIDAN: " + jsonElement)
 
                 val json = Json {
                     ignoreUnknownKeys = true
@@ -166,6 +167,7 @@ fun Application.configureRouting() {
                 }
                 val geminiResponse2 = json.decodeFromString<GeminiResponse2>(jsonText)
                 val geminiProRepo = GeminiProRepositoryImpl()
+                println("PARSIRANJE USPEŠNO. Provera obdukcijaR: ${geminiResponse2.obdukcijaR}")
                 val datumString = geminiResponse2.zlocinR.datum
                 var timestamp: Long? = null
 
@@ -175,6 +177,12 @@ fun Application.configureRouting() {
                     val datum = datumString?.let { LocalDate.parse(it, formatter) }
                     timestamp = datum?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
                 } catch (e: Exception) {
+                    e.printStackTrace()
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        mapOf("error" to "Greška u logici: ${e.message}")
+                    )
+
                     try {
                         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                         val datum = datumString?.let { LocalDateTime.parse(it, formatter) }
@@ -343,6 +351,12 @@ fun Application.configureRouting() {
                 // 4. Vrati potvrdu
                 call.respond(HttpStatusCode.OK, mapOf("ok" to "Validc JSON format"))
             } catch (e: Exception) {
+                e.printStackTrace() // Ispiši stack trace!
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    mapOf("error" to "Greška SERIJALIZACIJE JSON-a: ${e.message}") // Najverovatniji uzrok
+                )
+
                 call.respond(
                     HttpStatusCode.BadRequest,
                     mapOf("error" to "Nevalidan JSON format")
@@ -410,6 +424,7 @@ fun Application.configureRouting() {
                 val geminiResponse2 = json.decodeFromString<GeminiResponse2MysteriousSymptoms>(jsonText)
 
                 val geminiProRepo = GeminiProRepositoryImpl()
+
                 val datumString = geminiResponse2.zlocinR.datum
                 var timestamp: Long? = null
 
