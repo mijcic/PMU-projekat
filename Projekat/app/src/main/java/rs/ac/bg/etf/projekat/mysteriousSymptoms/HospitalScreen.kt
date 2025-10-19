@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
+import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.ui.HospitalNavigationEvent
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.ui.HospitalPage
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.viewModels.HospitalViewModel
@@ -13,11 +14,17 @@ import rs.ac.bg.etf.projekat.mysteriousSymptoms.viewModels.HospitalViewModel
 @Composable
 fun HospitalScreen(
     navController: NavController,
-    viewModel: HospitalViewModel = hiltViewModel()
+    viewModel: HospitalViewModel = hiltViewModel(),
+    myViewModel:MyViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-
     LaunchedEffect(Unit) {
+
+        myViewModel.getAllDataMysteriousSymptoms()
+
+    }
+    LaunchedEffect(Unit) {
+
         viewModel.navigation
             .flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { event ->

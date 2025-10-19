@@ -106,7 +106,7 @@ fun MedicalStatementCard(personName: String?, statementText: String?, modifier: 
 @Composable
 fun MedicalStatementCardTitle(personName: String?) {
     Text(
-        text = "Izjava ${personName ?: "Nepoznata osoba"}",
+        text = "Statement of ${personName ?: "Unknown person"}",
         fontSize = 26.sp,
         fontWeight = FontWeight.Bold,
         color = Color.White,

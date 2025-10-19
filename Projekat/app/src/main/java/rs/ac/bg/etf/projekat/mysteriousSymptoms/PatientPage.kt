@@ -62,10 +62,9 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, 
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
     LaunchedEffect(Unit) {
+
         myViewModel.getAllDataMysteriousSymptoms()
 
-
-        //Log.d("LOKACIJA",uiStateDataMysteriousSymptoms.locations.toString())
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -105,26 +104,26 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                PatientExpandableSection(title = "Detalji o pacijentu") {
-                    DetailItem("Datum rodjenja", "${formattedDateDatum}")
-                    DetailItem("Zanimanje", "${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.zanimanje}")
-                    DetailItem("Simptomi", "${uiStateDataMysteriousSymptoms.patient?.simptomi}")
-                    DetailItem("Datum prijema", "${formattedDate}")
-                    DetailItem("Prijavila", "${uiStateDataMysteriousSymptoms.patient?.prijavio}")
+                PatientExpandableSection(title = "Patient Details") {
+                    DetailItem("Date of Birth", "${formattedDateDatum}")
+                    DetailItem("Occupation", "${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.zanimanje}")
+                    DetailItem("Symptoms", "${uiStateDataMysteriousSymptoms.patient?.simptomi}")
+                    DetailItem("Admission Date", "${formattedDate}")
+                    DetailItem("Reported By", "${uiStateDataMysteriousSymptoms.patient?.prijavio}")
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                ExpandableSection(title = "Dokumenti") {
-                    PacijentInfoCard("📋", "Medicinski izveštaj", "Osnovni nalazi su čisti. CT i MR bez promena.",
+                ExpandableSection(title = "Documents") {
+                    PacijentInfoCard("📋", "Medical Report", "Displays the patient's basic medical findings.",
                         { navController.navigate(destinationMedicalReportPage.route) })
-                    PacijentInfoCard("📱", "Zaključan telefon", "Poslednje poruke upućuju na duhovni centar 'Novi Krug'.",{ navController.navigate(
+                    PacijentInfoCard("📱", "Phone", "Contains data from the patient's mobile phone.",{ navController.navigate(
                         destinationPhonePage.route
                     ) })
-                    PacijentInfoCard("👪", "Izjava sestre", "Marko se povukao nakon vikenda u 'Novom Krugu'.",{ navController.navigate(
+                    PacijentInfoCard("👪", "Medical Statement", "This can be an important lead in understanding the patient’s mental state.",{ navController.navigate(
                         destinationMedicalStatementPage.route
                     ) })
-                    PacijentInfoCard("🧪", "Prvi rezultati testova", "Nisu pronađeni tragovi poznatih psihoaktivnih supstanci.",{ navController.navigate(
+                    PacijentInfoCard("🧪", "Initial Test Results", "Laboratory test results confirm that no known psychoactive substances were found in the patient's body.",{ navController.navigate(
                         destinationLekarskiTestPage.route
                     ) })
                 }

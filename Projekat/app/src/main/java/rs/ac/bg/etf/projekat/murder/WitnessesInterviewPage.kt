@@ -104,7 +104,8 @@ fun WitnessesInterviewPage(
                             onFinished = {
                             },
                             modifier = Modifier.align(Alignment.BottomCenter),
-                            title = title
+                            title = title,
+                            navController
                         )
                     }
                     Log.d("SVE", "FINISH")
@@ -121,15 +122,14 @@ fun WitnessesFinishInvestigationButton(
     myViewModel: MyViewModel,
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String
+    title: String,
+    navController: NavController
 ) {
-    Log.d("SVE", "FINISHsss")
     Button(
         onClick = {
             if(uiPitanjaZaSvedoka.questions.isNotEmpty()){
-                Log.d("SVEDOK","nije prazno")
                 val wId = uiPitanjaZaSvedoka.questions.first().svedokId
-                Log.d("SVEDOK",wId.toString())
+
                 wId?.let {
                     myViewModel.selectIspitivanjeSvedokaZadatakViewModel(it)?.let { zadatak->
                         myViewModel.updateWitnessTask(zadatak)
@@ -137,6 +137,15 @@ fun WitnessesFinishInvestigationButton(
 
                 }
                 onFinished()
+                navController.navigate("destinationWitnessesPage") {
+                    popUpTo("destinationWitnessesInterviewPage/{title}") {
+                        inclusive = true
+                    }
+                    popUpTo("destinationWitnessDetailsPage/{osobaId}/{image}/{title}") {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
             }
             else{
                 myViewModel.updatePitanjaZaSvedokaPitanjaEmptyViewModel(title)

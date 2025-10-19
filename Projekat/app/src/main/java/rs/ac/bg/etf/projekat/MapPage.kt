@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.projekat
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,6 +58,8 @@ import rs.ac.bg.etf.projekat.navigation.questionsPage
 fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
     var paddingStart by remember { mutableStateOf(0.dp) }
     val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
+
+    Log.d("Zadaci",uiStateTasks.tasks.toString())
 
     Box(modifier = Modifier.fillMaxSize()) {
         MapBackground()
