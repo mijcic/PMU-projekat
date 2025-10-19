@@ -229,12 +229,176 @@
     </form>
 </div>
 
+<div class="entity-box">
+    <h2>6️⃣ Obdukcija (obdukcijaR)</h2>
+    <form id="obdukcijaForm">
+        <label>Izvestaj: <textarea name="izvestaj"></textarea></label>
+        <label>Datum: <input type="date" name="datum" /></label>
+        <label>Uzrok smrti: <textarea name="uzrokSmrti"></textarea></label>
+        <label>Informacije: <textarea name="informacije"></textarea></label>
+        <button type="button" onclick="addObdukcija()">Dodaj obdukciju</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>7️⃣ Forenzicki dokaz (forenzickiDokazR)</h2>
+    <form id="forenzickiDokazForm">
+        <label>Tip:
+            <select name="tip">
+                <option value="DNK">DNK</option>
+                <option value="otisak">otisak</option>
+                <option value="dokument">dokument</option>
+            </select>
+        </label>
+        <label>Opis: <textarea name="opis"></textarea></label>
+        <label>Status: <input type="number" name="status" /></label>
+        <label>Veza: <textarea name="veza"></textarea></label>
+        <button type="button" onclick="addForenzickiDokaz()">Dodaj forenzicki dokaz</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>8️⃣ Telefon (telefonR)</h2>
+    <form id="telefonForm">
+        <label>Model: <input type="text" name="model" /></label>
+        <label>OS: <input type="text" name="os" /></label>
+        <label>Sifra: <input type="text" name="sifra"></label>
+        <button type="button" onclick="addTelefon()">Dodaj telefon</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>9️⃣ Beleska (beleskaR)</h2>
+    <form id="beleskaForm">
+        <label>Tekst: <input type="text" name="tekst" /></label>
+        <label>Datum beleske: <input type="text" name="datum" /></label>
+        <button type="button" onclick="addBeleska()">Dodaj belesku</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>🔟 WhatsAppPorukaR (whatsAppPorukaR)</h2>
+    <form id="whatsAppPorukaForm">
+        <label>Ime posiljaoca: <input type="text" name="ime1" /></label>
+        <label>Broj posiljaoca: <input type="text" name="broj1" /></label>
+        <label>Slika posiljaoca: <input type="number" name="slika1" /></label>
+        <label>Ime primaoca: <input type="text" name="ime2" /></label>
+        <label>Broj primaoca: <input type="text" name="broj2" /></label>
+        <label>Slika primaoca: <input type="number" name="slika2" /></label>
+        <label>Tekst poruke: <textarea name="tekst"></textarea></label>
+        <label>Datum poruke: <input type="date" name="datum" /></label>
+        <label>Procitana:
+            <select name="procitana">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </label>
+        <button type="button" onclick="addWhatsAppPoruka()">Dodaj WhatsApp poruku</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>🔟 OneCallR (oneCallR)</h2>
+    <form id="oneCallForm">
+        <label>Ime kontakta: <input type="text" name="ime" /></label>
+        <label>Broj kontakta: <input type="text" name="broj" /></label>
+        <label>Slika kontakta: <input type="number" name="slika" /></label>
+        <label>Datum poziva: <input type="date" name="datum" /></label>
+        <label>Propusten:
+            <select name="propusten">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </label>
+        <label>Dolazni:
+            <select name="dolazni">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </label>
+        <button type="button" onclick="addOneCall()">Dodaj poziv</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>1️⃣1️⃣ GalleryR (galleryR)</h2>
+    <form id="galleryForm">
+        <label>Slika: <input type="number" name="slika" /></label>
+        <label>Datum slike: <input type="date" name="datum" /></label>
+        <label>Mesto slike: <input type="text" name="mesto" /></label>
+        <button type="button" onclick="addGallery()">Dodaj sliku</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>1️⃣2️⃣ ObicnaPorukaR (obicnaPorukaR)</h2>
+    <form id="obicnaPorukaForm">
+        <label>Ime posiljaoca: <input type="text" name="ime1" /></label>
+        <label>Broj posiljaoca: <input type="text" name="broj1" /></label>
+        <label>Slika posiljaoca: <input type="number" name="slika1" /></label>
+        <label>Ime primaoca: <input type="text" name="ime2" /></label>
+        <label>Broj primaoca: <input type="text" name="broj2" /></label>
+        <label>Slika primaoca: <input type="number" name="slika2" /></label>
+        <label>Tekst poruke: <textarea name="tekst"></textarea></label>
+        <label>Datum poruke: <input type="date" name="datum" /></label>
+        <label>Procitana:
+            <select name="procitana">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </label>
+        <button type="button" onclick="addObicnaPoruka()">Dodaj poruku</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>1️⃣3️⃣ PrijavljeniKorisnikR (prijavljeniKorisnikR)</h2>
+    <form id="prijavljeniKorisnikForm">
+        <label>Korisnicko ime: <input type="text" name="korisnickoIme" /></label>
+        <label>Sifra: <input type="text" name="sifra" /></label>
+        <button type="button" onclick="addPrijavljeniKorisnik()">Dodaj prijavljenog korisnika</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>1️⃣4️⃣ PitanjeR (pitanjeR)</h2>
+    <form id="pitanjeForm">
+        <label>Tekst pitanja: <input type="text" name="tekst" /></label>
+        <label>Tacan:
+            <select name="tacan">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </label>
+        <button type="button" onclick="addPitanje()">Dodaj pitanje</button>
+    </form>
+</div>
+
+<div class="entity-box">
+    <h2>1️⃣5️⃣ OdgovorR (odgovorR)</h2>
+    <form id="odgovorForm">
+        <label>Tekst pitanja: <input type="text" name="tekstP" /></label>
+        <label>Tekst odgovora: <input type="text" name="tekstO" /></label>
+        <label>Tacan:
+            <select name="tacan">
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
+        </label>
+        <label>Bodovi: <input type="number" name="bodovi" /></label>
+        <button type="button" onclick="addOdgovor()">Dodaj odgovor</button>
+    </form>
+</div>
+
 <button onclick="generateJsonFile()">Generiši JSON fajl</button>
 <h3>📄 Trenutni JSON:</h3>
 <div id="jsonPreview">{}</div>
 
 <script>
-    let geminiData = { zlocinR: null, zrtvaR: null, osumnjicenR: [], dokazR: [], svedokR: [] };
+    let geminiData = { zlocinR: null, zrtvaR: null, osumnjicenR: [], dokazR: [], svedokR: [], obdukcijaR: null,
+    osobaR: [], forenzickiDokazR: [], telefonR: [], oneContactR: [], beleskaR: [], whatsAppPorukaR: [], whatsAppKontaktR: [],
+    oneCallR: [], galleryR: [], obicnaPorukaR: [], prijavljeniKorisnikR: [], pitanjeR: [], odgovorR: []
+    };
 
     function updatePreview() {
         document.getElementById("jsonPreview").textContent = JSON.stringify(geminiData, null, 4);
@@ -257,28 +421,49 @@
 
     function addZrtva() {
         const f = document.getElementById("zrtvaForm");
+
+        const osobaZrtva = {
+            idOsoba: Date.now(),
+            ime: f.ime.value,
+            kontakt: f.kontakt.value,
+            datum: f.datumOsoba.value,
+            zanimanje: f.zanimanje.value,
+            pol: f.pol.value,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0
+        }
+        geminiData.osobaR.push(osobaZrtva)
+
         geminiData.zrtvaR = {
             idZrtva: Date.now(),
             tipZrtve: f.tipZrtve.value,
             detalji: f.detalji.value,
             statusZrtva: f.statusZrtva.value,
             zlocinId: geminiData.zlocinR?.idZlocin || 0,
-            osobaId: {
-                idOsoba: Date.now(),
-                ime: f.ime.value,
-                kontakt: f.kontakt.value,
-                datum: f.datumOsoba.value,
-                zanimanje: f.zanimanje.value,
-                pol: f.pol.value,
-                zlocinId: geminiData.zlocinR?.idZlocin || 0
-            }
+            osobaId: osobaZrtva
         };
+
+        // if (geminiData.obdukcijaR && geminiData.obdukcijaR.zrtvaId === 0) {
+        //     geminiData.obdukcijaR.zrtvaId = geminiData.zrtvaR.idZrtva;
+        // }
+
         updatePreview();
         alert("Žrtva dodata!");
     }
 
     function addOsumnjicen() {
         const f = document.getElementById("osumnjicenForm");
+
+        const osobaOsumnjiceni = {
+            idOsoba: Date.now(),
+            ime: f.imeOsumnjicen.value,
+            kontakt: f.kontaktOsumnjicen.value,
+            datum: f.datumOsumnjicen.value,
+            zanimanje: f.zanimanjeOsumnjicen.value,
+            pol: f.polOsumnjicen.value,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0
+        }
+        geminiData.osobaR.push(osobaOsumnjiceni)
+
         geminiData.osumnjicenR.push({
             idOsumnjicen: Date.now(),
             status: 0,
@@ -286,15 +471,7 @@
             motiv: { idMotiv: Date.now(), opis: f.motivOpis.value },
             zlocinId: geminiData.zlocinR?.idZlocin || 0,
             kriv: parseInt(f.kriv.value),
-            osobaId: {
-                idOsoba: Date.now(),
-                ime: f.imeOsumnjicen.value,
-                kontakt: f.kontaktOsumnjicen.value,
-                datum: f.datumOsumnjicen.value,
-                zanimanje: f.zanimanjeOsumnjicen.value,
-                pol: f.polOsumnjicen.value,
-                zlocinId: geminiData.zlocinR?.idZlocin || 0
-            }
+            osobaId: osobaOsumnjiceni
         });
         updatePreview();
         alert("Osumnjičeni dodan!");
@@ -316,24 +493,234 @@
 
     function addSvedok() {
         const f = document.getElementById("svedokForm");
+
+        const osobaSvedok = {
+            idOsoba: Date.now(),
+            ime: f.ime.value,
+            kontakt: f.kontakt.value,
+            datum: f.datum.value,
+            zanimanje: f.zanimanje.value,
+            pol: f.pol.value,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0
+        }
+        geminiData.osobaR.push(osobaSvedok)
+
         geminiData.svedokR.push({
             idSvedok: Date.now(),
             izjava: f.izjava.value,
             statusSvedok: "aktivno",
             statusIspitan: 0,
             zlocinId: geminiData.zlocinR?.idZlocin || 0,
-            osobaId: {
-                idOsoba: Date.now(),
-                ime: f.ime.value,
-                kontakt: f.kontakt.value,
-                datum: f.datum.value,
-                zanimanje: f.zanimanje.value,
-                pol: f.pol.value,
-                zlocinId: geminiData.zlocinR?.idZlocin || 0
-            }
+            osobaId: osobaSvedok
         });
         updatePreview();
         alert("Svedok dodat!");
+    }
+
+    function addObdukcija() {
+        const f = document.getElementById("obdukcijaForm");
+        geminiData.obdukcijaR = {
+            idObdukcija: Date.now(),
+            izvestaj: f.izvestaj.value,
+            datum: f.datum.value,
+            uzrokSmrti: f.uzrokSmrti.value,
+            zrtvaId: geminiData.zrtvaR?.idZrtva || 0,
+            informacije: f.informacije.value
+        };
+        updatePreview();
+        alert("Obdukcija dodata!");
+    }
+
+    function addForenzickiDokaz() {
+        const f = document.getElementById("forenzickiDokazForm");
+        geminiData.forenzickiDokazR.push({
+            idForenzickiDokaz: Date.now(),
+            tipForenzickiDokaz: f.tip.value,
+            opis: f.opis.value,
+            status: f.status.value,
+            zrtvaId: geminiData.zrtvaR?.idZrtva || 0,
+            veza: f.veza.value
+        });
+        updatePreview();
+        alert("Forenzicki dokaz dodat!");
+    }
+
+    function addTelefon() {
+        const f = document.getElementById("telefonForm");
+        geminiData.telefonR.push({
+            idTelefon: Date.now(),
+            model: f.model.value,
+            os: f.os.value,
+            zrtvaId: geminiData.zrtvaR?.idZrtva || 0,
+            sifra: f.sifra.value
+        });
+        updatePreview();
+        alert("Telefon dodat!");
+    }
+
+    function addBeleska() {
+        const f = document.getElementById("beleskaForm");
+        geminiData.beleskaR.push({
+            idBeleska: Date.now(),
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            tekst: f.tekst.value,
+            datum: f.datum.value
+        });
+        updatePreview();
+        alert("Beleska dodata!");
+    }
+
+    function addWhatsAppPoruka() {
+        const f = document.getElementById("whatsAppPorukaForm");
+
+        const id = Date.now()
+
+        const posiljalac = {
+            idWhatsAppKontakt: id,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            ime: f.ime1.value,
+            broj: f.broj1.value,
+            slika: f.slika1.value
+        }
+        geminiData.whatsAppKontaktR.push(posiljalac)
+
+        const primalac = {
+            idWhatsAppKontakt: id + 1,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            ime: f.ime2.value,
+            broj: f.broj2.value,
+            slika: f.slika2.value
+        }
+        geminiData.whatsAppKontaktR.push(primalac)
+
+        geminiData.whatsAppPorukaR.push({
+            idWhatsAppPoruka: Date.now(),
+            kontaktKoSalje: posiljalac,
+            kontaktKomeSalje: primalac,
+            tekst: f.tekst.value,
+            datum: f.datum.value,
+            procitana: f.procitana.value,
+        });
+        updatePreview();
+        alert("WhatsApp poruka dodata!");
+    }
+
+    function addOneCall() {
+        const f = document.getElementById("oneCallForm");
+
+        const id = Date.now()
+
+        const kontakt = {
+            idOneContact: id,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            ime: f.ime.value,
+            broj: f.broj.value,
+            slika: f.slika.value
+        }
+        geminiData.oneContactR.push(kontakt)
+
+        geminiData.oneCallR.push({
+            idOneCall: Date.now(),
+            kontakt: kontakt,
+            datum: f.datum.value,
+            propusten: f.propusten.value,
+            dolazni: f.dolazni.value
+        });
+        updatePreview();
+        alert("Poziv dodat!");
+    }
+
+    function addGallery() {
+        const f = document.getElementById("galleryForm");
+
+        geminiData.galleryR.push({
+            idPhoto: Date.now(),
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            slika: f.slika.value,
+            datum: f.datum.value,
+            mesto: f.mesto.value
+        });
+        updatePreview();
+        alert("Slika dodata!");
+    }
+
+    function addObicnaPoruka() {
+        const f = document.getElementById("obicnaPorukaForm");
+
+        const id = Date.now()
+
+        const posiljalac = {
+            idOneContact: id,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            ime: f.ime1.value,
+            broj: f.broj1.value,
+            slika: f.slika1.value
+        }
+        geminiData.oneContactR.push(posiljalac)
+
+        const primalac = {
+            idOneContact: id + 1,
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            ime: f.ime2.value,
+            broj: f.broj2.value,
+            slika: f.slika2.value
+        }
+        geminiData.oneContactR.push(primalac)
+
+        geminiData.obicnaPorukaR.push({
+            idObicnaPoruka: Date.now(),
+            kontaktKoSalje: posiljalac,
+            kontaktKomeSalje: primalac,
+            tekst: f.tekst.value,
+            datum: f.datum.value,
+            procitana: f.procitana.value,
+        });
+        updatePreview();
+        alert("Poruka dodata!");
+    }
+
+    function addPrijavljeniKorisnik() {
+        const f = document.getElementById("prijavljeniKorisnikForm");
+        geminiData.prijavljeniKorisnikR.push({
+            idKorisnik: Date.now(),
+            korisnickoIme: f.korisnickoIme.value,
+            sifra: f.sifra.value
+        });
+        updatePreview();
+        alert("Prijavljeni korisnik dodat!");
+    }
+
+    function addPitanje() {
+        const f = document.getElementById("pitanjeForm");
+        geminiData.pitanjeR.push({
+            idPitanje: Date.now(),
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            tekst: f.tekst.value
+        });
+        updatePreview();
+        alert("Pitanje dodato!");
+    }
+
+    function addOdgovor() {
+        const f = document.getElementById("odgovorForm");
+
+        const pitanje = {
+            idPitanje: Date.now(),
+            zlocinId: geminiData.zlocinR?.idZlocin || 0,
+            tekst: f.tekstP.value
+        }
+        geminiData.pitanjeR.push(pitanje);
+
+        geminiData.odgovorR.push({
+            idOdogovor: Date.now(),
+            pitanjeId: pitanje,
+            tekstOdgovora: f.tekstO.value,
+            tacan: f.tacan.value,
+            bodovi: f.bodovi.value
+        });
+
+        updatePreview();
+        alert("Odgovor dodat!");
     }
 
     function generateJsonFile() {
