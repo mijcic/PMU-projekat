@@ -108,12 +108,12 @@ fun LocationOverlayHeader(modifier: Modifier,locationCount: Int) {
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Text(
-            text = "Misteriozne Lokacije",
+            text = "Mysterious Locations",
             color = Color.White,
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = "$locationCount pronađenih mesta",
+            text = "$locationCount locations found",
             color = Color.LightGray,
             style = MaterialTheme.typography.bodySmall
         )

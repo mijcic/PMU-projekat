@@ -440,4 +440,5 @@ class CommonRepository @Inject constructor(
         lokacije = realm.query<LokacijeIstrageR>().find()
         return lokacije
     }
+
 }

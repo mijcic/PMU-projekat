@@ -48,7 +48,6 @@ import rs.ac.bg.etf.projekat.data.realm.PitanjeIspitivanjeSvedokaR
 import rs.ac.bg.etf.projekat.data.realm.PitanjeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeR
 import rs.ac.bg.etf.projekat.data.realm.PorukeZadatakR
-import rs.ac.bg.etf.projekat.data.realm.PrijavljeniKorisnikR
 import rs.ac.bg.etf.projekat.data.realm.StatusAlibijaR
 import rs.ac.bg.etf.projekat.data.realm.StatusPorukeR
 import rs.ac.bg.etf.projekat.data.realm.StatusZrtvaR

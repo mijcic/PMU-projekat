@@ -37,7 +37,7 @@ fun NavGraphBuilder.medicalNavigation(
         LekarskiTestPage(viewModel)
     }
     composable("destinationHospitalPage") {
-        HospitalScreen(navController = navController, viewModel = hospitalViewModel)
+        HospitalScreen(navController = navController, viewModel = hospitalViewModel,myViewModel=viewModel)
     }
     composable("destinationLocationPage"){
         LocationPage(navController,viewModel,realmViewModel)

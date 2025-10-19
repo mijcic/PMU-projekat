@@ -123,7 +123,8 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
                                         selectedCategory = null
                                     },
                                     modifier = Modifier.align(Alignment.BottomCenter),
-                                    title=title
+                                    title=title,
+                                    navController
                                 )
                             }
                         }
@@ -245,7 +246,8 @@ fun FinishInvestigationButton(
     myViewModel: MyViewModel,
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String
+    title: String,
+    navController: NavController
 ) {
     Button(
         onClick = {
@@ -262,6 +264,15 @@ fun FinishInvestigationButton(
             }
 
             onFinished()
+            navController.navigate("destinationSuspectsPage") {
+                popUpTo("destinationSuspectsInterviewPage/{title}") {
+                    inclusive = true
+                }
+                popUpTo("destinationSuspectDetailsPage/{idOsoba}/{image}/{title}") {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
         },
         modifier = modifier
             .widthIn(min = 180.dp)

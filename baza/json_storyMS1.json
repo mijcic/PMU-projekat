@@ -376,45 +376,113 @@
         }
     ],
     "pitanjeR": [
-        {
+    {
         "idPitanje": 1,
         "zlocinId": 1,
         "tekst": "What unusual object was found in the victim's apartment that may be linked to the incident?"
-        },
-        {
-        "idPitanje": 2,
+    },
+    {
+        "idPitanje": 4,
         "zlocinId": 1,
-        "tekst": "Whose threatening messages were discovered on the victim's phone?"
-        },
-        {
-        "idPitanje": 3,
+        "tekst": "According to the medical report, what is the unexplained medical event the patient experienced?"
+    },
+    {
+        "idPitanje": 5,
         "zlocinId": 1,
-        "tekst": "What was the patient's condition upon arrival at the hospital?"
-        }
-    ],
-    "odgovorR": [
-        {
+        "tekst": "What is the key evidence found on the strange book that links the victim to an unknown person?"
+    },
+    {
+        "idPitanje": 6,
+        "zlocinId": 1,
+        "tekst": "What warning did 'Mr.Chao' give the victim in the WhatsApp messages about leaving the group?"
+    }
+],
+"odgovorR": [
+    {
         "idOdogovor": 1,
         "pitanjeId": 1,
         "tekstOdgovora": "A set of strange books with unknown symbols.",
         "tacan": true,
         "bodovi": 10
-        },
-        {
+    },
+    {
         "idOdogovor": 2,
         "pitanjeId": 1,
         "tekstOdgovora": "A loaded handgun hidden under the bed.",
         "tacan": false,
         "bodovi": 0
-        },
-        {
+    },
+    {
         "idOdogovor": 3,
         "pitanjeId": 1,
         "tekstOdgovora": "A passport with a different identity.",
         "tacan": false,
         "bodovi": 0
-        }
-    ],
+    },
+    {
+        "idOdogovor": 4,
+        "pitanjeId": 4,
+        "tekstOdgovora": "A short period of cardiac arrest with spontaneous recovery.",
+        "tacan": true,
+        "bodovi": 10
+    },
+    {
+        "idOdogovor": 5,
+        "pitanjeId": 4,
+        "tekstOdgovora": "A severe brain hemorrhage.",
+        "tacan": false,
+        "bodovi": 0
+    },
+    {
+        "idOdogovor": 6,
+        "pitanjeId": 4,
+        "tekstOdgovora": "Drug overdose with rapid antidote response.",
+        "tacan": false,
+        "bodovi": 0
+    },
+    {
+        "idOdogovor": 7,
+        "pitanjeId": 5,
+        "tekstOdgovora": "A partial DNA sample that does not match the victim or the national database.",
+        "tacan": true,
+        "bodovi": 10
+    },
+    {
+        "idOdogovor": 8,
+        "pitanjeId": 5,
+        "tekstOdgovora": "A latent fingerprint matching a known international criminal.",
+        "tacan": false,
+        "bodovi": 0
+    },
+    {
+        "idOdogovor": 9,
+        "pitanjeId": 5,
+        "tekstOdgovora": "A blood stain with a rare Parisian blood type.",
+        "tacan": false,
+        "bodovi": 0
+    },
+    {
+        "idOdogovor": 10,
+        "pitanjeId": 6,
+        "tekstOdgovora": "That leaving would be 'dangerous. For you. For those you love.'",
+        "tacan": true,
+        "bodovi": 10
+    },
+    {
+        "idOdogovor": 11,
+        "pitanjeId": 6,
+        "tekstOdgovora": "That the victim would be permanently banned from their future gatherings.",
+        "tacan": false,
+        "bodovi": 0
+    },
+    {
+        "idOdogovor": 12,
+        "pitanjeId": 6,
+        "tekstOdgovora": "That the Watcher would stop following them immediately.",
+        "tacan": false,
+        "bodovi": 0
+    }
+],
     "osobaR": [
         {
             "idOsoba": 1,
@@ -431,7 +499,7 @@
         "idZadatak": 1,
         "tekst": "Investigate the victim’s locations.",
         "korak": "1",
-        "uradjen": false,
+        "uradjen": true,
         "nextZadatak": 2,
         "zlocinId": 101
         },
@@ -439,7 +507,7 @@
         "idZadatak": 2,
         "tekst": "Analyze the threatening messages found on the victim’s phone.",
         "korak": "2",
-        "uradjen": false,
+        "uradjen": true,
         "nextZadatak": 3,
         "zlocinId": 101
         }
@@ -462,15 +530,9 @@
     "telefonZadatakR": [
             {
             "idTelefonZadatak": 1,
-            "telefonId": 10,
-            "zadatakId": 3,
+            "telefonId": 1,
+            "zadatakId": 2,
             "uradjen": false
-            },
-            {
-            "idTelefonZadatak": 2,
-            "telefonId": 11,
-            "zadatakId": 4,
-            "uradjen": true
             }
     ],
     "forenzickiDokazZadatakR": [
@@ -480,13 +542,6 @@
         "forenzickiDokazId": 1,
         "uradjen": false,
         "zadatakId": 1
-        },
-        {
-        "idForenzickiDokazZadatak": 2,
-        "tekst": "Compare DNA evidence with known suspects in the case.",
-        "forenzickiDokazId": 1,
-        "uradjen": false,
-        "zadatakId": 2
         }
     ],
     "aplikacijaKtor":[{

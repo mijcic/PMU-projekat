@@ -1378,14 +1378,24 @@ class MyViewModel @Inject constructor(
             val responseIzjava = commonRepository.selectIzjavaZaPacijenta()
             val responseLekarskiTest= commonRepository.selectLekarskiTest()
             val responseLokacije = commonRepository.selectLokacijeIstrageR()
-
+            Log.d("Zadaci vi","ovde")
             _uiStateMysteriousSymptomsData.value =
                 UiStateDataMysteriousSymptoms(patient = response, medicalReport = responseMed, statement = responseIzjava, tests = responseLekarskiTest, locations = responseLokacije)
+
+            Log.d("Zadaci vi","ovde")
         } catch (e: Exception) {
             e.printStackTrace()
             _uiStateMysteriousSymptomsData.value =
                 UiStateDataMysteriousSymptoms(patient = null,medicalReport = null, statement = null, tests = null, locations = emptyList())
         }
+        try {
+            Log.d("Zadaci vi","ovde")
+            val response = commonRepository.selectTasks()
+            Log.d("Zadaci vi",response.toString())
+            _uiStateTasks.value = UiStateTasks(response)
+        }catch (e: Exception) {
+            e.printStackTrace()
+         }
     }
 
     fun selectTelefonZadatakViewModel(): TelefonZadatakR? {
