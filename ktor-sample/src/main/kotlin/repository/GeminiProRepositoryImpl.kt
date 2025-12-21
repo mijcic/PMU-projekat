@@ -210,7 +210,7 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
 
     override fun insertGeminiObdukcija(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, zl: ZlocinData, zrtva: ZrtvaData, timestamp: Long, repo: RepositoryInsert){
         val obdukcija =geminiResponse2.obdukcijaR
-        val datumStr = obdukcija.datum
+        val datumStr = obdukcija?.datum
 
         var timestamp2: Long? = null
 
@@ -232,20 +232,21 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
             timestamp2=timestamp
         }
 
-        var ob= ObdukcijaData(
-            idObdukcija = obdukcija.idObdukcija,
-            izvestaj = obdukcija.izvestaj,
-            datum = timestamp2!!,
-            uzrokSmrti = obdukcija.uzrokSmrti,
-            zrtvaId = obdukcija.zrtvaId,
-            informacije = obdukcija.informacije
-        )
-        repo.insertObdukcijaData(
-            obdukcija = ob,
-            zrtva = zrtva
-        )
-
-        geminiResponseRetrofit.obdukcijaRetrofit=ob
+        if (obdukcija != null && timestamp2 != null) {
+            var ob= ObdukcijaData(
+                idObdukcija = obdukcija.idObdukcija,
+                izvestaj = obdukcija.izvestaj,
+                datum = timestamp2,
+                uzrokSmrti = obdukcija.uzrokSmrti,
+                zrtvaId = obdukcija.zrtvaId,
+                informacije = obdukcija.informacije
+            )
+            repo.insertObdukcijaData(
+                obdukcija = ob,
+                zrtva = zrtva
+            )
+            geminiResponseRetrofit.obdukcijaRetrofit=ob
+        }
     }
 
     override fun insertGeminiOsumnjicen(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, timestamp:Long, zl: ZlocinData, repo: RepositoryInsert): MutableList<OsumnjicenData> {
@@ -312,6 +313,35 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                         motiv = m
                     )
 
+//                    val indexOs = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.indexOfFirst { it.osumnjicenId == prev }
+//                    val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.osumnjicenId == prev }
+//                    ispitivanjeOsumnjicenogZadatak?.osumnjicenId = osum.idOsumnjicen
+//                    if(indexOs !=-1){
+//                        geminiResponse2.ispitivanjeOsumnjicenogZadatakR[indexOs].osumnjicenId = osum.idOsumnjicen
+//                    }
+//
+//                    val indexOsZr = geminiResponse2.odnosOsumnjicenZrtvaR.indexOfFirst { it.osumnjicenId == prev }
+//                    val odnosOsumnjicenZrtva = geminiResponse2.odnosOsumnjicenZrtvaR.find { it.osumnjicenId == prev }
+//                    odnosOsumnjicenZrtva?.osumnjicenId = osum.idOsumnjicen
+//                    if(indexOsZr !=-1){
+//                        geminiResponse2.odnosOsumnjicenZrtvaR[indexOsZr].osumnjicenId = osum.idOsumnjicen
+//                    }
+//
+//                    var indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
+//                    var pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
+//                    pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
+//                    if(indexOs !=-1){
+//                        geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
+//                    }
+//                    while(pitanjeIspitivanjeOsumnjicenog!=null){
+//                        indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
+//                        pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
+//                        pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
+//                        if(indexOs !=-1){
+//                            geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
+//                        }
+//                    }
+
                     val indexOs = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.indexOfFirst { it.osumnjicenId == prev }
                     val ispitivanjeOsumnjicenogZadatak = geminiResponse2.ispitivanjeOsumnjicenogZadatakR.find { it.osumnjicenId == prev }
                     ispitivanjeOsumnjicenogZadatak?.osumnjicenId = osum.idOsumnjicen
@@ -326,18 +356,11 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                         geminiResponse2.odnosOsumnjicenZrtvaR[indexOsZr].osumnjicenId = osum.idOsumnjicen
                     }
 
-                    var indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
-                    var pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
-                    pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
-                    if(indexOs !=-1){
-                        geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
-                    }
-                    while(pitanjeIspitivanjeOsumnjicenog!=null){
-                        indexOsPit= geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.indexOfFirst { it.osumnjicenId == prev }
-                        pitanjeIspitivanjeOsumnjicenog = geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.find { it.osumnjicenId == prev }
-                        pitanjeIspitivanjeOsumnjicenog?.osumnjicenId = osum.idOsumnjicen
-                        if(indexOs !=-1){
-                            geminiResponse2.pitanjeIspitivanjeOsumnjicenogR[indexOsPit].osumnjicenId = osum.idOsumnjicen
+                    // === ISPRAVKA LOGIKE ZA pitanjeIspitivanjeOsumnjicenogR ===
+                    // Ažuriraj SVE elemente koji imaju stari ID (prev)
+                    geminiResponse2.pitanjeIspitivanjeOsumnjicenogR.forEach { pitanje ->
+                        if (pitanje.osumnjicenId == prev) {
+                            pitanje.osumnjicenId = osum.idOsumnjicen
                         }
                     }
 
@@ -356,16 +379,110 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
         return osumnjiceniLista
     }
 
-    override fun insertGeminiSvedok(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, timestamp:Long, zl: ZlocinData, repo: RepositoryInsert): MutableList<SvedokData>{
-        val svedoci=geminiResponse2.svedokR
+//    override fun insertGeminiSvedok(geminiResponse2: GeminiResponse2, geminiResponseRetrofit: GeminiResponseRetrofit, timestamp:Long, zl: ZlocinData, repo: RepositoryInsert): MutableList<SvedokData>{
+//        val svedoci=geminiResponse2.svedokR
+//        val svedociLista = mutableListOf<SvedokData>()
+//
+//        for(s in svedoci){
+//            val prev = s.idSvedok
+//            val datumStr = s.osobaId?.datum
+//
+//            var timestamp2: Long? = null
+//
+//            try {
+//                val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+//                val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
+//                timestamp2 = dat?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+//            } catch (e: Exception) {
+//                try {
+//                    val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+//                    val dat = datumStr?.let { LocalDateTime.parse(it, formatter2) }
+//                    timestamp2 = dat?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+//                } catch (ex: Exception) {
+//                    println("Greska pri parsiranju datuma: ${ex.message}")
+//                }
+//            }
+//
+//            if(timestamp2==null){
+//                timestamp2=timestamp
+//            }
+//            val os= timestamp2?.let {
+//                s.osobaId?.let { it1 ->
+//                    OsobaData(
+//                        idOsoba = it1.idOsoba,
+//                        ime = s.osobaId.ime,
+//                        kontakt = if(s.osobaId.kontakt==null)"" else s.osobaId.kontakt,
+//                        datum = it,
+//                        zanimanje = s.osobaId.zanimanje,
+//                        pol = s.osobaId.pol,
+//                        zlocinId = s.osobaId.zlocinId
+//                    )
+//                }
+//            }
+//            if (os != null) {
+//                repo.insertOsobaData(os,zl)
+//            }
+//            if (os != null) {
+//                val svedok = SvedokData(
+//                    idSvedok = s.idSvedok,
+//                    izjava = s.izjava,
+//                    statusSvedok = s.statusSvedok,
+//                    statusIspitan = s.statusIspitan,
+//                    zlocinId = s.zlocinId,
+//                    osobaId = os
+//                )
+//                repo.insertSvedokData(
+//                    svedok = svedok,
+//                    zlocin = zl
+//                )
+//
+//                val indexSvedok = geminiResponse2.ispitivanjeSvedokaZadatakR.indexOfFirst { it.svedokId == prev }
+//                val pronadjenoIspitivanjeSvedokaZadatak = geminiResponse2.ispitivanjeSvedokaZadatakR.find { it.svedokId == prev }
+//                pronadjenoIspitivanjeSvedokaZadatak?.svedokId = svedok.idSvedok
+//                if (indexSvedok!=-1){
+//                    println("\n\n svedok"+ geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].idIspitivanjeSvedokaZadatak)
+//                    geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].svedokId=svedok.idSvedok
+//                }
+//
+//                var indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
+//                var pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
+//                pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
+//                if (indexSvedok!=-1){
+//                    geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
+//                }
+//                while (pitanjeIspitivanjeSvedoka!=null){
+//                    indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
+//                    pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
+//                    pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
+//                    if (indexSvedok!=-1){
+//                        geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
+//                    }
+//                }
+//
+//                svedociLista.add(svedok)
+//            }
+//        }
+//        geminiResponseRetrofit.svedociRetrofit = svedociLista
+//        return svedociLista
+//    }
+
+    override fun insertGeminiSvedok(
+        geminiResponse2: GeminiResponse2,
+        geminiResponseRetrofit: GeminiResponseRetrofit,
+        timestamp: Long,
+        zl: ZlocinData,
+        repo: RepositoryInsert
+    ): MutableList<SvedokData> {
+        val svedoci = geminiResponse2.svedokR
         val svedociLista = mutableListOf<SvedokData>()
 
-        for(s in svedoci){
-            val prev = s.idSvedok
+        for (s in svedoci) {
+            val prev = s.idSvedok // Stari ID svedoka iz JSON-a
             val datumStr = s.osobaId?.datum
 
             var timestamp2: Long? = null
 
+            // Logika za parsiranje datuma
             try {
                 val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                 val dat = datumStr?.let { LocalDate.parse(it, formatter2) }
@@ -380,15 +497,17 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                 }
             }
 
-            if(timestamp2==null){
-                timestamp2=timestamp
+            if (timestamp2 == null) {
+                timestamp2 = timestamp
             }
-            val os= timestamp2?.let {
+
+            // 1. Obrada i unos OsobaData
+            val os = timestamp2?.let {
                 s.osobaId?.let { it1 ->
                     OsobaData(
                         idOsoba = it1.idOsoba,
                         ime = s.osobaId.ime,
-                        kontakt = if(s.osobaId.kontakt==null)"" else s.osobaId.kontakt,
+                        kontakt = s.osobaId.kontakt ?: "",
                         datum = it,
                         zanimanje = s.osobaId.zanimanje,
                         pol = s.osobaId.pol,
@@ -397,8 +516,10 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                 }
             }
             if (os != null) {
-                repo.insertOsobaData(os,zl)
+                repo.insertOsobaData(os, zl)
             }
+
+            // 2. Unos SvedokData
             if (os != null) {
                 val svedok = SvedokData(
                     idSvedok = s.idSvedok,
@@ -413,28 +534,25 @@ class  GeminiProRepositoryImpl: GeminiProRepository{
                     zlocin = zl
                 )
 
+                // 3. Ažuriranje referenci u drugim listama sa NOVIM ID-em
+
+                // a) Azuriranje liste ispitivanjeSvedokaZadatakR (koristim tvoju postojeću logiku)
                 val indexSvedok = geminiResponse2.ispitivanjeSvedokaZadatakR.indexOfFirst { it.svedokId == prev }
                 val pronadjenoIspitivanjeSvedokaZadatak = geminiResponse2.ispitivanjeSvedokaZadatakR.find { it.svedokId == prev }
                 pronadjenoIspitivanjeSvedokaZadatak?.svedokId = svedok.idSvedok
-                if (indexSvedok!=-1){
-                    println("\n\n svedok"+ geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].idIspitivanjeSvedokaZadatak)
-                    geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].svedokId=svedok.idSvedok
+                if (indexSvedok != -1) {
+                    println("\n\n svedok" + geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].idIspitivanjeSvedokaZadatak)
+                    geminiResponse2.ispitivanjeSvedokaZadatakR[indexSvedok].svedokId = svedok.idSvedok
                 }
 
-                var indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
-                var pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
-                pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
-                if (indexSvedok!=-1){
-                    geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
-                }
-                while (pitanjeIspitivanjeSvedoka!=null){
-                    indexPitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.indexOfFirst { it.svedokId == prev }
-                    pitanjeIspitivanjeSvedoka = geminiResponse2.pitanjeIspitivanjeSvedokaR.find { it.svedokId == prev }
-                    pitanjeIspitivanjeSvedoka?.svedokId = svedok.idSvedok
-                    if (indexSvedok!=-1){
-                        geminiResponse2.pitanjeIspitivanjeSvedokaR[indexPitanjeIspitivanjeSvedoka].svedokId=svedok.idSvedok
+                // b) ISPRAVLJENO: Azuriranje liste pitanjeIspitivanjeSvedokaR
+                // SIGURAN NAČIN: Prolazi kroz SVE elemente i menja one koji imaju stari ID (prev).
+                geminiResponse2.pitanjeIspitivanjeSvedokaR.forEach { pitanje ->
+                    if (pitanje.svedokId == prev) {
+                        pitanje.svedokId = svedok.idSvedok
                     }
                 }
+                // Stari problematični blok (sa indexima i while petljom) je POTPUNO UKLONJEN.
 
                 svedociLista.add(svedok)
             }

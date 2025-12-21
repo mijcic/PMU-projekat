@@ -54,7 +54,7 @@ data class GeminiResponse2(
     override val dokazR:  List<DokazR>,
     val svedokR:  List<SvedokR>,
     val zrtvaR: ZrtvaR,
-    val obdukcijaR: ObdukcijaR,
+    val obdukcijaR: ObdukcijaR?,
     override val forenzickiDokazR: List<ForenzickiDokazR>,
     override val telefonR: List<TelefonR>,
     //val dokazOsumnjicenR: List<DokazOsumnjicenR>,
