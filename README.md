@@ -44,6 +44,8 @@ Key features include:
 <img src="preview/login.png" width="270"/>
 <img src="preview/sign_up.png" width="270"/>
 <img src="preview/settings.png" width="270"/>
+<img src="preview/cases.png" width="270"/>
+<img src="preview/case_dialog.png" width="270"/>
 <img src="preview/murder_info.png" width="270"/>
 <img src="preview/office.png" width="270"/>
 <img src="preview/murder_suspects.png" width="270"/>
