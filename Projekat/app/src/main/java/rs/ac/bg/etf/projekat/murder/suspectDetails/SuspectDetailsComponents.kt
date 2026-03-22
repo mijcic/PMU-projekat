@@ -1,45 +1,29 @@
-package rs.ac.bg.etf.projekat.murder
+package rs.ac.bg.etf.projekat.murder.suspectDetails
 
-import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -48,76 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
-import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.navigation.destinationSuspectsInterviewPage
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-@SuppressLint("StateFlowValueCalledInComposition")
-@Composable
-fun SuspectDetailsPage(idOsoba: Int, image: Int, title: String, navController: NavController) {
-    val realmViewModel: RealmViewModel = hiltViewModel()
-    var motiveAlibiStatus by remember { mutableStateOf<List<String>>(emptyList()) }
-
-    LaunchedEffect(Unit) {
-        motiveAlibiStatus = realmViewModel.getMotiveAlibiStatus(idOsoba) ?: emptyList()
-    }
-
-    val tableData = listOf(
-        listOf("Motive", motiveAlibiStatus.getOrNull(0).takeUnless { it.isNullOrBlank() } ?: "?"),
-        listOf("Alibi", motiveAlibiStatus.getOrNull(1).takeUnless { it.isNullOrBlank() } ?: "?"),
-        listOf("Status", motiveAlibiStatus.getOrNull(2).takeUnless { it.isNullOrBlank() } ?: "?")
-    )
-
-    Surface(modifier = Modifier.fillMaxSize()) {
-
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            DetailsBackground()
-
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth(0.92f)
-                        .shadow(12.dp, RoundedCornerShape(24.dp), clip = true)
-                        .background(colorResource(id = R.color.light_gray))
-                        .padding(16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        SuspectInfoFun(
-                            image = image,
-                            title = title,
-                            tableData = tableData
-                        )
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        InterrogateButton(
-                            title = title,
-                            navController = navController
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun oneRowAboutSuspect(tekst1: String, tekst2: String) {
@@ -221,11 +137,12 @@ fun SuspectInfoFun(
 }
 
 @Composable
-fun InterrogateButton(title: String, navController: NavController) {
+fun InterrogateButton(
+    text: String,
+    onDestinationSuspectsInterviewPage: () -> Unit
+) {
     Button(
-        onClick = {
-            navController.navigate(destinationSuspectsInterviewPage.route + "/" + title)
-        },
+        onClick = onDestinationSuspectsInterviewPage,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
         modifier = Modifier
@@ -234,7 +151,7 @@ fun InterrogateButton(title: String, navController: NavController) {
             .height(50.dp)
     ) {
         Text(
-            text = "Interrogate the Suspect",
+            text = text,
             color = Color.White,
             style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.special_elite)),
@@ -244,20 +161,4 @@ fun InterrogateButton(title: String, navController: NavController) {
             )
         )
     }
-}
-
-@Composable
-fun DetailsBackground(){
-    Image(
-        painter = painterResource(id = R.drawable.suspects_details_background),
-        contentDescription = "Background",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.6f))
-    )
 }

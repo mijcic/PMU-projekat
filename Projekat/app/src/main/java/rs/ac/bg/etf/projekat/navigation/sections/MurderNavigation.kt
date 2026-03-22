@@ -17,13 +17,20 @@ import rs.ac.bg.etf.projekat.ScorePage
 import rs.ac.bg.etf.projekat.ScoreQuestionsPage
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.murder.OfficePage
-import rs.ac.bg.etf.projekat.murder.SuspectDetailsPage
+import rs.ac.bg.etf.projekat.murder.office.OfficePage
+import rs.ac.bg.etf.projekat.murder.suspectDetails.SuspectDetailsPage
 import rs.ac.bg.etf.projekat.murder.SuspectInterviewPage
-import rs.ac.bg.etf.projekat.murder.SuspectsPage
+import rs.ac.bg.etf.projekat.murder.suspects.SuspectsPage
 import rs.ac.bg.etf.projekat.murder.WitnessDetailsPage
 import rs.ac.bg.etf.projekat.murder.WitnessesInterviewPage
 import rs.ac.bg.etf.projekat.murder.WitnessesPage
+import rs.ac.bg.etf.projekat.navigation.destinationEvidencePage
+import rs.ac.bg.etf.projekat.navigation.destinationMapPage
+import rs.ac.bg.etf.projekat.navigation.destinationPhonePage
+import rs.ac.bg.etf.projekat.navigation.destinationSuspectDetailsPage
+import rs.ac.bg.etf.projekat.navigation.destinationSuspectsInterviewPage
+import rs.ac.bg.etf.projekat.navigation.destinationSuspectsPage
+import rs.ac.bg.etf.projekat.navigation.destinationWitnessesPage
 
 @SuppressLint("NewApi")
 fun NavGraphBuilder.murderNavigation(
@@ -32,10 +39,33 @@ fun NavGraphBuilder.murderNavigation(
     realmViewModel: RealmViewModel
 ) {
     composable("destinationOfficePage"){
-        OfficePage(navController,viewModel,realmViewModel)
+        OfficePage(
+            onDestinationMapPageClick = {navController.navigate(destinationMapPage.route)},
+            onDestinationPhonePageClick = {navController.navigate(destinationPhonePage.route)},
+            onDestinationSuspectsPageClick = {navController.navigate(destinationSuspectsPage.route)},
+            onDestinationWitnessesPageClick = {navController.navigate(destinationWitnessesPage.route)},
+            onDestinationEvidencePageClick = {navController.navigate(destinationEvidencePage.route)},
+            onLoadTasks = { viewModel.getTasks()},
+            onSelectPhoneTasks = {
+                viewModel.selectTelefonZadatakViewModel()
+                viewModel.selectPorukeZadatakViewModel()
+            },
+            onLoadEvidences = {
+                viewModel.getEvidences()
+                viewModel.getForensicEvidences()
+            }
+        )
     }
     composable("destinationSuspectsPage"){
-        SuspectsPage(navController,viewModel,realmViewModel)
+        SuspectsPage(
+            onNavigateToDetails = { id, image, ime ->
+                navController.navigate("${destinationSuspectDetailsPage.route}/$id/$image/$ime")
+            },
+            onLoadPitanja = { ime ->
+                viewModel.getPitanjaZaOsumnjicenog(ime)
+            },
+            myViewModel = viewModel
+        )
     }
     composable(route = "destinationSuspectDetailsPage/{idOsoba}/{image}/{title}",
         arguments = listOf(
@@ -46,7 +76,12 @@ fun NavGraphBuilder.murderNavigation(
         val idOsoba = navBackStackEntry.arguments?.getInt("idOsoba") ?: 0
         val image = navBackStackEntry.arguments?.getInt("image") ?: 0
         val title =navBackStackEntry.arguments?.getString("title") ?:""
-        SuspectDetailsPage(idOsoba=idOsoba, image=image,title=title,navController)
+        SuspectDetailsPage(
+            idOsoba=idOsoba, image=image,title=title,
+            onNavigateToInterview = { suspectName ->
+                navController.navigate("${destinationSuspectsInterviewPage.route}/$suspectName")
+            }
+        )
     }
     composable(route = "destinationSuspectsInterviewPage/{title}",
         arguments = listOf(

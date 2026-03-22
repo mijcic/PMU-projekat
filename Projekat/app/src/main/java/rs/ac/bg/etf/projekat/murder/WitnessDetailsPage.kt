@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
+import rs.ac.bg.etf.projekat.murder.suspectDetails.oneRowAboutSuspect
 import rs.ac.bg.etf.projekat.navigation.destinationWitnessesInterviewPage
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
