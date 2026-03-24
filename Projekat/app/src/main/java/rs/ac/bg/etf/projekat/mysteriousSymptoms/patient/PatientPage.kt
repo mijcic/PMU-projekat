@@ -1,11 +1,8 @@
-package rs.ac.bg.etf.projekat.mysteriousSymptoms
+package rs.ac.bg.etf.projekat.mysteriousSymptoms.patient
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,9 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -44,27 +39,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import io.realm.kotlin.types.RealmInstant
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.navigation.destinationLekarskiTestPage
-import rs.ac.bg.etf.projekat.navigation.destinationMedicalReportPage
-import rs.ac.bg.etf.projekat.navigation.destinationMedicalStatementPage
-import rs.ac.bg.etf.projekat.navigation.destinationPhonePage
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, myViewModel: MyViewModel) {
+fun PatientScreen(
+    myViewModel: MyViewModel,
+    onDestinationMedicalReportPage: () -> Unit,
+    onDestinationPhonePage: () -> Unit,
+    onDestinationMedicalStatementPage: () -> Unit,
+    onDestinationLekarskiTestPage: () -> Unit
+) {
     val uiStateDataMysteriousSymptoms by myViewModel.uiStateMysteriousSymptomsData.collectAsState()
 
     LaunchedEffect(Unit) {
-
         myViewModel.getAllDataMysteriousSymptoms()
-
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -90,7 +83,7 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, 
                 formattedDate = dateFormat.format(date)
             }
             Text(
-                text = "Pacijent: ${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.ime}",
+                text = "Patient: ${uiStateDataMysteriousSymptoms.patient?.zrtvaId?.osobaId?.ime}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White),
@@ -115,17 +108,23 @@ fun PatientScreen(navController: NavController, realmViewModel: RealmViewModel, 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 ExpandableSection(title = "Documents") {
-                    PacijentInfoCard("📋", "Medical Report", "Displays the patient's basic medical findings.",
-                        { navController.navigate(destinationMedicalReportPage.route) })
-                    PacijentInfoCard("📱", "Phone", "Contains data from the patient's mobile phone.",{ navController.navigate(
-                        destinationPhonePage.route
-                    ) })
-                    PacijentInfoCard("👪", "Medical Statement", "This can be an important lead in understanding the patient’s mental state.",{ navController.navigate(
-                        destinationMedicalStatementPage.route
-                    ) })
-                    PacijentInfoCard("🧪", "Initial Test Results", "Laboratory test results confirm that no known psychoactive substances were found in the patient's body.",{ navController.navigate(
-                        destinationLekarskiTestPage.route
-                    ) })
+                    PatientInfoCard(icon ="📋", title = "Medical Report",
+                        description = "Displays the patient's basic medical findings.",
+                        onClick = onDestinationMedicalReportPage
+                    )
+                    PatientInfoCard(icon = "📱",
+                        title ="Phone",
+                        description = "Contains data from the patient's mobile phone.",
+                        onClick = onDestinationPhonePage
+                    )
+                    PatientInfoCard(icon= "👪",title=  "Medical Statement",
+                        description = "This can be an important lead in understanding the patient’s mental state.",
+                        onClick = onDestinationMedicalStatementPage
+                    )
+                    PatientInfoCard(icon = "🧪", title="Initial Test Results",
+                        description = "Laboratory test results confirm that no known psychoactive substances were found in the patient's body.",
+                        onClick = onDestinationLekarskiTestPage
+                    )
                 }
             }
 
@@ -140,12 +139,9 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
     val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { expanded = !expanded },
-//        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
-        // colors = CardDefaults.cardColors(containerColor = colorResource(R.color.mission_overlay_color)),
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.dark_purple)),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -154,7 +150,6 @@ fun PatientExpandableSection(title: String, content: @Composable ColumnScope.() 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     title,
-//                    color = Color(0xFFBBBBBB),
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
@@ -187,11 +182,9 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
     val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { expanded = !expanded },
-        // colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.dark_purple)),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -200,7 +193,6 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     title,
-                    // color = Color(0xFFBBBBBB),
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
@@ -217,8 +209,7 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
 
             AnimatedVisibility(visible = expanded) {
                 Column(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp)
                         .animateContentSize()
                 ) {
                     content()
@@ -226,54 +217,4 @@ fun ExpandableSection(title: String, content: @Composable ColumnScope.() -> Unit
             }
         }
     }
-}
-
-@Composable
-fun DetailItem(label: String, value: String) {
-    Row(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text("$label: ", color = Color.LightGray, fontWeight = FontWeight.Bold,
-            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
-        )
-        Text(value, color = Color.White,
-            style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
-        )
-    }
-}
-
-@Composable
-fun PacijentInfoCard(icon: String, title: String, description: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp).clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        // colors = CardDefaults.cardColors(containerColor = Color(0xFF333333))
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF342348))
-    ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(icon, fontSize = 22.sp, modifier = Modifier.padding(end = 12.dp),
-                style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
-            )
-            Column {
-                Text(title, color = Color.White, fontWeight = FontWeight.Bold,
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
-                )
-                Text(description, color = Color.LightGray, fontSize = 14.sp,
-                    style = TextStyle(fontFamily = FontFamily(Font(R.font.special_elite)), color = Color.White)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun PatientBackground(){
-    Image(
-        painter = painterResource(id = R.drawable.patient),
-        contentDescription = "Background Image",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
-    )
-
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.7f)))
 }

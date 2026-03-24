@@ -77,7 +77,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.protolite.well.known.types)
     implementation(libs.material)
-    implementation(libs.androidx.compose.testing)
+    //implementation(libs.androidx.compose.testing)
     implementation(libs.androidx.animation.android)
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.storage)
@@ -128,7 +128,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.8.2")
 
     //testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.13")
+    //testImplementation("org.robolectric:robolectric:4.13")
 
 
     testImplementation("io.mockk:mockk:1.13.10")
@@ -146,4 +146,8 @@ dependencies {
     implementation (libs.androidx.credentials.play.services.auth)
     implementation (libs.googleid)
     implementation(libs.facebook.android.sdk)
+
+    // UI tests
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

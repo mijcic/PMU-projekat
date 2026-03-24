@@ -1,10 +1,7 @@
-package rs.ac.bg.etf.projekat.murder
+package rs.ac.bg.etf.projekat.murder.suspectInterview
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,9 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -32,13 +27,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.UiStatePitanjaZaOsumnjicenog
+import rs.ac.bg.etf.projekat.murder.InterviewBackground
+import rs.ac.bg.etf.projekat.murder.QuestionDetail
+import rs.ac.bg.etf.projekat.murder.Section
+import kotlin.collections.get
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel, title: String,realmViewModel: RealmViewModel) {
+fun SuspectInterviewPage(
+    navController: NavController,
+    myViewModel: MyViewModel,
+    title: String
+) {
     LaunchedEffect(Unit) {
         myViewModel.getPitanjaZaOsumnjicenog(title)
     }
@@ -47,10 +49,34 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
 
     val questionsData = remember {
         mapOf(
-            "General Questions" to (uiPitanjaZaOsumnjicenog.generalQuestions.map { QuestionDetail(it.tekst, it.odgovor, it.komentar) } ?: listOf()),
-            "Alibi Questions" to (uiPitanjaZaOsumnjicenog.alibiQuestions.map { QuestionDetail(it.tekst, it.odgovor, it.komentar) } ?: listOf()),
-            "Evidence Questions" to (uiPitanjaZaOsumnjicenog.evidenceQuestions .map { QuestionDetail(it.tekst, it.odgovor, it.komentar) } ?: listOf()),
-            "Passing Questions" to (uiPitanjaZaOsumnjicenog.passingQuestions.map { QuestionDetail(it.tekst, it.odgovor, it.komentar) } ?: listOf()),
+            "General Questions" to (uiPitanjaZaOsumnjicenog.generalQuestions.map {
+                QuestionDetail(
+                    it.tekst,
+                    it.odgovor,
+                    it.komentar
+                )
+            } ?: listOf()),
+            "Alibi Questions" to (uiPitanjaZaOsumnjicenog.alibiQuestions.map {
+                QuestionDetail(
+                    it.tekst,
+                    it.odgovor,
+                    it.komentar
+                )
+            } ?: listOf()),
+            "Evidence Questions" to (uiPitanjaZaOsumnjicenog.evidenceQuestions .map {
+                QuestionDetail(
+                    it.tekst,
+                    it.odgovor,
+                    it.komentar
+                )
+            } ?: listOf()),
+            "Passing Questions" to (uiPitanjaZaOsumnjicenog.passingQuestions.map {
+                QuestionDetail(
+                    it.tekst,
+                    it.odgovor,
+                    it.komentar
+                )
+            } ?: listOf()),
         )
     }
 
@@ -139,7 +165,7 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ResponseSection(response = suspectResponse, selectedQuestionDetail = selectedQuestionDetail)
+                    ResponseSection( selectedQuestionDetail = selectedQuestionDetail)
 
                     Spacer(modifier = Modifier.height(20.dp))
                 }
@@ -148,29 +174,7 @@ fun SuspectInterviewPage(navController: NavController, myViewModel: MyViewModel,
     )
 }
 
-@Composable
-fun SuspectInfo(title: String) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            title, color = Color.White, style = TextStyle(
-                fontFamily = FontFamily(Font(R.font.special_elite)),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            "Investigation in progress ...", color = Color.White, style = TextStyle(
-                fontFamily = FontFamily(Font(R.font.special_elite)),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
-    }
-}
+
 
 @Composable
 fun VerticalTabBar(selectedSection: Section, onClickFunction: (Section) -> Unit) {
@@ -400,49 +404,4 @@ fun QuestionButton(question: QuestionDetail, onClick: () -> Unit) {
             )
         )
     }
-}
-
-@Composable
-fun ResponseSection(response: String, selectedQuestionDetail: QuestionDetail?) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .shadow(4.dp, RoundedCornerShape(12.dp)),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Box(modifier = Modifier.border(width = 1.dp, color = Color.Black)) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Answer: ${selectedQuestionDetail?.odgovor ?: "No answer available"}",
-                    style = TextStyle(fontSize = 18.sp, color = Color.Black)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Detective's Comment: ${selectedQuestionDetail?.komentar ?: "No comment available"}",
-                    style = TextStyle(fontSize = 18.sp, color = Color.Black, fontStyle = FontStyle.Italic)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun InterviewBackground(modifier: Modifier){
-    Image(
-        painter = painterResource(id = R.drawable.interview_background),
-        contentDescription = "Suspect Interview Background",
-        modifier = modifier,
-        contentScale = ContentScale.Crop
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.7f))
-    )
 }

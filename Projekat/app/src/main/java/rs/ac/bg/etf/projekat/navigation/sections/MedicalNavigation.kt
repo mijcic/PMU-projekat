@@ -1,20 +1,21 @@
 package rs.ac.bg.etf.projekat.navigation.sections
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.HospitalScreen
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.ui.HospitalPage
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.LekarskiTestPage
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.LocationPage
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.MedicalReportScreen
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.MedicalStatementPage
-import rs.ac.bg.etf.projekat.mysteriousSymptoms.PatientScreen
+import rs.ac.bg.etf.projekat.mysteriousSymptoms.medicalTest.LekarskiTestPage
+import rs.ac.bg.etf.projekat.mysteriousSymptoms.location.LocationPage
+import rs.ac.bg.etf.projekat.mysteriousSymptoms.medicalReport.MedicalReportScreen
+import rs.ac.bg.etf.projekat.mysteriousSymptoms.medicalStatement.MedicalStatementPage
+import rs.ac.bg.etf.projekat.mysteriousSymptoms.patient.PatientScreen
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.viewModels.HospitalViewModel
-import java.lang.reflect.Modifier
+import rs.ac.bg.etf.projekat.navigation.destinationLekarskiTestPage
+import rs.ac.bg.etf.projekat.navigation.destinationMedicalReportPage
+import rs.ac.bg.etf.projekat.navigation.destinationMedicalStatementPage
+import rs.ac.bg.etf.projekat.navigation.destinationPhonePage
 
 
 fun NavGraphBuilder.medicalNavigation(
@@ -28,18 +29,30 @@ fun NavGraphBuilder.medicalNavigation(
         MedicalReportScreen(navController, viewModel)
     }
     composable("destinationPatientPage"){
-        PatientScreen(navController,realmViewModel, viewModel)
+        PatientScreen(myViewModel =  viewModel,
+            onDestinationMedicalReportPage= { navController.navigate(destinationMedicalReportPage.route) } ,
+            onDestinationPhonePage = { navController.navigate(destinationPhonePage.route) },
+            onDestinationMedicalStatementPage = { navController.navigate(destinationMedicalStatementPage.route) },
+            onDestinationLekarskiTestPage = { navController.navigate(destinationLekarskiTestPage.route) }
+        )
     }
     composable("destinationMedicalStatementPage"){
-        MedicalStatementPage(navController,realmViewModel,viewModel)
+        MedicalStatementPage(myViewModel = viewModel)
     }
     composable("destinationLekarskiTestPage"){
         LekarskiTestPage(viewModel)
     }
     composable("destinationHospitalPage") {
-        HospitalScreen(navController = navController, viewModel = hospitalViewModel,myViewModel=viewModel)
+        HospitalScreen(
+            viewModel = hospitalViewModel,
+            myViewModel = viewModel,
+            onClickToPatient = {navController.navigate("destinationPatientPage")},
+            onClickToLocation = { navController.navigate("destinationLocationPage") },
+            onClickToEvidence = { navController.navigate("destinationEvidencePage")},
+            onClickToMap = { navController.navigate("destinationMapPage") }
+        )
     }
     composable("destinationLocationPage"){
-        LocationPage(navController,viewModel,realmViewModel)
+        LocationPage(viewModel= viewModel, onBack = { navController.popBackStack() })
     }
 }

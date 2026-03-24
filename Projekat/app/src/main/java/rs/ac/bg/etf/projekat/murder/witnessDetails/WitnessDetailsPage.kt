@@ -1,4 +1,4 @@
-package rs.ac.bg.etf.projekat.murder
+package rs.ac.bg.etf.projekat.murder.witnessDetails
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,18 +36,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
+import rs.ac.bg.etf.projekat.murder.DetailsBackground
 import rs.ac.bg.etf.projekat.murder.suspectDetails.oneRowAboutSuspect
-import rs.ac.bg.etf.projekat.navigation.destinationWitnessesInterviewPage
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
-fun WitnessDetailsPage(idOsoba:Int, image: Int, title: String, navController: NavController,realmViewModel: RealmViewModel) {
+fun WitnessDetailsPage(
+    idOsoba:Int, image: Int,
+    title: String,
+    onClick: () -> Unit,
+    realmViewModel: RealmViewModel
+) {
     var motiveAlibiStatus by remember { mutableStateOf<List<String>>(emptyList()) }
 
     LaunchedEffect(Unit) {
@@ -92,7 +93,10 @@ fun WitnessDetailsPage(idOsoba:Int, image: Int, title: String, navController: Na
 
                         Spacer(modifier = Modifier.height(25.dp))
 
-                        InterrogateWitnessButton(title, navController)
+                        InterrogateWitnessButton(
+                            text="Interrogate the Witness",
+                            onClick = onClick
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -140,37 +144,11 @@ fun WitnessInfoCard(image: Int, title: String, tableData: List<List<String>>) {
     Spacer(modifier = Modifier.height(25.dp))
 
     if (tableData.isNotEmpty()) {
-        oneRowAboutSuspect("Zanimanje", tableData[0][1])
+        oneRowAboutSuspect("Occupation", tableData[0][1])
         Spacer(modifier = Modifier.height(5.dp))
         Divider(color = Color.Black, modifier = Modifier.padding(horizontal = 16.dp))
         Spacer(modifier = Modifier.height(5.dp))
         oneRowAboutSuspect("Status", tableData[1][1])
         Spacer(modifier = Modifier.height(5.dp))
-    }
-}
-
-@Composable
-fun InterrogateWitnessButton(title: String, navController: NavController) {
-    Button(
-        onClick = {
-            navController.navigate(destinationWitnessesInterviewPage.route + "/" + title)
-        },
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
-        modifier = Modifier
-            .fillMaxWidth(0.7f)
-            .padding(horizontal = 16.dp)
-            .height(50.dp)
-    ) {
-        Text(
-            text = "Interrogate the Witness",
-            color = Color.White,
-            style = TextStyle(
-                fontFamily = FontFamily(Font(R.font.special_elite)),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-        )
     }
 }

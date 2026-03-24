@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.ui.HospitalNavigationEvent
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.ui.HospitalPage
@@ -13,26 +12,28 @@ import rs.ac.bg.etf.projekat.mysteriousSymptoms.viewModels.HospitalViewModel
 
 @Composable
 fun HospitalScreen(
-    navController: NavController,
     viewModel: HospitalViewModel = hiltViewModel(),
-    myViewModel:MyViewModel = hiltViewModel()
+    myViewModel:MyViewModel = hiltViewModel(),
+    onClickToPatient: () -> Unit,
+    onClickToLocation: () -> Unit,
+    onClickToEvidence: () -> Unit,
+    onClickToMap: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(Unit) {
-
         myViewModel.getAllDataMysteriousSymptoms()
-
     }
+
     LaunchedEffect(Unit) {
 
         viewModel.navigation
             .flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { event ->
                 when (event) {
-                    HospitalNavigationEvent.ToPatient -> navController.navigate("destinationPatientPage")
-                    HospitalNavigationEvent.ToLocation -> navController.navigate("destinationLocationPage")
-                    HospitalNavigationEvent.ToEvidence -> navController.navigate("destinationEvidencePage")
-                    HospitalNavigationEvent.ToMap -> navController.navigate("destinationMapPage")
+                    HospitalNavigationEvent.ToPatient -> onClickToPatient()
+                    HospitalNavigationEvent.ToLocation -> onClickToLocation()
+                    HospitalNavigationEvent.ToEvidence -> onClickToEvidence()
+                    HospitalNavigationEvent.ToMap -> onClickToMap()
                 }
             }
     }
