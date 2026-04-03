@@ -60,9 +60,7 @@ fun OfficePage(
                 containerColor = Color(0XFFA99367),
                 shape = CircleShape,
                 elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .size(60.dp)
+                modifier = Modifier.padding(16.dp).size(60.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.planning),
@@ -74,9 +72,7 @@ fun OfficePage(
         },
         content = { paddingValues ->
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                modifier = Modifier.fillMaxSize().padding(paddingValues)
             ) {
                 var imageSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -94,9 +90,7 @@ fun OfficePage(
                     contentScale = ContentScale.Crop
                 )
 
-                Box(modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.3f)))
+                Box(modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.3f)))
 
                 TopicForInvestigation(
                     imageSize = imageSize,

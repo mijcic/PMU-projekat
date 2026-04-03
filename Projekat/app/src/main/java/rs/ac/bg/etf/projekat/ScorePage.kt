@@ -1,6 +1,5 @@
 package rs.ac.bg.etf.projekat
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,12 +57,7 @@ fun ScorePage(navController: NavController,myViewModel: MyViewModel){
         myViewModel.scoreKorisnikaList()
     }
 
-    Log.d("SCORE PAFW", uiStateScoreKorisnikaList.scoreList.toString())
-
-    Log.d("SCORE PAFW", uiStateScoreKorisnika.toString())
-
     Surface(modifier = Modifier.fillMaxSize()) {
-
         ScoreBackground()
 
         Column(

@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.UiStatePitanjaZaOsumnjicenog
-import rs.ac.bg.etf.projekat.murder.InterviewBackground
+import rs.ac.bg.etf.projekat.Background
 import rs.ac.bg.etf.projekat.murder.QuestionDetail
 import rs.ac.bg.etf.projekat.murder.Section
 import kotlin.collections.get
@@ -106,7 +106,12 @@ fun SuspectInterviewPage(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
 
-                InterviewBackground(modifier = Modifier.matchParentSize())
+                Background(
+                    image = R.drawable.interview_background,
+                    desc = "Suspect Interview Background",
+                    modifier = Modifier.matchParentSize(),
+                    alpha = 0.7f
+                )
 
                 Column(
                     modifier = Modifier

@@ -32,13 +32,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 
 @Composable
-fun PhonePage(navController: NavController,myViewModel: MyViewModel) {
+fun PhonePage(myViewModel: MyViewModel, onClickNav: (String)-> Unit) {
     LaunchedEffect(Unit) {
         Log.d("Telefon ","OVDe")
         val zad =myViewModel.selectTelefonZadatakViewModel()
@@ -49,9 +48,7 @@ fun PhonePage(navController: NavController,myViewModel: MyViewModel) {
             myViewModel.updateTelefonTask(zad)
         }
     }
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         val imagePainter = painterResource(id = R.drawable.iphone_background)
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
@@ -68,14 +65,12 @@ fun PhonePage(navController: NavController,myViewModel: MyViewModel) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                AppIconPhotoTextItem("WhatsApp", R.drawable.iphone_whatsapp_icon, { navController.navigate("destinationWhatsAppPage") })
-                AppIconPhotoTextItem("Notes", R.drawable.iphone_notes_icon, { navController.navigate("destinationNotesPage")} )
-                AppIconPhotoTextItem("Settings", R.drawable.iphone_settings_icon, { navController.navigate("destinationPhoneSettingsPage")})
+                AppIconPhotoTextItem("WhatsApp", R.drawable.iphone_whatsapp_icon, { onClickNav("destinationWhatsAppPage") })
+                AppIconPhotoTextItem("Notes", R.drawable.iphone_notes_icon, { onClickNav("destinationNotesPage")} )
+                AppIconPhotoTextItem("Settings", R.drawable.iphone_settings_icon, { onClickNav("destinationPhoneSettingsPage")})
                 AppIconPhotoTextItem("", R.drawable.iphone_empty_icon, {})
             }
 
@@ -97,16 +92,14 @@ fun PhonePage(navController: NavController,myViewModel: MyViewModel) {
                 )
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AppIconPhotoItem(R.drawable.iphone_phone_icon, Modifier.weight(1f), { navController.navigate("destinationCallsPage") })
-                    AppIconPhotoItem(R.drawable.iphone_photos_icon, Modifier.weight(1f), { navController.navigate("destinationGalleryPage") })
-                    AppIconPhotoItem(R.drawable.iphone_message_icon, Modifier.weight(1f), { navController.navigate("destinationMessagesPage") })
-                    AppIconPhotoItem(R.drawable.iphone_contacts_icon, Modifier.weight(1f), { navController.navigate("destinationPhonebookPage") })
+                    AppIconPhotoItem(R.drawable.iphone_phone_icon, Modifier.weight(1f), { onClickNav("destinationCallsPage") })
+                    AppIconPhotoItem(R.drawable.iphone_photos_icon, Modifier.weight(1f), { onClickNav("destinationGalleryPage") })
+                    AppIconPhotoItem(R.drawable.iphone_message_icon, Modifier.weight(1f), { onClickNav("destinationMessagesPage") })
+                    AppIconPhotoItem(R.drawable.iphone_contacts_icon, Modifier.weight(1f), { onClickNav("destinationPhonebookPage") })
                 }
             }
         }

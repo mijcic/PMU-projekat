@@ -1,4 +1,4 @@
-package rs.ac.bg.etf.projekat.murder
+package rs.ac.bg.etf.projekat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,20 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import rs.ac.bg.etf.projekat.R
 
 @Composable
-fun DetailsBackground(){
+fun Background(image: Int, desc: String?, modifier: Modifier, alpha: Float){
     Image(
-        painter = painterResource(id = R.drawable.suspects_details_background),
-        contentDescription = "Background",
-        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(id = image),
+        contentDescription = desc,
+        modifier = modifier,
         contentScale = ContentScale.Crop
     )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.6f))
-    )
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = alpha)))
 }

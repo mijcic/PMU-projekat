@@ -41,15 +41,7 @@ import rs.ac.bg.etf.projekat.navigation.destinationOfficePage
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun MissionPage(
-    image: Int,
-    title: String,
-    date: String,
-    place: String,
-    description: String,
-    navController: NavController,
-    realmViewModel: RealmViewModel
-) {
+fun MissionPage(image: Int, navController: NavController, realmViewModel: RealmViewModel) {
     val crimeData = realmViewModel.uiStateCrimeData.collectAsState()
 
     MissionBackground(
@@ -72,13 +64,9 @@ fun MissionPage(
 
 @Composable
 fun MissionBackground(
-    image: Int,
-    onClick: () -> Unit,
-    content: @Composable BoxScope.() -> Unit
+    image: Int, onClick: () -> Unit, content: @Composable BoxScope.() -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()
-        .clickable { onClick() }
-    ) {
+    Box(modifier = Modifier.fillMaxSize().clickable { onClick() }) {
         Image(
             painter = painterResource(id = image),
             contentDescription = "Background",
@@ -176,19 +164,8 @@ fun MissionBox(content: @Composable () -> Unit) {
                 shape = RoundedCornerShape(24.dp)
                 clip = true
             }
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.15f),
-                        Color.White.copy(alpha = 0.05f)
-                    )
-                )
-            )
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.2f),
-                shape = RoundedCornerShape(24.dp)
-            )
+            .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.15f), Color.White.copy(alpha = 0.05f))))
+            .border(width = 1.dp, color = Color.White.copy(alpha = 0.2f), shape = RoundedCornerShape(24.dp))
             .padding(24.dp)
     ) {
         content()

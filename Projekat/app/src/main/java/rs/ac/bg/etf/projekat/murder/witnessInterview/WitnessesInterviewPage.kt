@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.murder.InterviewBackground
+import rs.ac.bg.etf.projekat.Background
 import rs.ac.bg.etf.projekat.murder.QuestionDetail
 import rs.ac.bg.etf.projekat.murder.suspectInterview.QuestionList
 import rs.ac.bg.etf.projekat.murder.suspectInterview.ResponseSection
@@ -47,7 +47,12 @@ fun WitnessesInterviewPage(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
 
-                InterviewBackground(modifier = Modifier.matchParentSize())
+                Background(
+                    image = R.drawable.interview_background,
+                    desc = "Suspect Interview Background",
+                    modifier = Modifier.matchParentSize(),
+                    alpha = 0.7f
+                )
 
                 Column(
                     modifier = Modifier.fillMaxSize().padding(16.dp),

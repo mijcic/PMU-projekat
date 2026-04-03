@@ -3,7 +3,6 @@ package rs.ac.bg.etf.projekat.auth
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -63,7 +62,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -71,12 +69,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.retrofit.models.KorisnikRequest
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -91,10 +85,8 @@ fun LoginPage(
         val imagePainter = painterResource(id = R.drawable.background_login_signup)
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        val uiStateUser by viewModel.uiStateUser.collectAsState()
 
         var context = LocalContext.current
-        val realmViewModel: RealmViewModel = hiltViewModel()
         val uiState by viewModel.uiStateLogIn.collectAsState()
         var showDialog by remember { mutableStateOf(false) }
         var errorMsg by remember { mutableStateOf("") }

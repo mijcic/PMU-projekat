@@ -38,16 +38,12 @@ import rs.ac.bg.etf.projekat.R
 @Composable
 fun oneRowAboutSuspect(tekst1: String, tekst2: String) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
-            modifier = Modifier
-                .width(IntrinsicSize.Min)
-                .weight(1f),
+            modifier = Modifier.width(IntrinsicSize.Min).weight(1f),
             contentAlignment = Alignment.CenterStart
         ) {
             Text(
@@ -63,8 +59,7 @@ fun oneRowAboutSuspect(tekst1: String, tekst2: String) {
         }
 
         Box(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             contentAlignment = Alignment.CenterEnd
         ) {
             Text(

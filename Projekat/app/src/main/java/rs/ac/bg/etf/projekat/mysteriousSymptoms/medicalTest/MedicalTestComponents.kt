@@ -1,6 +1,5 @@
 package rs.ac.bg.etf.projekat.mysteriousSymptoms.medicalTest
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,29 +14,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import rs.ac.bg.etf.projekat.Background
 import rs.ac.bg.etf.projekat.R
 
 @Composable
-fun MedicalTestBackground(
-    content: @Composable BoxScope.() -> Unit
-) {
+fun MedicalTestBackground(content: @Composable BoxScope.() -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.medical_test_background),
-            contentDescription = null,
+        Background(
+            image = R.drawable.medical_test_background,
+            desc = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            alpha = 0.5f
         )
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)))
 
         content()
     }

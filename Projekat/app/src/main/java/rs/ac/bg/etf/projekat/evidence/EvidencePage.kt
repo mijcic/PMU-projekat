@@ -1,7 +1,5 @@
-package rs.ac.bg.etf.projekat
+package rs.ac.bg.etf.projekat.evidence
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,26 +40,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
-import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.UiStateCntEvidence
 import rs.ac.bg.etf.projekat.data.UiStateCntForensicEvidence
 import rs.ac.bg.etf.projekat.data.UiStateEvidences
@@ -73,8 +66,7 @@ import rs.ac.bg.etf.projekat.data.realm.ForenzickiDokazZadatakR
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel){
-
+fun EvidencePage(myViewModel: MyViewModel){
     val uiStateEvidences by myViewModel.uiStateEvidence.collectAsState()
     val uiStateForensicEvidences by myViewModel.uiStateForensicEvidence.collectAsState()
 
@@ -104,11 +96,8 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
             modifier = Modifier.fillMaxSize().background(colorResource(R.color.dark_purple))
         ) {
             Row(
-                modifier = Modifier
-                    .padding(top = 40.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .align(Alignment.CenterHorizontally)
+                modifier = Modifier.padding(top = 40.dp).fillMaxWidth()
+                    .height(48.dp).align(Alignment.CenterHorizontally)
             ) {
                 EvidenceTextColumn(
                     pagerState= pagerState,
@@ -139,10 +128,7 @@ fun EvidencePage(navController: NavController, myViewModel: MyViewModel, realmVi
                         Box(
                             modifier = Modifier
                                 .size(8.dp)
-                                .background(
-                                    Color.White,
-                                    shape = CircleShape
-                                )
+                                .background(Color.White, shape = CircleShape)
                         )
                     }
                 }
@@ -241,89 +227,9 @@ fun ForensicEvidenceListSection(
 }
 
 @Composable
-fun ImageRowWithCenterFocus(imageResIds: List<Int>) {
-    require(imageResIds.size == 5) { "Potrebno je tačno 5 slika" }
-
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val spacing = 8.dp
-
-    val totalSpacing = spacing * 4
-    val availableWidth = screenWidth - totalSpacing
-
-    val smallWeight = 1f
-    val mediumWeight = 1.5f
-    val largeWeight = 2f
-    val totalWeight = smallWeight * 2 + mediumWeight * 2 + largeWeight
-
-    val smallSize = availableWidth * (smallWeight / totalWeight)
-    val mediumSize = availableWidth * (mediumWeight / totalWeight)
-    val largeSize = availableWidth * (largeWeight / totalWeight)
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Leva mala
-        Image(
-            painter = painterResource(id = imageResIds[0]),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(smallSize)
-                //.clip(RoundedCornerShape(8.dp))
-        )
-
-        // Leva srednja
-        Image(
-            painter = painterResource(id = imageResIds[1]),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(mediumSize)
-                //.clip(RoundedCornerShape(8.dp))
-        )
-
-        // Najveća u sredini
-        Image(
-            painter = painterResource(id = imageResIds[2]),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(largeSize)
-                //.clip(RoundedCornerShape(8.dp))
-        )
-
-        // Desna srednja
-        Image(
-            painter = painterResource(id = imageResIds[3]),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(mediumSize)
-                //.clip(RoundedCornerShape(8.dp))
-        )
-
-        // Desna mala
-        Image(
-            painter = painterResource(id = imageResIds[4]),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(smallSize)
-                //.clip(RoundedCornerShape(8.dp))
-        )
-    }
-}
-
-@Composable
 fun <T> CardEvidenceShow(showDialog: MutableState<Boolean>, i: T) {
     Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
+        modifier = Modifier.padding(8.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -393,17 +299,6 @@ fun <T> CardEvidenceShow(showDialog: MutableState<Boolean>, i: T) {
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
-                /*
-                Text(
-                    text = "Victim: Isabelle Moreau",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontStyle = FontStyle.Italic,
-                        color = Color.Black
-                    )
-                )
-
-                 */
             }
         }
     }
@@ -420,9 +315,7 @@ fun <T> CardEvidenceLock(i: T){
         colors = CardDefaults.cardColors(containerColor = Color.Gray)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -641,33 +534,6 @@ fun EvidenceOrForensicEvidenceText(modifier: Modifier,pagerState: PagerState){
         textAlign = TextAlign.Center
     )
     Spacer(modifier = Modifier.height(30.dp))
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun EvidenceTextColumn(pagerState: PagerState, modifier: Modifier, onClick:() -> Unit){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .fillMaxHeight()
-            .clickable {
-                onClick()
-            }
-    ) {
-        Text(
-            text = "Evidences",
-            color = if (pagerState.currentPage == 0) Color.White else Color.Gray,
-            fontWeight = FontWeight.Bold
-        )
-        if (pagerState.currentPage == 0) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .background(Color.White, shape = CircleShape)
-            )
-        }
-    }
 }
 
 fun getimageResIdsEvidence(): List<Int>{

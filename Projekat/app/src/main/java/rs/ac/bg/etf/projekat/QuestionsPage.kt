@@ -1,6 +1,5 @@
 package rs.ac.bg.etf.projekat
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -141,9 +139,7 @@ fun QuestionCardItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Black.copy(alpha = 0.5f)
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -209,8 +205,7 @@ fun QuestionsSubmitButton(onClick: () -> Unit){
     Spacer(modifier = Modifier.height(16.dp))
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().wrapContentWidth()
-            .padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().wrapContentWidth().padding(vertical = 8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.dark_purple),
             contentColor = Color.White

@@ -54,10 +54,7 @@ fun MainScreen2(navController: NavController,viewModel: MyViewModel) {
     var explanationOn by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-
-        MainScreen2BackgroundWithOverlay(
-            imageRes = R.drawable.main_screen_background
-        )
+        MainScreen2BackgroundWithOverlay(imageRes = R.drawable.main_screen_background)
 
         MainScreen2Content(
             explanationOn = explanationOn,
@@ -94,22 +91,18 @@ fun MainScreen2Content(
     ) {
         MainScreen2TopNavigationBar(
             onProfileClick = {
-
                     if (uiStateUser.korisnickoIme!=null){
                         navController.navigate("destinationUserProfile")
                     }else{
                         navController.navigate("destinationLoginPage")
-                    }
-                 },
+                }
+             },
             onSettingsClick = { navController.navigate("destinationSettingsPage") }
         )
 
         WelcomeMessage(modifier = Modifier.weight(0.3f))
 
-        ExplanationToggleButton(
-            explanationOn = explanationOn,
-            onToggle = onToggleExplanation
-        )
+        ExplanationToggleButton(explanationOn = explanationOn, onToggle = onToggleExplanation)
 
         MainScreen2AnimatedVisibility(explanationOn)
 
@@ -123,10 +116,7 @@ fun MainScreen2Content(
 }
 
 @Composable
-fun MainScreen2TopNavigationBar(
-    onProfileClick: () -> Unit,
-    onSettingsClick: () -> Unit
-) {
+fun MainScreen2TopNavigationBar(onProfileClick: () -> Unit, onSettingsClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(20.dp),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -189,8 +179,7 @@ fun ExplanationToggleButton(explanationOn: Boolean, onToggle: () -> Unit) {
         colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
         shape = RoundedCornerShape(15.dp),
         modifier = Modifier.fillMaxWidth(0.8f).padding(10.dp)
-            .shadow(elevation = 20.dp, shape = RoundedCornerShape(15.dp),
-                clip = false)
+            .shadow(elevation = 20.dp, shape = RoundedCornerShape(15.dp), clip = false)
     ) {
         ExplanationButtonContent(explanationOn)
     }
@@ -214,11 +203,7 @@ private fun ExplanationText(explanationOn: Boolean) {
         color = Color.White,
         textAlign = TextAlign.Center,
         style = TextStyle(
-            shadow = Shadow(
-                color = Color.Black,
-                offset = Offset(5f, 5f),
-                blurRadius = 10f
-            )
+            shadow = Shadow(color = Color.Black, offset = Offset(5f, 5f), blurRadius = 10f)
         )
     )
 }
@@ -253,10 +238,7 @@ fun MainScreen2AnimatedVisibility(explanationOn: Boolean){
 }
 
 @Composable
-fun MainScreen2BottomButtons(
-    onPlayClick: () -> Unit,
-    onScoreClick: () -> Unit
-) {
+fun MainScreen2BottomButtons(onPlayClick: () -> Unit, onScoreClick: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         PlayGameButton(onClick = onPlayClick)
         ScoreButton(onClick = onScoreClick)
@@ -269,8 +251,7 @@ fun PlayGameButton(onClick: () -> Unit) {
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(Color(0XFFA99367)),
         shape = RoundedCornerShape(15.dp),
-        modifier = Modifier.padding(10.dp)
-            .wrapContentWidth().elevatedIconButton()
+        modifier = Modifier.padding(10.dp).wrapContentWidth().elevatedIconButton()
     ) {
         Text(
             text = "PLAY GAME",
@@ -278,19 +259,14 @@ fun PlayGameButton(onClick: () -> Unit) {
             fontSize = 25.sp,
             color = Color.White,
             textAlign = TextAlign.Center,
-            style = TextStyle(
-                shadow = Shadow(Color.Black, Offset(5f, 5f), 10f)
-            )
+            style = TextStyle(shadow = Shadow(Color.Black, Offset(5f, 5f), 10f))
         )
     }
 }
 
 @Composable
 fun ScoreButton(onClick: () -> Unit) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.padding(12.dp).elevatedIconButton()
-    ) {
+    IconButton(onClick = onClick, modifier = Modifier.padding(12.dp).elevatedIconButton()) {
         Icon(
             painter = painterResource(id = R.drawable.trophy_fill),
             contentDescription = "Trophy",

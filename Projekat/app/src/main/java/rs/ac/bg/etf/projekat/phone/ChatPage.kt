@@ -1,7 +1,6 @@
 package rs.ac.bg.etf.projekat.phone
 
 import android.content.res.Resources
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.compose.material.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -52,38 +50,26 @@ import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.data.realm.ObicnaPorukaR
 
 @Composable
-fun ChatPage(id: Int, name: String, photo: Int, navController: NavController) {
+fun ChatPage(id: Int, name: String, photo: Int) {
     val realmViewModel: RealmViewModel = hiltViewModel()
     var messages by remember { mutableStateOf<List<ObicnaPorukaR>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         messages = realmViewModel.getMessagesWithContact(id)!!.reversed()
-
-        Log.d("CONTACT",messages.toString())
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(12.dp)
-            .padding(top = 30.dp)
+        modifier = Modifier.fillMaxSize().background(Color.White).padding(12.dp).padding(top = 30.dp)
     ) {
-        ContactInfo(
-            photo = photo,
-            name = name
-        )
+        ContactInfo(photo = photo, name = name)
 
         Spacer(modifier = Modifier.height(5.dp))
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
         ChatScreen(
             messages = messages,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
+            modifier = Modifier.weight(1f).fillMaxWidth()
         )
-
         TextInsertation()
     }
 }
@@ -108,15 +94,11 @@ fun ContactInfo(photo: Int, name: String) {
         Image(
             painter = painterResource(id = validPictureResId),
             contentDescription = "Profile",
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
+            modifier = Modifier.size(60.dp).clip(CircleShape)
         )
         Spacer(modifier = Modifier.height(7.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = name, fontSize = 13.sp)
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
@@ -163,9 +145,7 @@ fun MessageBubble(message: ObicnaPorukaR, spacing: Dp) {
     val horizontalAlignment = if (message.kontaktKoSalje?.ime == "Me") Arrangement.End else Arrangement.Start
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = spacing),
+        modifier = Modifier.fillMaxWidth().padding(top = spacing),
         horizontalArrangement = horizontalAlignment
     ) {
         Box(
@@ -190,11 +170,7 @@ fun TextInsertation() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .border(
-                width = 1.dp,
-                color = Color.LightGray,
-                shape = RoundedCornerShape(25.dp)
-            )
+            .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(25.dp))
             .clip(RoundedCornerShape(25.dp))
             .background(Color.White)
             .wrapContentHeight(),
@@ -214,14 +190,11 @@ fun TextInsertation() {
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(0.dp)
+                modifier = Modifier.weight(1f).padding(0.dp)
             )
 
             Box(
-                modifier = Modifier
-                    .size(32.dp)
+                modifier = Modifier.size(32.dp)
                     .background(color = Color(0xFF34C759), shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {

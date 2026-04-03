@@ -6,7 +6,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import rs.ac.bg.etf.projekat.CultAndSectsPage
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.mysteriousSymptoms.viewModels.HospitalViewModel
@@ -33,6 +32,6 @@ fun NavigationGraph(navController: NavHostController) {
         phoneNavigation(navController, viewModel)
         medicalNavigation(navController, viewModel, realmViewModel,hospitalViewModel)
 
-        composable("destinationCultsAndSectsPage"){ CultAndSectsPage() }
+        composable("destinationCultsAndSectsPage"){ }
     }
 }

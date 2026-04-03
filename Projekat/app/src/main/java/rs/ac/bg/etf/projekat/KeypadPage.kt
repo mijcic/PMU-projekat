@@ -135,22 +135,18 @@ fun KeypadPage(navController: NavController) {
             Spacer(Modifier.height(20.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.width(80.dp)) // prazno mesto levo
+                Spacer(modifier = Modifier.width(80.dp))
 
                 callButton()
 
                 if (chosenNumber.isNotEmpty()) {
-                    deleteButton(onClick = {
-                        chosenNumber = chosenNumber.dropLast(1)
-                    })
+                    deleteButton(onClick = { chosenNumber = chosenNumber.dropLast(1) })
                 } else {
-                    Spacer(modifier = Modifier.width(80.dp)) // zadrži razmak kad dugmeta nema
+                    Spacer(modifier = Modifier.width(80.dp))
                 }
             }
         }
@@ -182,10 +178,7 @@ fun oneButton(number: String, letters: String, onClick: () -> Unit) {
 @Composable
 fun callButton() {
     Box(
-        modifier = Modifier
-            .size(80.dp)
-            .clip(CircleShape)
-            .clickable { },
+        modifier = Modifier.size(80.dp).clip(CircleShape).clickable { },
         contentAlignment = Alignment.Center
     ) {
         Image(

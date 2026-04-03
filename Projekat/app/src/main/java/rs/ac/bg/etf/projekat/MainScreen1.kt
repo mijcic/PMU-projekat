@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
@@ -37,7 +36,7 @@ import androidx.compose.ui.unit.sp
 
 @SuppressLint("ResourceAsColor")
 @Composable
-fun MainScreen1(navController: NavController) {
+fun MainScreen1(onDestinationLoginPage: () -> Unit, onDestinationMainScreen2: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().background(colorResource(id = R.color.gray_1)),
         verticalArrangement = Arrangement.Center,
@@ -50,12 +49,15 @@ fun MainScreen1(navController: NavController) {
             color = colorResource(id = R.color.white)
         )
         Spacer(modifier = Modifier.height(12.dp))
-        LinearDeterminateIndicator(navController)
+        LinearDeterminateIndicator(
+            onDestinationLoginPage = onDestinationLoginPage,
+            onDestinationMainScreen2 = onDestinationMainScreen2
+        )
     }
 }
 
 @Composable
-fun LinearDeterminateIndicator(navController: NavController) {
+fun LinearDeterminateIndicator(onDestinationLoginPage: () -> Unit, onDestinationMainScreen2: () -> Unit) {
     var currentProgress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
 
@@ -66,7 +68,10 @@ fun LinearDeterminateIndicator(navController: NavController) {
             loadProgress { progress ->
                 currentProgress = progress
                 if (progress >= 0.99f) {
-                    checkUserAndNavigate(navController, realmViewModel)
+                    checkUserAndNavigate(realmViewModel =realmViewModel,
+                        onDestinationLoginPage = onDestinationLoginPage,
+                        onDestinationMainScreen2 = onDestinationMainScreen2
+                    )
                 }
             }
         }
@@ -95,13 +100,17 @@ suspend fun loadProgress(updateProgress: (Float) -> Unit) {
     }
 }
 
-fun checkUserAndNavigate(navController: NavController, realmViewModel: RealmViewModel) {
+fun checkUserAndNavigate(
+    realmViewModel: RealmViewModel,
+    onDestinationLoginPage: () -> Unit,
+    onDestinationMainScreen2: () -> Unit
+) {
     realmViewModel.checkIfUserExists()
     val userExists = realmViewModel.uiState.value.userExists
     if (userExists == false) {
-        navController.navigate("destinationLoginPage")
+        onDestinationLoginPage()
     }
     else {
-        navController.navigate("destinationMainScreen2")
+        onDestinationMainScreen2()
     }
 }

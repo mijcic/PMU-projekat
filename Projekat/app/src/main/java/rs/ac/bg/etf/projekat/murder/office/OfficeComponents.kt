@@ -24,9 +24,7 @@ import rs.ac.bg.etf.projekat.R
 @Composable
 fun DescriptionForDetective(text: String) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 32.dp, start = 20.dp, end = 20.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 32.dp, start = 20.dp, end = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(

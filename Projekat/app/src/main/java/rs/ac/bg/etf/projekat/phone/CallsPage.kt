@@ -27,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -75,7 +74,6 @@ fun CallsPage(navController: NavController) {
                     Instant.ofEpochSecond(it.epochSeconds, it.nanosecondsOfSecond.toLong())
                 }
             } ?: emptyList()
-
     }
 
     val filteredCalls = if (selectedButton == 1) calls else calls.filter { it.propusten == true }
@@ -151,9 +149,7 @@ fun AllOrMissedCallsButton(
     Button(
         onClick = onClickFunction,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (selectedButton == buttonIndex) Color.White else colorResource(
-                R.color.light_gray
-            )
+            containerColor = if (selectedButton == buttonIndex) Color.White else colorResource(R.color.light_gray)
         ),
         shape = RoundedCornerShape(4.dp),
         contentPadding = PaddingValues(0.dp),
@@ -164,9 +160,7 @@ fun AllOrMissedCallsButton(
             .then(
                 if (selectedButton == buttonIndex) {
                     Modifier.shadow(
-                        elevation = 12.dp,
-                        shape = RoundedCornerShape(4.dp),
-                        clip = true
+                        elevation = 12.dp, shape = RoundedCornerShape(4.dp), clip = true
                     )
                 } else Modifier
             )
@@ -182,9 +176,7 @@ fun CallFilterToggleButtons(
     font: GenericFontFamily
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 30.dp),
+        modifier = Modifier.fillMaxWidth().heightIn(min = 30.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -228,25 +220,17 @@ fun CallerData(
             R.drawable.no_account
         }
 
-    Box(
-        modifier = Modifier
-            .size(50.dp)
-            .clip(CircleShape)
-    ) {
+    Box(modifier = Modifier.size(50.dp).clip(CircleShape)) {
         Image(
             painter = painterResource(id = validImageResId),
             contentDescription = "Profile picture",
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape)
+            modifier = Modifier.fillMaxSize().clip(CircleShape)
         )
     }
 
     Spacer(modifier = Modifier.width(12.dp))
 
-    Column(
-        horizontalAlignment = Alignment.Start
-    ) {
+    Column(horizontalAlignment = Alignment.Start) {
         Text(
             call.kontakt?.ime ?: call.kontakt?.broj ?: "No Caller ID",
             fontWeight = FontWeight.Bold,
@@ -271,30 +255,23 @@ fun CallerData(
         }
     }
 
-    Spacer(modifier = Modifier.height(8.dp)) // ili potpuno izbaci
+    Spacer(modifier = Modifier.height(8.dp))
 
     Text(
         realmInstantToTimeString(call.datum),
         color = Color.Gray,
         fontSize = 14.sp,
         fontFamily = font,
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentWidth(Alignment.End)
+        modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.End)
     )
 }
 
 @Composable
 fun CallsList(
-    filteredCalls: List<OneCallR>?,
-    navController: NavController,
-    font: GenericFontFamily
+    filteredCalls: List<OneCallR>?, navController: NavController, font: GenericFontFamily
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())
     ) {
         filteredCalls?.forEach { call ->
             Row(

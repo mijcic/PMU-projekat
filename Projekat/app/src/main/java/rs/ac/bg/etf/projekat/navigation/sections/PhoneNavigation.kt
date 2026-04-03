@@ -23,7 +23,9 @@ import rs.ac.bg.etf.projekat.phone.WhatsAppPage
 
 fun NavGraphBuilder.phoneNavigation(navController: NavHostController,myViewModel: MyViewModel) {
     composable("destinationPhonePage") {
-        PhonePage(navController,myViewModel)
+        PhonePage(myViewModel, onClickNav = { destination ->
+            navController.navigate(destination)
+        })
     }
     composable("destinationWhatsAppPage") {
         WhatsAppPage(navController)
@@ -85,7 +87,7 @@ fun NavGraphBuilder.phoneNavigation(navController: NavHostController,myViewModel
         val id = navBackStackEntry.arguments?.getInt("id") ?: 0
         val name = navBackStackEntry.arguments?.getString("name") ?: ""
         val photo = navBackStackEntry.arguments?.getInt("photo") ?: 0
-        ChatPage(id, name, photo, navController)
+        ChatPage(id, name, photo)
     }
     composable("destinationGalleryPage") {
         GalleryPage(navController)

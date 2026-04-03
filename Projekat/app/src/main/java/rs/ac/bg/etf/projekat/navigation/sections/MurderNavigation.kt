@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import rs.ac.bg.etf.projekat.CardsPage
 import rs.ac.bg.etf.projekat.error.ErrorPage
-import rs.ac.bg.etf.projekat.EvidencePage
-import rs.ac.bg.etf.projekat.MapPage
+import rs.ac.bg.etf.projekat.evidence.EvidencePage
+import rs.ac.bg.etf.projekat.map.MapPage
 import rs.ac.bg.etf.projekat.MissionPage
 import rs.ac.bg.etf.projekat.QuestionsPage
 import rs.ac.bg.etf.projekat.ScorePage
@@ -143,10 +143,10 @@ fun NavGraphBuilder.murderNavigation(
         QuestionsPage(navController, viewModel)
     }
     composable("destinationEvidencePage") {
-        EvidencePage(navController, viewModel,realmViewModel)
+        EvidencePage(myViewModel =  viewModel)
     }
     composable("destinationMapPage") {
-        MapPage(navController, viewModel,realmViewModel)
+        MapPage(navController, viewModel)
     }
     composable("destinationErrorPage"){
         ErrorPage()
@@ -167,7 +167,7 @@ fun NavGraphBuilder.murderNavigation(
         val date = navBackStackEntry.arguments?.getString("date") ?:""
         val place = navBackStackEntry.arguments?.getString("place") ?:""
         val description = navBackStackEntry.arguments?.getString("description") ?:""
-        MissionPage(image=image, title=title, date = date, place = place, description = description, navController,realmViewModel)
+        MissionPage(image=image,  navController,realmViewModel)
     }
 
     composable("destinationScorePage") {

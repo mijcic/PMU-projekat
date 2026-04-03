@@ -41,9 +41,7 @@ fun LocationOverlayHeader(modifier: Modifier, locationCount: Int) {
 fun LocationBackButton(modifier: Modifier, onBack: () -> Unit) {
     IconButton(
         onClick = onBack,
-        modifier = modifier
-            .padding(16.dp)
-            .background(Color(0xAA000000), shape = CircleShape)
+        modifier = modifier.padding(16.dp).background(Color(0xAA000000), shape = CircleShape)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,

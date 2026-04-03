@@ -58,11 +58,7 @@ fun MessagesPage(navController: NavController) {
         messages = result?.sortedByDescending { it.lastMessage?.datum } ?: emptyList()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 40.dp, bottom = 20.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxSize().padding(top = 40.dp, bottom = 20.dp)) {
         UpperIcons(font = font)
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -153,15 +149,12 @@ fun MessagesList(messages: List<OneContactPreviewItem>, navController: NavContro
                     }
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                             .padding(vertical = 12.dp, horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
+                            modifier = Modifier.size(50.dp).clip(CircleShape)
                         ) {
                             val context = LocalContext.current
 
@@ -178,9 +171,7 @@ fun MessagesList(messages: List<OneContactPreviewItem>, navController: NavContro
                             Image(
                                 painter = painterResource(id = validPictureResId),
                                 contentDescription = "Profile picture",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape)
+                                modifier = Modifier.fillMaxSize().clip(CircleShape)
                             )
                         }
 

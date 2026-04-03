@@ -65,15 +65,9 @@ fun NotesPage(navController: NavController) {
         containerColor = Color(0xFFF5F5F5)
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)
         ) {
-            NotesList(
-                notes = notes,
-                navController = navController
-            )
+            NotesList(notes = notes, navController = navController)
         }
     }
 }

@@ -156,10 +156,7 @@ fun ContactAction(icon: Int, label: String, enabled: Boolean = true) {
 fun ContactOption(text: String) {
     Text(
         text = text, fontSize = 16.sp, color = colorResource(R.color.iphone_blue),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { }
-            .padding(vertical = 12.dp)
+        modifier = Modifier.fillMaxWidth().clickable { }.padding(vertical = 12.dp)
     )
     Divider()
 }

@@ -3,6 +3,8 @@ package rs.ac.bg.etf.projekat.mysteriousSymptoms.patient
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -40,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.realm.kotlin.types.RealmInstant
+import rs.ac.bg.etf.projekat.Background
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.MyViewModel
 import java.sql.Date
@@ -62,7 +67,12 @@ fun PatientScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        PatientBackground()
+        Background(
+            image = R.drawable.patient,
+            desc = "Background Image",
+            modifier = Modifier.fillMaxSize(),
+            alpha = 0.7f
+        )
 
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp),

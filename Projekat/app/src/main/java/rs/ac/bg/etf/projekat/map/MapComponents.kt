@@ -1,6 +1,5 @@
-package rs.ac.bg.etf.projekat
+package rs.ac.bg.etf.projekat.map
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,40 +47,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import rs.ac.bg.etf.projekat.data.MyViewModel
+import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realm.ZadatakR
-import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
 import rs.ac.bg.etf.projekat.navigation.questionsPage
 
-@Composable
-fun MapPage(navController: NavController, myViewModel: MyViewModel, realmViewModel: RealmViewModel) {
-    var paddingStart by remember { mutableStateOf(0.dp) }
-    val uiStateTasks by myViewModel.uiStateTasks.collectAsState()
-
-    Log.d("Zadaci",uiStateTasks.tasks.toString())
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        MapBackground()
-
-        Column(
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 22.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-
-            TasksHeader(paddingStart)
-
-            MapPageTaskListWithQuestions(
-                tasks = uiStateTasks.tasks,
-                navController = navController
-            )
-        }
-
-        MapBackButton(
-            onBack = {navController.popBackStack()},
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
-    }
-}
 
 @Composable
 fun MapBackground() {

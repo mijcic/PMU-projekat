@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.murder.DetailsBackground
+import rs.ac.bg.etf.projekat.Background
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -55,7 +55,12 @@ fun SuspectDetailsPage(
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            DetailsBackground()
+            Background(
+                image = R.drawable.suspects_details_background,
+                desc = "Background",
+                modifier = Modifier.fillMaxSize(),
+                alpha = 0.6f
+            )
 
             Box(
                 modifier = Modifier.fillMaxSize(),

@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import rs.ac.bg.etf.projekat.R
 import rs.ac.bg.etf.projekat.data.realmViewModel.RealmViewModel
-import rs.ac.bg.etf.projekat.murder.DetailsBackground
+import rs.ac.bg.etf.projekat.Background
 import rs.ac.bg.etf.projekat.murder.suspectDetails.oneRowAboutSuspect
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -65,7 +65,12 @@ fun WitnessDetailsPage(
     Surface(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxSize()) {
 
-            DetailsBackground()
+            Background(
+                image = R.drawable.suspects_details_background,
+                desc = "Background",
+                modifier = Modifier.fillMaxSize(),
+                alpha = 0.6f
+            )
 
             Box(
                 modifier = Modifier.fillMaxSize(),

@@ -63,7 +63,6 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController,
     var paddingStart by remember { mutableStateOf(0.dp) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-
         CardsBackground()
 
         Column(
@@ -71,7 +70,6 @@ fun CardsPage(modifier: Modifier = Modifier, navController: NavController,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally)
         {
-
             DetectiveHeader(paddingStart = paddingStart)
 
             CardsPageCardList(

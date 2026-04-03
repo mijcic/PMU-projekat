@@ -93,9 +93,7 @@ fun WhatsAppChatsList(chats: List<WhatsAppPreviewItem>, navController: NavContro
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
+                        modifier = Modifier.size(50.dp).clip(CircleShape)
                     ) {
                         val context = LocalContext.current
                         val validPictureResId = remember(kontakt.slika) {
@@ -111,9 +109,7 @@ fun WhatsAppChatsList(chats: List<WhatsAppPreviewItem>, navController: NavContro
                         Image(
                             painter = painterResource(id = validPictureResId),
                             contentDescription = "Profile picture",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
+                            modifier = Modifier.fillMaxSize().clip(CircleShape)
                         )
                     }
 

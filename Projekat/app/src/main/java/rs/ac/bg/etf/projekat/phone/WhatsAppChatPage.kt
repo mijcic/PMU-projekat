@@ -278,9 +278,7 @@ fun WhatsappMessageBubble(message: WhatsAppPorukaR, spacing: Dp) {
     val alignment = if (message.kontaktKoSalje?.ime?.contains("Me")==true) Alignment.CenterEnd else Alignment.CenterStart
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = spacing),
+        modifier = Modifier.fillMaxWidth().padding(top = spacing),
         contentAlignment = alignment
     ) {
         Box(

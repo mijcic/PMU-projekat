@@ -41,9 +41,6 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.http.*
-import io.ktor.server.application.*
-import com.google.gson.Gson
 
 /**
  * Configures the routing and endpoints for the Ktor application.
@@ -991,26 +988,3 @@ fun closeResources(conn: Connection?, statement: PreparedStatement?, resultSet: 
     statement?.close()
     //conn?.close()
 }
-/*
-fun <T> executeQuery(query: String, rowMapper: (ResultSet) -> T): List<T> {
-    val resultList = mutableListOf<T>()
-    var conn: Connection? = null
-    var statement: PreparedStatement? = null
-    var resultSet: ResultSet? = null
-
-    try {
-        val conn = getDatabaseConnection()
-        statement = conn?.prepareStatement(query)
-        resultSet = statement?.executeQuery()
-
-        while (resultSet?.next() == true) {
-            resultList.add(rowMapper(resultSet))
-        }
-    } catch (e: SQLException) {
-        e.printStackTrace()
-    } finally {
-        closeResources(conn, statement, resultSet)
-    }
-
-    return resultList
-}*/
